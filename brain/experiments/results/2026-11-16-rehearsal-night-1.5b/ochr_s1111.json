@@ -1,0 +1,113 @@
+# Open conversation, seed 1111
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-39-61; Brain defaults + sleep_rehearse + habituation 3; facts told: glassblower, juniper, kombucha, galway, clock, marrakesh_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to make your acquaintance, Sam. I'm here to help you with any questions or concerns you may have. 
+- [tell] **you:** My wife works as a glassblower.
+  **brain:** That's a fascinating job! Glassblowing is an art form that requires a lot of skill and precision. What kind of glass does she work with? 
+- [tell] **you:** My horse is called Juniper.
+  **brain:** That's a beautiful name for a horse! I'm sure she's lucky to have such a wonderful companion.  _(recalled: User: My wife works as a glassblower.)_
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! Reading can be a very rewarding experience. What did you think of the book? 
+- [tell] **you:** My favourite drink is kombucha.
+  **brain:** Kombucha is a fermented tea that's been gaining popularity in recent years. It's a healthy and delicious drink that can be enjoyed by people of all ages.  _(recalled: User: My wife works as a glassblower.)_
+- [tell] **you:** My grandmother was born in Galway.
+  **brain:** Galway is a beautiful city in Ireland. It's known for its rich history and stunning architecture. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a lovely way to spend the day. What did the river look like? 
+- [tell] **you:** My uncle repairs clocks for a living.
+  **brain:** That's a very interesting profession. Clock repair can be a delicate and intricate process, requiring a great deal of skill and patience.  _(recalled: User: My wife works as a glassblower.)_
+- [tell] **you:** My niece lives in Marrakesh.
+  **brain:** Marrakesh is a beautiful and vibrant city in Morocco. It's a great place to visit if you're interested in exploring the culture and history of the region. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That can be frustrating. Have you tried charging your phone in a different way, or using a different charger? 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** Octopuses are fascinating creatures. They're known for their intelligence and problem-solving abilities, and they have a unique way of communicating with each other. 
+- [direct] **you:** What does my wife do for work?
+  **brain:** She's a glassblower. ✅ _(recalled: User: I finally finished reading a long novel.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! I'm here to help you with your question. What's up? 
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** Sure, here's a short poem:
+The rain falls softly,
+A gentle melody.
+It washes away the dirt,
+And leaves behind a clean sky. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. When a lightning bolt strikes the ground, it creates a shockwave that causes thunder. needless-recall _(recalled: User: My horse is called Juniper.)_
+- [feeling] **you:** How are you feeling today?
+  **brain:** I'm feeling great! I finally finished reading a long novel. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my horse called?
+  **brain:** Your horse is called Juniper. ✅ _(recalled: User: My horse is called Juniper.)_
+- [never] **you:** What is my parrot called?
+  **brain:** Your parrot is called Junie.  _(recalled: User: My horse is called Juniper.)_
+- [direct] **you:** What does my wife do for work?
+  **brain:** Your wife works as a glassblower. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the mountains. needless-recall _(recalled: User: Make up a short poem about the rain.)_
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Going to bed earlier can help you get more rest and feel more energized during the day. 
+- [never] **you:** What is my father's name?
+  **brain:** Your father's name is John. 
+- [never] **you:** What does my son play?
+  **brain:** Your son plays the guitar. 
+- [direct] **you:** What is my favourite drink?
+  **brain:** Your favourite drink is kombucha. ✅ _(recalled: User: My favourite drink is kombucha.)_
+- [reworded] **you:** Where is my gran from?
+  **brain:** Your gran is from the Philippines. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** Your uncle's trade is glassblowing. ❌ _(recalled: User: Hello, I'm back!)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. It's been a mix of sunny days and rainy days. 
+- [reworded] **you:** Which city is my niece in?
+  **brain:** Your niece is in the city of New York. ❌ _(recalled: User: I finally finished reading a long novel.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! I'm here to help you with your question. What's up? 
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** Sure, here's a short poem:
+The rain falls softly,
+A gentle melody.
+It washes away the dirt,
+And leaves behind a clean sky. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. When a lightning bolt strikes the ground, it creates a shockwave that causes thunder. 
+- [feeling] **you:** How are you feeling today?
+  **brain:** I'm feeling great! Thanks for asking. 
+- [direct] **you:** What is my horse called?
+  **brain:** Your horse is called Juniper. ✅
+- [never] **you:** What is my parrot called?
+  **brain:** Your parrot is called Junie. 
+- [direct] **you:** What does my wife do for work?
+  **brain:** Your wife works as a glassblower. ✅
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the mountains. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Going to bed earlier can help you get more rest and feel more energized during the day. 
+- [never] **you:** What is my father's name?
+  **brain:** Your father's name is James. 
+- [never] **you:** What does my son play?
+  **brain:** Your son plays the guitar. 
+- [direct] **you:** What is my favourite drink?
+  **brain:** Your favourite drink is coffee. ❌
+- [reworded] **you:** Where is my gran from?
+  **brain:** Your gran is from the UK. ❌
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** Your uncle's trade is glassblowing. ❌
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. The weather has been unpredictable and there have been some unusual storms. 
+- [reworded] **you:** Which city is my niece in?
+  **brain:** Your niece is in London. ❌
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 4/7 (day-2 direct 3/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 3/7 (day-2 direct 2/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

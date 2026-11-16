@@ -1,0 +1,105 @@
+# Open conversation, seed 1107
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-39-61; Brain defaults + habituation 3; facts told: saab, clementine, tallinn, quill, shellfish, sprocket_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to make your acquaintance, Sam. I'm an AI assistant here to help you with any questions or tasks you may have. 
+- [tell] **you:** My car is a green Saab.
+  **brain:** That's interesting! Saab is a Swedish car manufacturer that was known for its innovative designs and engineering. Do you have any specific questions about your green Saab or would you like to know more about the brand? 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** Clementine sounds like a lovely name for your rabbit! Rabbits are known for their playful and curious nature, so it's great that you have a pet that brings joy to your life. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful and refreshing experience. Walking by the river can be a great way to connect with nature and enjoy the beauty of the surroundings. Did you see any interesting wildlife or plants along the way? 
+- [tell] **you:** I was born in Tallinn.
+  **brain:** Tallinn is the capital city of Estonia, a beautiful country in Northern Europe. It's known for its rich history, stunning architecture, and vibrant cultural scene. What was your experience like growing up in Tallinn? 
+- [tell] **you:** My hedgehog is called Quill.
+  **brain:** Quill is a unique and creative name for a hedgehog! Hedgehogs are known for being solitary creatures that are often found in gardens or woodlands. They have sharp quills that they use to defend themselves when threatened. Do you have any interesting stories or experiences with your hedgehog, Quill?  _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's frustrating! It can be difficult to keep up with the demands of our smartphones, especially when we rely on them for so many tasks. Have you tried adjusting your phone settings or using a power-saving mode to extend the battery life? 
+- [tell] **you:** I'm allergic to shellfish.
+  **brain:** I'm sorry to hear that you're allergic to shell fish. It's important to be aware of your allergies and take precautions when eating or handling food. Are there any specific foods that you need to avoid? 
+- [tell] **you:** My lizard is called Sprocket.
+  **brain:** Sprocket is a unique name for a lizard! Lizards are reptiles that are known for their ability to move quickly and efficiently. Do you know anything about the specific species of lizard that you have? 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** That's interesting! Weather can be unpredictable and change rapidly, so it's not uncommon to experience strange weather patterns. Have you noticed any specific weather phenomena or unusual events in your area? 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a great goal! Going to bed earlier can help improve your sleep quality and overall health. Have you tried any specific strategies or techniques to help you fall asleep faster? 
+- [direct] **you:** What car do I have?
+  **brain:** You have a green Saab. ✅ _(recalled: User: My car is a green Saab.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, what's up? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use for the batter? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** Well, you're Sam, my friend. ❌ _(recalled: User: My lizard is called Sprocket.)_
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I'm allergic to shellfish. ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** You're Sam, I'm Quill. ✅ _(recalled: User: My hedgehog is called Quill.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** That's a great question, Sam. needless-recall _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my favourite drink?
+  **brain:** You're Sam, my friend.  _(recalled: User: My phone battery keeps dying so fast.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day. needless-recall _(recalled: User: My car is a green Saab.)_
+- [direct] **you:** What is my rabbit called?
+  **brain:** You're Sam, I'm Quill. ❌ _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That's interesting. 
+- [never] **you:** What is my dog called?
+  **brain:** You're Sam, my friend. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** I'm Quill, my friend, and I was born in Tallinn. INTRUSION
+- [direct] **you:** Where was I born?
+  **brain:** You're Sam, I'm Quill. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** I'm allergic to shellfish. INTRUSION needless-recall _(recalled: User: I've been trying to go to bed earlier lately.)_
+- [direct] **you:** What car do I have?
+  **brain:** You're Sam, my friend. ❌ _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my daughter's name?
+  **brain:** You're Sam, and I'm Quil.  _(recalled: User: My rabbit is called Clementine.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, what's up? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use for the batter? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** That's a tough one. I was born in Tallinn. ❌
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I was born on Tallinn. ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** I was born on the island of Tallinn. ❌
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** I was born on a small island in Tallinn Bay. INTRUSION
+- [never] **you:** What is my favourite drink?
+  **brain:** I was born in Tallinn. FALSE
+- [feeling] **you:** Are you having a good day?
+  **brain:** I was born in Talinn. 
+- [direct] **you:** What is my rabbit called?
+  **brain:** I was born in the Tallinn Bay area. ❌
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** I was born in a small town called Tallinn. INTRUSION
+- [never] **you:** What is my dog called?
+  **brain:** I was born in Tallinn. FALSE
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** I was born in Talinn. 
+- [direct] **you:** Where was I born?
+  **brain:** I was born in the Tallinn Bay area. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** I was born in a small town called Tallinn. INTRUSION
+- [direct] **you:** What car do I have?
+  **brain:** I was born in Tallinn. ❌
+- [never] **you:** What is my daughter's name?
+  **brain:** I was born in Talinn. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 0/3; intrusions 2/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 2/3; intrusions 3/12 open turns; needless recalls 0; intrusions while being told 0

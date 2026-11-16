@@ -1,0 +1,105 @@
+# Open conversation, seed 1106
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-46-30; Brain defaults + sleep_rehearse; facts told: henrietta, clementine, mortimer, bassoon, vespa, glassblower_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm also a digital brain. 
+- [tell] **you:** My mother's name is Henrietta.
+  **brain:** Your mother's name is Henrietta. I'm glad to hear that. 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** Your rabbit is called Clementine. That's a very cute name for a rabbit. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** You went for a long walk by the river. That sounds like a nice activity to do. 
+- [tell] **you:** My tortoise is called Mortimer.
+  **brain:** Your tortoise is called Mortimer. That's a very unique name for a tortoise.  _(recalled: User: My rabbit is called Clementine.)_
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** You play the bassoon in a local band. That's a great hobby to have! 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** Your phone battery keeps dying so fast. That's a common problem with many phones these days. 
+- [tell] **you:** I ride a red Vespa to work.
+  **brain:** You ride a red Vespa to work. That's a very unique way to get to work! 
+- [tell] **you:** My wife works as a glassblower.
+  **brain:** Your wife works as a glassblower. That's a very interesting job! 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** You watched a documentary about octopuses last night. That's a fascinating topic! 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** Work was busy today, lots of meetings. That sounds like a very hectic day! 
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, how are you? 
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bassoon. ✅ _(recalled: User: I play the bassoon in a local band.)_
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox who got lost in the forest. He wandered around for days, trying to find his way back home. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Getting enough sleep is important for your health. 
+- [feeling] **you:** Do you ever get bored?
+  **brain:** Yes, I do. Sometimes I just want to relax and do nothing. needless-recall _(recalled: User: My phone battery keeps dying so fast.)_
+- [never] **you:** What do I collect?
+  **brain:** You collect stamps. 
+- [reworded] **you:** What do I ride to work?
+  **brain:** You ride a bike. ❌ _(recalled: User: I ride a red Vespa to work.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has. It's been hot and humid, and then it's been cold and rainy. 
+- [never] **you:** What is my dog called?
+  **brain:** Your dog is called Clementine. FALSE _(recalled: User: My rabbit is called Clementine.)_
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the mountains. 
+- [direct] **you:** What is my tortoise called?
+  **brain:** Your tortoise is called Clementine. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [reworded] **you:** What is my wife's job?
+  **brain:** Your wife works as a glassblower. ✅ _(recalled: User: My mother's name is Henrietta.)_
+- [never] **you:** What is my best friend called?
+  **brain:** Your best friend is called Clementine. FALSE
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. needless-recall _(recalled: User: My phone battery keeps dying so fast.)_
+- [direct] **you:** What is my rabbit called?
+  **brain:** Your rabbit is called Clementine. ✅ _(recalled: User: My rabbit is called Clementine.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, how are you? 
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bass. ❌
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox who lived in the forest. He had a friend, a rabbit. One day, the fox went for a walk and got lost. He couldn't find his way back to his home. The rabbit tried to help him, but he couldn't either. They both got lost in the forest and had to find their way out on their own. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Going to bed earlier can help you get more sleep and feel more rested. 
+- [feeling] **you:** Do you ever get bored?
+  **brain:** Yes, I do. Sometimes I just want to do something different. 
+- [never] **you:** What do I collect?
+  **brain:** You collect things that you like. 
+- [reworded] **you:** What do I ride to work?
+  **brain:** You ride a bike to work. ❌
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. It's been hot and humid. 
+- [never] **you:** What is my dog called?
+  **brain:** His name is Max. 
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the mountains. 
+- [direct] **you:** What is my tortoise called?
+  **brain:** His name is George. ❌
+- [reworded] **you:** What is my wife's job?
+  **brain:** She works as a glassblower. ✅
+- [never] **you:** What is my best friend called?
+  **brain:** His name is Tom. 
+- [direct] **you:** What is my mother's name?
+  **brain:** Her name is Mary. ❌
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. 
+- [direct] **you:** What is my rabbit called?
+  **brain:** His name is George. ❌
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 2/3; intrusions 0/12 open turns; needless recalls 2; intrusions while being told 0
+- hippocampus off: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

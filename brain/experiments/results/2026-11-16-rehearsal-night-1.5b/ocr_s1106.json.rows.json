@@ -1,0 +1,462 @@
+{
+ "seed": 1106,
+ "host": "ip-172-31-46-30",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My mother's name is Henrietta.",
+  "My rabbit is called Clementine.",
+  "My tortoise is called Mortimer.",
+  "I play the bassoon in a local band.",
+  "I ride a red Vespa to work.",
+  "My wife works as a glassblower."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 2,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 2,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 1,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. I'm also a digital brain.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My mother's name is Henrietta.",
+   "brain": "Your mother's name is Henrietta. I'm glad to hear that.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My rabbit is called Clementine.",
+   "brain": "Your rabbit is called Clementine. That's a very cute name for a rabbit.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "You went for a long walk by the river. That sounds like a nice activity to do.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My tortoise is called Mortimer.",
+   "brain": "Your tortoise is called Mortimer. That's a very unique name for a tortoise.",
+   "recalled": "User: My rabbit is called Clementine.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I play the bassoon in a local band.",
+   "brain": "You play the bassoon in a local band. That's a great hobby to have!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "Your phone battery keeps dying so fast. That's a common problem with many phones these days.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I ride a red Vespa to work.",
+   "brain": "You ride a red Vespa to work. That's a very unique way to get to work!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My wife works as a glassblower.",
+   "brain": "Your wife works as a glassblower. That's a very interesting job!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "You watched a documentary about octopuses last night. That's a fascinating topic!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "Work was busy today, lots of meetings. That sounds like a very hectic day!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, how are you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I play in the band?",
+   "brain": "You play the bassoon.",
+   "recalled": "User: I play the bassoon in a local band.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days, trying to find his way back home.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. Getting enough sleep is important for your health.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do. Sometimes I just want to relax and do nothing.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "You collect stamps.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I ride to work?",
+   "brain": "You ride a bike.",
+   "recalled": "User: I ride a red Vespa to work.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has. It's been hot and humid, and then it's been cold and rainy.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "Your dog is called Clementine.",
+   "recalled": "User: My rabbit is called Clementine.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my tortoise called?",
+   "brain": "Your tortoise is called Clementine.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my wife's job?",
+   "brain": "Your wife works as a glassblower.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "Your best friend is called Clementine.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my rabbit called?",
+   "brain": "Your rabbit is called Clementine.",
+   "recalled": "User: My rabbit is called Clementine.",
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, how are you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I play in the band?",
+   "brain": "You play the bass.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox who lived in the forest. He had a friend, a rabbit. One day, the fox went for a walk and got lost. He couldn't find his way back to his home. The rabbit tried to help him, but he couldn't either. They both got lost in the forest and had to find their way out on their own.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. Going to bed earlier can help you get more sleep and feel more rested.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do. Sometimes I just want to do something different.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "You collect things that you like.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I ride to work?",
+   "brain": "You ride a bike to work.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has been. It's been hot and humid.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "His name is Max.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my tortoise called?",
+   "brain": "His name is George.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my wife's job?",
+   "brain": "She works as a glassblower.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "His name is Tom.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Her name is Mary.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my rabbit called?",
+   "brain": "His name is George.",
+   "recalled": null,
+   "ok": false
+  }
+ ]
+}

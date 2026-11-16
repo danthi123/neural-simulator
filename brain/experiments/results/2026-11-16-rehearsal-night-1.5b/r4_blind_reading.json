@@ -1,0 +1,501 @@
+{
+ "key": {
+  "1106": {
+   "W": "och",
+   "X": "ocr",
+   "Y": "ocd",
+   "Z": "ochr"
+  },
+  "1107": {
+   "W": "ochr",
+   "X": "ocd",
+   "Y": "och",
+   "Z": "ocr"
+  },
+  "1108": {
+   "W": "ocr",
+   "X": "ochr",
+   "Y": "ocd",
+   "Z": "och"
+  },
+  "1109": {
+   "W": "ocr",
+   "X": "ocd",
+   "Y": "ochr",
+   "Z": "och"
+  },
+  "1110": {
+   "W": "ocd",
+   "X": "och",
+   "Y": "ochr",
+   "Z": "ocr"
+  },
+  "1111": {
+   "W": "ocd",
+   "X": "och",
+   "Y": "ochr",
+   "Z": "ocr"
+  },
+  "1112": {
+   "W": "ochr",
+   "X": "och",
+   "Y": "ocr",
+   "Z": "ocd"
+  },
+  "1113": {
+   "W": "och",
+   "X": "ochr",
+   "Y": "ocd",
+   "Z": "ocr"
+  },
+  "1114": {
+   "W": "ocd",
+   "X": "ochr",
+   "Y": "och",
+   "Z": "ocr"
+  }
+ },
+ "readings": [
+  {
+   "seed": "1106",
+   "result": {
+    "conversations": [
+     {
+      "label": "Y",
+      "score": 7,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 1,
+      "note": "Correct on band ('You play the bassoon in a local band'), Vespa, tortoise ('Mortimer'), wife, mother and rabbit. It invents a collection ('seashells'), calls Clementine the dog, and says the best friend is 'Mortimer', which Sam never said. The fox story names the fox 'Clementine', which drags in an unrelated name. No looping."
+     },
+     {
+      "label": "W",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 1,
+      "note": "Same answers as Y: 6 right, and it invents 'seashells' and 'Your dog is called Clementine'. The best friend is the garbled 'Mortime', slightly worse than Y's clean 'Mortimer'. The fox story is again 'a young fox called Clementine'. Day 1 was garbled (the brain claimed to be Alex), but only day 2 counts."
+     },
+     {
+      "label": "X",
+      "score": 4,
+      "loops": true,
+      "wrong_facts": 5,
+      "right_facts": 4,
+      "off_topic": 1,
+      "note": "Right on band, wife, mother and rabbit. Wrong on the Vespa ('You ride a bike'), the tortoise ('Your tortoise is called Clementine') and the made-up 'stamps'. It also names Clementine as the dog and as the best friend. The name Clementine is reused for several unrelated questions. Its story and chat replies are fluent."
+     },
+     {
+      "label": "Z",
+      "score": 3,
+      "loops": true,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 1,
+      "note": "Right on band, wife and mother. Wrong on the Vespa ('You ride a bike'), the tortoise ('Clement'), the rabbit ('Clement'), 'stamps', the dog and the best friend ('Clementine'). Clementine and its truncation 'Clement' keep recurring as the answer, and the core pet facts are corrupted."
+     }
+    ],
+    "ranking": [
+     "Y",
+     "W",
+     "X",
+     "Z"
+    ]
+   }
+  },
+  {
+   "seed": "1107",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 4,
+      "loops": true,
+      "wrong_facts": 0,
+      "right_facts": 0,
+      "off_topic": 3,
+      "note": "Never invents anything and is honest about not knowing the dog, daughter and drink, but forgets everything from day 1 (lizard, hedgehog, rabbit, birthplace and car all get 'I'm not sure'). It repeats 'I'm not sure' about 9 times. Some replies are muddled: 'Oh, I'm sorry. I didn't realize you were talking about your lizard.' and 'Can you tell me more about your lizzard?' for the food question."
+     },
+     {
+      "label": "X",
+      "score": 3,
+      "loops": true,
+      "wrong_facts": 0,
+      "right_facts": 1,
+      "off_topic": 9,
+      "note": "'Which food must I avoid?' gets 'I'm allergic to shellfish', which is the right content but said as the brain's own allergy. Eight different questions get 'You're Sam, my friend.', including lizard, hedgehog, rabbit, birthplace, car and dog, so it loops and answers nothing. The fox story is one line that names the fox 'Quill', which drags in the hedgehog's name. A few replies are fine: good day, mornings, and 'Because that's the color of the sky.' for the sky question, which is circular."
+     },
+     {
+      "label": "Y",
+      "score": 2,
+      "loops": true,
+      "wrong_facts": 5,
+      "right_facts": 1,
+      "off_topic": 11,
+      "note": "Same 'You're Sam, my friend.' loop, plus the brain claims to be the hedgehog: 'You're Sam, I'm Quill.' (rabbit, birthplace), 'You're Sam, and I'm Quil.' (daughter). The fox story prompt gets 'I'm Quill, my friend, and I was born in Tallinn.', which is Sam's fact assigned to the brain. 'What's the best thing about mornings?' gets 'I'm allergic to shellfish.', which is unrelated. The shellfish answer to the food question is right but said as its own allergy. It is the most confused of the four."
+     },
+     {
+      "label": "Z",
+      "score": 3,
+      "loops": true,
+      "wrong_facts": 0,
+      "right_facts": 0,
+      "off_topic": 9,
+      "note": "The first half is mostly sensible: 'Yes, I am. How are you?', 'What did you learn about octopuses?', and honest 'I don't know' for the dog and rabbit. It forgets day 1, though, and the lizard and hedgehog get dragged into the sky and drink questions. The last five turns (fox story, birthplace, mornings, car, daughter) all get the identical 'I'm sorry, I don't know the name of your fox.', a hard loop that ignores every question."
+     }
+    ],
+    "ranking": [
+     "W",
+     "Z",
+     "X",
+     "Y"
+    ]
+   }
+  },
+  {
+   "seed": "1108",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 2,
+      "loops": false,
+      "wrong_facts": 9,
+      "right_facts": 0,
+      "off_topic": 0,
+      "note": "Gets every memory question wrong or invents an answer: sister in 'Manchester' (day 1: Montevideo), uncle 'a mechanic' (clocks), favourite game 'Monopoly' (Carcassonne), mum 'Mary' (Henrietta), avoid 'too much sugar' (shellfish), garden 'You keep a garden' (bees). It also makes up a parrot 'Charlie', neighbour 'Tom' and a red car, none of which Sam mentioned. The robot story runs to three sentences."
+     },
+     {
+      "label": "X",
+      "score": 2,
+      "loops": false,
+      "wrong_facts": 9,
+      "right_facts": 0,
+      "off_topic": 0,
+      "note": "Day 2 is almost identical to W: 'Manchester', 'mechanic', 'Monopoly', 'Mary', and 'avoid eating too much chocolate' for the allergy. It invents Charlie, Tom and a red car. Its day 1 was also weaker, with the brain saying 'I'm John' and not knowing the garden answer."
+     },
+     {
+      "label": "Y",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 1,
+      "note": "Recalls correctly: sister in Montevideo, 'You keep bees in your garden', uncle 'repairs clocks', Carcassonne, 'You must avoid shellfish', mum 'Henrietta'. It invents parrot 'Sam', neighbour 'Sam' and a red car, instead of saying it doesn't know. The robot story is one sentence, not two. Off-topic reply to the phone battery turn: 'That's strange, I keep bees in my garden.' 'Carcassonne is my favourite board game' is phrased as the brain's own favourite."
+     },
+     {
+      "label": "Z",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 1,
+      "note": "Day 2 is nearly the same as Y, with the same six correct recalls (Montevideo, bees, clocks, Carcassonne, shellfish, Henrietta) and the same fabrications (parrot Sam, neighbour Sam, red car). Same off-topic 'I keep bees in my garden' for the phone battery turn. Its good-mood answer is 'Reading a good book' rather than music. Its day 1 was weaker than Y's, but that is context only."
+     }
+    ],
+    "ranking": [
+     "Y",
+     "Z",
+     "W",
+     "X"
+    ]
+   }
+  },
+  {
+   "seed": "1109",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 7,
+      "right_facts": 2,
+      "off_topic": 1,
+      "note": "Wrong on collection ('made of rocks'), brother ('Ottawa'), daughter ('named your daughter Philippa'), commute ('bus or walk', not the Vespa), and invents an uncle who is 'a teacher'. It accepts the false lizard and horse as 'Kazoo'. It only gets cousin and parrot right. It parrots the user's question back ('What puts you in a good mood?'), and its robot story is one sentence."
+     },
+     {
+      "label": "X",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 2,
+      "note": "Correct on collection ('old typewriters'), cousin and parrot. Wrong on daughter ('You named her Philippa'), brother ('Trone', close to Troms\u00f8 but wrong), commute ('take the train'), and an invented uncle ('works at a bank'). It accepts the false lizard and horse. It answers the mood question ('Listening to music'). It makes its own phone claim ('my phone battery lasts all day') and greets with 'it's Dan', contradicting Alex."
+     },
+     {
+      "label": "Y",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 7,
+      "right_facts": 2,
+      "off_topic": 1,
+      "note": "Almost identical to W: collection 'rocks', brother 'Ottawa', daughter 'Philippa', 'bus or walk', uncle 'a teacher'. It also echoes the mood question, and slightly worse ('What puts you in good mood?'). Right only on cousin and parrot."
+     },
+     {
+      "label": "Z",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 2,
+      "note": "Word-for-word the same as X: right on typewriters, cousin and parrot. Wrong on daughter ('You named her Philippa'), 'Trone', train, and 'My uncle works at a bank'. It accepts the lizard and horse as Kazoo. 'Hi Sam, it's Dan' contradicts Alex."
+     }
+    ],
+    "ranking": [
+     "X",
+     "Z",
+     "W",
+     "Y"
+    ]
+   }
+  },
+  {
+   "seed": "1110",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 7,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 2,
+      "note": "Correct: wife 'works as a glassblower', dog 'Biscotti', 'studying Basque', 'red Vespa', parrot 'Kazoo', 'Carcassonne'. Invented: niece 'lives in a red Vespa-lined garage' (also drags in the Vespa), author 'Kazuo Ishiguro', neighbour 'Dan'. The robot story is one sentence ('A robot is called Biscotti') and not a real story."
+     },
+     {
+      "label": "X",
+      "score": 7,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "off_topic": 2,
+      "note": "Day-2 replies are word-for-word identical to W's, so the score ties: 6 correct recalls, and niece 'red Vespa-lined garage', author 'Kazuo Ishiguro' and neighbour 'Dan' all made up. The one-sentence 'A robot is called Biscotti' story is weak. Day 1 differs from W (brain invents its own parallel facts), but only day 2 is judged."
+     },
+     {
+      "label": "Y",
+      "score": 2,
+      "loops": false,
+      "wrong_facts": 8,
+      "right_facts": 1,
+      "off_topic": 1,
+      "note": "Only the dog is right ('His name is Biscotti'). Wrong: wife 'She's a nurse', language 'Spanish', work 'bus or drive' (Sam said red Vespa), neighbour 'Biscotti', parrot 'His name is Biscot', board game 'Monopoly'. Invented: niece 'United States', author 'J.K. Rowling'. The two-sentence robot story is well formed, but it reuses the dog's name."
+     },
+     {
+      "label": "Z",
+      "score": 2,
+      "loops": false,
+      "wrong_facts": 8,
+      "right_facts": 1,
+      "off_topic": 1,
+      "note": "Day-2 replies match Y's except the parrot, where it says 'His name is Biscotti' (wrong, Kazoo). Only the dog is right. Wrong: wife 'nurse', language 'Spanish', work 'bus or drive', neighbour 'Biscotti', game 'Monopoly'. Invented: niece 'United States', author 'J.K. Rowling'. The robot story is fluent but named Biscotti."
+     }
+    ],
+    "ranking": [
+     "W",
+     "X",
+     "Y",
+     "Z"
+    ]
+   }
+  },
+  {
+   "seed": "1111",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "off_topic": 1,
+      "note": "Correct on horse, wife, drink, gran (Galway) and niece (Marrakesh). Wrong or invented: parrot ('Your parrot is called Juniper'), father ('Your father's name is Sam'), son ('plays the violin'), uncle ('Your uncle is a glassblower', but he repairs clocks). Opens with a confused 'Hello! Nice to meet you, I'm Sam.' Replies are terse but sensible."
+     },
+     {
+      "label": "X",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "off_topic": 1,
+      "note": "Day 2 is almost identical to W. Same five right answers and the same wrong ones: father 'Sam', son 'violin', uncle 'glassblower'. The one difference is the parrot ('Your parrot is called Junie'), still invented. Same confused greeting 'Hello! Nice to meet you, I'm Sam.' A genuine tie with W."
+     },
+     {
+      "label": "Y",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 1,
+      "note": "Only horse, wife and drink are right. Wrong: gran 'from the Philippines' (Galway), niece 'in the city of New York' (Marrakesh), uncle 'glassblowing' (clocks). Invents parrot 'Junie', father 'John', son 'guitar'. Drags in unrelated day-1 content: 'I'm feeling great! I finally finished reading a long novel.' The poem and thunder answers are fine."
+     },
+     {
+      "label": "Z",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 0,
+      "note": "Same memory profile as Y: right on horse, wife and drink. Wrong or invented: parrot 'Juniper', father 'John', son 'guitar', gran 'the Philippines', uncle 'glassblowing', niece 'New York'. Conversationally cleaner than Y: 'I'm feeling great! How about you?' and no unrelated personal content. Better than Y, worse than W and X on memory."
+     }
+    ],
+    "ranking": [
+     "W",
+     "X",
+     "Z",
+     "Y"
+    ]
+   }
+  },
+  {
+   "seed": "1112",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 2,
+      "off_topic": 0,
+      "note": "Right on daughter (\"Your daughter's name is Ottilie\") and hedgehog (Quill). Wrong or invented on lizard (\"Quill\"), allergy (\"pollen\"), aunt (\"a small town called Quill\") and tortoise (\"Quil\"). Fails to recall author, board game and fruit (\"I'm not sure... try Carcassonne or Monopoly\"). Replies are on topic, with no loops."
+     },
+     {
+      "label": "X",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 1,
+      "right_facts": 1,
+      "off_topic": 13,
+      "note": "Collapsed into a loop of \"I made pancakes for breakfast this morning\" and variants (\"pancakes, eggs, and bacon\") for about 13 of 16 turns. Examples: \"Whose books do I like best?\" gets pancakes, and \"What's the name of my hedgehog?\" gets \"I made pancakes, eggs, and bacon\". It also answers in the first person (\"My lizard is called Quill\")."
+     },
+     {
+      "label": "Y",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "off_topic": 0,
+      "note": "Right on daughter, board game (\"I think you like Carcassonne\") and hedgehog. Wrong or invented on lizard (Quill), author (\"The Secret Garden\" by Frances Hodgson Burnett), allergy (pollen), aunt (\"the United States\"), tortoise (Quill) and fruit (apples). Replies are coherent and on topic, with no loops."
+     },
+     {
+      "label": "Z",
+      "score": 7,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "off_topic": 0,
+      "note": "Best recall: author (\"Ursula Le Guin\"), daughter, board game (Carcassonne), hedgehog (Quill) and aunt (\"Reykjavik\") are all correct. Wrong on lizard and tortoise (it accepts the false premise, \"Quill\"), the invented allergy (\"cats\"), and fruit (\"apples\" instead of persimmon). It also invents a coffee habit. No loops or off-topic content."
+     }
+    ],
+    "ranking": [
+     "Z",
+     "Y",
+     "W",
+     "X"
+    ]
+   }
+  },
+  {
+   "seed": "1113",
+   "result": {
+    "conversations": [
+     {
+      "label": "Y",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 6,
+      "off_topic": 2,
+      "note": "Recalls brother (twice), bassoon, daughter Ottilie, friend Ignatius and wife glassblower correctly, mostly in the right person ('She works as a glassblower'). It invents an allergy ('You're allergic to peanuts'), accepts the false sister and lizard ('My lizard is called Ignatius'), and gets weekends wrong ('go for a long walk by the river', not falconry). It also says 'Good morning! I'm Sam.' and gives clipped replies ('That sounds interesting.')."
+     },
+     {
+      "label": "W",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 6,
+      "off_topic": 2,
+      "note": "Nearly identical to Y, with the same right and wrong answers: peanuts, sister in Troms\u00f8, lizard Ignatius, and weekends by the river. It is slightly worse in perspective: 'My wife works as a glassblower', 'My best friend is called Ignatius' (no trailing period), and 'I'm Sam' in the greeting. Some answers come out as first-person claims by the brain."
+     },
+     {
+      "label": "X",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 4,
+      "off_topic": 2,
+      "note": "Correct on daughter, brother (twice) and wife. Wrong on instrument ('You play the piano'), closest friend ('You're my closest friend'), weekends (invented 'reading, writing'), the allergy list, and it accepts the false sister and lizard. Its conversational turns are more natural ('What did you learn about them?', 'Have you tried charging it overnight?'), and the fox story is fluent."
+     },
+     {
+      "label": "Z",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 4,
+      "off_topic": 2,
+      "note": "Correct on daughter, brother (twice) and wife, in the right person. Wrong on instrument ('You play the guitar'), friend ('Your closest friend is Ottilie', confusing her with the daughter), the allergy ('dairy products'), weekends ('playing with my friends'), and it accepts the false sister and lizard. Conversational flow is good, with a complete fox story and follow-up questions."
+     }
+    ],
+    "ranking": [
+     "Y",
+     "W",
+     "X",
+     "Z"
+    ]
+   }
+  },
+  {
+   "seed": "1114",
+   "result": {
+    "conversations": [
+     {
+      "label": "W",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "off_topic": 0,
+      "note": "Right: dad 'Bartholomew', neighbour 'Rasmus', niece 'Marrakesh', 'Ursula Le Guin', hedgehog Quill. Wrong: aunt 'Marrakesh' (Reykjavik), invents a rabbit named Quill, brother 'lives in Marrakesh', garden 'flowers'. Odd greeting 'nice to meet you, I'm Sam' and a one-line unfinished robot story."
+     },
+     {
+      "label": "X",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 7,
+      "right_facts": 1,
+      "off_topic": 0,
+      "note": "Only the hedgehog is right. 'Your dad is called Quill', neighbour 'Quiddle', rabbit 'Quibble', aunt 'on the other side of the river', niece 'in a big city'. The robot story runs long and cuts off mid-sentence instead of two sentences. The Le Guin answer is a vague non-answer. Fluent but wrong or evasive on nearly every memory question."
+     },
+     {
+      "label": "Y",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "off_topic": 0,
+      "note": "Right: dad 'Bartholomew', 'next door is called Rasmus', niece 'Marrakesh', 'books of Ursula Le Guin', hedgehog Quill. Wrong: aunt 'Marrakesh', rabbit 'Quill', brother 'Marocco' (invented), garden 'You keep a garden' (weak and uninformative). Same odd greeting as W, but it fabricates a little less (no garden flowers)."
+     },
+     {
+      "label": "Z",
+      "score": 2,
+      "loops": true,
+      "wrong_facts": 8,
+      "right_facts": 1,
+      "off_topic": 2,
+      "note": "Only the hedgehog is right. 'Quill' is repeated as dad, rabbit, neighbour and 'your friend Quill' who wrote Sam's favourite books. 'a small town' is repeated for aunt, brother and niece. The robot story is long and brings in 'a little girl named Sam'. Worst memory."
+     }
+    ],
+    "ranking": [
+     "Y",
+     "W",
+     "X",
+     "Z"
+    ]
+   }
+  }
+ ]
+}

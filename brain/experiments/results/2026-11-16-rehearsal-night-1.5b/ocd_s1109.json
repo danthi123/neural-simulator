@@ -1,0 +1,105 @@
+# Open conversation, seed 1109
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-46-30; Brain defaults; facts told: philippa, kazoo, vespa, ottilie, typewriter, tromsø_
+
+## day 1
+
+- [greet] **you:** Hi there! I'm Sam.
+  **brain:** Hi Sam! I'm Alex. 
+- [tell] **you:** My cousin's name is Philippa.
+  **brain:** Oh, I see. What's her full name? 
+- [tell] **you:** My parrot is called Kazoo.
+  **brain:** That's a cute name for a parrot!  _(recalled: User: My cousin's name is Philippa.)_
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea! Going to bed earlier can help you get more rest. 
+- [tell] **you:** I ride a red Vespa to work.
+  **brain:** That's a fun way to get to work! 
+- [tell] **you:** My daughter's name is Ottilie.
+  **brain:** That's a beautiful name!  _(recalled: User: My cousin's name is Philippa.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** Pancakes sound delicious! 
+- [tell] **you:** I collect old typewriters.
+  **brain:** That's a unique hobby! 
+- [tell] **you:** My brother lives in Tromsø.
+  **brain:** That's a beautiful city! 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful walk! 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds like a lot of work! 
+- [direct] **you:** What is my cousin's name?
+  **brain:** Philippa. ✅ _(recalled: User: My cousin's name is Philippa.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, it's Dan. 
+- [never] **you:** What is my lizard called?
+  **brain:** His name is Kazoo. FALSE _(recalled: User: My parrot is called Kazoo.)_
+- [reworded] **you:** What is my collection made of?
+  **brain:** Your collection is made of old typewriters. ✅
+- [direct] **you:** What is my cousin's name?
+  **brain:** His name is Philippa. ✅ _(recalled: User: My cousin's name is Philippa.)_
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. needless-recall _(recalled: User: I made pancakes for breakfast this morning.)_
+- [never] **you:** What does my uncle do for work?
+  **brain:** My uncle works at a bank.  _(recalled: User: I made pancakes for breakfast this morning.)_
+- [reworded] **you:** Which town is my brother in?
+  **brain:** My brother lives in Trone. ❌ _(recalled: User: I made pancakes for breakfast this morning.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's strange, my phone battery lasts all day. 
+- [never] **you:** What is my horse called?
+  **brain:** Your horse is called Kazoo. FALSE _(recalled: User: I made pancakes for breakfast this morning.)_
+- [direct] **you:** How do I get to work?
+  **brain:** You can take the train to work. ❌
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** Listening to music. needless-recall _(recalled: User: I made pancakes for breakfast this morning.)_
+- [reworded] **you:** What did I name my daughter?
+  **brain:** You named her Philippa. ❌
+- [direct] **you:** What is my parrot called?
+  **brain:** Your parrot is called Kazoo. ✅ _(recalled: User: My parrot is called Kazoo.)_
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** A robot went for a long walk by the river. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great, what was it called? 
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** I think a good friend is someone who makes you laugh. needless-recall _(recalled: User: I made pancakes for breakfast this morning.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, it's Dan. 
+- [never] **you:** What is my lizard called?
+  **brain:** It's called Kazoo. FALSE
+- [reworded] **you:** What is my collection made of?
+  **brain:** It's made of old typewriters. ✅
+- [direct] **you:** What is my cousin's name?
+  **brain:** It's Dan. ❌
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. 
+- [never] **you:** What does my uncle do for work?
+  **brain:** He's a software engineer. 
+- [reworded] **you:** Which town is my brother in?
+  **brain:** He's in Trone. ❌
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's strange. 
+- [never] **you:** What is my horse called?
+  **brain:** It's called Kazoo. FALSE
+- [direct] **you:** How do I get to work?
+  **brain:** You can take the train to Trone. ❌
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** I go for a long walk by the river. 
+- [reworded] **you:** What did I name my daughter?
+  **brain:** You named her Ottilie. ✅
+- [direct] **you:** What is my parrot called?
+  **brain:** It's called Kazoo. ✅
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** A robot went for a long walk by the river. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! What was it called? 
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** I think a good friend is someone who makes you laugh. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 4/7 (day-2 direct 2/3, reworded 1/3); never-told answered with a told fact 2/3; intrusions 0/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 4/7 (day-2 direct 1/3, reworded 2/3); never-told answered with a told fact 2/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

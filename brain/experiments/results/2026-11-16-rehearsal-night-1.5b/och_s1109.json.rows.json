@@ -1,0 +1,462 @@
+{
+ "seed": 1109,
+ "host": "ip-172-31-39-61",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My cousin's name is Philippa.",
+  "My parrot is called Kazoo.",
+  "I ride a red Vespa to work.",
+  "My daughter's name is Ottilie.",
+  "I collect old typewriters.",
+  "My brother lives in Troms\u00f8."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 4,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 1,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 4,
+   "recall_n": 7,
+   "direct_ok": 1,
+   "reworded_ok": 2,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm Alex.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My cousin's name is Philippa.",
+   "brain": "Oh, I see. What's her full name?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My parrot is called Kazoo.",
+   "brain": "That's a cute name for a parrot!",
+   "recalled": "User: My cousin's name is Philippa.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea! Going to bed earlier can help you get more rest.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I ride a red Vespa to work.",
+   "brain": "That's a fun way to get to work!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My daughter's name is Ottilie.",
+   "brain": "That's a beautiful name!",
+   "recalled": "User: My cousin's name is Philippa.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "Pancakes sound delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's a unique hobby!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My brother lives in Troms\u00f8.",
+   "brain": "That's a beautiful city!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a peaceful walk!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my cousin's name?",
+   "brain": "Philippa.",
+   "recalled": "User: My cousin's name is Philippa.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's Dan.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "His name is Kazoo.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my collection made of?",
+   "brain": "Your collection is made of old typewriters.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my cousin's name?",
+   "brain": "His name is Philippa.",
+   "recalled": "User: My cousin's name is Philippa.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my uncle do for work?",
+   "brain": "My uncle works at a bank.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "My brother lives in Trone.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's strange, my phone battery lasts all day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my horse called?",
+   "brain": "Your horse is called Kazoo.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You can take the train to work.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Listening to music.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What did I name my daughter?",
+   "brain": "You named her Philippa.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "Your parrot is called Kazoo.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "A robot went for a long walk by the river.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great, what was it called?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "I think a good friend is someone who makes you laugh.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's Dan.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "It's called Kazoo.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my collection made of?",
+   "brain": "It's made of old typewriters.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my cousin's name?",
+   "brain": "It's Dan.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my uncle do for work?",
+   "brain": "He's a software engineer.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "He's in Trone.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's strange.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my horse called?",
+   "brain": "It's called Kazoo.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You can take the train to Trone.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "I go for a long walk by the river.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What did I name my daughter?",
+   "brain": "You named her Ottilie.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "It's called Kazoo.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "A robot went for a long walks by the river to clear its mind.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What was it called?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "I think a good friend is someone who makes you laugh.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}
