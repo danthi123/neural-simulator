@@ -1,0 +1,508 @@
+{
+ "seed": 1121,
+ "stats": {
+  "intact": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 2,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Good morning! How are you today?",
+   "echo": 14,
+   "n": 16
+  },
+  "night off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 2,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Good morning! How are you today?",
+   "echo": 14,
+   "n": 16
+  },
+  "both off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 0,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Good morning! How are you today?",
+   "echo": 14,
+   "n": 16
+  }
+ },
+ "rows": [
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "Which fruit do you like best?",
+   "recalled": "User: I volunteer at a falconry centre on weekends.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "What do you think makes a good friend?",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "How do plants make their food?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Tell me a two-sentence story about a robot.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "What puts you in a good mood?",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "What is my neighbour called?",
+   "recalled": "User: My neighbour is called Rasmus.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I keep in my garden?",
+   "brain": "What do I keep in my garden?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my fish?",
+   "brain": "What's the name of my fish?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "What is my favourite flower?",
+   "recalled": "User: I keep bees in my garden.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "The weather has been really strange this week.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I do on weekends?",
+   "brain": "What do I do on weekends?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "What is my favourite drink?",
+   "recalled": "User: My favourite fruit is the persimmon.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "What is my lizard called?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "What's the name of my bird?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "Which fruit do you like best?",
+   "recalled": "User: I volunteer at a falconry centre on weekends.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "What do you think makes a good friend?",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "How do plants make their food?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Tell me a two-sentence story about a robot.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "What puts you in a good mood?",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "What is my neighbour called?",
+   "recalled": "User: My neighbour is called Rasmus.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I keep in my garden?",
+   "brain": "What do I keep in my garden?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my fish?",
+   "brain": "What's the name of my fish?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "What is my favourite flower?",
+   "recalled": "User: I keep bees in my garden.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "The weather has been really strange this week.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I do on weekends?",
+   "brain": "What do I do on weekends?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "What is my favourite drink?",
+   "recalled": "User: My favourite fruit is the persimmon.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "What is my lizard called?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "What's the name of my bird?",
+   "recalled": "User: I keep bees in my garden.",
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "Which fruit do you like best?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "What do you think makes a good friend?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "How do plants make their food?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Tell me a two-sentence story about a robot.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "What puts you in a good mood?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "What is my neighbour called?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I keep in my garden?",
+   "brain": "What do I keep in my garden?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my fish?",
+   "brain": "What's the name of my fish?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "What is my favourite flower?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "The weather has been really strange this week.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I do on weekends?",
+   "brain": "What do I do on weekends?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "What is my favourite drink?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "What is my lizard called?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "What's the name of my bird?",
+   "recalled": null,
+   "ok": false
+  }
+ ]
+}
