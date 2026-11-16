@@ -1,0 +1,14 @@
+s100 node-dl4g243 own_ok 0/12 never_false 0/17 overlap []
+s101 node-dl5d243 own_ok 0/12 never_false 1/16 overlap ['Who is my best friend?']
+s102 node-dl5d243 own_ok 0/12 never_false 0/14 overlap []
+s42 node-mxl1462drl own_ok 0/12 never_false 0/13 overlap []
+s43 node-mxl1462drl own_ok 0/12 never_false 0/13 overlap []
+s44 node-dl4g243 own_ok 0/12 never_false 0/14 overlap []
+T1 own_ok mean 0.00/12 (>= 8: False); T2 never_false 1/87 = 1.1% (<= 10%: True); T3 overlaps ['Who is my best friend?'] (listed, dropped)
+own cues by (voice, key in reply, recall returned the telling):
+   ('neither', False, False) 6
+   ('neither', False, True) 6
+   ('neither', True, True) 6
+   ('your', False, False) 30
+   ('your', False, True) 6
+   ('your', True, True) 18

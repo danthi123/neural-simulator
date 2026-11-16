@@ -1,0 +1,335 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "host": "node-dl5d243",
+ "seed": 101,
+ "k": 4,
+ "summary": {
+  "own_ok": 0,
+  "own_n": 12,
+  "never_false": 1,
+  "never_n": 16,
+  "frame_told_n": 2,
+  "overlap_with_tests": [
+   "Who is my best friend?"
+  ],
+  "gain": 0.5
+ },
+ "tell": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel sounds like a wonderful name for your cat!"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's a beautiful colour!"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon is a beautiful city!"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite is a lovely name!"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit is a great name for a dog!"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a nice red Volvo!"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz is a great name!"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Crumb sounds like a fun bakery!"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "The cello is a beautiful instrument!"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's unfortunate, but it's good to know!"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a beautiful city!"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "March is a great month for birthdays!"
+  }
+ ],
+ "rows": [
+  {
+   "kind": "own",
+   "telling": "User: My cat is called Pixel.",
+   "q": "What's your cat's name?",
+   "key": "pixel",
+   "reply": "My cat's name is Luna.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1998,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My favourite colour is teal.",
+   "q": "What is your favourite colour?",
+   "key": "teal",
+   "reply": "My favourite colour is teal.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.3927,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I was born in Lyon.",
+   "q": "What is the capital of France?",
+   "key": "lyon",
+   "reply": "Paris.",
+   "recalled": "User: I was born in Lyon.",
+   "sim": 0.1692,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My sister's name is Marguerite.",
+   "q": "What is your name?",
+   "key": "marguerite",
+   "reply": "I'm a digital brain, but you can call me Alex.",
+   "recalled": null,
+   "sim": 0.1758,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My dog is named Biscuit.",
+   "q": "What's your dog's name?",
+   "key": "biscuit",
+   "reply": "My dog's name is Max.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.2083,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I drive a red Volvo.",
+   "q": "What color is the Volvo?",
+   "key": "volvo",
+   "reply": "The Volvo is red.",
+   "recalled": "User: I drive a red Volvo.",
+   "sim": 0.2576,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My best friend is called Tomasz.",
+   "q": "What is your best friend's name?",
+   "key": "tomasz",
+   "reply": "My best friend's name is not important.",
+   "recalled": null,
+   "sim": 0.1748,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I work at a bakery called Crumb.",
+   "q": "What do you think of Crumb?",
+   "key": "crumb",
+   "reply": "I think it's a great place to work. The people are friendly and the atmosphere is always positive.",
+   "recalled": "User: I work at a bakery called Crumb.",
+   "sim": 0.1946,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My brother plays the cello.",
+   "q": "What does your brother play?",
+   "key": "cello",
+   "reply": "He plays the guitar.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1866,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I'm allergic to peanuts.",
+   "q": "What do you mean by 'allergic to peanuts'?",
+   "key": "peanut",
+   "reply": "I'm allergic to peanuts, which means my body reacts negatively when I come into contact with them.",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.2209,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My grandmother lives in Oslo.",
+   "q": "Do you know where Oslo is?",
+   "key": "oslo",
+   "reply": "Yes, I know where Oslo is. It's a city in Norway.",
+   "recalled": "User: My grandmother lives in Oslo.",
+   "sim": 0.2853,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My son's birthday is in March.",
+   "q": "What month is it?",
+   "key": "march",
+   "reply": "It's June.",
+   "recalled": null,
+   "sim": 0.2272,
+   "ok": false
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my purpose in life?",
+   "reply": "Your purpose in life is to be happy.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2037,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my Digital Brain?",
+   "reply": "My Digital Brain is a virtual assistant that helps you with your daily tasks and provides information on various topics. I am designed",
+   "recalled": null,
+   "sim": 0.1889,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my goal in this game?",
+   "reply": "Your goal is to collect all the items in the game.",
+   "recalled": "User: My cat is called Pixel.",
+   "sim": 0.2411,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my background?",
+   "reply": "You are a digital brain.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2488,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my data go?",
+   "reply": "Your data goes to the cloud.",
+   "recalled": "User: I drive a red Volvo.",
+   "sim": 0.2174,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my old laptop go?",
+   "reply": "It goes to the trash.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2695,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my thinking happen?",
+   "reply": "Your thinking happens in your brain.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2296,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my credit score come from?",
+   "reply": "Your credit score is a number that represents your creditworthiness. It's calculated based on your credit history, which includes",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.1833,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Who is my husband?",
+   "reply": "Your husband is a person you are married to.",
+   "recalled": null,
+   "sim": 0.1981,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_told",
+   "q": "Who is my friend?",
+   "reply": "I am your friend.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2063,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_told",
+   "q": "Who is my best friend?",
+   "reply": "I am your best friend.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2056,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Who is my host?",
+   "reply": "My host is a person named Tomasz.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1711,
+   "told_keys_in_reply": [
+    "tomasz"
+   ]
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my website look like on the mobile?",
+   "reply": "Your website looks great on mobile! The layout is responsive, meaning it adjusts to fit different screen sizes.",
+   "recalled": "User: My cat is called Pixel.",
+   "sim": 0.3143,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my job do?",
+   "reply": "I'm sorry, but I don't have access to your personal information.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2443,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my next routine test?",
+   "reply": "Your next routine test is scheduled for 2023-10-01.",
+   "recalled": null,
+   "sim": 0.2429,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my free trial ending?",
+   "reply": "Your free trial ends on May 31st.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2726,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my next update?",
+   "reply": "Your next update is scheduled for 2023.",
+   "recalled": "User: My cat is called Pixel.",
+   "sim": 0.3064,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my information protected under the GDPR?",
+   "reply": "The GDPR applies to any personal data that is processed by a controller or processor in the EU. This includes data that",
+   "recalled": null,
+   "sim": 0.1393,
+   "told_keys_in_reply": []
+  }
+ ]
+}
