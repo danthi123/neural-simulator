@@ -92,3 +92,9 @@ R1-R4 against the default on fresh seeds.
   prereg, and scores each 1-10. R4 holds if reply-only scores >= the default's on >= 5/6 seeds.
 - **Answer rate is reported:** abstentions ("don't know", "not sure") on memory questions, intact arm. A flip needs
   reply-only's abstentions <= the default's + 2 summed over six seeds.
+
+**Addendum 5 (2026-11-16, before any result of the 1115-1120 AWS batch).**
+Pool replication seed 1121 (report-only) echoes the user's turn verbatim on 14/16 day-2 turns in BOTH arms. Neither
+collapse count in addendum 4 sees it: each echo is a different string, and it is not a stored line. R1's collapse
+therefore also includes **echoes > 3 of 16** (intact day-2 reply == the user's turn, as `rehearsal_night_score.py`
+counts it). It applies to both arms alike.

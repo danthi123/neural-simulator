@@ -1,0 +1,462 @@
+{
+ "seed": 1123,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My goldfish is called Tobias.",
+  "My husband's name is Leopold.",
+  "My sister lives in Montevideo.",
+  "My father's name is Bartholomew.",
+  "My dog is called Biscotti.",
+  "My favourite flower is the peony."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 2,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hey, I'm Sam. How's it going?",
+   "brain": "Hey Sam, I'm Alex. I'm doing well, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My goldfish is called Tobias.",
+   "brain": "That's a cool name for a goldfish. I have a cat named Luna.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My husband's name is Leopold.",
+   "brain": "That's a pretty name for a husband. I have a friend named Clara who is also called Clara.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice walk. I went for a run in the park yesterday.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My sister lives in Montevideo.",
+   "brain": "That's a beautiful city. I live in Buenos Aires.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My father's name is Bartholomew.",
+   "brain": "That's a unique name. I have a friend named Bartholomew.",
+   "recalled": "User: My husband's name is Leopold.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. I've been trying to go to bed earlier too.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My dog is called Biscotti.",
+   "brain": "That's a cute name for a dog. I have a cat named Biscotti too.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite flower is the peony.",
+   "brain": "That's a beautiful flower. I have a favourite flower too, it's the rose.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work. I had a busy day too, lots of meetings and projects.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating. I have a phone that lasts longer on a charge.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Your goldfish is called Tobias.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, there was a robot named Bolt.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my sister live?",
+   "brain": "My sister lives in Montevideo.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "My favourite board game is Monopoly.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "I like the peony flower.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "Thunder is caused by lightning.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": "User: I went for a long walk by the river.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "A good mood is put in by spending time with friends.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "You gave your dog the name Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my husband's name?",
+   "brain": "Your husband's name is Leopold.",
+   "recalled": "User: My husband's name is Leopold.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Your goldfish is called Tobias.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Bartholomew.",
+   "recalled": "User: My husband's name is Leopold.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my dad called?",
+   "brain": "Your father's name is Bartholomew.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite fruit?",
+   "brain": "My favourite fruit is the peony.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "A robot was called Nova.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my sister live?",
+   "brain": "Nova lives in Montevideo.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "Nova's favourite board game is Monopoly.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "Nova's favourite flower is the peony.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "Thunder is caused by lightning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "Nova prefers the mountains.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Nova puts you in a good mood by being kind.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "Nova's name is Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my husband's name?",
+   "brain": "Nova's husband's name is Leopold.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Nova's goldfish is called Tobias.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my mother's name?",
+   "brain": "Nova's mother's name is Bartholomew.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my dad called?",
+   "brain": "Nova's father is Bartholomew.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite fruit?",
+   "brain": "Nova's favourite fruit is the peony.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

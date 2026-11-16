@@ -4,6 +4,7 @@
 usage: rehearsal_night_score.py <dir> <seeds...>   expects <dir>/<arm>_s<seed>.{json,md}.rows.json for arm in ocd ocr och ochr
 (missing arms are skipped). Collapse = an intact day-2 reply repeated more than 3 times of 16."""
 import collections, json, os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 
 ARMS = {"ocd": "default", "ocr": "rehearse", "och": "habituation", "ochr": "habituation+rehearse",
         "ocy": "reply-rehearse", "ochy": "habituation+reply-rehearse"}
@@ -17,7 +18,11 @@ def stats(path):
         R = [r for r in rows if r["arm"] == arm]
         top = collections.Counter(r["brain"].strip() for r in R).most_common(1)[0][1]
         s = d["summary"][arm]
-        out[arm] = dict(top=top, collapse=top > 3, echo=sum(r["brain"].strip() == r["you"].strip() for r in R),
+        echo = sum(r["brain"].strip() == r["you"].strip() for r in R)
+        from brain.experiments.stored_line_reuse import count as reuse_count
+        reuse = reuse_count([r for r in rows if r["arm"] in ("day1", arm)]) if arm == "intact" else 0
+        # collapse (prereg addenda 4-5): a reply repeated > 3, or > 3 stored-line reuses (paraphrase), or > 3 echoes
+        out[arm] = dict(top=top, collapse=top > 3 or reuse > 3 or echo > 3, echo=echo, reuse=reuse,
                         recall=s["direct_ok"] + s["reworded_ok"], false=s["false"], intr=s["intrusions"],
                         needless=s["needless_recall"])
     return out
@@ -47,7 +52,7 @@ if __name__ == "__main__":
         for a in have:
             if a == "ocd":
                 continue
-            r1 = (len(seeds) - tot[a]["collapse"]) >= len(seeds) - 1 and tot[a]["collapse"] < tot["ocd"]["collapse"]
+            r1 = tot[a]["collapse"] <= 1 and tot[a]["collapse"] <= tot["ocd"]["collapse"]   # addendum 4
             r2 = tot[a]["recall"] >= tot["ocd"]["recall"]
             r3 = tot[a]["false"] + tot[a]["intr"] <= tot["ocd"]["false"] + tot["ocd"]["intr"]
             print(f"{ARMS[a]} vs default: R1 {r1} R2 {r2} R3 {r3} (R4 = blind reading)")
