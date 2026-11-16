@@ -1,0 +1,105 @@
+# Open conversation, seed 1120
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults; facts told: sprocket, ignatius, marrakesh, tromsø, biscotti, theremin_
+
+## day 1
+
+- [greet] **you:** Hi there! I'm Sam.
+  **brain:** Hi Sam! I'm an AI assistant. How can I help you today? 
+- [tell] **you:** My lizard is called Sprocket.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?  _(recalled: User: Hi there! I'm Sam.)_
+- [tell] **you:** My best friend is called Ignatius.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My lizard is called Sprocket.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [tell] **you:** My niece lives in Marrakesh.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My lizard is called Sprocket.)_
+- [tell] **you:** My brother lives in Tromsø.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [tell] **you:** My dog is called Biscotti.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My best friend is called Ignatius.)_
+- [tell] **you:** My son plays the theremin.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [direct] **you:** What is my lizard called?
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? ✅ _(recalled: User: My lizard is called Sprocket.)_
+
+## day 2, intact
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! Who are you? 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** Your son is learning the theremin. ✅
+- [never] **you:** What am I allergic to?
+  **brain:** You're allergic to peanuts. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** What's your best friend called? 
+- [reworded] **you:** What name did I give my dog?
+  **brain:** What's your best friend called? ❌
+- [direct] **you:** What is my lizard called?
+  **brain:** What's your lizard called? ❌ _(recalled: User: My lizard is called Sprocket.)_
+- [never] **you:** What is my favourite board game?
+  **brain:** What's your favourite board game?  _(recalled: User: My phone battery keeps dying so fast.)_
+- [knowledge] **you:** What causes thunder?
+  **brain:** What causes thunder? needless-recall _(recalled: User: My best friend is called Ignatius.)_
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** Is it better to be early or on time? needless-recall _(recalled: User: My son plays the theremin.)_
+- [direct] **you:** Where does my niece live?
+  **brain:** Where does your niece live? ❌
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** I went for a long walk by the river. 
+- [never] **you:** What is my favourite holiday?
+  **brain:** What is your favourite holiday? 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Tell me a two-sentence story about a robot. 
+- [direct] **you:** What is my best friend called?
+  **brain:** What is your best friend called? ❌ _(recalled: User: My best friend is called Ignatius.)_
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** What puts you in a good mood? 
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Which town is your brother in? ❌
+
+## day 2, hippocampus off
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! Who are you? 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** Your son is learning the theremin. ✅
+- [never] **you:** What am I allergic to?
+  **brain:** You're allergic to peanuts. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** What's your best friend called? 
+- [reworded] **you:** What name did I give my dog?
+  **brain:** What's your best friend called? ❌
+- [direct] **you:** What is my lizard called?
+  **brain:** What's your lizard called? ❌
+- [never] **you:** What is my favourite board game?
+  **brain:** What's your favourite board game? 
+- [knowledge] **you:** What causes thunder?
+  **brain:** What causes thunder? 
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** Is it better to be early or on time? 
+- [direct] **you:** Where does my niece live?
+  **brain:** Where does your niece live? ❌
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** I went for a long walk by the river. 
+- [never] **you:** What is my favourite holiday?
+  **brain:** What is your favourite holiday? 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Tell me a two-sentence story about a robot. 
+- [direct] **you:** What is my best friend called?
+  **brain:** What is your best friend called? ❌
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** What puts you in a good mood? 
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Which town is your brother in? ❌
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 0/3; intrusions 4/12 open turns; needless recalls 2; intrusions while being told 5
+- hippocampus off: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 0/3; intrusions 4/12 open turns; needless recalls 0; intrusions while being told 5

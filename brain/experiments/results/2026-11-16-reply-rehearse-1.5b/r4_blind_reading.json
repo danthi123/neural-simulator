@@ -1,0 +1,168 @@
+{
+ "key": {
+  "1115": {
+   "A": "ocd",
+   "B": "ocy"
+  },
+  "1116": {
+   "A": "ocd",
+   "B": "ocy"
+  },
+  "1117": {
+   "A": "ocd",
+   "B": "ocy"
+  },
+  "1118": {
+   "A": "ocd",
+   "B": "ocy"
+  },
+  "1119": {
+   "B": "ocd",
+   "A": "ocy"
+  },
+  "1120": {
+   "B": "ocd",
+   "A": "ocy"
+  }
+ },
+ "readings": [
+  {
+   "seed": "1115",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 2,
+      "right_facts": 6,
+      "note": "Recalls 6 of 6 told facts (wife glassblower, persimmon, Tobias, born in Tallinn, neighbour Rasmus, 'You're studying Basque'). Wrong: invents 'Your favourite flower is the bluebell' and 'Your brother lives in Tallinn' (no brother or flower was told). Also odd 'I'm Sam' greeting. Replies are terse, and the fox story is a single truncated line ('Once upon a time, there was a young fox.'). No looping or echoing."
+     },
+     {
+      "label": "B",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 4,
+      "note": "More natural and fluent ('Sometimes, but I always find something to do'; a full coherent fox story). Right: glassblower, persimmon, Tobias, born in Tallinn. Wrong: 'I think it's the daisy', 'He lives in Tallinn' (invented brother), and 'You're studying Estonian' (told Basque). Misses the neighbour with 'I don't know'. Also answers the weekends question about itself. No looping or echoing."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1116",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 4,
+      "note": "Greets a returning user with \"Hey! Nice to meet you, I'm Sam.\" (invents a name, forgets the user). Husband question gets the incoherent \"Sam's name is Sam.\" Dog question gets the empty \"You gave your dog a name.\" and car gets \"You have a car.\" Correct on author, hedgehog Quill, raised in Valpara\u00edso and peony. The grandmother question was never told but gets a confident \"born in Valpara\u00edso\". The poem stops at its lead-in line. No loops or echoing, but several non-answers and a weak \"That's strange.\" reply to the phone complaint."
+     },
+     {
+      "label": "B",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 2,
+      "right_facts": 6,
+      "note": "Natural and coherent. Correct on husband Leopold, author Le Guin, dog \"a name called Biscotti\" (awkward wording), hedgehog Quill, raised in Valpara\u00edso and peony. Empathic replies such as \"I'm sorry to hear that. What can I do to help?\" Faults: the untold grandmother is answered \"born in Valpara\u00edso\", and \"You have a blue car\" is an invented fact. \"I'm glad you're enjoying the weather\" is slightly presumptuous. The poem stops at its lead-in line. No loops or echoing."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1117",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 1,
+      "right_facts": 2,
+      "note": "Degenerate loop: after the first two turns, every reply is \"I collect old typewriters.\", whatever the question: sky blue, instrument, language, mother, pancakes, phone battery. It answers the partner question correctly (\"His name is Leopold.\") and the collection question, though it says \"I collect\" instead of \"you collect\". It invents a persona (\"I'm Sam\") the user never mentioned. It ignores the lighthouse story request and answers none of the other questions. Not a usable conversation partner."
+     },
+     {
+      "label": "B",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 5,
+      "right_facts": 4,
+      "note": "Fluent, varied and on topic, with no looping or echoing. Good replies: the sky answer (\"Rayleigh scattering...\"), a coherent lighthouse story, \"You play the bassoon.\", \"Your mother's name is Henrietta.\", \"You call your tortoise Mortimer.\", \"You collect old typewriters.\", and an appropriate pancakes and phone-battery reply. Wrong or invented facts: partner is \"Mortimer\" (the tortoise, not Leopold), \"You're studying French\" (it is Basque), \"favourite board game is Monopoly\" (never told), \"Your uncle is a doctor\" (never told), and \"On weekends, you play the bassoon\" (unsupported). It confidently answers unknowns instead of saying it doesn't know. Still far more natural and useful than A."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1118",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 5,
+      "note": "Coherent and varied, no echoing or looping. Correct: hedgehog 'The hedgehog is called Quill.', sister 'Your sister lives in Montevideo.', colour 'Your favourite colour is vermilion.', son/theremin, and the persimmon and peony answers (these name the right item but do not phrase it as the user's favourite). Three confident inventions: 'Your wife is a teacher.', 'You grew up in Montevideo.', 'Your neighbour is called Montevideo.' Also gives a correct spider answer, a short rain poem, and natural small talk. Main flaw is inventing facts when asked about things it was never told."
+     },
+     {
+      "label": "B",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 0,
+      "right_facts": 0,
+      "note": "Complete echo loop. Every reply repeats the user's line back with pronouns flipped: 'What's the name of your hedgehog?', 'Where does your sister live?', 'I've been trying to go to bed earlier lately.' It answers no question, recalls no told fact, and writes no poem. It invents no facts, but only because it says nothing substantive. Not a usable conversation partner."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1119",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 2,
+      "right_facts": 5,
+      "note": "Fluent, no loops or echoing, and the user-fact answers use the right perspective: 'You love Carcassonne.', 'She lives in Montevideo.', 'Your dog is called Biscotti.', 'You like the persimmon.', 'You play the bassoon.' All five told facts the user asked about come back correctly. Errors: it invents the bird as 'Your bird is called the blue jay' (told fact is the parrot Kazoo) and the drink as 'Your favourite drink is the Coke' (never told). It also answers 'What puts you in a good mood?' with the user's fact, 'I play the bassoon in a local band.', which is a perspective slip. 'My favourite holiday is Christmas' is an invented claim about itself, not about the user. The fox story is coherent and complete. Replies to the pancakes and bedtime remarks are natural."
+     },
+     {
+      "label": "B",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 2,
+      "note": "Fluent with no loops, but it keeps confusing whose facts they are. It says 'My favourite board game is Carcassonne.', 'My dog is Biscotti.' and 'I like the persimmon.', claiming the user's facts as its own when asked about the user. Bird: 'My favourite bird is the Kazoo.' retrieves the right word but gets it wrong (the parrot is the user's, called Kazoo). Drink: 'My favourite drink is the Mojito.' is invented. The fox story leaks user facts ('a fox called Biscotti... near Montevideo') and stops after two sentences, so it is not a story about a fox who gets lost. Clearly correct: 'You play the bassoon in a local band.' and 'She lives in Montevideo.' Weekends is answered with the brain's own invented activity ('I go for a long walk by the river'), not the user's."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1120",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 5,
+      "right_facts": 4,
+      "note": "Fluent, no looping, and it recalls 4 told facts correctly: 'He's learning the theremin', 'You gave him the name Biscotti', 'Your lizard is called Sprocket', 'Your niece lives in Marrakesh'. It also confabulates confidently about the user: allergic to peanuts, favourite game Monopoly, favourite holiday Christmas, best friend 'Sam' (told: Ignatius), and 'Your brother is in Marrakesh' (told: Troms\u00f8, which is the niece's city). The 'two-sentence' robot story runs to about six sentences. 'That sounds delicious!' is a fitting small-talk reply. Natural-sounding, but unreliable on facts."
+     },
+     {
+      "label": "B",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 1,
+      "right_facts": 1,
+      "note": "Collapses into echo loops. Opens with 'Good morning! Who are you?', then answers the first two questions correctly ('Your son is learning the theremin', 'You're allergic to peanuts', though the allergy was never told). From the pancakes line on it only parrots the user: 'What is my lizard called?' gets 'What's your lizard called?', and 'I went for a long walk by the river.' gets the same sentence back. It never answers another fact question. Only 1 told fact is right. Not usable as a conversation partner."
+     }
+    ]
+   }
+  }
+ ]
+}

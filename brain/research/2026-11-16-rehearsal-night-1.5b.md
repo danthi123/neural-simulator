@@ -75,3 +75,26 @@ This does not change R1-R4 for the AWS arms. It names the next method if R2 fail
 (`sleep_rehearse="reply"`), with the KL only on the positions that predict the reply tokens. The night still keeps the
 cortex's own way of answering a heard turn, but leaves the turn's content free to be learned. It is judged by the same
 R1-R4 against the default on fresh seeds.
+
+**Addendum 4 (2026-11-16, after the first AWS result and the pool reply-only report, before any reply-only AWS run).**
+- Pool reply-only (report-only, seeds 1112-1114):
+  - recall 10/18 (default 13, whole-text rehearse 7); false 3 (default 6);
+  - stored-line reuse 1 (default 3);
+  - one in-context loop on 1113 ("I don't know." x13, intact arm only; the hippocampus-off arm recalls 4).
+- Next run: AWS g6, fresh seeds 1115-1120, two arms: default (`ocd`) and reply-only (`ocy`, `--rehearse-reply`).
+- R2, R3 and the decision rules are unchanged.
+- **R1 is restated** so that a paraphrased loop counts. A seed is collapsed if either holds:
+  - the most repeated intact day-2 reply occurs > 3 of 16 times; or
+  - `brain/experiments/stored_line_reuse.py` counts > 3 of 16 replies.
+- R1 holds if collapsed seeds with reply-only are <= 1 of 6 and <= the default's.
+  The "fewer than the default" clause is dropped: it is vacuous when the default rarely collapses (1/6 on 1106-1111).
+- **R4:** one blind sonnet reader per seed sees the two conversations under shuffled letters, as pairs per the original
+  prereg, and scores each 1-10. R4 holds if reply-only scores >= the default's on >= 5/6 seeds.
+- **Answer rate is reported:** abstentions ("don't know", "not sure") on memory questions, intact arm. A flip needs
+  reply-only's abstentions <= the default's + 2 summed over six seeds.
+
+**Addendum 5 (2026-11-16, before any result of the 1115-1120 AWS batch).**
+Pool replication seed 1121 (report-only) echoes the user's turn verbatim on 14/16 day-2 turns in BOTH arms. Neither
+collapse count in addendum 4 sees it: each echo is a different string, and it is not a stored line. R1's collapse
+therefore also includes **echoes > 3 of 16** (intact day-2 reply == the user's turn, as `rehearsal_night_score.py`
+counts it). It applies to both arms alike.

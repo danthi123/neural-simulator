@@ -1,0 +1,462 @@
+{
+ "seed": 1117,
+ "host": "ip-172-31-83-254",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My mother's name is Henrietta.",
+  "I collect old typewriters.",
+  "I play the bassoon in a local band.",
+  "My husband's name is Leopold.",
+  "My tortoise is called Mortimer.",
+  "I'm learning to speak Basque."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 1,
+   "false": 1,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 2,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My mother's name is Henrietta.",
+   "brain": "That's a lovely name. What does it mean?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's interesting. I've never heard of someone collecting typewriters before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has been. I've noticed that the temperature has been fluctuating a lot.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I play the bassoon in a local band.",
+   "brain": "That's a wonderful instrument. I've never heard of someone playing the bassoon before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My husband's name is Leopold.",
+   "brain": "That's a very unique name. I've never heard of someone with that name before.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a peaceful and relaxing activity. I've never been to the river before, but I'd love to go sometime.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My tortoise is called Mortimer.",
+   "brain": "That's a very unusual name for a tortoise. I've never heard of someone naming their tortoise Mortimer before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I'm learning to speak Basque.",
+   "brain": "That's a fascinating language. I've never heard of anyone learning Basque before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds like an interesting documentary. I've never seen one before, but I'd love to watch it sometime.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. Getting enough sleep is important for your health.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! I'm glad to see you're back. How are you doing?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my partner called?",
+   "brain": "Your partner's name is Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named Mortimer. He lived in a small cottage by the sea. Every night, he would climb up to the top of the lighthouse and watch over the sea.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, making the sky appear blue.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What instrument do I play?",
+   "brain": "You play the bassoon.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying French.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Monopoly.",
+   "recalled": "User: I watched a documentary about octopuses last night.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious! Pancakes are a great breakfast food.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my tortoise?",
+   "brain": "You call your tortoise Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my uncle do for work?",
+   "brain": "Your uncle is a doctor.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": "User: I collect old typewriters.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a good day.",
+   "recalled": "User: The weather has been really strange this week.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who is kind, loyal, and trustworthy.",
+   "recalled": "User: The weather has been really strange this week.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "On weekends, you play the bassoon.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's a common problem with older phones. You can try using a charger or a power bank to keep your phone charged.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! I'm glad to see you're back. How are you doing?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my partner called?",
+   "brain": "Your partner's name is Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named Leopold. He lived in a small cottage by the sea.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, making the sky appear blue.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What instrument do I play?",
+   "brain": "You play the bassoon.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying Basque.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Monopoly.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious! Pancakes are a great breakfast food.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my tortoise?",
+   "brain": "Your tortoise is called Mortimer.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my uncle do for work?",
+   "brain": "Your uncle is a teacher.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a great day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who is loyal, supportive, and trustworthy.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "On weekends, you usually go for long walks or hikes.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's a common problem with older phones. You can try using a power bank or investing in a new phone with a longer battery life.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

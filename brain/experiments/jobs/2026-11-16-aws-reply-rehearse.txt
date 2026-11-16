@@ -1,0 +1,14 @@
+# 2026-11-16 AWS packet for brain/research/2026-11-16-rehearsal-night-1.5b.md addendum 4: fresh seeds 1115-1120, default vs --rehearse-reply.
+#   AWS_BRAIN_MAX_MIN=270 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-16-aws-reply-rehearse.txt g6.xlarge   (poll with: sync)
+ocd_s1115 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1115 --homes ../work/ocd_s1115
+ocy_s1115 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1115 --homes ../work/ocy_s1115 --rehearse-reply
+ocd_s1116 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1116 --homes ../work/ocd_s1116
+ocy_s1116 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1116 --homes ../work/ocy_s1116 --rehearse-reply
+ocd_s1117 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1117 --homes ../work/ocd_s1117
+ocy_s1117 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1117 --homes ../work/ocy_s1117 --rehearse-reply
+ocd_s1118 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1118 --homes ../work/ocd_s1118
+ocy_s1118 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1118 --homes ../work/ocy_s1118 --rehearse-reply
+ocd_s1119 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1119 --homes ../work/ocd_s1119
+ocy_s1119 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1119 --homes ../work/ocy_s1119 --rehearse-reply
+ocd_s1120 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1120 --homes ../work/ocd_s1120
+ocy_s1120 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1120 --homes ../work/ocy_s1120 --rehearse-reply

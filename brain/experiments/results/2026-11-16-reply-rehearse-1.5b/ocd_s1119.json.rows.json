@@ -1,0 +1,462 @@
+{
+ "seed": 1119,
+ "host": "ip-172-31-83-254",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "I play the bassoon in a local band.",
+  "My sister lives in Montevideo.",
+  "My dog is called Biscotti.",
+  "My favourite board game is Carcassonne.",
+  "My favourite fruit is the persimmon.",
+  "My parrot is called Kazoo."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 2,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 3,
+   "false": 1,
+   "never_n": 3,
+   "intrusions": 2,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hey, I'm Sam. How's it going?",
+   "brain": "Hey Sam, I'm Alex. I'm doing well, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I play the bassoon in a local band.",
+   "brain": "That's cool! I've never played an instrument before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My sister lives in Montevideo.",
+   "brain": "That's interesting. I've never been to Montevideo before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I've had that problem too. It's really frustrating.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My dog is called Biscotti.",
+   "brain": "That's a cute name for a dog.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite board game is Carcassonne.",
+   "brain": "I've never played that game before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! I've never read a novel before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite fruit is the persimmon.",
+   "brain": "I've never tried a persimmon before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My parrot is called Kazoo.",
+   "brain": "That's a funny name for a parrot.",
+   "recalled": "User: My dog is called Biscotti.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice walk.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What instrument do I play?",
+   "brain": "You play the bassoon.",
+   "recalled": "User: My dog is called Biscotti.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite holiday?",
+   "brain": "My favourite holiday is the Christmas.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "My favourite bird is the Kazoo.",
+   "recalled": "User: I went for a long walk by the river.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "My favourite drink is the Mojito.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox called Biscotti. Biscotti lived in a forest near Montevideo.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Listening to music puts me in a good mood.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is the feeling of waking up refreshed.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which board game do I love?",
+   "brain": "My favourite board game is Carcassonne.",
+   "recalled": "User: My favourite board game is Carcassonne.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What instrument do I play?",
+   "brain": "You play the bassoon in a local band.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "I go for a long walk by the river.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my sister live?",
+   "brain": "She lives in Montevideo.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my dog called?",
+   "brain": "My dog is Biscotti.",
+   "recalled": "User: My dog is called Biscotti.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "I like the persimmon.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite holiday?",
+   "brain": "My favourite holiday is the Christmas.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "Your bird is called Kazoo.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "Your favourite drink is the mojito.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox called Biscotti. Biscotti lived in a forest near Montevideo. One day, Biscotti went for a long walk by the river. As he walked, he saw many animals and birds. He finally reached the end of the river.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is the sunrise.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which board game do I love?",
+   "brain": "You love the Carcassonne board game.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What instrument do I play?",
+   "brain": "You play the bassoon in a local band.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "On weekends, I play the bassoon in a local band.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my sister live?",
+   "brain": "My sister lives in Montevideo.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my dog called?",
+   "brain": "Your dog is called Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "You like the persimmon best.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

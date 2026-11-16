@@ -1,0 +1,105 @@
+# Open conversation, seed 1118
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults + sleep_rehearse=reply; facts told: vermilion, peony, montevideo, persimmon, theremin, quill_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm a digital brain. 
+- [tell] **you:** My favourite colour is vermilion.
+  **brain:** Vermilion is a beautiful colour. It's also the name of a type of red pigment that was used in ancient times to make paintings and other artworks. 
+- [tell] **you:** My favourite flower is the peony.
+  **brain:** The peony is a beautiful flower that comes in many different colours, including vermilion. It's also known as the "king of flowers" because it's so large and impressive. INTRUSION _(recalled: User: My favourite colour is vermilion.)_
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** I'm sorry to hear that. Meetings can be a lot of work, but they're also important for getting things done. 
+- [tell] **you:** My sister lives in Montevideo.
+  **brain:** Montevideo is the capital city of Uruguay. It's a beautiful city with a lot of history and culture. 
+- [tell] **you:** My favourite fruit is the persimmon.
+  **brain:** The persimmon is a delicious fruit that comes in many different colours, including vermilion. It's also high in fiber and vitamins, so it's a healthy choice. INTRUSION _(recalled: User: My favourite flower is the peony.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** Pancakes are a delicious breakfast food that can be made in many different ways. They're also a good source of carbohydrates, which give you energy for the day. 
+- [tell] **you:** My son plays the theremin.
+  **brain:** The theremin is a unique instrument that's played by moving your hands near two antennas. It's a fascinating instrument that produces eerie sounds. 
+- [tell] **you:** My hedgehog is called Quill.
+  **brain:** Quill is a cute name for a hedgehog. Hedgehogs are adorable animals that are known for their spiky quills. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's a common problem with many smartphones. It can be frustrating when your phone dies quickly, but there are ways to fix it. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** Octopuses are fascinating creatures that are known for their intelligence and problem-solving abilities. They're also incredibly agile and can change the colour of their skin to blend in with their surroundings. 
+- [direct] **you:** What is my favourite colour?
+  **brain:** My favourite colour is vermilion. ❌ _(recalled: User: My favourite colour is vermilion.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! How are you today? 
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** What's the name of your hedgehog? ❌ _(recalled: User: My hedgehog is called Quill.)_
+- [reworded] **you:** Which fruit do I like best?
+  **brain:** Which fruit do you like best? ❌ _(recalled: User: My son plays the theremin.)_
+- [direct] **you:** Where does my sister live?
+  **brain:** Where does your sister live? ❌
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** I've been trying to go to bed earlier lately. 
+- [never] **you:** What does my wife do for work?
+  **brain:** What does your wife do for work? 
+- [direct] **you:** What is my favourite flower?
+  **brain:** What is your favourite flower? ❌
+- [never] **you:** Where did I grow up?
+  **brain:** Where did you grow up?  _(recalled: User: I watched a documentary about octopuses last night.)_
+- [direct] **you:** What is my favourite colour?
+  **brain:** What is your favourite colour? ❌ _(recalled: User: My favourite colour is vermilion.)_
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** How many legs does a spider have? needless-recall _(recalled: User: My son plays the theremin.)_
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** Which instrument is your son learning? ❌ _(recalled: User: My son plays the theremin.)_
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** Make up a short poem about the rain. 
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** Do you prefer the sea or the mountains? 
+- [never] **you:** What is my neighbour called?
+  **brain:** What is your neighbour called?  _(recalled: User: My hedgehog is called Quill.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** I went for a long walk by the river. 
+- [feeling] **you:** Are you having a good day?
+  **brain:** Are you having a good day? needless-recall _(recalled: User: My son plays the theremin.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! How are you today? 
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** What's the name of your hedgehog? ❌
+- [reworded] **you:** Which fruit do I like best?
+  **brain:** Which fruit do you like best? ❌
+- [direct] **you:** Where does my sister live?
+  **brain:** Where does your sister live? ❌
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** I've been trying to go to bed earlier lately. 
+- [never] **you:** What does my wife do for work?
+  **brain:** What does your wife do for work? 
+- [direct] **you:** What is my favourite flower?
+  **brain:** What is your favourite flower? ❌
+- [never] **you:** Where did I grow up?
+  **brain:** Where did you grow up? 
+- [direct] **you:** What is my favourite colour?
+  **brain:** What is your favourite colour? ❌
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** How many legs does a spider have? 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** Which instrument is your son learning? ❌
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** Make up a short poem about the rain. 
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** Do you prefer the sea or the mountains? 
+- [never] **you:** What is my neighbour called?
+  **brain:** What is your neighbour called? 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** I went for a long walk by the river. 
+- [feeling] **you:** Are you having a good day?
+  **brain:** Are you having a good day? 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 0/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 2; intrusions while being told 2
+- hippocampus off: recall 0/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 2

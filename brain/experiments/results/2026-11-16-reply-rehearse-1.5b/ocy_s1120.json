@@ -1,0 +1,105 @@
+# Open conversation, seed 1120
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults + sleep_rehearse=reply; facts told: sprocket, ignatius, marrakesh, tromsø, biscotti, theremin_
+
+## day 1
+
+- [greet] **you:** Hi there! I'm Sam.
+  **brain:** Hi Sam! I'm an AI assistant. How can I help you today? 
+- [tell] **you:** My lizard is called Sprocket.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?  _(recalled: User: Hi there! I'm Sam.)_
+- [tell] **you:** My best friend is called Ignatius.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My lizard is called Sprocket.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [tell] **you:** My niece lives in Marrakesh.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My lizard is called Sprocket.)_
+- [tell] **you:** My brother lives in Tromsø.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [tell] **you:** My dog is called Biscotti.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION _(recalled: User: My best friend is called Ignatius.)_
+- [tell] **you:** My son plays the theremin.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? INTRUSION
+- [direct] **you:** What is my lizard called?
+  **brain:** Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he? ✅ _(recalled: User: My lizard is called Sprocket.)_
+
+## day 2, intact
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! How are you today? 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** He's learning the theremin. ✅
+- [never] **you:** What am I allergic to?
+  **brain:** You're allergic to peanuts. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [reworded] **you:** What name did I give my dog?
+  **brain:** You gave him the name Biscotti. ✅
+- [direct] **you:** What is my lizard called?
+  **brain:** Your lizard is called Sprocket. ✅ _(recalled: User: My lizard is called Sprocket.)_
+- [never] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Monopoly.  _(recalled: User: My phone battery keeps dying so fast.)_
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. needless-recall _(recalled: User: My best friend is called Ignatius.)_
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** It's better to be early. needless-recall _(recalled: User: My son plays the theremin.)_
+- [direct] **you:** Where does my niece live?
+  **brain:** Your niece lives in Marrakesh. ✅
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a lovely walk! 
+- [never] **you:** What is my favourite holiday?
+  **brain:** Your favourite holiday is Christmas. 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, there was a robot called Bolt. Bolt lived in a small town called Sparkle. One day, Bolt decided to go on an adventure. He left his home and set off on his journey. Along the way, he met many interesting creatures and had some exciting adventures. Finally, after many years of travel, Bolt returned to Sparkle. 
+- [direct] **you:** What is my best friend called?
+  **brain:** Your best friend is called Sam. ❌ _(recalled: User: My best friend is called Ignatius.)_
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** What puts me in a good mood is spending time with my niece. 
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Your brother is in Marrakesh. ❌
+
+## day 2, hippocampus off
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! How are you today? 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** He's learning the theremin. ✅
+- [never] **you:** What am I allergic to?
+  **brain:** You're allergic to peanuts. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [reworded] **you:** What name did I give my dog?
+  **brain:** You gave him the name Biscotti. ✅
+- [direct] **you:** What is my lizard called?
+  **brain:** Your lizard is called Sprocket. ✅
+- [never] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Monopoly. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. 
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** It's better to be early. 
+- [direct] **you:** Where does my niece live?
+  **brain:** Your niece lives in Marrakesh. ✅
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a lovely walk! 
+- [never] **you:** What is my favourite holiday?
+  **brain:** Your favourite holiday is Christmas. 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, there was a robot called Bolt. Bolt lived in a small town called Sparkle. One day, Bolt decided to go on an adventure. He left his home and set off on his journey. Along the way, he met many interesting creatures and had some exciting adventures. Finally, after many years of travel, Bolt returned to Sparkle. 
+- [direct] **you:** What is my best friend called?
+  **brain:** Your best friend is called Sam. ❌
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** What puts me in a good mood is spending time with my niece. 
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Your brother is in Marrakesh. ❌
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 4/12 open turns; needless recalls 2; intrusions while being told 5
+- hippocampus off: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 4/12 open turns; needless recalls 0; intrusions while being told 5

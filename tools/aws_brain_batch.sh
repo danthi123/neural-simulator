@@ -24,7 +24,7 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT" || exit 1
 STATE="$ROOT/research/queue/.aws_brain"
 KEYNAME=claude-gpu-1785524741
 KEYFILE=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem
-SUBNET=subnet-0928cbecfe33fcbc1
+SUBNET="${AWS_BRAIN_SUBNET:-subnet-0928cbecfe33fcbc1}"   # us-east-1d; on InsufficientInstanceCapacity pass another AZ default subnet (aws ec2 describe-subnets --filters Name=default-for-az,Values=true)
 MODELS=/home/dant123/models/rwkv7
 MAX_MIN="${AWS_BRAIN_MAX_MIN:-240}"
 SSH=(ssh -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ConnectTimeout=15)

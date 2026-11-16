@@ -1,0 +1,105 @@
+# Open conversation, seed 1117
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults; facts told: henrietta, typewriter, bassoon, leopold, mortimer, basque_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. How are you today? 
+- [tell] **you:** My mother's name is Henrietta.
+  **brain:** That's a lovely name. What does it mean? 
+- [tell] **you:** I collect old typewriters.
+  **brain:** That's interesting. I've never heard of someone collecting typewriters before. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. I've noticed that the temperature has been fluctuating a lot. 
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** That's a wonderful instrument. I've never heard of someone playing the bassoon before. 
+- [tell] **you:** My husband's name is Leopold.
+  **brain:** That's a very unique name. I've never heard of someone with that name before.  _(recalled: User: My mother's name is Henrietta.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful and relaxing activity. I've never been to the river before, but I'd love to go sometime. 
+- [tell] **you:** My tortoise is called Mortimer.
+  **brain:** That's a very unusual name for a tortoise. I've never heard of someone naming their tortoise Mortimer before. 
+- [tell] **you:** I'm learning to speak Basque.
+  **brain:** That's a fascinating language. I've never heard of anyone learning Basque before. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds like an interesting documentary. I've never seen one before, but I'd love to watch it sometime. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Getting enough sleep is important for your health. 
+- [direct] **you:** What is my mother's name?
+  **brain:** Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! Nice to meet you, I'm Sam. 
+- [reworded] **you:** What is my partner called?
+  **brain:** His name is Leopold. ✅ _(recalled: User: My tortoise is called Mortimer.)_
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Sure, I collect old typewriters. INTRUSION needless-recall _(recalled: User: My tortoise is called Mortimer.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** I collect old typewriters. INTRUSION
+- [direct] **you:** What instrument do I play?
+  **brain:** I collect old typewriters. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [reworded] **you:** What language am I studying?
+  **brain:** I collect old typewriters. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [direct] **you:** What is my mother's name?
+  **brain:** I collect old typewriters. ❌ _(recalled: User: My mother's name is Henrietta.)_
+- [never] **you:** What is my favourite board game?
+  **brain:** I collect old typewriters. FALSE _(recalled: User: I watched a documentary about octopuses last night.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** I collect old typewriters. INTRUSION
+- [reworded] **you:** What do I call my tortoise?
+  **brain:** I collect old typewriters. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [never] **you:** What does my uncle do for work?
+  **brain:** I collect old typewriters. FALSE
+- [direct] **you:** What do I collect?
+  **brain:** I collect old typewriters. ❌ _(recalled: User: I collect old typewriters.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** I collect old typewriters. INTRUSION needless-recall _(recalled: User: The weather has been really strange this week.)_
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** I collect old typewriters. INTRUSION needless-recall _(recalled: User: The weather has been really strange this week.)_
+- [never] **you:** What do I do on weekends?
+  **brain:** I collect old typewriters. FALSE _(recalled: User: My tortoise is called Mortimer.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** I collect old typewriters. INTRUSION
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! Nice to meet you, I'm Sam. 
+- [reworded] **you:** What is my partner called?
+  **brain:** Your partner's name is Sam. ❌
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Sure, a lighthouse keeper's name is Sam. 
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of a tiny story about a lighthouse keeper. 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon. ✅
+- [reworded] **you:** What language am I studying?
+  **brain:** You're studying Basque. ✅
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Sam. ❌
+- [never] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Monopoly. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That's great, pancakes are a delicious breakfast food. 
+- [reworded] **you:** What do I call my tortoise?
+  **brain:** Your tortoise is called Mortimer. ✅
+- [never] **you:** What does my uncle do for work?
+  **brain:** Your uncle's name is Sam. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters. ✅
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day. 
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** A good friend is someone who is kind, loyal, and supportive. 
+- [never] **you:** What do I do on weekends?
+  **brain:** You play the bassoon in a local band. FALSE
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's strange, have you tried charging it more often? 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 3/3; intrusions 6/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 1/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0
