@@ -23,14 +23,20 @@
   (`results/2026-11-15-open-conv-baseline-1.5b.md`); control: the night causes the stored-line loop, and the
   pretrained cortex also loops (mirror, then echo) on 3/6 (`results/2026-11-16-open-conv-day2-control-1.5b/`).
   Fixes, default OFF: `Brain(sleep_rehearse)` and `Brain(habituation=N)`; prereg `research/2026-11-16-rehearsal-night-1.5b.md`.
-- **LIVE RUNS:** AWS batch 1 (default vs rehearse, seeds 1106-1111) from worktree `_scratch/wt-rehearse`; AWS batch 2
-  (H, HR) from `_scratch/wt-habit` -> in EACH: `bash tools/aws_brain_batch.sh pull`; transcripts are the .json
-  outputs. Pool report-only default vs HR seeds 1112-1114 (`~/brain-lane/hab/`). Old S_all fit batch: instance
-  i-0129d9e410417218b stopped, pull failed (no g6 capacity) from `wt-mixday`; low priority, pull when capacity returns.
+- **RESULT (11-16):** `results/2026-11-16-rehearsal-night-1.5b.md`: no switch flips. rehearse (whole-text guard) NO-GO
+  (recall 25->10/36: the guard KL also holds the told sentence, so it fights replay); habituation passes R1-R3, fails
+  R4 (blind reading tied 4/6), and hides the night's loop as paraphrase (pool 1112). Collapse is seed-dependent (1/6
+  fresh). Biggest visible defect when no collapse: invented / misplaced facts (readers: 27 right, 19 wrong / 6 seeds).
+  Board #290.
+- **LIVE RUNS:** pool40/41/42 report-only `sleep_rehearse="reply"` (KL on reply tokens only, prereg addendum 3) on
+  seeds 1112-1114 (`~/brain-lane/hab/ocy_s*`, `done3.txt`); compare with the pool default via
+  `rehearsal_night_score.py` + `stored_line_reuse.py`. Old S_all fit batch: i-0129d9e410417218b stopped in `wt-mixday`
+  state; pull when g6 capacity returns (pull now waits for status-ok; poll with `sync` while running).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **NEXT STEP:** score R1-R4 (collapse = a day-2 reply repeated >3 of 16; R4 blind sonnet reading of all arms); land;
-  flip what holds. Then when-to-recall (needless recalls 2-4 per conversation) judged on open_conv.
+- **NEXT STEP:** if reply-only keeps pool recall near default, run it vs default on fresh AWS seeds with R1 counting
+  paraphrased loops too (`stored_line_reuse.py`; write addendum 4 first). Then the invented-facts defect (never-told
+  questions answered with a made-up fact) and when-to-recall, both judged on open_conv by reading transcripts.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
