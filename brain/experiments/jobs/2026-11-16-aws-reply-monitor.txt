@@ -1,0 +1,14 @@
+# 2026-11-16 AWS packet for brain/research/2026-11-16-reply-monitor-1.5b.md: fresh seeds 1126-1131, default vs --reply-monitor 4.
+#   AWS_BRAIN_MAX_MIN=270 AWS_BRAIN_SUBNET=<az subnet> bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-16-aws-reply-monitor.txt g5.xlarge   (poll with: sync)
+ocd_s1126 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1126 --homes ../work/ocd_s1126
+ocm_s1126 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1126 --homes ../work/ocm_s1126 --reply-monitor 4
+ocd_s1127 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1127 --homes ../work/ocd_s1127
+ocm_s1127 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1127 --homes ../work/ocm_s1127 --reply-monitor 4
+ocd_s1128 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1128 --homes ../work/ocd_s1128
+ocm_s1128 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1128 --homes ../work/ocm_s1128 --reply-monitor 4
+ocd_s1129 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1129 --homes ../work/ocd_s1129
+ocm_s1129 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1129 --homes ../work/ocm_s1129 --reply-monitor 4
+ocd_s1130 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1130 --homes ../work/ocd_s1130
+ocm_s1130 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1130 --homes ../work/ocm_s1130 --reply-monitor 4
+ocd_s1131 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1131 --homes ../work/ocd_s1131
+ocm_s1131 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1131 --homes ../work/ocm_s1131 --reply-monitor 4

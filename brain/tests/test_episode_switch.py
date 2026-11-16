@@ -209,3 +209,24 @@ def test_sleep_reply_only_kl_masks_the_prefix():
     text = "User: hi\n\nAssistant: yo\n\n"
     assert run([text]) == run([("", text)])
     assert run([text]) != run([("User: hi\n\nAssistant:", " yo\n\n")])
+
+
+def test_reply_monitor_withholds_copies(tmp_path, monkeypatch):
+    from brain.brain import _is_copy
+    assert _is_copy("What's the name of your hedgehog?", ["What's the name of my hedgehog?"])
+    assert not _is_copy("Your hedgehog is called Quill.", ["What is my hedgehog called?"])
+    assert not _is_copy("Hi Sam.", ["Hi Sam."])                          # under 3 words: never a copy
+    c = StubCortex()
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, reply_monitor=3)
+    drafts = iter(["I went for a long walk by the river.", "I went for a long walk by the river.", "How lovely, where?"])
+    monkeypatch.setattr(b.cortex, "speak", lambda lg, st, **k: (next(drafts), st))
+    reply, info = b.hear("I went for a long walk by the river.")
+    assert reply == "How lovely, where?" and info["withheld"] == 2 and b.monitor_log == [2]
+    drafts2 = iter(["How lovely, where?"] * 5)
+    monkeypatch.setattr(b.cortex, "speak", lambda lg, st, **k: (next(drafts2), st))
+    reply, info = b.hear("Something else entirely today.")                # every draft repeats: the last is kept
+    assert reply == "How lovely, where?" and info["withheld"] == 3
+    off = Brain(str(tmp_path / "b"), cortex=c, **KW)
+    assert off.reply_monitor == 0
+    _, info = off.hear("I went for a long walk by the river.")
+    assert "withheld" not in info and off.monitor_log == []

@@ -79,7 +79,7 @@ def live(b: Brain, turns, told, lines, rows, arm, day):
     for kind, turn, fact in turns:
         reply, info = b.hear(turn)
         m = mark(kind, turn, fact, reply, info.get("recalled"), told)
-        rows.append({"arm": arm, "day": day, "kind": kind, "you": turn, "brain": reply, "recalled": info.get("recalled"), **m})
+        rows.append({"arm": arm, "day": day, "kind": kind, "you": turn, "brain": reply, "recalled": info.get("recalled"), **({"withheld": info["withheld"]} if "withheld" in info else {}), **m})
         tag = ("✅" if m["ok"] else "❌") if "ok" in m else ("FALSE" if m.get("false") else "") + \
               (" INTRUSION" if m.get("intrusion") else "") + (" needless-recall" if m.get("needless") else "")
         rec = f" _(recalled: {info['recalled']})_" if info.get("recalled") else ""
@@ -110,6 +110,7 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--sleep-rehearse", action="store_true", help="Brain(sleep_rehearse=True) (switch, default OFF)")
     ap.add_argument("--rehearse-reply", action="store_true", help="Brain(sleep_rehearse='reply'): KL on reply tokens only")
     ap.add_argument("--habituation", type=int, default=0, help="Brain(habituation=N) (switch, default OFF = 0)")
+    ap.add_argument("--reply-monitor", type=int, default=0, help="Brain(reply_monitor=N) (switch, default OFF = 0)")
     a = ap.parse_args(argv)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
@@ -117,7 +118,8 @@ def main(argv=None, cortex: Cortex | None = None):
     told, day1, day2 = build(a.seed)
     kw = {"sleep_seed": a.seed, **({"sleep_rehearse": True} if a.sleep_rehearse else {}),
           **({"sleep_rehearse": "reply"} if a.rehearse_reply else {}),
-          **({"habituation": a.habituation} if a.habituation else {})}
+          **({"habituation": a.habituation} if a.habituation else {}),
+          **({"reply_monitor": a.reply_monitor} if a.reply_monitor else {})}
     root = a.homes or (os.path.splitext(os.path.abspath(a.out))[0] + "_homes")
     intact, off = os.path.join(root, "intact"), os.path.join(root, "hippocampus_off")
     for h in (intact, off):
@@ -125,7 +127,7 @@ def main(argv=None, cortex: Cortex | None = None):
     os.makedirs(root, exist_ok=True)
     lines = [f"# Open conversation, seed {a.seed}",
              f"\n_cortex: {getattr(cortex, 'model_name', None)}; device: {a.device}; host: {socket.gethostname()};"
-             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
+             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}{f' + reply_monitor {a.reply_monitor}' if a.reply_monitor else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
     rows = []
     live(Brain(intact, cortex=cortex, **kw), day1, told, lines, rows, "both", 1)
     Brain(intact, cortex=cortex, **kw).save()     # restart = the one night

@@ -7,7 +7,7 @@ import collections, json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 
 ARMS = {"ocd": "default", "ocr": "rehearse", "och": "habituation", "ochr": "habituation+rehearse",
-        "ocy": "reply-rehearse", "ochy": "habituation+reply-rehearse"}
+        "ocy": "reply-rehearse", "ochy": "habituation+reply-rehearse", "ocm": "reply-monitor"}
 
 
 def stats(path):

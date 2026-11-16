@@ -72,6 +72,26 @@ class CortexMismatch(RuntimeError):
     """A brain home was made with another cortex: its deltas and adapters do not transfer (plan step 10: migrate)."""
 
 
+
+MONITOR_OVERLAP = 0.75   # declared scaffold (reply_monitor): share of a draft's words found in one earlier text
+
+
+def _words(t: str) -> list[str]:
+    return [w for w in "".join(c.lower() if c.isalnum() or c in "'" else " " for c in t).split() if w]
+
+
+def _is_copy(reply: str, earlier: list[str]) -> bool:
+    """True if >= MONITOR_OVERLAP of the draft's words (>= 3 of them) occur in one earlier text."""
+    w = _words(reply)
+    if len(w) < 3:
+        return False
+    for e in earlier:
+        ew = set(_words(e))
+        if ew and sum(x in ew for x in w) / len(w) >= MONITOR_OVERLAP:
+            return True
+    return False
+
+
 class BrainBusy(RuntimeError):
     """Another process (chat or night) holds this brain home."""
 
@@ -157,7 +177,7 @@ class Brain:
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
-                 habituation: int = 0):
+                 habituation: int = 0, reply_monitor: int = 0):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -199,7 +219,13 @@ class Brain:
         fact sentence). Not saved in the home.
         habituation: (switch, default OFF = 0) the mouth may not repeat a 4-token sequence from its own last
         `habituation` replies or from the user's current turn (no-repeat n-gram across turns; a declared scaffold,
-        brain/SCAFFOLDS.md): the cortex's in-context loops (echoing every turn, one line x14) cannot form. Not saved."""
+        brain/SCAFFOLDS.md): the cortex's in-context loops (echoing every turn, one line x14) cannot form. Not saved.
+        reply_monitor: (switch, default OFF = 0) before a reply enters the conversation state it is compared with the
+        turn it answers and with the brain's own earlier replies since waking; a copy (>= MONITOR_OVERLAP of its words
+        in one of them, >= 3 words) is withheld and the cortex speaks again from the same state, up to reply_monitor
+        times (the last draft is kept if every one is a copy). A declared scaffold (brain/SCAFFOLDS.md): the
+        sampled onset of an in-context echo or loop, which the conversation state then repeats on every later turn
+        (results/2026-11-16-reply-rehearse-1.5b.md, echo-onset probe), never enters the state. Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -216,6 +242,8 @@ class Brain:
             raise ValueError(f"sleep_rehearse must be False, True or 'reply', not {sleep_rehearse!r}")
         self.sleep_rehearse = sleep_rehearse
         self.habituation = int(habituation)
+        self.reply_monitor = int(reply_monitor)
+        self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
@@ -354,11 +382,16 @@ class Brain:
         self.cortex.consolidated_on = retrieval and known
         try:
             logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
-            if self.habituation:
-                blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text])
-                reply, _ = self.cortex.speak(logits, st, block=blk)
-            else:
-                reply, _ = self.cortex.speak(logits, st)
+            blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text]) \
+                if self.habituation else None
+            reply, _ = self.cortex.speak(logits, st, block=blk) if blk is not None else self.cortex.speak(logits, st)
+            withheld = 0
+            while withheld < self.reply_monitor and _is_copy(reply, [text] + self._recent_replies):
+                withheld += 1
+                reply, _ = self.cortex.speak(logits, st, block=blk) if blk is not None else self.cortex.speak(logits, st)
+            if self.reply_monitor:
+                self.monitor_log.append(withheld)
+                info["withheld"] = withheld
         finally:
             self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
