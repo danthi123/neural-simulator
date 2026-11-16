@@ -32,6 +32,7 @@ def main():
     ap.add_argument("--home", required=True)
     ap.add_argument("--script-seeds", type=int, nargs="+", required=True)
     ap.add_argument("--samples", type=int, default=8)
+    ap.add_argument("--carry-penalty", action="store_true", help="Brain(carry_penalty=True)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
@@ -44,7 +45,7 @@ def main():
             tmp = tempfile.mkdtemp(dir=os.path.dirname(os.path.abspath(a.out)))
             cp = os.path.join(tmp, "home")
             shutil.copytree(a.home, cp)
-            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s)
+            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty)
             b.set_lesions(hippocampus_off=True, consolidated_off=True)
             turns = []
             for kind, turn, _ in day2:

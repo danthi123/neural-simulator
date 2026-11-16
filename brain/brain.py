@@ -178,7 +178,8 @@ class Brain:
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
-                 own_gain: float | None = None, own_gain_copies: bool = False):
+                 own_gain: float | None = None, own_gain_copies: bool = False,
+                 carry_penalty: bool = False):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -235,7 +236,10 @@ class Brain:
         own_gain_copies: (switch, default OFF) own_gain applies only to a reply the reply monitor's comparison calls a
         copy (_is_copy against the heard turn and the brain's own replies since waking); every other reply is written
         at full gain, so the turn structure stays (a flat gain <= 0.25 lost it: results/2026-11-16-own-gain-probe.md).
-        The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved."""
+        The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved.
+        carry_penalty: (switch, default OFF) the mouth's presence/frequency penalty counts carry across the turns since
+        waking, decaying 0.996 per generated token, as the model family's own chat tooling runs it (reference arm;
+        results/2026-11-16-onset-baseline.md). Off: the counts reset every turn. Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -255,6 +259,8 @@ class Brain:
         self.reply_monitor = int(reply_monitor)
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
+        self.carry_penalty = bool(carry_penalty)
+        self._occ: dict = {}
         self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
@@ -396,11 +402,12 @@ class Brain:
             logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
             blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text]) \
                 if self.habituation else None
-            reply, _ = self.cortex.speak(logits, st, block=blk) if blk is not None else self.cortex.speak(logits, st)
+            kw = {**({"block": blk} if blk is not None else {}), **({"carry": self._occ} if self.carry_penalty else {})}
+            reply, _ = self.cortex.speak(logits, st, **kw)
             withheld = 0
             while withheld < self.reply_monitor and _is_copy(reply, [text] + self._recent_replies):
                 withheld += 1
-                reply, _ = self.cortex.speak(logits, st, block=blk) if blk is not None else self.cortex.speak(logits, st)
+                reply, _ = self.cortex.speak(logits, st, **kw)
             if self.reply_monitor:
                 self.monitor_log.append(withheld)
                 info["withheld"] = withheld

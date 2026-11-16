@@ -268,3 +268,15 @@ def test_own_gain_copies_only_spares_ordinary_replies(tmp_path):
     for i in range(1, len(sp), 3):
         assert torch.allclose(ordinary[i], sp[i]) and torch.allclose(copy[i], su[i])
     assert Brain(str(tmp_path / "b"), cortex=c, **KW).own_gain_copies is False
+
+
+def test_carry_penalty_keeps_counts_across_turns(tmp_path):
+    c = StubCortex()
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, carry_penalty=True)
+    b.hear("Hello there.")
+    n1 = sum(b._occ.values())
+    b.hear("Hello again.")
+    assert n1 > 0 and len(b._occ) >= 1 and sum(b._occ.values()) != n1
+    off = Brain(str(tmp_path / "b"), cortex=c, **KW)
+    off.hear("Hello there.")
+    assert off.carry_penalty is False and off._occ == {}
