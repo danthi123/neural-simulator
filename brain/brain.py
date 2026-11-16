@@ -178,7 +178,7 @@ class Brain:
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
-                 own_gain: float | None = None):
+                 own_gain: float | None = None, own_gain_copies: bool = False):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -231,7 +231,11 @@ class Brain:
         brain's own reply is written into the conversation state's matrix memory at gain own_gain (the heard turn
         at full gain): speaking-induced suppression of self-produced speech, so a sampled copy cannot reinforce itself
         turn after turn (research round 11-16, brain/research/2026-11-16-own-gain-1.5b.md). 1.0 = the split read at
-        full gain (the control). Not saved."""
+        full gain (the control). Not saved.
+        own_gain_copies: (switch, default OFF) own_gain applies only to a reply the reply monitor's comparison calls a
+        copy (_is_copy against the heard turn and the brain's own replies since waking); every other reply is written
+        at full gain, so the turn structure stays (a flat gain <= 0.25 lost it: results/2026-11-16-own-gain-probe.md).
+        The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -250,6 +254,7 @@ class Brain:
         self.habituation = int(habituation)
         self.reply_monitor = int(reply_monitor)
         self.own_gain = None if own_gain is None else float(own_gain)
+        self.own_gain_copies = bool(own_gain_copies)
         self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
@@ -421,6 +426,8 @@ class Brain:
         _, su = self.cortex.read(f"User: {text}\n\nAssistant:", state)
         _, sp = self.cortex.read(f" {reply}\n\n", su)
         g = self.own_gain
+        if self.own_gain_copies and not _is_copy(reply, [text] + self._recent_replies):
+            g = 1.0
         return [su[i] + g * (sp[i] - su[i]) if i % 3 == 1 else sp[i] for i in range(len(sp))]
 
     def knows(self, text: str):
