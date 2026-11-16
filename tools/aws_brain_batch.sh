@@ -3,7 +3,9 @@
 # lever A on the existing AWS lane: six-seed runs in about an hour instead of a night on the mini-PCs, and safe while
 # the workstation is off, e.g. on gaming nights).
 #   bash tools/aws_brain_batch.sh launch <jobs.txt> [instance-type]   # default g5.xlarge (A10G 24 GB, ~$1/h)
-#   bash tools/aws_brain_batch.sh status | pull | terminate
+#   bash tools/aws_brain_batch.sh status | sync | pull | terminate
+# sync: while the instance runs, copy the results so far (no start, no terminate). Poll with `sync`, not `status`:
+# a stopped g6 cannot always restart (InsufficientInstanceCapacity, 2026-11-16), and the results live on its disk.
 # jobs.txt: the tools/brain_batch_run.sh format ("<name> <sleep_probe args>" or "<name> brain.<module> <args>",
 # models as ../models/<file>.pth; # lines are comments). A batch longer than 4 h needs AWS_BRAIN_MAX_MIN raised;
 # every job gets --device cuda. Results land in _scratch/brainv2/aws/<batch>/ on `pull`.
@@ -78,11 +80,20 @@ status)
   IID=$(get instance); S=$(state_of "$IID"); echo "$IID $S (batch $(get batch))"
   [ "$S" = running ] && "${SSH[@]}" ubuntu@"$(ip_of "$IID")" "tail -3 ~/brainv2/run.log" 2>/dev/null
   ;;
+sync)
+  [ -f "$STATE" ] || { echo "no brain batch recorded"; exit 0; }
+  IID=$(get instance); S=$(state_of "$IID"); echo "$IID $S (batch $(get batch))"
+  [ "$S" = running ] || exit 0
+  OUT="$ROOT/_scratch/brainv2/aws/$(get batch)"; mkdir -p "$OUT"
+  rsync -a -e "${SSH[*]}" ubuntu@"$(ip_of "$IID")":brainv2/results/ ubuntu@"$(ip_of "$IID")":brainv2/run.log "$OUT/" 2>/dev/null \
+    && tail -1 "$OUT/run.log"
+  ;;
 pull)
   [ -f "$STATE" ] || { echo "no brain batch recorded"; exit 1; }
   IID=$(get instance); S=$(state_of "$IID")
   if [ "$S" = stopped ]; then
-    aws ec2 start-instances --region "$REGION" --instance-ids "$IID" >/dev/null
+    aws ec2 start-instances --region "$REGION" --instance-ids "$IID" >/dev/null \
+      || { echo "⛔ could not start $IID (capacity?); results stay on its disk. Retry pull later."; exit 1; }
     aws ec2 wait instance-running --region "$REGION" --instance-ids "$IID"; sleep 30
   fi
   OUT="$ROOT/_scratch/brainv2/aws/$(get batch)"; mkdir -p "$OUT"
@@ -100,5 +111,5 @@ terminate)
   aws ec2 delete-security-group --region "$REGION" --group-id "$SG"
   mv "$STATE" "$STATE.done-$(date +%s)"; echo "[aws-brain] terminated $IID, deleted $SG"
   ;;
-*) echo "usage: aws_brain_batch.sh {launch <jobs.txt> [type]|status|pull|terminate}"; exit 2 ;;
+*) echo "usage: aws_brain_batch.sh {launch <jobs.txt> [type]|status|sync|pull|terminate}"; exit 2 ;;
 esac
