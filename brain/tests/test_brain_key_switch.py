@@ -105,7 +105,7 @@ def test_default_matches_the_old_brain(tmp_path):
     old = _old_brain_module()
     c = StubCortex()
     b_old = old.Brain(str(tmp_path / "old"), cortex=c, **KW)
-    b_new = Brain(str(tmp_path / "new"), cortex=c, **KW)
+    b_new = Brain(str(tmp_path / "new"), cortex=c, **KW, self_completion=False)   # the old self episodes (default ON since 11-15)
     assert type(b_new.hippocampus) is Hippocampus and b_new.key == "S0"
     r_old, r_new = _talk(b_old), _talk(b_new)
     assert r_old == r_new
@@ -183,7 +183,7 @@ def test_sall_similarity_is_centred_cosine_of_all_layer_deltas(tmp_path):
     cue = "Which car is mine?"
     _, st = c.read(f"User: {cue}\n\n", b.base)
     blk = lambda d: torch.cat([F.normalize(d[3 * l + 1].flatten().float(), dim=0) for l in range(c.n_layers)])
-    K = torch.stack([blk(e.delta) for e in h.episodes])
+    K = torch.stack([blk(getattr(e, "route_delta", None) or e.delta) for e in h.episodes])   # routing reads the plain change
     q = blk([st[i] - b.base[i] if i % 3 == 1 else None for i in range(len(st))])
     mu = K.mean(0)
     want = F.normalize(K - mu, dim=1) @ F.normalize(q - mu, dim=0)

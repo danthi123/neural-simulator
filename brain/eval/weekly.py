@@ -104,8 +104,9 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--homes", default="brain_data", help="directory for the two arms' brain homes")
     ap.add_argument("--sleep-lesion", action="store_true",
                     help="with --shared-sleep: a third arm with the hippocampus AND the night's synapses off")
-    ap.add_argument("--self-completion", action="store_true",
-                    help="switch (default OFF): self episodes store their completion only (Brain(self_completion=True))")
+    ap.add_argument("--self-completion", action=argparse.BooleanOptionalAction, default=None,
+                    help="self episodes store their completion only (Brain(self_completion=...); default ON since "
+                         "2026-11-15). --no-self-completion = the flag-off arm. Unset = the Brain default")
     ap.add_argument("--seed", type=int, default=None, help="sleep seed + torch/numpy seed (default: unset, as before)")
     a = ap.parse_args(argv)
     SEED.clear()
@@ -115,8 +116,9 @@ def main(argv=None, cortex: Cortex | None = None):
         SEED["sleep_seed"] = a.seed
         np.random.seed(a.seed)
         torch.manual_seed(a.seed)
-    if a.self_completion:
-        SEED["self_completion"] = True
+    if a.self_completion is not None:
+        SEED["self_completion"] = a.self_completion
+    sc_on = Brain.__init__.__kwdefaults__["self_completion"] if a.self_completion is None else a.self_completion
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     lines = [f"# Weekly conversation test, {datetime.date.today()}"]
     if a.model or a.shared_sleep:
@@ -128,7 +130,7 @@ def main(argv=None, cortex: Cortex | None = None):
         lines.append(f"\n_cortex: {name}; sleep: {cfg}; device: {a.device};"
                      f" {'one shared night' if a.shared_sleep else 'each arm sleeps'}"
                      f"{'' if a.seed is None else f'; seed {a.seed}'}"
-                     f"{'; self episodes store their completion' if a.self_completion else ''}_")
+                     f"{'; self episodes store their completion' if sc_on else ''}_")
     homes = {k: os.path.join(a.homes, f"_weekly_{k}") for k in ("intact", "lesion", "sleep_lesion")}
     for h in homes.values():
         shutil.rmtree(h, ignore_errors=True)

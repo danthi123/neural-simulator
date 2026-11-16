@@ -78,8 +78,9 @@ def test_speaker_contrast_with_sall_keeps_routing_and_persists(tmp_path):
 def test_self_completion_changes_self_content_not_key_or_tellings(tmp_path):
     import torch
     a = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, self_completion=True)
-    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW)
+    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW, self_completion=False)
     assert b.self_completion is False
+    assert Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW).self_completion is True   # default ON since 11-15
     sa = [e for e in a.hippocampus.episodes if e.permanent]
     sb = [e for e in b.hippocampus.episodes if e.permanent]
     assert len(sa) == len(sb) == 3
@@ -100,7 +101,7 @@ def test_self_completion_with_sall_keeps_routing(tmp_path):
     from brain.tests.test_key_bar_switch import Stub15
     kw = dict(KW, key="S_all", key_bar="size")
     a = Brain(str(tmp_path / "a"), cortex=Stub15(), **kw, self_completion=True)
-    b = Brain(str(tmp_path / "b"), cortex=Stub15(), **kw)
+    b = Brain(str(tmp_path / "b"), cortex=Stub15(), **kw, self_completion=False)
     q = "What's your name?"
     assert torch.allclose(a.hippocampus.similarities(a.cortex, a.base, q),
                           b.hippocampus.similarities(b.cortex, b.base, q), atol=1e-5)

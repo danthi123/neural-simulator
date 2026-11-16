@@ -1,0 +1,14 @@
+s300 off hdr 0 d1own 0 'My name is Alex. ❌' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s300 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s301 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 4 echo 0
+s301 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 4 echo 0
+s302 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My sister's name is Marguerite' hoff 6 echo 0
+s302 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My sister's name is Marguerite' hoff 6 echo 0
+s303 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s303 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s304 off hdr 0 d1own 0 'My name is a very long word. It's like a' d1cat 0 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Pixel. ❌' hoff 4 echo 0
+s304 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Pixel. ❌' hoff 4 echo 0
+s305 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s305 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+day-1 own off 4/6 on 6/6; keyed mean off 4.33 on 4.33; told mean off 3.17 on 3.17; d1 cat off 2 on 4; friend off 6 on 6; s2 own off 1 on 1; hoff keyed off 5.00 on 5.00
+C0 True C1 True C2 True C3 True -> GO
