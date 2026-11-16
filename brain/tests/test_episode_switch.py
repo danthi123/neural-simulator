@@ -105,3 +105,26 @@ def test_self_completion_with_sall_keeps_routing(tmp_path):
     q = "What's your name?"
     assert torch.allclose(a.hippocampus.similarities(a.cortex, a.base, q),
                           b.hippocampus.similarities(b.cortex, b.base, q), atol=1e-5)
+
+
+def test_self_key_question_keys_self_by_question_only(tmp_path):
+    import torch
+    a = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, self_key="question")
+    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW)
+    assert b.self_key == "exchange"
+    sa = [e for e in a.hippocampus.episodes if e.permanent]
+    sb = [e for e in b.hippocampus.episodes if e.permanent]
+    assert len(sa) == len(sb) == 3
+    for ea, eb in zip(sa, sb):
+        q = ea.text.split("User: ", 1)[1].split("\n\nAssistant:")[0]
+        _, st = a.raw_cortex.read(f"User: {q}\n\n", a.base)
+        assert torch.equal(ea.key, a.raw_cortex.key_of(a.raw_cortex.matrix_delta(st, a.base)).cpu())   # the question's key
+        assert not torch.equal(ea.key, eb.key)
+        assert ea.text == eb.text and all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)
+    a.save()
+    a.release() if hasattr(a, "release") else None
+    r = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW)     # the key survives a restart (birth-only switch)
+    ra = [e for e in r.hippocampus.episodes if e.permanent]
+    assert all(torch.equal(x.key, y.key) for x, y in zip(ra, sa))
+    with pytest.raises(ValueError):
+        Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW, self_key="answer")

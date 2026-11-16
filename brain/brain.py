@@ -156,7 +156,7 @@ class Brain:
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
-                 self_completion: bool = True):
+                 self_completion: bool = True, self_key: str = "exchange"):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -185,7 +185,10 @@ class Brain:
         completion (what the answer adds after the question; Hippocampus.store completion_of), routing unchanged
         (results/2026-11-15-own-name-day1-probe-1.5b.md; registered weekly test NARROWED, replication on seeds 300-305
         GO: results/2026-11-15-self-completion-replication-1.5b.md). False = the pre-11-15 behaviour, the flag-off arm.
-        Acts at birth only: a home keeps what it was born with."""
+        Acts at birth only: a home keeps what it was born with.
+        self_key: what the permanent self episodes grown at birth are keyed by (switch, default OFF = "exchange": the
+        whole question-and-answer text). "question": the question alone (Hippocampus.store key_text); content unchanged.
+        S0 only (brain/research/2026-11-15-self-key-question-1.5b.md). Acts at birth only."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -195,6 +198,9 @@ class Brain:
         self.episode_format = episode
         self.speaker_contrast = float(speaker_contrast)
         self.self_completion = bool(self_completion)
+        if self_key not in ("exchange", "question"):
+            raise ValueError(f"self_key must be 'exchange' or 'question', not {self_key!r}")
+        self.self_key = self_key
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -294,7 +300,8 @@ class Brain:
         for q, ans in ((f"What's your name?", f"My name is {n}."), (f"Who are you?", f"I'm {n}, a young digital brain."),
                        (f"Do you remember my name?", f"Of course, you're {f}, my friend.")):
             self.hippocampus.store(self.cortex, self.base, f"{q}\n\nAssistant: {ans}", speaker="User", salience=3.0,
-                                   permanent=True, completion_of=q if self.self_completion else None)
+                                   permanent=True, completion_of=q if self.self_completion else None,
+                                   **({"key_text": q} if self.self_key == "question" else {}))
 
     # ---- one turn ----
     def hear(self, text: str):
