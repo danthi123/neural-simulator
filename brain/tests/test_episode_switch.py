@@ -230,3 +230,26 @@ def test_reply_monitor_withholds_copies(tmp_path, monkeypatch):
     assert off.reply_monitor == 0
     _, info = off.hear("I went for a long walk by the river.")
     assert "withheld" not in info and off.monitor_log == []
+
+
+def test_own_gain_scales_the_reply_write(tmp_path):
+    import torch
+    c = StubCortex()
+    off = Brain(str(tmp_path / "o"), cortex=c, **KW)
+    assert off.own_gain is None
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, own_gain=0.0)
+    st = [s.clone() for s in b.state]
+    su = b.cortex.read("User: Hello there.\n\nAssistant:", st)[1]
+    sp = b.cortex.read(" Hi.\n\n", su)[1]
+    out0 = b.commit_exchange("Hello there.", "Hi.", st)
+    b.own_gain = 1.0
+    out1 = b.commit_exchange("Hello there.", "Hi.", st)
+    b.own_gain = 0.5
+    outh = b.commit_exchange("Hello there.", "Hi.", st)
+    for i in range(len(sp)):
+        if i % 3 == 1:
+            assert torch.allclose(out0[i], su[i]) and torch.allclose(out1[i], sp[i])
+            assert torch.allclose(outh[i], (su[i] + sp[i]) / 2)
+        else:
+            assert torch.equal(out0[i], sp[i])
+    reply, _ = b.hear("Hello there.")      # hear commits through the same path

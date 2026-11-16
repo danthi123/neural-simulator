@@ -177,7 +177,8 @@ class Brain:
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
-                 habituation: int = 0, reply_monitor: int = 0):
+                 habituation: int = 0, reply_monitor: int = 0,
+                 own_gain: float | None = None):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -225,7 +226,12 @@ class Brain:
         in one of them, >= 3 words) is withheld and the cortex speaks again from the same state, up to reply_monitor
         times (the last draft is kept if every one is a copy). A declared scaffold (brain/SCAFFOLDS.md): the
         sampled onset of an in-context echo or loop, which the conversation state then repeats on every later turn
-        (results/2026-11-16-reply-rehearse-1.5b.md, echo-onset probe), never enters the state. Not saved."""
+        (results/2026-11-16-reply-rehearse-1.5b.md, echo-onset probe), never enters the state. Not saved.
+        own_gain: (switch, default OFF = None: the exchange is read into the conversation state as one text) the
+        brain's own reply is written into the conversation state's matrix memory at gain own_gain (the heard turn
+        at full gain): speaking-induced suppression of self-produced speech, so a sampled copy cannot reinforce itself
+        turn after turn (research round 11-16, brain/research/2026-11-16-own-gain-1.5b.md). 1.0 = the split read at
+        full gain (the control). Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -243,6 +249,7 @@ class Brain:
         self.sleep_rehearse = sleep_rehearse
         self.habituation = int(habituation)
         self.reply_monitor = int(reply_monitor)
+        self.own_gain = None if own_gain is None else float(own_gain)
         self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
@@ -394,7 +401,7 @@ class Brain:
                 info["withheld"] = withheld
         finally:
             self.cortex.consolidated_on = retrieval
-        _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
+        self.state = self.commit_exchange(text, reply, self.state)
         self._recent_replies.append(reply)
         if self.hippocampus.enabled and _is_telling(text):
             lived = self.episode_format in ("lived", "lived_key") and reply.strip()
@@ -404,6 +411,17 @@ class Brain:
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info
+
+    def commit_exchange(self, text: str, reply: str, state):
+        """The conversation state after hearing `text` and saying `reply`. own_gain None: one read of the exchange.
+        Else the heard turn is read at full gain and the reply's change to the matrix memory is scaled by own_gain
+        (the token-shift slots hold the last token, the same for any reply, and are taken as read)."""
+        if self.own_gain is None:
+            return self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", state)[1]
+        _, su = self.cortex.read(f"User: {text}\n\nAssistant:", state)
+        _, sp = self.cortex.read(f" {reply}\n\n", su)
+        g = self.own_gain
+        return [su[i] + g * (sp[i] - su[i]) if i % 3 == 1 else sp[i] for i in range(len(sp))]
 
     def knows(self, text: str):
         """The gate's decision for a request turn: (known, read-outs) under know_rule."""
