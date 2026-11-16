@@ -39,3 +39,15 @@ replies vs 165 others, layer means: echo -0.33 to -0.98, others -0.30 to -0.95; 
 the deepest layers (last layer -0.978 vs -0.952). No direction separates a copy from an answer, so "scale only the
 component along the user turn" has nothing to act on: that variant is dropped before building. Next: the research
 round's method 2 (adaptation of recent own-output representations at readout), or a state-level self/other tag.
+
+**Addendum-2 variant, copies only (`Brain(own_gain=0, own_gain_copies=True)`; `ogc_E.json`, `ogc_B.json`; also
+`ogc_E25.json` at gain 0.25).** Counts pass at g = 0: E echoes 0, 1, 2, 1, 0, 1; B onset repeats 6, 2, 2, 3 (g = 1: 14
+on every sample). Reading fails the addendum-2 bar (<= 3 questions back on samples 0-1 of E and B): replies ending
+"?" per sample E [1, 13, 2, 3, 0, 14], B [5, 2, 2, 9]. E sample 0 is the best conversation in the whole probe (it
+answers, and says "I'm sorry, but I don't have information about your fish." for what it was not told); E sample 1
+falls into "What is the best way to make a sandwich?" x6: a repeated reply is a copy, so it is kept out of the state,
+the state does not move, and the cortex says it again. B sample 0 drifts back into the bee line. At 0.25 E echoes 0,
+11, 3, 12, 0, 3. **NO LEAD** (report-only, one script seed). What it adds: keeping a copy out of the state is
+necessary but not sufficient; on 2/6 E samples the cortex is already speaking as the user (questions) from turn 2,
+a role confusion the copy test does not cover. The state needs a positive marker of whose turn it is, not only less
+of the brain's own copies.
