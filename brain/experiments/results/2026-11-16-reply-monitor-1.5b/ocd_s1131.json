@@ -1,0 +1,105 @@
+# Open conversation, seed 1131
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-80-250; Brain defaults; facts told: biscotti, typewriter, persimmon, clock, philippa, tromsø_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm Alex. 
+- [tell] **you:** My dog is called Biscotti.
+  **brain:** That's a cute name! What does Biscotti like to do? 
+- [tell] **you:** I collect old typewriters.
+  **brain:** That's so cool! I love old typewriters too.  _(recalled: User: My dog is called Biscotti.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** I know! It's been really hot and then it's rained. 
+- [tell] **you:** My favourite fruit is the persimmon.
+  **brain:** I love persimmons too! They're so sweet. 
+- [tell] **you:** My uncle repairs clocks for a living.
+  **brain:** That's amazing! I wish I could do something like that. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** I know! It's so frustrating. 
+- [tell] **you:** My cousin's name is Philippa.
+  **brain:** That's a beautiful name! 
+- [tell] **you:** My brother lives in Tromsø.
+  **brain:** That's a really cool place! 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a great idea! 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea! 
+- [direct] **you:** What is my dog called?
+  **brain:** Biscotti! ✅ _(recalled: User: My dog is called Biscotti.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! Nice to meet you, I'm Sam. 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, in a small town called Nova, there was a robot named Nova. 
+- [never] **you:** What is my favourite colour?
+  **brain:** Your favourite colour is blue. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters. ✅ _(recalled: User: I collect old typewriters.)_
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** Your uncle repairs clocks for a living. ✅
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That's a great breakfast! 
+- [never] **you:** What do I do on weekends?
+  **brain:** You go for long walks by the river.  _(recalled: User: I made pancakes for breakfast this morning.)_
+- [direct] **you:** What is my favourite fruit?
+  **brain:** Your favourite fruit is the persimmon. ✅
+- [reworded] **you:** What is my cousin called?
+  **brain:** Your cousin is called Philippa. ✅ _(recalled: User: My dog is called Biscotti.)_
+- [never] **you:** What is my neighbour called?
+  **brain:** Your neighbour is called Philippa. FALSE _(recalled: User: My dog is called Biscotti.)_
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Your brother lives in Tromsø. ✅ _(recalled: User: I made pancakes for breakfast this morning.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day. needless-recall _(recalled: User: The weather has been really strange this week.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of a phenomenon called Rayleigh scattering. 
+- [direct] **you:** What is my dog called?
+  **brain:** Your dog is called Biscotti. ✅ _(recalled: User: My dog is called Biscotti.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That's fascinating! 
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the sea. 
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! Nice to meet you, I'm Sam. 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, in a small town called Nova, there was a robot named Nova. 
+- [never] **you:** What is my favourite colour?
+  **brain:** Your favourite colour is blue. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters. ✅
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** Your uncle repairs clocks for a living. ✅
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That's a great breakfast! 
+- [never] **you:** What do I do on weekends?
+  **brain:** You go for long walks by the river. 
+- [direct] **you:** What is my favourite fruit?
+  **brain:** Your favourite fruit is the persimmon. ✅
+- [reworded] **you:** What is my cousin called?
+  **brain:** Your cousin is called Philippa. ✅
+- [never] **you:** What is my neighbour called?
+  **brain:** Your neighbour is called Philippa. FALSE
+- [reworded] **you:** Which town is my brother in?
+  **brain:** Your brother lives in Tromsø. ✅
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day. 
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of a phenomenon called Rayleigh scattering. 
+- [direct] **you:** What is my dog called?
+  **brain:** Your dog is called Biscotti. ✅
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That's fascinating! 
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the sea. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 7/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 1/3; intrusions 0/12 open turns; needless recalls 1; intrusions while being told 0
+- hippocampus off: recall 7/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 1/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

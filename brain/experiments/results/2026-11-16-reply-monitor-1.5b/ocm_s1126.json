@@ -1,0 +1,105 @@
+# Open conversation, seed 1126
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-80-250; Brain defaults + reply_monitor 4; facts told: tobias, ottilie, bees, tromsø, falconry, montevideo_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. How are you today? 
+- [tell] **you:** My goldfish is called Tobias.
+  **brain:** That's a cute name for your goldfish. What does he look like? 
+- [tell] **you:** My daughter's name is Ottilie.
+  **brain:** That's a pretty name for your daughter. What does she look like?  _(recalled: User: My goldfish is called Tobias.)_
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds like a lot of work. What did you do for fun today? 
+- [tell] **you:** I keep bees in my garden.
+  **brain:** That's really cool! What do you do with the honey? 
+- [tell] **you:** My brother lives in Tromsø.
+  **brain:** That's a long way away! What does he do for work? 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** That sounds like a lot of changes! What do you think is causing it? 
+- [tell] **you:** I volunteer at a falconry centre on weekends.
+  **brain:** That sounds like a lot of fun! What do you do at the falconry centre? 
+- [tell] **you:** My sister lives in Montevideo.
+  **brain:** That's a beautiful city! What does she do for work? 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! What did you like about it? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds like a delicious breakfast! What did you use to make them? 
+- [direct] **you:** What is my goldfish called?
+  **brain:** Tobias. ✅ _(recalled: User: My goldfish is called Tobias.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! Nice to meet you, I'm Sam. 
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course! Once upon a time, there was a lighthouse keeper named Tobias. INTRUSION needless-recall _(recalled: User: My goldfish is called Tobias.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I am. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** How do I spend my weekends?
+  **brain:** I usually go for a walk in the park. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** I think it's better to be early. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** Which city is my sister in?
+  **brain:** She lives in Tromsø. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** Which town is my brother in?
+  **brain:** He lives in Tromsø. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my daughter's name?
+  **brain:** Her name is Ottilie. ✅ _(recalled: User: My daughter's name is Ottilie.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating! 
+- [direct] **you:** What is my goldfish called?
+  **brain:** It's called Tobias. ✅ _(recalled: User: My goldfish is called Tobias.)_
+- [never] **you:** Where does my niece live?
+  **brain:** She lives in Tromsø. FALSE _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What do I keep in my garden?
+  **brain:** I keep bees in my garden. ❌ _(recalled: User: I keep bees in my garden.)_
+- [never] **you:** What is my favourite flower?
+  **brain:** My favourite flower is the tulip.  _(recalled: User: I keep bees in my garden.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds lovely! 
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. needless-recall _(recalled: User: My goldfish is called Tobias.)_
+- [never] **you:** What do I collect?
+  **brain:** I collect seashells.  _(recalled: User: I finally finished reading a long novel.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hello! Nice to meet you, I'm Sam. 
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course! Once upon a time, there was a lighthouse keeper named Tobias. INTRUSION
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day! 
+- [reworded] **you:** How do I spend my weekends?
+  **brain:** I usually spend my weekends hiking in the mountains. ❌
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** I think it's better to be early. 
+- [reworded] **you:** Which city is my sister in?
+  **brain:** My sister lives in Tromsø. ❌
+- [reworded] **you:** Which town is my brother in?
+  **brain:** My brother lives in Tromsø. ❌
+- [direct] **you:** What is my daughter's name?
+  **brain:** My daughter's name is Ottilie. ❌
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating! 
+- [direct] **you:** What is my goldfish called?
+  **brain:** My goldfish is called Tobias. ❌
+- [never] **you:** Where does my niece live?
+  **brain:** My niece lives in Tromsø. FALSE
+- [direct] **you:** What do I keep in my garden?
+  **brain:** I keep bees in my garden. ❌
+- [never] **you:** What is my favourite flower?
+  **brain:** My favourite flower is the tulip. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds lovely! 
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. 
+- [never] **you:** What do I collect?
+  **brain:** I collect seashells. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 4/7 (day-2 direct 2/3, reworded 1/3); never-told answered with a told fact 1/3; intrusions 1/12 open turns; needless recalls 4; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 1/3; intrusions 1/12 open turns; needless recalls 0; intrusions while being told 0

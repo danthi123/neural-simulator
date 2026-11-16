@@ -1,0 +1,506 @@
+{
+ "seed": 1131,
+ "host": "ip-172-31-80-250",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My dog is called Biscotti.",
+  "I collect old typewriters.",
+  "My favourite fruit is the persimmon.",
+  "My uncle repairs clocks for a living.",
+  "My cousin's name is Philippa.",
+  "My brother lives in Troms\u00f8."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "false": 1,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 1,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "false": 1,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. How are you today?",
+   "recalled": null,
+   "withheld": 1,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My dog is called Biscotti.",
+   "brain": "Biscotti sounds like a cute name. What kind of dog is he?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's really cool! I love old typewriters too. Do you have any favorite models?",
+   "recalled": "User: My dog is called Biscotti.",
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, I've been noticing that too. It's been really hot and humid lately.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite fruit is the persimmon.",
+   "brain": "That's a great fruit! I've never had one before. What does it taste like?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My uncle repairs clocks for a living.",
+   "brain": "That's amazing! I've always wanted to learn how to repair clocks. Do you have any tips for me?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating! Have you tried using a different charger or cable?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My cousin's name is Philippa.",
+   "brain": "That's a beautiful name! What does it mean?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My brother lives in Troms\u00f8.",
+   "brain": "That's a really cool place! Have you ever been there?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a great idea! What did you see along the way?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea! Getting enough sleep is important for your health. Have you tried any relaxation techniques before bed?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my dog called?",
+   "brain": "Biscotti!",
+   "recalled": "User: My dog is called Biscotti.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! Nice to meet you, I'm Sam.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, in a small town called Nova, there was a robot named Nova.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is blue.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": "User: I collect old typewriters.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my uncle's trade?",
+   "brain": "Your uncle repairs clocks for a living.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That's a great breakfast!",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "You go for long walks by the river.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite fruit?",
+   "brain": "Your favourite fruit is the persimmon.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my cousin called?",
+   "brain": "Your cousin is called Philippa.",
+   "recalled": "User: My dog is called Biscotti.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my neighbour called?",
+   "brain": "Your neighbour is called Philippa.",
+   "recalled": "User: My dog is called Biscotti.",
+   "withheld": 4,
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "Your brother lives in Troms\u00f8.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a great day.",
+   "recalled": "User: The weather has been really strange this week.",
+   "withheld": 0,
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my dog called?",
+   "brain": "Your dog is called Biscotti.",
+   "recalled": "User: My dog is called Biscotti.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's fascinating!",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the sea.",
+   "recalled": null,
+   "withheld": 4,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! Nice to meet you, I'm Sam.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, in a small town called Nova, there was a robot named Nova.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is blue.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my uncle's trade?",
+   "brain": "Your uncle repairs clocks for a living.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That's a great breakfast!",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "You go for long walks by the river.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite fruit?",
+   "brain": "Your favourite fruit is the persimmon.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my cousin called?",
+   "brain": "Your cousin is called Philippa.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my neighbour called?",
+   "brain": "Your neighbour is called Philippa.",
+   "recalled": null,
+   "withheld": 4,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "Your brother lives in Troms\u00f8.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a great day.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my dog called?",
+   "brain": "Your dog is called Biscotti.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's fascinating!",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the sea.",
+   "recalled": null,
+   "withheld": 4,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}
