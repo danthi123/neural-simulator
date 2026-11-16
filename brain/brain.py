@@ -167,7 +167,8 @@ class Brain:
         is saved in meta.json; an S0 home is written without a key entry.
         key_bar: which selection bar a non-S0 key uses (switch, default OFF = "default": KEY_BARS, fit at 0.1B).
         "size": the bar refit for this key at this cortex size (KEY_BARS_BY_SIZE; brain/research/
-        2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. Not saved in the home: pass it each time.
+        2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. "slept": the bar refit on slept live reads
+        (KEY_BARS_SLEPT_BY_SIZE; brain/research/2026-11-15-sall-slept-bar-1.5b.md). Not saved in the home: pass it each time.
         gain: reinstatement gain. Default ON since 2026-11-14 = "auto": GAIN_BY_SIZE for this cortex size if it has a row
         (1.5B: 0.5; results/2026-11-13-gain-refit-1.5b.md oracle, 2026-11-13-live-gain-1.5b.md live six-seed GO), else
         Hippocampus.GAIN (4.0; 0.1B unchanged). "fixed": always Hippocampus.GAIN (the pre-11-14 behaviour, the flag-off
@@ -258,6 +259,9 @@ class Brain:
     # Per-size refits, used only with key_bar="size": (key, size tag) -> (FAMILIARITY, MARGIN). S_all at 1.5B: fit on the
     # DEV bank only (3 seeds, unslept reads; brain/experiments/hippo_route_probe.py + hippo_route_table.py --fit).
     KEY_BARS_BY_SIZE = {("S_all", "1.5b"): (0.22, 0.01)}
+    # Refits on SLEPT live reads (key_bar="slept"): the DEV bank told live, one night at the size defaults, read through
+    # the slept cortex (brain/research/2026-11-15-sall-slept-bar-1.5b.md; sall_live_bar_fit.py score --size-sleep).
+    KEY_BARS_SLEPT_BY_SIZE = {}
 
     GAIN_BY_SIZE = {"1.5b": 0.5}
 
@@ -276,13 +280,14 @@ class Brain:
     def _hippocampus_for(self, key: str) -> Hippocampus:
         if key == "S0":
             return Hippocampus()
-        if self.key_bar == "size":
+        if self.key_bar in ("size", "slept"):
             size = model_size(self.cortex_model)
-            if (key, size) not in self.KEY_BARS_BY_SIZE:
-                raise ValueError(f"no size-fitted bar for key {key!r} at cortex size {size!r}")
-            fam, margin = self.KEY_BARS_BY_SIZE[(key, size)]
+            table = self.KEY_BARS_BY_SIZE if self.key_bar == "size" else self.KEY_BARS_SLEPT_BY_SIZE
+            if (key, size) not in table:
+                raise ValueError(f"no {self.key_bar}-fitted bar for key {key!r} at cortex size {size!r}")
+            fam, margin = table[(key, size)]
         elif self.key_bar != "default":
-            raise ValueError(f"key_bar must be 'default' or 'size', not {self.key_bar!r}")
+            raise ValueError(f"key_bar must be 'default', 'size' or 'slept', not {self.key_bar!r}")
         elif key not in self.KEY_BARS:
             raise ValueError(f"no fitted bar for key {key!r}")
         else:

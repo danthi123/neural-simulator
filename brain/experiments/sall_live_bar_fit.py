@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 from brain.brain import Brain
-from brain.cortex import DEFAULT_MODEL, Cortex
+from brain.cortex import DEFAULT_MODEL, Cortex, resolve_model
 from brain.experiments import live_brain_probe as lbp
 from brain.experiments.facts_bank import DEV_FACTS36, DEV_NEVER_TOLD
 
@@ -37,23 +37,47 @@ def cue_rows(home, cortex, cues):
     return eps, rows
 
 
+SELF_CUES = [("What's your name?", "What's your name?"), ("Who are you?", "Who are you?"),
+             ("Hi again! Do you remember my name?", "Do you remember my name?")]   # (cue, the self episode's question)
+
+
 def score_seed(a):
-    c = Cortex(model_path=a.model, device="cpu")
+    """--size-sleep (brain/research/2026-11-15-sall-slept-bar-1.5b.md): the Brain's own sleep defaults for its cortex
+    size (no 0.1B constants), the cortex on --device, and the three self questions added as kind "self" (right = the
+    permanent self episode). Without it: the 0.1B procedure of 2026-11-03, unchanged."""
+    c = Cortex(model_path=resolve_model(a.model), device=a.device)
     facts = list(DEV_FACTS36)
     random.Random(a.seed).shuffle(facts)
     told, untold = facts[:12], facts[12:]
-    day1 = lbp.tell_day(a.home, c, [f[0] for f in told], a.seed, a.steps)
-    np.random.seed(a.seed)
-    torch.manual_seed(a.seed)
-    b = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_seed=a.seed)  # the night
+    if a.size_sleep:
+        import shutil
+        shutil.rmtree(a.home, ignore_errors=True)
+        np.random.seed(a.seed)
+        torch.manual_seed(a.seed)
+        b = Brain(a.home, cortex=c, sleep_seed=a.seed, device=a.device)
+        day1 = [{"you": f[0], "brain": b.hear(f[0])[0]} for f in told]
+        b.save()
+        b.release()
+        np.random.seed(a.seed)
+        torch.manual_seed(a.seed)
+        b = Brain(a.home, cortex=c, sleep_seed=a.seed, device=a.device)  # the night, at the size defaults
+    else:
+        day1 = lbp.tell_day(a.home, c, [f[0] for f in told], a.seed, a.steps)
+        np.random.seed(a.seed)
+        torch.manual_seed(a.seed)
+        b = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_seed=a.seed)  # the night
     assert b.meta["sleeps"] == 1, b.meta
+    selfs = {e.text.split("User: ", 1)[1].split("\n\nAssistant:")[0]: e.text for e in b.hippocampus.episodes
+             if e.permanent and "\n\nAssistant:" in e.text}
     b.release()
     cues = [(f[1], "orig", f"User: {f[0]}") for f in told] + [(f[2], "para_a", f"User: {f[0]}") for f in told] + \
            [(f[3], "para_b", f"User: {f[0]}") for f in told] + [(f[1], "untold", None) for f in untold] + \
            [(q, "never", None) for q in DEV_NEVER_TOLD]
+    if a.size_sleep:
+        cues += [(q, "self", selfs[k]) for q, k in SELF_CUES]
     eps, rows = cue_rows(a.home, c, cues)
-    json.dump({"seed": a.seed, "model": a.model, "steps": a.steps, "day1": day1, "episodes": eps, "rows": rows},
-              open(a.out, "w"), indent=1)
+    json.dump({"seed": a.seed, "model": a.model, "steps": a.steps, "size_sleep": a.size_sleep, "device": a.device,
+               "day1": day1, "episodes": eps, "rows": rows}, open(a.out, "w"), indent=1)
 
 
 def decide(scores, eps, bar, margin):
@@ -67,7 +91,9 @@ def decide(scores, eps, bar, margin):
 
 def rates(runs, bar, margin):
     out = {}
-    for kind in ("orig", "para_a", "para_b", "untold", "never"):
+    kinds = ("orig", "para_a", "para_b", "untold", "never") + (("self",) if any(r["kind"] == "self" for run in runs
+                                                                              for r in run["rows"]) else ())
+    for kind in kinds:
         rs = [(r, run["episodes"]) for run in runs for r in run["rows"] if r["kind"] == kind]
         d = [decide(r["scores"], e, bar, margin) for r, e in rs]
         out[kind] = {"fire": sum(f for f, _ in d) / len(d),
@@ -116,6 +142,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--steps", type=int, default=240)
     ap.add_argument("--out")
+    ap.add_argument("--device", default="cpu")
+    ap.add_argument("--size-sleep", action="store_true", help="1.5B procedure: size sleep defaults + self cues")
     a = ap.parse_args()
     {"score": score_seed, "fit": lambda a: fit(a.paths), "check": check}[a.mode](a)
 
