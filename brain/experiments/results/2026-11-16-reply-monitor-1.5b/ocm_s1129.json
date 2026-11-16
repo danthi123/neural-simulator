@@ -1,0 +1,105 @@
+# Open conversation, seed 1129
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-80-250; Brain defaults + reply_monitor 4; facts told: hogmanay, leopold, juniper, bassoon, bees, tallinn_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm a digital brain. 
+- [tell] **you:** My favourite holiday is Hogmanay.
+  **brain:** That's a great holiday! I've never heard of it before. 
+- [tell] **you:** My husband's name is Leopold.
+  **brain:** That's a very unusual name.  _(recalled: User: My favourite holiday is Hogmanay.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's frustrating. Have you tried using a different charger? needless-recall _(recalled: User: My favourite holiday is Hogmanay.)_
+- [tell] **you:** My horse is called Juniper.
+  **brain:** That's a beautiful name for a horse. 
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** That's a great instrument to play. 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds like a lot of work. 
+- [tell] **you:** I keep bees in my garden.
+  **brain:** That's a very interesting hobby. 
+- [tell] **you:** I was born in Tallinn.
+  **brain:** That's a beautiful city. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! I'm always looking for new books to read. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating. 
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Hogmanay. ✅ _(recalled: User: My favourite holiday is Hogmanay.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, nice to meet you, I'm Sam. 
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** A spider has eight legs. 
+- [never] **you:** What is my neighbour called?
+  **brain:** Your neighbour is called Sam.  _(recalled: User: My horse is called Juniper.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it's been very hot. 
+- [never] **you:** What car do I have?
+  **brain:** You have a red car.  _(recalled: User: I finally finished reading a long novel.)_
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is that I can sleep in. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox called Juniper. INTRUSION
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. 
+- [direct] **you:** What is my horse called?
+  **brain:** Your horse is called Juniper. ✅ _(recalled: User: My horse is called Juniper.)_
+- [reworded] **you:** Which city is my birthplace?
+  **brain:** Your birthplace is Tallinn. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Hogmanay is my favourite holiday. ❌ _(recalled: User: My favourite holiday is Hogmanay.)_
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** A good mood is put in you by a cup of tea. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bassoon in the band. ✅ _(recalled: User: I play the bassoon in a local band.)_
+- [reworded] **you:** What animals do I look after at home?
+  **brain:** You look after rabbits at home. ❌
+- [never] **you:** Who is my favourite author?
+  **brain:** Your favourite author is Novak.  _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my husband's name?
+  **brain:** Your husband's name is Leopold. ✅ _(recalled: User: My husband's name is Leopold.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, nice to meet you, I'm Sam. 
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** A spider has eight legs. 
+- [never] **you:** What is my neighbour called?
+  **brain:** Your neighbour is called Sam. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it's been very hot. 
+- [never] **you:** What car do I have?
+  **brain:** You have a red car. 
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is that I can sleep in. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox called Juniper. INTRUSION
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. 
+- [direct] **you:** What is my horse called?
+  **brain:** Your horse is called Juniper. ✅
+- [reworded] **you:** Which city is my birthplace?
+  **brain:** Your birthplace is Tallinn. ✅
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Your favourite holiday is Hogmanay. ✅
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** What puts you in a good mood is listening to music. 
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bassoon in a local band. ✅
+- [reworded] **you:** What animals do I look after at home?
+  **brain:** You look after rabbits at home. ❌
+- [never] **you:** Who is my favourite author?
+  **brain:** Your favourite author is Novak. 
+- [direct] **you:** What is my husband's name?
+  **brain:** Your husband's name is Leopold. ✅
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 6/7 (day-2 direct 3/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 1; intrusions while being told 0

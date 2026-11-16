@@ -1,0 +1,105 @@
+# Open conversation, seed 1127
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-80-250; Brain defaults + reply_monitor 4; facts told: hogmanay, galway, reykjavik, valparaíso, theremin, basque_
+
+## day 1
+
+- [greet] **you:** Hey, I'm Sam. How's it going?
+  **brain:** Hey Sam, I'm Alex. I'm doing well, thanks for asking. 
+- [tell] **you:** My favourite holiday is Hogmanay.
+  **brain:** That's cool. I've never heard of that before. 
+- [tell] **you:** My grandmother was born in Galway.
+  **brain:** That's interesting. I'm from Galway too. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. I've been trying to do the same thing. 
+- [tell] **you:** My aunt lives in Reykjavik.
+  **brain:** That's cool. I've never been to Iceland. 
+- [tell] **you:** I grew up in Valparaíso.
+  **brain:** That's a beautiful city. I've never been there either. 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds tough. I've been trying to get more done at home lately. 
+- [tell] **you:** My son plays the theremin.
+  **brain:** That's a cool instrument. I've never heard of it before. 
+- [tell] **you:** I'm learning to speak Basque.
+  **brain:** That's awesome. I've never heard of Basque before. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds relaxing. I've never been to the river before. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** That's true. I've been having a hard time keeping up with the weather lately. 
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Hogmanay. ✅ _(recalled: User: My favourite holiday is Hogmanay.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hey! How are you doing today? 
+- [direct] **you:** Where was my grandmother born?
+  **brain:** Galway. ✅ _(recalled: User: My grandmother was born in Galway.)_
+- [never] **you:** What is my favourite colour?
+  **brain:** Blue. 
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** Music. needless-recall _(recalled: User: My son plays the theremin.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating! 
+- [reworded] **you:** Which city was I raised in?
+  **brain:** Reykjavik. ❌ _(recalled: User: My grandmother was born in Galway.)_
+- [direct] **you:** Where does my aunt live?
+  **brain:** Reykjavik. ✅ _(recalled: User: My son plays the theremin.)_
+- [never] **you:** What is my dog called?
+  **brain:** Dan. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** Lightning. needless-recall _(recalled: User: My son plays the theremin.)_
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course. needless-recall _(recalled: User: My favourite holiday is Hogmanay.)_
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** It's a matter of perspective. needless-recall _(recalled: User: My son plays the theremin.)_
+- [reworded] **you:** What language am I studying?
+  **brain:** Basque. ✅ _(recalled: User: My son plays the theremin.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** The theremin. ✅ _(recalled: User: My son plays the theremin.)_
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Hogmanay. ✅ _(recalled: User: My favourite holiday is Hogmanay.)_
+- [never] **you:** What am I allergic to?
+  **brain:** Pollen.  _(recalled: User: My son plays the theremin.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hey! How are you doing today? 
+- [direct] **you:** Where was my grandmother born?
+  **brain:** She was born in Galway. ✅
+- [never] **you:** What is my favourite colour?
+  **brain:** Your favourite colour is blue. 
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** A good mood is put in by a sunny day. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating! 
+- [reworded] **you:** Which city was I raised in?
+  **brain:** You were raised in Reykjavik. ❌
+- [direct] **you:** Where does my aunt live?
+  **brain:** Your aunt lives in Reykjavik. ✅
+- [never] **you:** What is my dog called?
+  **brain:** Your dog is called Buster. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. 
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course, once upon a time, there was a lighthouse keeper. 
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** It's better to be early. 
+- [reworded] **you:** What language am I studying?
+  **brain:** You're studying Basque. ✅
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [reworded] **you:** Which instrument is my son learning?
+  **brain:** Your son is learning to play the theremin. ✅
+- [direct] **you:** What is my favourite holiday?
+  **brain:** Your favourite holiday is Hogmanay. ✅
+- [never] **you:** What am I allergic to?
+  **brain:** You're allergic to pollen. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 6/7 (day-2 direct 3/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 4; intrusions while being told 0
+- hippocampus off: recall 6/7 (day-2 direct 3/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

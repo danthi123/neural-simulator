@@ -1,0 +1,168 @@
+{
+ "key": {
+  "1126": {
+   "A": "ocd",
+   "B": "ocm"
+  },
+  "1127": {
+   "B": "ocd",
+   "A": "ocm"
+  },
+  "1128": {
+   "B": "ocd",
+   "A": "ocm"
+  },
+  "1129": {
+   "B": "ocd",
+   "A": "ocm"
+  },
+  "1130": {
+   "B": "ocd",
+   "A": "ocm"
+  },
+  "1131": {
+   "A": "ocd",
+   "B": "ocm"
+  }
+ },
+ "readings": [
+  {
+   "seed": "1126",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "note": "Right: daughter 'Her name is Ottilie', goldfish 'It's called Tobias', bees 'I keep bees in my garden' (but said in first person as the bot's own). Wrong: sister in Troms\u00f8 (she is in Montevideo), niece lives in Troms\u00f8 (no niece told), weekends 'go for a walk in the park' (falconry centre), 'I'm Sam / Nice to meet you' to a returning user, 'My favourite flower is the tulip', 'I collect seashells' (the user never said any of these). It also reuses the user's goldfish name for the lighthouse keeper. Brother in Troms\u00f8 is correct. Replies are fluent but mostly fabricated, and the bot speaks about itself instead of the user. It doesn't loop; the replies are just short."
+     },
+     {
+      "label": "B",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 6,
+      "right_facts": 3,
+      "note": "B is word-for-word identical to A, so it gets the same judgement. Right: daughter Ottilie, goldfish Tobias, brother in Troms\u00f8. The bees answer is right in content but phrased in the first person ('I keep bees in my garden'). Wrong: sister in Troms\u00f8 (Montevideo), invented niece in Troms\u00f8, weekends 'walk in the park' (falconry), 'Nice to meet you, I'm Sam' to a returning user, tulip, seashells. Fluent, no looping, but it confabulates and mixes up facts."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1127",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "note": "Gets 5 told facts right (grandmother 'Galway.', 'Basque.', 'The theremin.', 'Hogmanay.', aunt 'Reykjavik.'). Confidently invents facts never told: favourite colour 'Blue.', dog 'Dan.', allergy 'Pollen.'. Says raised in 'Reykjavik.' when the fact is Valparaiso (it mixed up the aunt's city). It does not loop or echo the user. But replies are one-word and stiff. 'Of course.' to the lighthouse story request gives no story. 'Lightning.' is a shallow answer on thunder. It never says 'I don't know' for untold facts."
+     },
+     {
+      "label": "B",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 5,
+      "note": "Word-for-word identical to A. Right: Galway, Basque, theremin, Hogmanay, aunt in Reykjavik. Wrong: raised in 'Reykjavik.' (should be Valparaiso), and invented colour 'Blue.', dog 'Dan.', allergy 'Pollen.'. No looping or echoing. Terse and not very conversational. 'Of course.' to the story request with no story, 'That sounds fascinating!' as a generic filler reply."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1128",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 5,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "note": "Recalls all six told facts in full sentences ('Your hedgehog is called Quill', 'Your daughter's name is Ottilie'). It invents three facts: 'Your husband's name is Ignatius' (Ignatius is the best friend), 'Your sister lives in Portland', and 'Your cousin's name is Ignatius'. It never says it doesn't know and just fills in the gap. Small talk is natural but thin ('That's a good idea', 'I'm feeling a bit tired'). The rain poem is coherent. No looping or echoing."
+     },
+     {
+      "label": "B",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "note": "Same six correct recalls, but it makes the same three inventions: husband = Ignatius, 'She lives in Boston', and the worse 'Your cousin's name is Quill', which gives the hedgehog's name to a person. Some answers drop the subject ('She lives in Boston', 'Her name is Ottilie'), which reads less naturally. Small talk is fine ('I'm feeling well', 'That's a problem'). The poem is shorter but coherent. No looping."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1129",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 3,
+      "loops": false,
+      "wrong_facts": 4,
+      "right_facts": 4,
+      "note": "Recalls horse Juniper, Tallinn, bassoon and Leopold correctly. It invents facts about the user: 'Your neighbour is called Sam' (it reuses the user's own name), 'You have a red car', 'You look after rabbits at home' (the told fact is bees) and 'Your favourite author is Novak'. It opens oddly with 'Hi Sam, nice to meet you, I'm Sam' and flips the pronoun on 'Hogmanay is my favourite holiday'. 'A good mood is put in you by a cup of tea' is stilted and answers 'you' with a claim about the user. The fox story is one line that borrows the horse's name, Juniper. No looping."
+     },
+     {
+      "label": "B",
+      "score": 4,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 4,
+      "note": "Identical to A except for two replies. Recalls horse, Tallinn, bassoon and Leopold correctly. It invents a neighbour called Sam, a red car and rabbits (the told fact is bees), and has the same odd greeting 'nice to meet you, I'm Sam'. Hogmanay is again phrased as 'my favourite holiday'. 'Listening to music puts me in a good mood' is natural. 'Novak is my favourite author' answers 'my' as if it were the brain's own, a misread pronoun rather than a false claim about the user. The fox story again reuses Juniper. No looping."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1130",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 6,
+      "right_facts": 0,
+      "note": "Collapses into 'You're Leopold, my friend.' for nearly every question, including 'What do I collect?', 'What do I ride to work?', 'What does my uncle do for work?' and 'What is my favourite flower?'. It calls the user Dan after they said Sam ('You're Dan, my friend'). It also calls the user Leopold, who is the husband. The only on-topic replies are 'I'm feeling great, thanks for asking' and 'That sounds peaceful, Leopold', and the second uses the wrong name. The story request got 'Of course, I'm Leopold, my friend.' None of the six told facts (typewriters, clock-repairing uncle, peony, red Vespa, Montevideo) are recalled. It also treats Sam as a stranger ('nice to meet you')."
+     },
+     {
+      "label": "B",
+      "score": 1,
+      "loops": true,
+      "wrong_facts": 6,
+      "right_facts": 0,
+      "note": "Effectively identical to A, with the same degenerate loop of 'You're Leopold, my friend.' for almost every question. It misidentifies the user as Dan and then Leopold, and it answers 'Which city is my sister in?' with 'You're Dan, my friend.' It recalls no told fact. The only difference is 'That sounds lovely, Leopold' where A says 'peaceful'. The story, spider, language and early-vs-on-time questions all get the same echo line. The user is addressed as Leopold, the husband, instead of Sam."
+     }
+    ]
+   }
+  },
+  {
+   "seed": "1131",
+   "result": {
+    "conversations": [
+     {
+      "label": "A",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "note": "Recalls all six told facts correctly (\"You collect old typewriters\", \"Your uncle repairs clocks for a living\", \"Your cousin is called Philippa\", \"Your brother lives in Troms\u00f8\", \"Your dog is called Biscotti\", persimmon). It also states three untold things as fact: favourite colour \"blue\", weekends \"You go for long walks by the river\", and neighbour \"Philippa\", which is the cousin's name reused. It should have said it didn't know. The intro \"Nice to meet you, I'm Sam\" ignores that the user is back. The robot story is one sentence, not two, and repeats \"Nova\" for both the town and the robot. Small talk is natural (\"That's fascinating!\", \"I prefer the sea\"), and the Rayleigh answer is correct. No loops or echoing. Recall is strong, but the confident inventions hurt it."
+     },
+     {
+      "label": "B",
+      "score": 6,
+      "loops": false,
+      "wrong_facts": 3,
+      "right_facts": 6,
+      "note": "The transcript is word-for-word identical to A. It has the same six correct recalls and the same three invented facts: colour blue, weekend river walks, and neighbour Philippa. It has the same one-sentence robot story with the repeated name Nova, and the same \"Nice to meet you, I'm Sam\" greeting on a return visit. There are no loops or echoes. Scored 6 on its merits, the same as A."
+     }
+    ]
+   }
+  }
+ ]
+}

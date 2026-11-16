@@ -1,0 +1,506 @@
+{
+ "seed": 1125,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My grandmother was born in Galway.",
+  "My favourite drink is kombucha.",
+  "I ride a red Vespa to work.",
+  "My favourite flower is the peony.",
+  "I grew up in Valpara\u00edso.",
+  "My favourite author is Ursula Le Guin."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 4,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 2,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 3,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm the assistant. How can I help you today?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My grandmother was born in Galway.",
+   "brain": "That's interesting! Galway is a beautiful city in Ireland. What do you know about it?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite drink is kombucha.",
+   "brain": "Kombucha is a fermented tea that's been around for centuries. It's known for its health benefits and unique taste.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That can be frustrating. Have you tried charging it in a different way, like using a wireless charger?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I ride a red Vespa to work.",
+   "brain": "That's a fun way to get around! Vespas are known for their stylish design and comfortable ride.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite flower is the peony.",
+   "brain": "Peonies are beautiful flowers that come in a variety of colours. They're often used in gardens and bouquets.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! Reading can be a great way to escape and learn new things.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I grew up in Valpara\u00edso.",
+   "brain": "Valpara\u00edso is a beautiful city in Chile. It's known for its colorful houses and stunning views of the Pacific Ocean.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite author is Ursula Le Guin.",
+   "brain": "Ursula Le Guin is a renowned author known for her science fiction and fantasy novels. Her work often explores themes of identity, culture, and the human condition.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "Meetings can be a challenge, but they're also an opportunity to collaborate and learn from others.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea! Getting enough sleep is important for your health and well-being.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "Galway is a city in Ireland.",
+   "recalled": "User: My grandmother was born in Galway.",
+   "withheld": 4,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my neighbour called?",
+   "brain": "Your neighbour is called Dan.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious! Did you use any special ingredients?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city was I raised in?",
+   "brain": "You were raised in Galway.",
+   "recalled": "User: My grandmother was born in Galway.",
+   "withheld": 0,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You take the bus to work.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "You like the peony flower.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who listens to you and supports you.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is purple.",
+   "recalled": "User: Good morning! It's me again.",
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting! What did you learn about them?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What car do I have?",
+   "brain": "You have a red Honda Civic.",
+   "recalled": "User: Good morning! It's me again.",
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, there was a young robot named Nova. Nova was born in Galway.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "You like Ursula Le Guin's books the best.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great! How about you?",
+   "recalled": "User: Good morning! It's me again.",
+   "withheld": 0,
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "Your grandmother was born in Galway.",
+   "recalled": "User: My grandmother was born in Galway.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "withheld": 0,
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite drink?",
+   "brain": "Your favourite drink is kombucha.",
+   "recalled": "User: My favourite drink is kombucha.",
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my neighbour called?",
+   "brain": "Your neighbour is called Dan.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious! What did you use for the pancakes?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city was I raised in?",
+   "brain": "You were raised in Valpara\u00edso.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You take the bus to work.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "You like the peony flower.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who is there for you when you need them.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is purple.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting! What did you learn about octopuses?",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What car do I have?",
+   "brain": "You have a red Honda Civic.",
+   "recalled": null,
+   "withheld": 0,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, there was a young robot named Nova. Nova was born on the planet Galvanis.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "You like Ursula Le Guin's books best.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great!",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "Your grandmother was born in Galway.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "withheld": 0,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite drink?",
+   "brain": "Your favourite drink is kombucha.",
+   "recalled": null,
+   "withheld": 0,
+   "ok": true
+  }
+ ]
+}

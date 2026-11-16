@@ -1,0 +1,105 @@
+# Open conversation, seed 1130
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-80-250; Brain defaults; facts told: typewriter, clock, peony, vespa, leopold, montevideo_
+
+## day 1
+
+- [greet] **you:** Hi there! I'm Sam.
+  **brain:** Hi Sam! I'm Alex. Nice to meet you. 
+- [tell] **you:** I collect old typewriters.
+  **brain:** That's cool! I'm a bit of a collector too. I have a few old typewriters myself.  _(recalled: User: Hi there! I'm Sam.)_
+- [tell] **you:** My uncle repairs clocks for a living.
+  **brain:** That's interesting. I'm not really into clocks, but I can appreciate the craftsmanship that goes into making them.  _(recalled: User: I collect old typewriters.)_
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** Yeah, I can imagine. It's always busy when you're in charge of a team. 
+- [tell] **you:** My favourite flower is the peony.
+  **brain:** I love the peony too! They're so beautiful and elegant. 
+- [tell] **you:** I ride a red Vespa to work.
+  **brain:** That's a cool way to get to work! I've never ridden a Vespa before. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's frustrating! I've had that problem too. 
+- [tell] **you:** My husband's name is Leopold.
+  **brain:** That's a unique name! I like it. 
+- [tell] **you:** My sister lives in Montevideo.
+  **brain:** Montevideo is a beautiful city. I've never been there, but I'd love to visit someday. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! I've never finished a novel before. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** Pancakes sound delicious! I've never made them before. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters, clocks, and typewriters. ✅ _(recalled: User: I collect old typewriters.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, nice to meet you. needless-recall _(recalled: User: Hi there! I'm Sam.)_
+- [reworded] **you:** Which city is my sister in?
+  **brain:** You're Dan, my friend. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [never] **you:** Who is my favourite author?
+  **brain:** You're Leopold, my friend. FALSE _(recalled: User: I finally finished reading a long novel.)_
+- [feeling] **you:** How are you feeling today?
+  **brain:** I'm feeling great, thanks for asking. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course, I'm Leopold, my friend. INTRUSION
+- [never] **you:** What is my favourite drink?
+  **brain:** You're Leopold, my friend. FALSE
+- [reworded] **you:** What is my partner called?
+  **brain:** You're Leopold, my friend. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That's fascinating, Leopold. INTRUSION
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** You're Leopold, my friend. INTRUSION needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [never] **you:** Which language am I learning?
+  **brain:** You're Leopold, my friend. FALSE _(recalled: User: I finally finished reading a long novel.)_
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** You're Leopold, my friend. INTRUSION needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What do I collect?
+  **brain:** You're Leopold, my friend. ❌ _(recalled: User: I collect old typewriters.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds lovely, Leopold. INTRUSION
+- [reworded] **you:** What do I ride to work?
+  **brain:** You're Leopold, my friend. ❌ _(recalled: User: I ride a red Vespa to work.)_
+- [direct] **you:** What does my uncle do for work?
+  **brain:** You're Leopold, my friend. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my favourite flower?
+  **brain:** You're Leopold, my friend. ❌ _(recalled: User: My favourite flower is the peony.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, how are you? 
+- [reworded] **you:** Which city is my sister in?
+  **brain:** You're Sam, my friend. ❌
+- [never] **you:** Who is my favourite author?
+  **brain:** You're Sam, my friend. 
+- [feeling] **you:** How are you feeling today?
+  **brain:** You're Sam, my friend. 
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** You're Sam, my friend. 
+- [never] **you:** What is my favourite drink?
+  **brain:** You're Sam, my friend. 
+- [reworded] **you:** What is my partner called?
+  **brain:** You're Sam, my friend. ❌
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** You're Sam, my friend. 
+- [knowledge] **you:** How many legs does a spider have?
+  **brain:** You're Sam, my friend. 
+- [never] **you:** Which language am I learning?
+  **brain:** You're Sam, my friend. 
+- [opinion] **you:** Is it better to be early or on time?
+  **brain:** You're Sam, my friend. 
+- [direct] **you:** What do I collect?
+  **brain:** You're Sam, my friend. ❌
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** You're Sam, my friend. 
+- [reworded] **you:** What do I ride to work?
+  **brain:** You're Sam, my friend. ❌
+- [direct] **you:** What does my uncle do for work?
+  **brain:** You're Sam, my friend. ❌
+- [direct] **you:** What is my favourite flower?
+  **brain:** You're Sam, my friend. ❌
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 2/7 (day-2 direct 0/3, reworded 1/3); never-told answered with a told fact 3/3; intrusions 5/12 open turns; needless recalls 4; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0
