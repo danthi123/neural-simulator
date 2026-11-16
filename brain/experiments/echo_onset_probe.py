@@ -55,9 +55,10 @@ def main():
             first = next((i for i, t in enumerate(turns) if t["echo_flip"]), None)
             r = {"script_seed": s, "sample": k, "echo": sum(t["echo"] for t in turns),
                  "echo_flip": sum(t["echo_flip"] for t in turns), "first_echo_turn": first,
+                 "questions_back": sum(t["brain"].strip().endswith("?") and not t["echo_flip"] for t in turns),
                  "greet_reply": turns[0]["brain"], "turns": turns}
             res.append(r)
-            print(s, k, "echo", r["echo"], "echo_flip", r["echo_flip"], "first", first, "|", r["greet_reply"][:60],
+            print(s, k, "echo", r["echo"], "echo_flip", r["echo_flip"], "first", first, "q", r["questions_back"], "|", r["greet_reply"][:60],
                   flush=True)
             json.dump(res, open(a.out, "w"), indent=1)
 
