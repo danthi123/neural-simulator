@@ -103,6 +103,21 @@ pull)
   if grep -q "all done" "$OUT/run.log" || [ "$S" = stopped ]; then exec bash "$0" terminate; fi
   echo "[aws-brain] jobs still running; it will stop itself. Pull again later."
   ;;
+resume)
+  # A batch the dead-man stopped mid-job: start it, re-arm the dead-man, rerun (run.sh skips jobs with a result).
+  [ -f "$STATE" ] || { echo "no brain batch recorded"; exit 1; }
+  IID=$(get instance); S=$(state_of "$IID")
+  [ "$S" = stopped ] || { echo "⛔ $IID is $S, not stopped; wait for it to stop, or pull"; exit 1; }
+  bash "$ROOT/tools/aws_budget.sh" check "$(aws ec2 describe-instances --region "$REGION" --instance-ids "$IID" --query 'Reservations[].Instances[].InstanceType' --output text)" \
+    || { echo "⛔ refused by tools/aws_budget.sh (daily cap)"; exit 1; }
+  aws ec2 start-instances --region "$REGION" --instance-ids "$IID" >/dev/null \
+    || { echo "⛔ could not start $IID (capacity?); retry later"; exit 1; }
+  aws ec2 wait instance-status-ok --region "$REGION" --instance-ids "$IID"
+  R=(ubuntu@"$(ip_of "$IID")")
+  "${SSH[@]}" "${R[@]}" "sudo shutdown -h +$MAX_MIN" || { echo "⛔ could not arm the dead-man; stopping"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
+  "${SSH[@]}" "${R[@]}" "nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h now' >/dev/null 2>&1 &"
+  echo "[aws-brain] resumed $IID (dead-man ${MAX_MIN} min); later: bash tools/aws_brain_batch.sh pull"
+  ;;
 terminate)
   [ -f "$STATE" ] || { echo "no brain batch recorded"; exit 1; }
   IID=$(get instance); SG=$(get sg)
@@ -111,5 +126,5 @@ terminate)
   aws ec2 delete-security-group --region "$REGION" --group-id "$SG"
   mv "$STATE" "$STATE.done-$(date +%s)"; echo "[aws-brain] terminated $IID, deleted $SG"
   ;;
-*) echo "usage: aws_brain_batch.sh {launch <jobs.txt> [type]|status|sync|pull|terminate}"; exit 2 ;;
+*) echo "usage: aws_brain_batch.sh {launch <jobs.txt> [type]|status|sync|pull|resume|terminate}"; exit 2 ;;
 esac
