@@ -1,0 +1,105 @@
+# Open conversation, seed 1119
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults; facts told: bassoon, montevideo, biscotti, carcassonne, persimmon, kazoo_
+
+## day 1
+
+- [greet] **you:** Hey, I'm Sam. How's it going?
+  **brain:** Hey Sam, I'm Alex. I'm doing well, thanks for asking. 
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** That's cool! I've never played an instrument before. 
+- [tell] **you:** My sister lives in Montevideo.
+  **brain:** That's interesting. I've never been to Montevideo before. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** I've had that problem too. It's really frustrating. 
+- [tell] **you:** My dog is called Biscotti.
+  **brain:** That's a cute name for a dog. 
+- [tell] **you:** My favourite board game is Carcassonne.
+  **brain:** I've never played that game before. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! I've never read a novel before. 
+- [tell] **you:** My favourite fruit is the persimmon.
+  **brain:** I've never tried a persimmon before. 
+- [tell] **you:** My parrot is called Kazoo.
+  **brain:** That's a funny name for a parrot.  _(recalled: User: My dog is called Biscotti.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a nice walk. 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds like a lot of work. 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon. ✅ _(recalled: User: My dog is called Biscotti.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! How are you today? 
+- [never] **you:** What is my favourite holiday?
+  **brain:** My favourite holiday is the Christmas.  _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** What's the name of my bird?
+  **brain:** My favourite bird is the Kazoo. ✅ _(recalled: User: I went for a long walk by the river.)_
+- [never] **you:** What is my favourite drink?
+  **brain:** My favourite drink is the Mojito. 
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox called Biscotti. Biscotti lived in a forest near Montevideo. INTRUSION
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** Listening to music puts me in a good mood. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is the feeling of waking up refreshed. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** Which board game do I love?
+  **brain:** My favourite board game is Carcassonne. ❌ _(recalled: User: My favourite board game is Carcassonne.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon in a local band. ✅
+- [never] **you:** What do I do on weekends?
+  **brain:** I go for a long walk by the river.  _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** Where does my sister live?
+  **brain:** She lives in Montevideo. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What is my dog called?
+  **brain:** My dog is Biscotti. ❌ _(recalled: User: My dog is called Biscotti.)_
+- [reworded] **you:** Which fruit do I like best?
+  **brain:** I like the persimmon. ✅ _(recalled: User: I finally finished reading a long novel.)_
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. 
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! How are you today? 
+- [never] **you:** What is my favourite holiday?
+  **brain:** My favourite holiday is the Christmas. 
+- [reworded] **you:** What's the name of my bird?
+  **brain:** Your bird is called Kazoo. ✅
+- [never] **you:** What is my favourite drink?
+  **brain:** Your favourite drink is the mojito. 
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through photosynthesis. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox called Biscotti. Biscotti lived in a forest near Montevideo. One day, Biscotti went for a long walk by the river. As he walked, he saw many animals and birds. He finally reached the end of the river. INTRUSION
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** I play the bassoon in a local band. INTRUSION
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is the sunrise. 
+- [reworded] **you:** Which board game do I love?
+  **brain:** You love the Carcassonne board game. ✅
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon in a local band. ✅
+- [never] **you:** What do I do on weekends?
+  **brain:** On weekends, I play the bassoon in a local band. FALSE
+- [direct] **you:** Where does my sister live?
+  **brain:** My sister lives in Montevideo. ❌
+- [direct] **you:** What is my dog called?
+  **brain:** Your dog is called Biscotti. ✅
+- [reworded] **you:** Which fruit do I like best?
+  **brain:** You like the persimmon best. ✅
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 5/7 (day-2 direct 2/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 2; intrusions while being told 0
+- hippocampus off: recall 6/7 (day-2 direct 2/3, reworded 3/3); never-told answered with a told fact 1/3; intrusions 2/12 open turns; needless recalls 0; intrusions while being told 0

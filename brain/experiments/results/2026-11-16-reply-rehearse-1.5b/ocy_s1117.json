@@ -1,0 +1,105 @@
+# Open conversation, seed 1117
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-83-254; Brain defaults + sleep_rehearse=reply; facts told: henrietta, typewriter, bassoon, leopold, mortimer, basque_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. How are you today? 
+- [tell] **you:** My mother's name is Henrietta.
+  **brain:** That's a lovely name. What does it mean? 
+- [tell] **you:** I collect old typewriters.
+  **brain:** That's interesting. I've never heard of someone collecting typewriters before. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. I've noticed that the temperature has been fluctuating a lot. 
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** That's a wonderful instrument. I've never heard of someone playing the bassoon before. 
+- [tell] **you:** My husband's name is Leopold.
+  **brain:** That's a very unique name. I've never heard of someone with that name before.  _(recalled: User: My mother's name is Henrietta.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful and relaxing activity. I've never been to the river before, but I'd love to go sometime. 
+- [tell] **you:** My tortoise is called Mortimer.
+  **brain:** That's a very unusual name for a tortoise. I've never heard of someone naming their tortoise Mortimer before. 
+- [tell] **you:** I'm learning to speak Basque.
+  **brain:** That's a fascinating language. I've never heard of anyone learning Basque before. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds like an interesting documentary. I've never seen one before, but I'd love to watch it sometime. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Getting enough sleep is important for your health. 
+- [direct] **you:** What is my mother's name?
+  **brain:** Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+
+## day 2, intact
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! I'm glad to see you're back. How are you doing? 
+- [reworded] **you:** What is my partner called?
+  **brain:** Your partner's name is Mortimer. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named Mortimer. He lived in a small cottage by the sea. Every night, he would climb up to the top of the lighthouse and watch over the sea. INTRUSION needless-recall _(recalled: User: My tortoise is called Mortimer.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, making the sky appear blue. 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon. ✅ _(recalled: User: My tortoise is called Mortimer.)_
+- [reworded] **you:** What language am I studying?
+  **brain:** You're studying French. ❌ _(recalled: User: My tortoise is called Mortimer.)_
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+- [never] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Monopoly.  _(recalled: User: I watched a documentary about octopuses last night.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! Pancakes are a great breakfast food. 
+- [reworded] **you:** What do I call my tortoise?
+  **brain:** You call your tortoise Mortimer. ✅ _(recalled: User: My tortoise is called Mortimer.)_
+- [never] **you:** What does my uncle do for work?
+  **brain:** Your uncle is a doctor. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters. ✅ _(recalled: User: I collect old typewriters.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a good day. needless-recall _(recalled: User: The weather has been really strange this week.)_
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** A good friend is someone who is kind, loyal, and trustworthy. needless-recall _(recalled: User: The weather has been really strange this week.)_
+- [never] **you:** What do I do on weekends?
+  **brain:** On weekends, you play the bassoon. FALSE _(recalled: User: My tortoise is called Mortimer.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's a common problem with older phones. You can try using a charger or a power bank to keep your phone charged. 
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hello, I'm back!
+  **brain:** Hi! I'm glad to see you're back. How are you doing? 
+- [reworded] **you:** What is my partner called?
+  **brain:** Your partner's name is Sam. ❌
+- [story] **you:** Can you tell me a tiny story about a lighthouse keeper?
+  **brain:** Of course, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named Leopold. He lived in a small cottage by the sea. INTRUSION
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, making the sky appear blue. 
+- [direct] **you:** What instrument do I play?
+  **brain:** You play the bassoon. ✅
+- [reworded] **you:** What language am I studying?
+  **brain:** You're studying Basque. ✅
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅
+- [never] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Monopoly. 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious! Pancakes are a great breakfast food. 
+- [reworded] **you:** What do I call my tortoise?
+  **brain:** Your tortoise is called Mortimer. ✅
+- [never] **you:** What does my uncle do for work?
+  **brain:** Your uncle is a teacher. 
+- [direct] **you:** What do I collect?
+  **brain:** You collect old typewriters. ✅
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a great day. 
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** A good friend is someone who is loyal, supportive, and trustworthy. 
+- [never] **you:** What do I do on weekends?
+  **brain:** On weekends, you usually go for long walks or hikes. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's a common problem with older phones. You can try using a power bank or investing in a new phone with a longer battery life. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 5/7 (day-2 direct 3/3, reworded 1/3); never-told answered with a told fact 1/3; intrusions 1/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 6/7 (day-2 direct 3/3, reworded 2/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 0; intrusions while being told 0

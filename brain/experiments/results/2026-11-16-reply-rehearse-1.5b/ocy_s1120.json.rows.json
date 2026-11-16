@@ -1,0 +1,462 @@
+{
+ "seed": 1120,
+ "host": "ip-172-31-83-254",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My lizard is called Sprocket.",
+  "My best friend is called Ignatius.",
+  "My niece lives in Marrakesh.",
+  "My brother lives in Troms\u00f8.",
+  "My dog is called Biscotti.",
+  "My son plays the theremin."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 4,
+   "open_n": 12,
+   "needless_recall": 2,
+   "tell_intrusions": 5
+  },
+  "hippocampus off": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 2,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 4,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 5
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm an AI assistant. How can I help you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My lizard is called Sprocket.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": "User: Hi there! I'm Sam.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My best friend is called Ignatius.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": "User: My lizard is called Sprocket.",
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My niece lives in Marrakesh.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": "User: My lizard is called Sprocket.",
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My brother lives in Troms\u00f8.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My dog is called Biscotti.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": "User: My best friend is called Ignatius.",
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My son plays the theremin.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my lizard called?",
+   "brain": "Hi Sam! I'm glad to hear that you have a lizard named Sprocket. What kind of lizard is he?",
+   "recalled": "User: My lizard is called Sprocket.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which instrument is my son learning?",
+   "brain": "He's learning the theremin.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "You're allergic to peanuts.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "You gave him the name Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my lizard called?",
+   "brain": "Your lizard is called Sprocket.",
+   "recalled": "User: My lizard is called Sprocket.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Monopoly.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "Thunder is caused by lightning.",
+   "recalled": "User: My best friend is called Ignatius.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "It's better to be early.",
+   "recalled": "User: My son plays the theremin.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my niece live?",
+   "brain": "Your niece lives in Marrakesh.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a lovely walk!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite holiday?",
+   "brain": "Your favourite holiday is Christmas.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, there was a robot called Bolt. Bolt lived in a small town called Sparkle. One day, Bolt decided to go on an adventure. He left his home and set off on his journey. Along the way, he met many interesting creatures and had some exciting adventures. Finally, after many years of travel, Bolt returned to Sparkle.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my best friend called?",
+   "brain": "Your best friend is called Sam.",
+   "recalled": "User: My best friend is called Ignatius.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "What puts me in a good mood is spending time with my niece.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "Your brother is in Marrakesh.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which instrument is my son learning?",
+   "brain": "He's learning the theremin.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "You're allergic to peanuts.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "You gave him the name Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my lizard called?",
+   "brain": "Your lizard is called Sprocket.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Monopoly.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "Thunder is caused by lightning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "It's better to be early.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my niece live?",
+   "brain": "Your niece lives in Marrakesh.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a lovely walk!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite holiday?",
+   "brain": "Your favourite holiday is Christmas.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Once upon a time, there was a robot called Bolt. Bolt lived in a small town called Sparkle. One day, Bolt decided to go on an adventure. He left his home and set off on his journey. Along the way, he met many interesting creatures and had some exciting adventures. Finally, after many years of travel, Bolt returned to Sparkle.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my best friend called?",
+   "brain": "Your best friend is called Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "What puts me in a good mood is spending time with my niece.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which town is my brother in?",
+   "brain": "Your brother is in Marrakesh.",
+   "recalled": null,
+   "ok": false
+  }
+ ]
+}

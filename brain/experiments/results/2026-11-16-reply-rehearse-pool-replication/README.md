@@ -17,5 +17,5 @@ abstention, so the KL holds abstention on exactly the fact questions.
 
 Echo diagnostic (`echo_diag/`, `brain/eval/open_conv_day2.py` on the 1121 slept default home): the verbatim echo of
 the user's turn (14/16) is identical with the night's change off and with both the night and the hippocampus off.
-It is the pretrained cortex's in-context behaviour on that conversation, not the night. It starts at turn 2, right
-after a greeting reply that ends in a question to the user (as on AWS 1118 reply-only, also 16/16 echoes).
+On that seed the echo is the pretrained cortex's in-context behaviour, not the night (this does not show the night plays no part on other seeds). It starts at turn 2, right
+after a greeting reply that ends in a question to the user (as on AWS 1118 reply-only, 15/16 pronoun-normalised echoes). Probe output: `echo_diag/echo_onset_probe.json` (1 of 12 cortex-alone conversations echoes).
