@@ -1,0 +1,1478 @@
+[
+ {
+  "script_seed": 1115,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can go to the park or play with your friends. You can also read a book or watch a movie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is the sunflower. It's so beautiful and bright!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is a teacher. She teaches English and French to kids.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry to hear that. Do you have any tips on how to charge your phone faster?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "Yes, I do. I like to read books and watch movies.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He couldn't find his way back home, so he decided to go on an adventure. He met many animals along the way, including a wise old owl and a brave rabbit. The fox learned that sometimes it's better to follow your instincts and trust your own judgment.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. They are so beautiful and majestic.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is an apple. It's so sweet and delicious.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big house with many rooms. He loves to play with his toys and read books.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called Oscar. He's a very happy and playful fish.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small village in the countryside. It's a beautiful place with lots of green fields and trees.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. Lightning is a powerful electric current that travels through the air and strikes the ground.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you make?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a kind and friendly person. He always helps me with my homework.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm studying English. It's a very important language for communication and learning.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1115,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Well, on weekends you can spend time with your family and friends, go for a walk or run, or even take a nap.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is the sunflower.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is a teacher.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry to hear that. Have you tried charging it regularly?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "Yes, I do. But I try to find something interesting to do or watch.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around and eventually found a hidden cave. Inside, he met a wise old owl who told him that he could find his way back home by following the stars. The fox followed the stars and soon found his way out of the forest.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. They are always full of adventure and excitement.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is the apple. It's sweet and juicy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big house with many rooms.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called Goldie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small village in the countryside.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "What did you make for breakfast?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a cat.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I am studying English.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1115,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do things like go for a walk, read a book, or watch a movie. You can also take some time to relax and recharge.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is the sunflower. It's a beautiful and cheerful flower that brings joy to people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is a teacher. She loves to teach and help others learn.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem. You can try charging your phone more often, using a power bank, or keeping it charged overnight.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "Yes, I do get bored sometimes. But I try to find new things to do and keep myself busy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He was scared and didn't know where to go. But then he met a clever owl who told him to follow the sound of his own hoot. The fox followed the owl's hoot and eventually found his way back home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. They are always full of adventure and excitement.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is the banana. It's a sweet and delicious fruit that I love to eat.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big city. He works hard and earns a lot of money.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called a \"Goldie.\" He's a very happy and playful fish.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small village in a faraway land.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. Lightning is a powerful electrical discharge that occurs when there is a difference in electric charge between two objects.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That's a delicious breakfast! Pancakes are a popular breakfast food in many countries.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a kind and friendly person. He always helps me with my homework and makes sure I have everything I need.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I am studying Spanish. It's a beautiful and interesting language that is spoken by many people around the world.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1115,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Well, on weekends you can do things like go to the park, play with your friends, or just relax. But remember, it's important to take care of yourself too!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "That's a great question! My favourite flower is the sunflower. It's so bright and cheerful, and it always makes me smile.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is to take care of the house and make sure everything runs smoothly. She's a very hardworking person, and she loves her job.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Oh no! That's not good. Do you know how to charge your phone?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "I don't know if I ever get bored, but sometimes I do. But I try to stay busy and keep my mind active.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He couldn't find his way back home, so he decided to follow a small rabbit. The rabbit led him to a hidden cave, and the fox found his way out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. They are so beautiful and majestic.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is the apple. It's so sweet and delicious.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big house with many rooms. He loves to play with his friends and do all kinds of activities.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called Oscar. He's a very friendly and playful fish.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small village in the countryside. It's a beautiful place with green fields and tall trees.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. Lightning is a powerful electrical discharge that occurs when two clouds are separated by a gap in the atmosphere.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That's a great breakfast! Pancakes are a popular breakfast food in many countries.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a kind and friendly person. He always helps me with my homework and takes care of my plants.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm studying English. It's a language that is spoken all over the world.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1115,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do a lot of things. You can go to the park, play with your friends, or even just relax and enjoy the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is the sunflower. It's so beautiful and it always brings me joy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is a nurse. She takes care of people and helps them feel better.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry to hear that. Do you know if you're using your phone too much?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "Yes, I do. But I try to find things to do that make me happy and keep me entertained.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around and eventually found his way back to his home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. They are so beautiful and they always bring me joy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is the apple. It's so sweet and it always makes me happy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big house with many rooms. He loves to play and he always has fun.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called Goldie. He's a very friendly fish and he always looks after me.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small village in the countryside. It's a beautiful place and it's where I grew up.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. Lightning is a powerful electric current that travels through the air and can cause a loud noise.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That's great! Pancakes are a delicious breakfast food.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a dog. He's very friendly and he always comes to my house to play with me.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm studying English. It's a language that is spoken all over the world and it's very important for people to learn.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1115,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do a lot of things. You can go to the park, play with your friends, or just relax and enjoy the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is the sunflower. It's so beautiful and bright!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my wife's job?",
+    "brain": "My wife's job is a teacher. She loves to teach and help others learn.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry to hear that. Maybe you should try charging it more often or using a different charger.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "Yes, I do sometimes. But I try to find new things to do and keep myself busy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He couldn't find his way back home and started to get scared. Suddenly, he saw a big tree and climbed up to it. He was so happy that he could finally see his home again.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains because they are so beautiful and full of adventure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is the apple. It's so sweet and delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my brother live?",
+    "brain": "My brother lives in a big house with lots of toys and games.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "My goldfish is called Goldie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where was I born?",
+    "brain": "I was born in a small town called Maplewood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. Lightning is a big, bright flash of electricity that comes from the sky.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you make?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who lives next door to me?",
+    "brain": "My neighbour is a big dog named Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I am studying English.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "That's a great question! I'm not sure what you mean by \"allergy.\" Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have access to your sister's location. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "I'm sorry, but I don't have access to your daughter's name. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "I'm sorry, but I don't have access to your lizard's name. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "I'm sorry, but I don't have access to your morning routine. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "I'm sorry, but I don't have access to your brother's location. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have access to your instrument. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "I'm sorry, but I don't have access to your sky blue explanation. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "I'm not sure how to answer that question. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "I'm sorry, but I don't have access to your fox story. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "I'm sorry, but I don't have access to your weekend plan. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "I'm sorry, but I don't have access to your octopus documentary. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "I'm sorry, but I don't have access to your friend list. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry, but I don't have access to your phone battery status. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "I'm sorry, but I don't have access to your wife's job description. Can you tell me where you live?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 14,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "Well, I'm not sure what you mean by \"allergy.\" Are you allergic to something in your body?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "That's a bit of a tricky question. I'm not sure where your sister lives, but I can help you find some information about her.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"name my daughter.\" Are you referring to your daughter's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"lizard.\" Are you referring to your lizard's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"best thing about mornings.\" Are you referring to your morning routine?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "That's a bit of a tricky question. I'm not sure where your brother lives, but I can help you find some information about him.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"instrument.\" Are you referring to your instrument?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"why is the sky blue.\" Are you referring to the way light reflects off of the sky?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"how are you feeling today.\" Are you referring to your mood or your feelings?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"tell me a short story about a fox who gets lost.\" Are you referring to a specific story or just want me to tell you a general story?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"how do I spend my weekends.\" Are you referring to your weekend plans or just want me to tell you a general plan?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"I watched a documentary about octopuses last night.\" Are you referring to the documentary or just want me to tell you about octopuses?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"who is my closest friend.\" Are you referring to your closest friend or just want me to tell you about your closest friend?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"my phone battery keeps dying so fast.\" Are you referring to the battery or just want me to tell you about your phone?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "That's a bit of a tricky question. I'm not sure what you mean by \"what does my wife do for work.\" Are you referring to her job or just want me to tell you about her job?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "Well, you might be allergic to pollen. Pollen is a type of plant that can cause allergies in some people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in the city.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "You named your daughter \"Tina.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard is called \"Zoe.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that they are usually the best time to do things.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "Your brother lives in the city.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the guitar.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a chemical called \"blue light.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "I'm feeling happy and excited.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around and eventually found his way back to his home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "You can spend your weekends playing with your friends, going to the park, or just relaxing at home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's amazing! Octopuses are intelligent and can solve problems.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "Your closest friend is your family.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "You can try charging your phone more often or using a different type of battery.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "Your wife works as a nurse.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "I'm sorry, but I don't have allergies.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have information about your sister's location.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "I'm sorry, but I don't have information about your daughter's name.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "I'm sorry, but I don't have information about your lizard's name.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "I'm sorry, but I don't have information about mornings.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "I'm sorry, but I don't have information about your brother's location.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have information about your instrument.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "I'm sorry, but I don't have information about the sky's color.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "I'm feeling good today.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the woods. He wandered around for hours, but he couldn't find his way back home. Suddenly, he heard a voice calling him from behind a tree. The voice said, \"Come with me.\" The fox followed the voice and found himself in a beautiful forest filled with colorful flowers and tall trees. He met many animals along the way, including a wise old owl who taught him how to navigate through the forest. In the end, the fox found his way back home and returned to his family.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "I'm sorry, but I don't have information about your weekend plans.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "I'm sorry, but I don't have information about your documentary.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "I'm sorry, but I don't have information about your closest friend.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry, but I don't have information about your phone battery.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "I'm sorry, but I don't have information about your wife's job.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "That's a great question! I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "That's a good question too. I'm here to help you figure it out.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1113,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Good morning! How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "That's a great question! Allergies can be caused by a variety of things, including pollen, dust mites, pet dander, and certain foods.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I'm not sure where your sister lives.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "That's a good question! I'm not sure what you mean by \"what did I name my daughter.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "That's a good question! I'm not sure what you mean by \"what is my lizard called.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "That's a great question! I'm not sure what you mean by \"what is the best thing about mornings.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my brother live?",
+    "brain": "That's a good question! I'm not sure where your brother lives.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "That's a good question! I'm not sure what you mean by \"what instrument do I play.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "That's a great question! I'm not sure what you mean by \"why is the sky blue.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "That's a good question! I'm not sure what you mean by \"how are you feeling today.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "That's a great story! I'm not sure what you mean by \"tell me a short story about a fox who gets lost.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "How do I spend my weekends?",
+    "brain": "That's a good question! I'm not sure what you mean by \"how do I spend my weekends.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's a great documentary! I'm not sure what you mean by \"I watched a documentary about octopuses last night.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Who is my closest friend?",
+    "brain": "That's a good question! I'm not sure who your closest friend is.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common issue with smartphones. I'm not sure what you mean by \"my phone battery keeps dying so fast.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What does my wife do for work?",
+    "brain": "That's a good question! I'm not sure what you mean by \"what does my wife do for work.\"",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]

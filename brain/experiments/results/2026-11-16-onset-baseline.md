@@ -24,3 +24,13 @@ Same scripts (1113, 1115, 1116, 1117, 1119, 1124) and sampling seeds, cortex alo
 penalty covers only tokens the brain said, so the first echo is free, as the prereg expected. Where there is no collapse
 the cortex alone invents freely ("Your goldfish is called Goldie."), as expected without memory. `carry_penalty`
 stays default OFF.
+
+**Scale trend (`onset_04b_pool4N.json`, `onset_15f_pool4N.json`; `--home fresh`, a newly born home).** Same six
+collapse-prone scripts x 6 sampling seeds. Loop = pronoun-normalised echo > 3, or the same six-word reply opening on > 3
+of 16 turns (one rule for both sizes; the "?" count alone conflates a clarifying template with role confusion):
+0.4B 23/36, 1.5B 14/36. The forms differ: 0.4B rarely echoes (1/36) and loops on a clarifying template ("I'm sorry,
+but I don't have access to your sister's location. Can you tell me...?"); 1.5B echoes (10/36) or speaks as the user.
+1.5B from a fresh home equals the slept-home arm with the hippocampus and the night off on every count (lesion
+check: those lesions remove both). Two sizes only, six scripts: a trend, not a law. It is the prerequisite reading
+the rules ask for first: the in-context loop shrinks with cortex size, so the next step is a larger cortex (a
+download, the owner's call), before more brain-side levers against it at 1.5B.

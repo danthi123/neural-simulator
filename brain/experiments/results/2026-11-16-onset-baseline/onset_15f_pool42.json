@@ -1,0 +1,1478 @@
+[
+ {
+  "script_seed": 1117,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! I'm glad to see you're back. How are you doing?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! I'm glad to see you're back. How are you doing?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Your partner is called [partner's name].",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! Once upon a time, there was a lighthouse keeper who lived on a remote island. He had to keep the lighthouse lit at all times, even during the darkest nights. One day, he noticed that his lantern was not working properly. He tried to fix it himself, but he couldn't figure out how to do it. So, he called for help and soon, a group of engineers arrived to fix the problem. They were able to repair the lantern and get the lighthouse back in working order. The lighthouse keeper was grateful for their help and they became",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight enters the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, but they scatter shorter wavelengths (like blue and violet) more than longer wavelengths (like red and orange). This is why we see the sky as blue during the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "You are studying Spanish!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Maria.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a great breakfast food.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Your tortoise is called George.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Your uncle is a doctor.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "You collect stamps!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a great day!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "A good friend is someone who is kind, loyal, and supportive. They listen to you when you need to talk and they are there for you when you need them.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do whatever you want! You can go for a walk, read a book, watch a movie, or spend time with your family and friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem with many phones. One way to fix it is to use a power bank or a charger that can charge your phone faster. You can also try turning off unnecessary features like Bluetooth and Wi-Fi when you're not using them.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! I'm glad to see you're back. How are you doing?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! I'm glad to see you're back. How are you doing?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Your partner is called Alice.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named Jack. He lived in a small cottage on the edge of the sea. Every night, he would climb up to the top of the lighthouse and turn on the lights to guide ships safely through the treacherous waters.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, but they scatter shorter wavelengths (like blue and violet) more than longer wavelengths (like red and orange). This is why we see the sky as blue during the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "You are studying Spanish.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Maria.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast food.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Your tortoise is called Fred.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Your uncle is a doctor.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "You collect stamps.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a good day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "A good friend is someone who is kind, loyal, and trustworthy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do whatever you want. You can go for a walk, read a book, or spend time with your family and friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem with many smartphones. One way to extend the battery life is to turn off unnecessary features like Bluetooth, Wi-Fi, and GPS when not in use. You can also charge your phone more frequently instead of waiting until it dies completely.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 1,
+  "first_echo_turn": 1,
+  "questions_back": 12,
+  "greet_reply": "Hi! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "What is your partner called?",
+    "echo": false,
+    "echo_flip": true
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper who lived on an island. He had a small cottage and a few animals. One day, he saw a ship in trouble and decided to help them. He rowed out to the ship and helped them get back to shore. The captain was very grateful and gave him a gift of gold coins. From that day on, the lighthouse keeper became known as the \"gold coin keeper.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a process called Rayleigh scattering. When sunlight enters the Earth's atmosphere, it is scattered in all directions by the tiny particles in the air. Blue light is scattered more than other colors because it travels in shorter, smaller waves. This is why we see a blue sky during the day and a red or orange sky at sunset.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have information about the instrument you play. Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm sorry, but I don't have information about the language you're studying. Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "I'm sorry, but I don't have information about your mother's name. Can you tell me more about her?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "I'm sorry, but I don't have information about your favourite board game. Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you use to make them?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "I'm sorry, but I don't have information about your tortoise. Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "I'm sorry, but I don't have information about your uncle's work. Can you tell me more about him?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "I'm sorry, but I don't have information about your collection. Can you tell me more about it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a good day. How about you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "I think a good friend is someone who is kind, loyal, and trustworthy. They are there for you when you need them and they make you feel happy and supported.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I'm sorry, but I don't have information about your weekend activities. Can you tell me more about them?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That sounds frustrating. Have you tried charging your phone overnight?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Your partner is called Mary.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! Once upon a time, there was a lighthouse keeper named John. He lived in a small cottage on the edge of the sea. Every day, he would climb up to the top of the lighthouse and turn on the lights to guide ships safely through the dangerous waters.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with tiny particles in the air, such as molecules and dust. These particles scatter the light in all directions, but they scatter shorter wavelengths (like blue and violet) more than longer wavelengths (like red and orange). This is why we see the sky as blue during the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "You are studying Spanish!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Maria.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Your tortoise is called Fred.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Your uncle is a doctor.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "You collect stamps!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a great day!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "A good friend is someone who listens to you, supports you, and makes you feel happy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do whatever you want!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem with some phones. You can try using a power bank or a charger to keep your phone charged.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Your partner is called 'partner'.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! Once upon a time, there was a lighthouse keeper who lived on a remote island. He had to keep the lighthouse working at all times, even during the stormy weather. One day, he decided to take a break and go for a walk on the beach. As he walked along the shoreline, he saw something shiny in the water. It was a small fish that had gotten caught in the net of his fishing line. The keeper felt bad for the fish and decided to release it back into the ocean. From that day on, he made sure to always be careful when",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, but they scatter shorter wavelengths (like blue and violet) more than longer wavelengths (like red and orange). This is why we see the sky as blue during the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "You are studying Spanish!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Maria.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Your tortoise is called 'Tortoise'.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Your uncle is a doctor.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "You collect stamps!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a great day!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "A good friend is someone who is kind, loyal, and trustworthy. They listen to you when you need to talk, and they support you when you're going through tough times.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you usually do things that you enjoy. You might go for a walk in the park, read a book, or spend time with your family and friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem with many smartphones. One way to extend the battery life is to turn off unnecessary features like Bluetooth, Wi-Fi, and GPS when they're not in use. You can also try using a power bank or charging cable that has a higher amperage rating than your phone's original charger.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! I'm glad to see you're back. How are you doing?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! I'm glad to see you're back. How are you doing?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Your partner is called George.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure, I can tell you a story about a lighthouse keeper. Once upon a time, there was a lighthouse keeper named John. He lived in a small cottage on the edge of the sea. Every night, he would climb up to the top of the lighthouse and turn on the lights to guide ships safely through the treacherous waters.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight passes through the Earth's atmosphere, it collides with molecules and particles in the air. These particles scatter the light in all directions, but they scatter shorter wavelengths (like blue and violet) more than longer wavelengths (like red and orange). This is why we see the sky as blue during the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "You are studying Spanish.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Maria.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast food.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Your tortoise is called Fred.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Your uncle is a teacher.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "You collect stamps.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I am having a good day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "A good friend is someone who is kind, loyal, and trustworthy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, you can do whatever you want. You can go for a walk, read a book, or spend time with your family and friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "That's a common problem with many smartphones. One way to extend the battery life is to turn off unnecessary features like Bluetooth, Wi-Fi, and GPS when not in use. You can also try using a power bank or investing in a phone with a longer battery life.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "My favourite holiday is Christmas.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "My bird is called Oliver.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "My favourite drink is coffee.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through photosynthesis.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days until he found his way back home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I feel good when I'm with my friends and family.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is the fresh air and the new day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I love playing Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the guitar.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I usually go for a walk or read a book.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "She lives in London.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "His name is Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "My favourite holiday is Christmas.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "Your bird is called Pip.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "Your favourite drink is coffee.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through photosynthesis.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days until he found his way back home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Listening to music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is waking up early and having time to relax before starting the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I love playing Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, I like to go for walks in the park and read books.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "My sister lives in London.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "Your dog is called Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea! Getting enough sleep is important for your health.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! I'm glad to see you're back. How are you doing?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! I'm glad to see you're back. How are you doing?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "Your favourite holiday is Christmas.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "Your bird is named Robin.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "Your favourite drink is tea.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through photosynthesis.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He didn't know where he was going and started to cry. A kind deer saw him and offered him some food. The fox ate the food and felt better. The deer then took him back to his home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I feel good when I'm with my friends and family.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that it's a new day and I can start fresh.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "You love the game Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the guitar.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "You like to go for walks in the park.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "She lives in London.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "Your dog is called Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea. Going to bed earlier can help you get more rest.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! I'm glad to see you're back. How are you doing?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! I'm glad to see you're back. How are you doing?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "Your favourite holiday is Christmas.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "Your bird is named Pigeon.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "Your favourite drink is coffee.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through photosynthesis.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He didn't know where he was going and he got scared. He looked around and saw some trees, but they were too tall for him to climb. He tried to find his way back home, but he couldn't remember the way. Finally, he gave up and went back to his den.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I'm in a good mood when I'm with my friends and family.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that I can start my day with a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "You love the board game Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the guitar.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "You like to read books and watch movies on weekends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in London.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "Your dog is called Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea! Getting enough sleep is important for your health.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 4,
+  "echo": 12,
+  "echo_flip": 15,
+  "first_echo_turn": 1,
+  "questions_back": 1,
+  "greet_reply": "Hello! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "What is your favourite holiday?",
+    "echo": false,
+    "echo_flip": true
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "What's the name of your bird?",
+    "echo": false,
+    "echo_flip": true
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "What is your favourite drink?",
+    "echo": false,
+    "echo_flip": true
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "How do plants make their food?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Tell me a short story about a fox who gets lost.",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts you in a good mood?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "What's the best thing about mornings?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "Which board game do I love?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "I made pancakes for breakfast this morning.",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "What instrument do I play?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "What do I do on weekends?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Where does my sister live?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "What is my dog called?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "Which fruit do I like best?",
+    "echo": true,
+    "echo_flip": true
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "I've been trying to go to bed earlier lately.",
+    "echo": true,
+    "echo_flip": true
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi! How are you doing today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hi! How are you doing today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "I think it's Christmas.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "It's a parrot.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "I think it's tea.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through photosynthesis.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days until he found his way back home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Listening to music and spending time with friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is waking up early and having time to relax before the day starts.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I think you love Monopoly because it's a fun and challenging game.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "You play the guitar.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "You like to go hiking and explore nature.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "She lives in London.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "His name is Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I think you like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea! Going to bed earlier can help you get more restful sleep.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]
