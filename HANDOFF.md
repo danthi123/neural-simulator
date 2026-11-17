@@ -31,7 +31,8 @@
   seed 7): the in-context 1.5B teacher binds a WRONG told fact as often as the right one (9 vs 7 of 64), so no 1.5B
   self-teacher can be distilled. Recommendation: KILL self-teacher levers at 1.5B. Only KEEP option: test the
   in-context ceiling and teacher night with a 2.9B cortex (in context 13/48 invented, 1 wrong reuse), weighed
-  against its worse looping (`results/2026-11-16-onset-*.md`).
+  against its worse looping (`results/2026-11-16-onset-*.md`). Checked 11-17: the 2.9B teacher on the same topic cues
+  declines 33/60, wrong told fact 4, new invention 16, so it is still a third bad targets: a weak KEEP case.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

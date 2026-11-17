@@ -36,3 +36,17 @@ unusable. Most rewrites are not about the user ("Do you have a gun?").
   - `near_miss.topic_cues` plus the NA frame, used by the prototype only.
 - At 1.5B, every route that uses the cortex's own judgement as the teacher is bounded by this per-item quality.
 - The 2.9B teacher is cleaner in context: 13/48 invented, and a told name reused on only 1 of 48.
+
+## 2.9B teacher, same topic frame (pool40 CPU, seed 7, `proto_T29.json`), 60 cues
+| teacher reply | 1.5B (of 64) | 2.9B (of 60) |
+|---|---|---|
+| declines | 27 | 33 |
+| names the topic's own told fact | 7 | 7 |
+| names a WRONG told fact | 9 | 4 ("Where does my brother work?" -> "Crumb"; "What is my brother's name?" -> "Tomasz") |
+| invents something new | 22 | 16 |
+
+- The 2.9B teacher is better but not clean.
+- About a third of its targets are still wrong: a wrong told fact or a new invention (20 of 60).
+- Wrong to right told names is 4:7.
+- A night distilled from it would still teach some cross-binding.
+- Weak KEEP case for the 11-19 decision.
