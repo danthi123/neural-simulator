@@ -33,6 +33,7 @@ def main():
     ap.add_argument("--script-seeds", type=int, nargs="+", required=True)
     ap.add_argument("--samples", type=int, default=8)
     ap.add_argument("--carry-penalty", action="store_true", help="Brain(carry_penalty=True)")
+    ap.add_argument("--fake-think", action="store_true", help="Brain(fake_think=True)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
@@ -46,7 +47,7 @@ def main():
             cp = os.path.join(tmp, "home")
             if a.home != "fresh":   # "fresh": a newly born home (any cortex size; nothing lived, no night)
                 shutil.copytree(a.home, cp)
-            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty,
+            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty, fake_think=a.fake_think,
                       # the probe never sleeps; explicit settings let a size with no SLEEP_DEFAULTS row load
                       sleep_steps=480, sleep_lr=5e-4, sleep_kl_weight=3.0, adapter_rank=8)
             b.set_lesions(hippocampus_off=True, consolidated_off=True)

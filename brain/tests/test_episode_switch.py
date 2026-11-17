@@ -280,3 +280,18 @@ def test_carry_penalty_keeps_counts_across_turns(tmp_path):
     off = Brain(str(tmp_path / "b"), cortex=c, **KW)
     off.hear("Hello there.")
     assert off.carry_penalty is False and off._occ == {}
+
+
+def test_fake_think_prompts_with_the_empty_think_tag(tmp_path):
+    c = StubCortex()
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, fake_think=True)
+    seen = []
+    real = b.cortex.read
+    b.cortex.read = lambda t, s=None: (seen.append(t), real(t, s))[1]
+    b.cortex.speak = lambda lg, st, **k: (">Hello there, friend.", st)
+    reply, _ = b.hear("Hi.")
+    assert reply == "Hello there, friend."
+    assert any(t.endswith("Assistant: <think></think") for t in seen)
+    assert any("Assistant: <think></think>Hello there, friend.\n\n" in t for t in seen)
+    off = Brain(str(tmp_path / "b"), cortex=c, **KW)
+    assert off.fake_think is False and off._spoken(">x") == ">x"
