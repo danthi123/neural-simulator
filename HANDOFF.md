@@ -27,10 +27,10 @@
 - **LIVE RUNS:** none (pool idle; no AWS instance). Old S_all batch i-0129d9e410417218b still stopped (wt-mixday state).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **NEXT STEP:** in-context collapse is a cortex property (`results/2026-11-16-onset-baseline.md`: cortex alone loops
-  19% of day-2 conversations; 0.4B 23/36 vs 1.5B 14/36 on prone scripts). Levers at 1.5B (habituation, monitor,
-  own-gain, carry penalty): none a lead. NEEDS owner: download a larger RWKV-7 chat checkpoint (~3B, fits 24 GB) and
-  rerun the onset baseline on it. Meanwhile: invented facts on open_conv (readers: many confident inventions).
+- **NEXT STEP:** scale checked (`results/2026-11-16-onset-2.9b.md`, owner approved the 2.9B download): 2.9B loops MORE
+  than 1.5B on the same GPU (30 vs 10 of 72); the brain keeps 1.5B. On GPU the 1.5B cortex alone loops on open turns in
+  only 6/72 (pool CPU 11/72): do not pool CPU and GPU rates. Next method targets the format / sampling (prereg first).
+  Then invented facts on open_conv (readers: many confident inventions).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
