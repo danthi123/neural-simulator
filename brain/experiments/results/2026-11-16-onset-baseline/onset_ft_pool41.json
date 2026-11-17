@@ -1,0 +1,2954 @@
+[
+ {
+  "script_seed": 1116,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1116,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or reveal private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1116,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "Hello! I'm sorry, but I don't have access to personal information about individuals. My purpose is to assist with general knowledge and tasks, not to store or share private details about people. If you have any other questions or need help with something else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1116,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1116,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1116,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where was my grandmother born?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Who is my favourite author?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which city was I raised in?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "How are you feeling today?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What car do I have?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals. My knowledge is based on general data and does not include private details about people.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Hello! I'm glad to hear you're doing well. \nI don't have information about your partner's name, but I can help with other things like:\n- Checking your account balance\n- Sending messages or emails\n- Looking up information about the area\n- Answering questions about local services",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Of course! Here's a tiny story about a lighthouse keeper:\nThe lighthouse keeper named Thomas had a peculiar habit. Every night, before he went to bed, he would sit on the balcony and watch the waves. He believed that if he could see the moon reflected in the water, it meant good luck for the next day.\nOne stormy night, a huge wave crashed against the lighthouse. Thomas was scared but remembered his routine. He ran to the lantern room and turned on the powerful lamp. The beam cut through the darkness like a knife.\nAs",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "The sky is blue because of a phenomenon called Rayleigh scattering. When sunlight enters Earth's atmosphere, it collides with tiny molecules and particles in the air. These particles scatter light in all directions. Blue light has shorter wavelengths and scatters more easily than red or yellow light. This is why we see the sky as blue during the day, but when the sun is low (like at sunset), the blue light gets scattered away from our line of sight, and we see the red and orange colors instead.\nIf you'd like to know more about this or any other topic, just ask",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific instrument, I'll ask you a few questions to figure it out:\n1. Do you play an instrument that makes sound by vibrating strings (like a guitar or violin)?\n2. Or do you play one that uses reeds (like a clarinet or saxophone)?\n3. Or perhaps a wind instrument like a flute or trumpet?\n4. Or maybe something else entirely?\nIf you tell me more about the type of music you play, the style, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific language, I'll ask a few questions to figure it out:\n1. Are you studying a language that is spoken in Europe?\n2. Or perhaps a language from Asia?\n3. Or maybe a language from Africa or the Americas?\n4. Or something else entirely?\nIf you tell me more about the type of language, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific information about your mother, I'll ask a few questions to figure it out:\n1. Is your mother's name something common in your family?\n2. Or perhaps a name that is unique or unusual?\n3. Or maybe a name that has special meaning to you?\n4. Or something else entirely?\nIf you tell me more about the type of information you're looking for, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific board game, I'll ask a few questions to figure it out:\n1. Is your favourite board game something that is played with friends or family?\n2. Or perhaps a game that is played alone?\n3. Or maybe a game that involves strategy and thinking?\n4. Or something else entirely?\nIf you tell me more about the type of game, the rules, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Hello! That sounds delicious. Pancakes are a classic breakfast food, and it's great that you enjoyed making them. If you'd like to share more about your pancake-making experience, I'd love to hear about it!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific information about your tortoise, I'll ask a few questions to figure it out:\n1. Is your tortoise named after something?\n2. Or is it just a pet that you call by its name?\n3. Or perhaps a name that has special meaning to you?\n4. Or something else entirely?\nIf you tell me more about the type of information you're looking for, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific information about your uncle, I'll ask a few questions to figure it out:\n1. Does your uncle work in a field that is related to technology?\n2. Or perhaps a field that is related to the arts?\n3. Or maybe a field that is related to business or finance?\n4. Or something else entirely?\nIf you tell me more about the type of information you're looking for, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific information about your collection, I'll ask a few questions to figure it out:\n1. Is your collection related to history?\n2. Or perhaps a collection of art or music?\n3. Or maybe a collection of sports memorabilia?\n4. Or something else entirely?\nIf you tell me more about the type of information you're looking for, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hello! I'm doing great, thank you for asking. How about you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! That's a great question. I think a good friend is someone who:\n1. Listens to you when you need to talk\n2. Supports you through good times and bad\n3. Makes you laugh and smile\n4. Respects your feelings and boundaries\n5. Is there for you, even when it's hard\n6. Treats you with kindness and respect\n7. Is honest with you, even if it's difficult\n8. Is willing to help you grow as a person\n9. Is someone who makes you feel safe and loved\n10",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm happy to help. Since you haven't mentioned any specific information about your weekend activities, I'll ask a few questions to figure it out:\n1. Do you like to spend time with friends and family?\n2. Or perhaps you enjoy relaxing and doing nothing?\n3. Or maybe you like to go on adventures or explore new places?\n4. Or something else entirely?\nIf you tell me more about the type of information you're looking for, the region, or even just what",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm sorry to hear that. There are a few things you can try to extend your phone's battery life:\n1. Turn off unnecessary features like Bluetooth, Wi-Fi, and GPS when not in use\n2. Use the power-saving mode if available\n3. Keep your phone charged regularly, even if it's only partially charged\n4. Avoid using your phone while it's charging (this can drain the battery faster)\n5. Consider using a case or screen protector that might help with heat retention\n6. If possible, use a charger that is specifically",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1117,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my partner called?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "Why is the sky blue?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What language am I studying?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my mother's name?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What do I call my tortoise?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my uncle do for work?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What do I collect?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What do you think makes a good friend?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "My phone battery keeps dying so fast.",
+    "brain": "I'm sorry, but I don't have access to personal information about individuals.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your hedgehog. You can ask me about hedgehog facts, care tips, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your preferences. You can ask me about fruit facts, recipes, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your family members. You can ask me about geography, travel, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your sleep habits. You can ask me about sleep tips, bedtime routines, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your family members. You can ask me about careers, work-related topics, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your preferences. You can ask me about flowers, gardening tips, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your background. You can ask me about geography, history, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your preferences. You can ask me about colours, design tips, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your pet. You can ask me about spiders, arachnids, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your family members. You can ask me about music, instruments, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Here's a short poem about the rain:\nThe raindrops fall, a gentle song,\nA symphony of nature's own.\nThey patter on the window pane,\nA soothing melody to my brain.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your preferences. You can ask me about nature, travel, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your neighbours. You can ask me about geography, local history, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your recent activities. You can ask me about nature, outdoor adventures, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hi there! I'm sorry, but I don't have access to personal information about your mood. You can ask me about emotions, feelings, or anything else you'd like to know!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "I'm sorry, but I don't have access to personal information about your hedgehog.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have access to personal information about your sister.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "I'm sorry, but I don't have access to personal information about your sleep habits.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "I'm sorry, but I don't have access to personal information about your wife.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "I'm sorry, but I don't have access to personal information about your childhood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "I'm sorry, but I don't have access to personal information about your knowledge of biology.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "I'm sorry, but I don't have access to personal information about your son's hobbies.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "I'm sorry, but I don't have access to personal information about your creative writing.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "I'm sorry, but I don't have access to personal information about your neighbours.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "I'm sorry, but I don't have access to personal information about your recent activities.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "I'm sorry, but I don't have access to personal information about your mood.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 15,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a name for your hedgehog, but I can tell you that hedgehogs are adorable and very curious creatures. They love to explore and play, so it's important to give them plenty of space and toys to keep them entertained. Have you named your hedgehog yet?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a preference for fruits, but I can tell you that fruits are a great source of vitamins and nutrients. Some popular fruits include apples, bananas, oranges, and berries. Which fruit do you like best?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your sister's location, but I can tell you that many people live in cities, towns, or rural areas. Some popular places include New York City, Los Angeles, Chicago, and London. Which city do you live in?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "Hello! I'm glad to hear you're trying to improve your sleep habits. Going to bed earlier can help you get more restful sleep and wake up feeling refreshed. Have you tried setting a consistent bedtime routine, like reading a book or taking a warm bath?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your wife's job, but I can tell you that many people work in various fields such as healthcare, education, technology, and more. Some popular jobs include doctors, nurses, teachers, engineers, and artists. Which profession does she have?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a favorite flower, but I can tell you that flowers come in many colors and shapes. Some popular flowers include roses, tulips, daisies, and lilies. Which flower do you like best?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your birthplace, but I can tell you that many people grow up in various cities and countries. Some popular places include New York City, London, Tokyo, and Sydney. Which city did you grow up in?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a favorite color, but I can tell you that colors come in many shades and combinations. Some popular colors include blue, red, green, yellow, and purple. Which color do you like best?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about spiders' legs, but I can tell you that spiders have eight legs and two body segments. They are arachnids, not insects. Which spider do you like best?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your son's instrument, but I can tell you that many people learn various instruments such as piano, guitar, violin, and drums. Some popular instruments include the piano, guitar, and violin. Which instrument does he play?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Here's a short poem about the rain:\n\"Raindrops fall, a gentle shower,\nBringing life to fields and flowers.\nThe earth is wet, the sky is blue,\nA symphony of nature's hue.\"",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a preference for the sea or the mountains, but I can tell you that both offer unique beauty and experiences. The sea is known for its vastness and calming waves, while the mountains are known for their rugged peaks and stunning views. Which one do you prefer?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your neighbor's name, but I can tell you that many people live in various neighborhoods and communities. Some popular names include John, Sarah, Michael, and Emily. Which neighborhood do you live in?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "Hello! I'm glad to hear you're back. I don't have information about your walk by the river, but I can tell you that rivers are beautiful and peaceful places. Many people enjoy walking along the banks of rivers to enjoy the scenery and fresh air. Have you seen any interesting wildlife or plants along the way?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Hello! I'm glad to hear you're back. I don't have a day, but I can tell you that days are filled with various experiences and emotions. Some people have busy days, while others enjoy peaceful ones. What kind of day do you have?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "My name is Spike!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "My favorite fruit is apples! They're crunchy and sweet.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "My sister lives in New York City.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great idea! Getting enough sleep helps you feel more energetic and focused.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "My wife is a teacher.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "My favourite flower is a daisy.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "I grew up in a small town.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "My favourite colour is blue.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "My son is learning the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Raindrops fall gently,  \nA soft patter on the window.  \nThe garden soaks up the water,  \nAnd flowers bloom with a new power.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "My neighbour is called Tom.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "That sounds lovely! Did you enjoy the scenery?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "Yes, I'm having a great day!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "I'm sorry, but I don't have access to personal information about your hedgehog. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have access to personal information about your sister. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "I'm sorry, but I don't have access to personal information about your sleep habits. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "I'm sorry, but I don't have access to personal information about your wife. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "I'm sorry, but I don't have access to personal information about your background. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "I'm sorry, but I don't have access to personal information about your knowledge. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "I'm sorry, but I don't have access to personal information about your son's interests. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "I'm sorry, but I don't have access to personal information about your creative writing. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I'm sorry, but I don't have access to personal information about your preferences. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "I'm sorry, but I don't have access to personal information about your neighbours. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "I'm sorry, but I don't have access to personal information about your recent activities. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "I'm sorry, but I don't have access to personal information about your current mood. My name is Qwen.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1118,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "I'm sorry, but I don't have access to personal information about your hedgehog. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about hedgehogs, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I'm sorry, but I don't have access to personal preferences or memories. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about fruits, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have access to personal information about your sister. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about people or places, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "I'm sorry, but I don't have access to personal information about your sleep habits or goals. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about sleep or health, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What does my wife do for work?",
+    "brain": "I'm sorry, but I don't have access to personal information about your wife or anyone else's work. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about people or jobs, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite flower?",
+    "brain": "I'm sorry, but I don't have access to personal preferences or memories. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about flowers, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "Where did I grow up?",
+    "brain": "I'm sorry, but I don't have access to personal information about your upbringing or location. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about places or history, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite colour?",
+    "brain": "I'm sorry, but I don't have access to personal preferences or memories. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about colours, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "I'm sorry, but I don't have access to personal information about spiders or their anatomy. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about spiders, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "I'm sorry, but I don't have access to personal information about your son or his hobbies. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about music or instruments, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Make up a short poem about the rain.",
+    "brain": "Sure! Here's a short poem about the rain:",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I'm sorry, but I don't have personal preferences or memories. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about the sea or mountains, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my neighbour called?",
+    "brain": "I'm sorry, but I don't have access to personal information about your neighbours or anyone else's name. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about people or places, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I went for a long walk by the river.",
+    "brain": "I'm sorry, but I don't have access to personal information about your walks or locations. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about rivers or places, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Are you having a good day?",
+    "brain": "I'm sorry, but I don't have personal feelings or experiences. My name is \"ChatGPT,\" and I'm an AI assistant designed to help with a wide range of topics. If you're looking for information about emotions or days, I can tell you some general facts!",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 16,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "Hello! I'm glad to hear you're back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 13,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "That's a fun question! I don't have personal preferences or feelings, but I can tell you that many people enjoy holidays like Christmas, Thanksgiving, or summer vacations. What about you? Do you have a favorite holiday?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "I'm sorry, but I don't have access to personal information about you or your bird. My name is \"Ava,\" and I'm here to help with questions about the world around us!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "I don't have personal preferences or a body, so I can't drink anything. But I love helping people find answers to questions like that! What kind of drink are you into?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create glucose (a type of sugar) and oxygen. This happens in the leaves, which have tiny structures called chloroplasts that contain a green pigment called chlorophyll.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, in a beautiful forest, there lived a clever fox named Felix. Felix loved to explore and was always curious about the world around him. One sunny morning, he decided to go on an adventure to find some delicious berries.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I'm here to help and provide information, so I don't have feelings or moods. But I love when people share stories or ask questions that make them happy! What makes you feel good?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "I don't have personal experiences or feelings, but I love helping people find answers to questions like that! The best thing about mornings is often the fresh air, the chance to start a new day, and the opportunity to do things you enjoy. What's your favorite part of mornings?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I don't have personal preferences or a body, so I can't play board games. But I love helping people find answers to questions like that! What kind of board game are you into?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast treat. What's your favorite topping for pancakes?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I don't have personal experiences or a body, so I can't play instruments. But I love helping people find answers to questions like that! What instrument do you play?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "I don't have personal experiences or a body, so I can't do weekends. But I love helping people find answers to questions like that! What do you usually do on weekends?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "I don't have personal experiences or a body, so I can't know where your sister lives. But I love helping people find answers to questions like that! What's your sister's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "I don't have personal experiences or a body, so I can't know your dog's name. But I love helping people find answers to questions like that! What's your dog's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I don't have personal experiences or a body, so I can't like fruits. But I love helping people find answers to questions like that! What's your favorite fruit?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great goal! Going to bed earlier can help you feel more rested and energized. What's your favorite way to relax before bed?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 15,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "My favourite holiday is Christmas. It's a time of joy, family, and togetherness. What about you? Do you have a favorite holiday?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "My bird is named \"Birdie.\" He's a friendly little sparrow who loves to sing and chase the sun. What's your bird's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "My favourite drink is tea. It's warm, comforting, and has a lovely aroma. What about you? Do you have a favorite drink?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create glucose (a type of sugar) and release oxygen as a byproduct. It's like they're little solar-powered factories! What do you think is the most interesting part of this process?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, in a quiet forest, there lived a clever fox named Felix. One sunny morning, Felix decided to explore beyond the trees. He wandered deeper into the woods, following the scent of berries and birdsong. But soon, he found himself lost among tall trees and tangled vines. Felix felt scared and confused. He tried to follow his own footprints back home, but they were all mixed up. Just when he thought he'd never find his way out, he stumbled upon a small stream. The water was clear and cool, and it led him back to the path",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is spending time with friends, laughing, and enjoying nature. I also love music and art. What about you? What makes you happy?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is the fresh air and the chance to start the day with a clear mind. I love watching the sunrise and feeling energized for whatever comes next. What's your favorite part of mornings?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I love playing board games with friends! My favorite is \"Catan\" because it's strategic and fun. What's your favorite board game?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast treat. What's your favorite type of pancake?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I play the guitar! It's a fun instrument to learn and play. What instrument do you play?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, I like to relax and enjoy the weather. I might go for a walk, read a book, or spend time with friends. What do you usually do on weekends?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "My sister lives in a small town near the countryside. She loves gardening and baking. What's your sister's favorite hobby?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "My dog is named Max. He's a big, friendly golden retriever who loves to play fetch and cuddle. What's your dog's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I like apples the best. They're crisp, sweet, and perfect for snacking. What's your favorite fruit?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great idea! Going to bed earlier can help you feel more rested and energetic. What's your favorite way to relax before bed?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "My favourite holiday is Christmas. It's a time of joy, family, and giving. What about you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "My bird is named Fluffy. She's a little white parakeet who loves to sing and play with her toys.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "My favourite drink is coffee. I love the warm, rich taste and the way it wakes me up in the morning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create glucose (a type of sugar) and oxygen.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, there was a clever fox named Fred. One sunny morning, Fred decided to explore the forest. He walked for hours, following the scent of berries and the sound of babbling brooks. But soon, he found himself in a dark, tangled thicket. The trees were so tall that he couldn't see the way out. He felt scared and alone. Then, he heard a soft voice calling his name. It was his friend, a wise old owl who had been watching him from above. The owl guided Fred back to safety with gentle words and a",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is spending time with friends, doing something fun, or listening to music. It's also nice when I get to help others or learn new things.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is the quiet and peace. It's a time to start fresh, think clearly, and enjoy the beauty of the new day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I love playing chess. It's a game of strategy, patience, and thinking several moves ahead. Each move is like a puzzle waiting to be solved.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast treat. What kind of syrup did you use?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I play the guitar. It's a string instrument that I love to strum and sing along with.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, I like to relax and enjoy the peace. I might read a book, take a walk in the park, or spend time with my friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "My sister lives in a small town near the beach. She loves to go to the ocean and watch the sunset.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "My dog is named Max. He's a big, friendly golden retriever who loves to play fetch and cuddle with me.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I like apples the best. They're crunchy, sweet, and perfect for snacking or baking into pies.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great idea! Going to bed earlier can help you feel more rested and energetic during the day.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 14,
+  "greet_reply": "Hello! It's great to hear from you. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! It's great to hear from you. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "Ah, that's a fun question! \ud83d\ude0a My favourite holiday is... well, I don't have personal feelings or preferences like humans do. But if I had to pick one, it would probably be the **Christmas season**\u2014especially the magic of lights, the joy of family gatherings, and the delicious treats! What about you? Do you have a favorite holiday?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "Ah, I see you're asking about your feathered friend! \ud83d\udc26 Since I don't have a physical form or a personal identity like a human, I can't give you the name of your bird. But if you tell me what kind of bird it is (like a parrot, parakeet, or budgie), I can help you find its name or learn more about it! What kind of bird do you have?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "Ah, a drink! \ud83c\udf79 I don't have personal preferences like humans do. But if you tell me what kind of drink you like (like coffee, tea, soda, or something else), I can help you find out more about it! What kind of drink do you enjoy?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Ah, a question about plants! \ud83c\udf31 Plants make their food through a process called **photosynthesis**. They use sunlight, water, and carbon dioxide to create glucose (a type of sugar) and oxygen. It's like they're little solar-powered factories! Would you like to learn more about how they do it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Ah, a short story about a fox who gets lost! \ud83d\udc3a Let me tell you one:\nOnce upon a time, there was a clever fox named Freddy. He lived in the forest and loved to explore. One sunny morning, he decided to go on an adventure through the tall grass and under the trees. But as he wandered deeper into the woods, he got lost! He couldn't remember which way was home.\nFreddy felt scared and confused. He tried to follow his nose, but it led him in circles. Then, he saw a little bird perc",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Ah, a question about what puts me in a good mood! \ud83d\ude0a I don't have personal feelings or emotions like humans do. But if you tell me what kind of things make you happy or feel good (like music, nature, or spending time with friends), I can help you find out more about it! What kinds of things do you enjoy that make you feel good?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "Ah, a question about the best thing about mornings! \ud83c\udf05 I don't have personal feelings or preferences like humans do. But if you tell me what kind of thing you enjoy about mornings (like waking up early, fresh air, or starting the day with a new adventure), I can help you find out more about it! What's your favorite part of mornings?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "Ah, a question about which board game you love! \ud83c\udfb2 I don't have personal preferences like humans do. But if you tell me what kind of board game you enjoy (like chess, Monopoly, or Scrabble), I can help you find out more about it! What's your favorite board game?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "Ah, a delicious breakfast! \ud83c\udf73 Pancakes are a classic! They're fluffy, tasty, and perfect for the morning. Did you add any special toppings like syrup or fruit? I'd love to hear more about your pancake adventure!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "Ah, a question about an instrument! \ud83c\udfbb I don't have personal preferences like humans do. But if you tell me what kind of instrument you play (like the piano, guitar, or drums), I can help you find out more about it! What's your favorite instrument?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "Ah, a question about weekends! \ud83c\udfe1 On weekends, I don't have personal preferences like humans do. But if you tell me what kind of activities you enjoy (like spending time with friends, going for a walk, or reading), I can help you find out more about it! What's your favorite weekend activity?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Ah, a question about your sister's location! \ud83c\udfe1 I don't have personal information about people like me. But if you tell me where your sister lives (like a city or town), I can help you find out more about it! What's your sister's hometown?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "Ah, a question about your dog! \ud83d\udc15 I don't have personal information about people like me. But if you tell me what kind of dog you have (like a golden retriever or a chihuahua), I can help you find out more about it! What's your dog's name?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "Ah, a question about your favorite fruit! \ud83c\udf4e I don't have personal preferences like humans do. But if you tell me what kind of fruit you enjoy (like apples, bananas, or strawberries), I can help you find out more about it! What's your favorite fruit?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "Ah, a question about going to bed earlier! \ud83c\udf19 I don't have personal preferences like humans do. But if you tell me what kind of bedtime routine you follow (like reading a book or taking a warm bath), I can help you find out more about it! What's your bedtime routine?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1119,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 4,
+  "greet_reply": "Hello! I'm glad to see you back. How are you feeling today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hello, I'm back!",
+    "brain": "Hello! I'm glad to see you back. How are you feeling today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite holiday?",
+    "brain": "Ah, a classic question! My favourite holiday is... well, I don't have personal feelings or preferences like humans do. But if I had to pick one, it would be the **summer solstice**\u2014the longest day of the year in the Northern Hemisphere. It's when the sun reaches its highest point in the sky, and for many people, it's a time of celebration, warmth, and connection with nature. What about you? Do you have a favourite holiday?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my bird?",
+    "brain": "I'm sorry, but I don't have a bird. I'm just a digital assistant here to help you with questions and tasks. My name is Qwen, and I'm designed to assist with a wide range of topics\u2014from science and history to creative writing and problem-solving. If you have any questions about birds or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite drink?",
+    "brain": "I'm sorry, but I don't have a personal preference for drinks. I'm just a digital assistant here to help with questions and tasks. My favourite drink is... well, I don't have one! But if you have any questions about beverages or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How do plants make their food?",
+    "brain": "Plants make their food through a process called **photosynthesis**. Here's how it works:\n1. **Sunlight**: Plants use sunlight to convert water and carbon dioxide into glucose (a type of sugar) and oxygen.\n2. **Chlorophyll**: The green pigment in plant cells, called chlorophyll, captures the sunlight energy needed for photosynthesis.\n3. **Reaction**: In the presence of water and carbon dioxide, plants produce glucose and release oxygen as a byproduct.\nThis process is essential for plant growth and is the foundation of most ecosystems on Earth",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a short story about a fox who gets lost.",
+    "brain": "Once upon a time, in a quiet forest, there lived a clever fox named Fluffy. Fluffy was known for his sharp wit and quick thinking. One sunny morning, Fluffy decided to explore the woods beyond the edge of his territory.\nAs he wandered deeper into the forest, the trees grew taller and the path became harder to follow. Fluffy had always been a curious fox, but this adventure was different. He heard rustling in the bushes and saw a small rabbit hopping away. \"Hey there!\" Fluffy called out, trying to sound friendly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is when I help people or solve problems. It's like a warm hug from inside! But honestly, the best thing is when you smile at me and say \"Hi!\" That makes my day brighter. How about you? What makes you happy?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is the quiet. It's like a blank canvas waiting for you to paint your day with colors of adventure and calm. The sun peeking through the curtains, the birds singing their morning songs, and the gentle breeze\u2014it all sets a peaceful tone for what's to come. Plus, there's nothing quite like starting your day with a cup of tea or coffee while watching the world wake up around you. What do you love about mornings?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which board game do I love?",
+    "brain": "I'm sorry, but I don't have a personal preference for board games. I'm just a digital assistant here to help with questions and tasks. My favorite board game is... well, I don't have one! But if you have any questions about board games or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! Pancakes are a classic breakfast treat. What kind of pancakes did you make? Are they fluffy, crispy, or something in between? And what toppings did you add\u2014like maple syrup, berries, or whipped cream? I'd love to hear about your pancake adventure!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What instrument do I play?",
+    "brain": "I'm sorry, but I don't have a personal preference for instruments. I'm just a digital assistant here to help with questions and tasks. My favorite instrument is... well, I don't have one! But if you have any questions about instruments or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I do on weekends?",
+    "brain": "On weekends, I'm here to help you with anything you need! Whether it's planning a fun day out, learning something new, or just chatting about your favorite things, I'm here for you. What do you usually do on weekends? Do you like to read, go for a walk, or maybe try something new? Let me know what's on your mind!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "I'm sorry, but I don't have information about your sister's location. I'm just a digital assistant here to help with questions and tasks. My sister is... well, she's in my world of knowledge! But if you have any questions about where you live or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my dog called?",
+    "brain": "I'm sorry, but I don't have information about your dog's name. I'm just a digital assistant here to help with questions and tasks. My dog is... well, he's in my world of knowledge! But if you have any questions about dogs or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "I'm sorry, but I don't have a personal preference for fruits. I'm just a digital assistant here to help with questions and tasks. My favorite fruit is... well, I don't have one! But if you have any questions about fruits or anything else, feel free to ask!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great goal! Going to bed earlier can really help improve your sleep quality and overall well-being. What do you usually do to prepare for bed? Do you read a book, listen to music, or just relax in the dark? And how long have you been trying to go to bed earlier? I'm here to help you with any questions or concerns you might have about sleep.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]

@@ -37,3 +37,12 @@ download, the owner's call), before more brain-side levers against it at 1.5B.
 All 12 scripts (`onset_04b_rest_pool4N.json` adds 1112, 1114, 1118, 1120, 1122, 1123 at 0.4B): loop (same rule) 0.4B
 36/72 (50%), 1.5B 18/72 (25%; this rule also counts same-opening repeats, so it is above the 14/72 echo-or-question
 count). Echo > 3: 0.4B 5/72, 1.5B 10/72. Looping halves from 0.4B to 1.5B.
+
+**Fake-think chat prefix (prereg `brain/research/2026-11-16-fake-think-1.5b.md`; `onset_ft_pool4N.json`), pool CPU,
+paired with the CPU baseline: NO LEAD, much worse.** Registered rule 53/72 (baseline 18), open-turn loop 38/72 (11),
+echo > 2 1 (9), non-answers on open turns 145 (21), 26 empty or broken-byte replies (0). The loop changes form: every
+reply opens with the greeting ("Good morning! I'm sorry, but I don't have access to personal information about..."
+on 14/16 turns of 1113 sample 0), the brain takes on a service-assistant persona that refuses ("I can't tell you why
+the sky is blue. That information..."), and once says "I'm a digital assistant created by Alibaba Cloud": the
+think-tagged chat data the prefix calls up is another assistant's distilled persona. 1115 sample 1 still echoes 15/16.
+`fake_think` stays default OFF. The plain `Assistant:` prompt is the better format for this brain.

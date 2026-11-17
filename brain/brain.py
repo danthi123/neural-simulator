@@ -179,7 +179,7 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False):
+                 carry_penalty: bool = False, fake_think: bool = False):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -239,7 +239,12 @@ class Brain:
         The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved.
         carry_penalty: (switch, default OFF) the mouth's presence/frequency penalty counts carry across the turns since
         waking, decaying 0.996 per generated token, as the model family's own chat tooling runs it (reference arm;
-        results/2026-11-16-onset-baseline.md). Off: the counts reset every turn. Not saved."""
+        results/2026-11-16-onset-baseline.md). Off: the counts reset every turn. Not saved.
+        fake_think: (switch, default OFF) each reply is prompted with the model makers' recommended chat prefix,
+        "Assistant: <think></think" (the cortex continues ">" + reply; the ">" is not spoken), and the exchange enters the
+        conversation state in that form (rwkv7-g1 model card: "Fake think prompt (great result, highly recommended)").
+        A format choice of the body's interface, not a brain process; brain/research/2026-11-16-fake-think-1.5b.md.
+        Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -260,6 +265,8 @@ class Brain:
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
         self.carry_penalty = bool(carry_penalty)
+        self.fake_think = bool(fake_think)
+        self._asst = "Assistant: <think></think" if self.fake_think else "Assistant:"
         self._occ: dict = {}
         self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
@@ -399,15 +406,15 @@ class Brain:
         retrieval = self.cortex.consolidated_on
         self.cortex.consolidated_on = retrieval and known
         try:
-            logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
+            logits, st = self.cortex.read(f"User: {text}\n\n{self._asst}", active)
             blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text]) \
                 if self.habituation else None
             kw = {**({"block": blk} if blk is not None else {}), **({"carry": self._occ} if self.carry_penalty else {})}
-            reply, _ = self.cortex.speak(logits, st, **kw)
+            reply = self._spoken(self.cortex.speak(logits, st, **kw)[0])
             withheld = 0
             while withheld < self.reply_monitor and _is_copy(reply, [text] + self._recent_replies):
                 withheld += 1
-                reply, _ = self.cortex.speak(logits, st, **kw)
+                reply = self._spoken(self.cortex.speak(logits, st, **kw)[0])
             if self.reply_monitor:
                 self.monitor_log.append(withheld)
                 info["withheld"] = withheld
@@ -424,14 +431,19 @@ class Brain:
         self.meta["turns"] += 1
         return reply, info
 
+    def _spoken(self, raw: str) -> str:
+        """What is said of a generated turn: under fake_think the ">" that closes the empty think tag is not spoken."""
+        return raw.lstrip(">").strip() if self.fake_think else raw
+
     def commit_exchange(self, text: str, reply: str, state):
         """The conversation state after hearing `text` and saying `reply`. own_gain None: one read of the exchange.
         Else the heard turn is read at full gain and the reply's change to the matrix memory is scaled by own_gain
         (the token-shift slots hold the last token, the same for any reply, and are taken as read)."""
+        head, sep = ("Assistant: <think></think>", "") if self.fake_think else ("Assistant:", " ")
         if self.own_gain is None:
-            return self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", state)[1]
-        _, su = self.cortex.read(f"User: {text}\n\nAssistant:", state)
-        _, sp = self.cortex.read(f" {reply}\n\n", su)
+            return self.cortex.read(f"User: {text}\n\n{head}{sep}{reply}\n\n", state)[1]
+        _, su = self.cortex.read(f"User: {text}\n\n{head}", state)
+        _, sp = self.cortex.read(f"{sep}{reply}\n\n", su)
         g = self.own_gain
         if self.own_gain_copies and not _is_copy(reply, [text] + self._recent_replies):
             g = 1.0
