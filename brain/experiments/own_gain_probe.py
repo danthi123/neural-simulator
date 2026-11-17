@@ -46,6 +46,7 @@ def main():
     ap.add_argument("--samples", type=int, default=6)
     ap.add_argument("--hippocampus-off", action="store_true")
     ap.add_argument("--night-off", action="store_true")
+    ap.add_argument("--copies-only", action="store_true", help="Brain(own_gain_copies=True)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
@@ -61,7 +62,8 @@ def main():
             tmp = tempfile.mkdtemp(dir=os.path.dirname(os.path.abspath(a.out)))
             cp = os.path.join(tmp, "home")
             shutil.copytree(a.home, cp)
-            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=a.script_seed, own_gain=g)
+            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=a.script_seed, own_gain=g,
+                      own_gain_copies=a.copies_only)
             b.set_lesions(hippocampus_off=a.hippocampus_off, consolidated_off=a.night_off)
             real = b.cortex.speak
             queue = list(forced)

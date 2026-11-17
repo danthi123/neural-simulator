@@ -31,3 +31,6 @@ On 1121 the monitor blocked the echo at turn 2; the second draft was a stored li
 every later turn all 5 drafts were that line, so the last copy was kept (the "forced by the state" failure the prereg
 named). The collapse moved from echo to a stored-line loop, as habituation moved it to paraphrase: blocking one
 output form leaves the state's attractor in place. Two levers on in-context collapse -> research gate fired (11-16).
+More monitor seeds (report-only; `ocd_s1112*` copied from `2026-11-16-rehearsal-night-pool-replication/`): 1112, 1122,
+1123: default and monitor both collapsed 0/3, recall 13/18 each, false 5 vs 4: no visible effect where no collapse
+occurs (`results/2026-11-16-reply-monitor-1.5b.md`: not flipped).

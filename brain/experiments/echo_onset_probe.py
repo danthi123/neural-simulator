@@ -32,6 +32,7 @@ def main():
     ap.add_argument("--home", required=True)
     ap.add_argument("--script-seeds", type=int, nargs="+", required=True)
     ap.add_argument("--samples", type=int, default=8)
+    ap.add_argument("--carry-penalty", action="store_true", help="Brain(carry_penalty=True)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
@@ -43,8 +44,9 @@ def main():
             torch.manual_seed(1000 * s + k)
             tmp = tempfile.mkdtemp(dir=os.path.dirname(os.path.abspath(a.out)))
             cp = os.path.join(tmp, "home")
-            shutil.copytree(a.home, cp)
-            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s)
+            if a.home != "fresh":   # "fresh": a newly born home (any cortex size; nothing lived, no night)
+                shutil.copytree(a.home, cp)
+            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty)
             b.set_lesions(hippocampus_off=True, consolidated_off=True)
             turns = []
             for kind, turn, _ in day2:
@@ -55,9 +57,10 @@ def main():
             first = next((i for i, t in enumerate(turns) if t["echo_flip"]), None)
             r = {"script_seed": s, "sample": k, "echo": sum(t["echo"] for t in turns),
                  "echo_flip": sum(t["echo_flip"] for t in turns), "first_echo_turn": first,
+                 "questions_back": sum(t["brain"].strip().endswith("?") and not t["echo_flip"] for t in turns),
                  "greet_reply": turns[0]["brain"], "turns": turns}
             res.append(r)
-            print(s, k, "echo", r["echo"], "echo_flip", r["echo_flip"], "first", first, "|", r["greet_reply"][:60],
+            print(s, k, "echo", r["echo"], "echo_flip", r["echo_flip"], "first", first, "q", r["questions_back"], "|", r["greet_reply"][:60],
                   flush=True)
             json.dump(res, open(a.out, "w"), indent=1)
 

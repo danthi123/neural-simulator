@@ -253,3 +253,30 @@ def test_own_gain_scales_the_reply_write(tmp_path):
         else:
             assert torch.equal(out0[i], sp[i])
     reply, _ = b.hear("Hello there.")      # hear commits through the same path
+
+
+def test_own_gain_copies_only_spares_ordinary_replies(tmp_path):
+    import torch
+    c = StubCortex()
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, own_gain=0.0, own_gain_copies=True)
+    st = [s.clone() for s in b.state]
+    full = b.cortex.read("User: I went for a long walk by the river.\n\nAssistant: How lovely, where?\n\n", st)[1]
+    su = b.cortex.read("User: I went for a long walk by the river.\n\nAssistant:", st)[1]
+    sp = b.cortex.read(" How lovely, where?\n\n", su)[1]
+    ordinary = b.commit_exchange("I went for a long walk by the river.", "How lovely, where?", st)
+    copy = b.commit_exchange("I went for a long walk by the river.", "I went for a long walk by the river.", st)
+    for i in range(1, len(sp), 3):
+        assert torch.allclose(ordinary[i], sp[i]) and torch.allclose(copy[i], su[i])
+    assert Brain(str(tmp_path / "b"), cortex=c, **KW).own_gain_copies is False
+
+
+def test_carry_penalty_keeps_counts_across_turns(tmp_path):
+    c = StubCortex()
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, carry_penalty=True)
+    b.hear("Hello there.")
+    n1 = sum(b._occ.values())
+    b.hear("Hello again.")
+    assert n1 > 0 and len(b._occ) >= 1 and sum(b._occ.values()) != n1
+    off = Brain(str(tmp_path / "b"), cortex=c, **KW)
+    off.hear("Hello there.")
+    assert off.carry_penalty is False and off._occ == {}

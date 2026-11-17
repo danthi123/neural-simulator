@@ -74,12 +74,16 @@ class Cortex:
         return self.model.forward(tokens, state)
 
     def speak(self, logits, state, max_tokens: int = 120, temperature: float = 1.0, top_p: float = 0.3,
-              presence: float = 0.4, frequency: float = 0.4, block: dict | None = None, block_n: int = 4):
+              presence: float = 0.4, frequency: float = 0.4, block: dict | None = None, block_n: int = 4,
+              carry: dict | None = None, decay: float = 0.996):
         """Generate one turn from (logits, state). Stops at a blank line or end of text. Returns (text, state).
         block (default None = off): {(n-1 token prefix): {next tokens}} that may not follow that prefix in this turn
-        (no-repeat n-gram across turns; Brain(habituation=...))."""
+        (no-repeat n-gram across turns; Brain(habituation=...)).
+        carry (default None = off): a token-occurrence dict kept across turns by the caller and updated in place, each
+        count decaying by `decay` per generated token (the RWKV chat practice, penalty_decay; Brain(carry_penalty))."""
         st = copy.deepcopy(state)
-        out, counts = [], {}
+        out = []
+        counts = carry if carry is not None else {}
         logits = logits.clone()
         for _ in range(max_tokens):
             for t, c in counts.items():
@@ -92,6 +96,9 @@ class Cortex:
             if tok == END_OF_TEXT:
                 break
             out.append(tok)
+            if carry is not None:
+                for t in counts:
+                    counts[t] *= decay
             counts[tok] = counts.get(tok, 0) + 1
             text = self.pipe.decode(out)
             if "\n\n" in text or "\nUser:" in text:

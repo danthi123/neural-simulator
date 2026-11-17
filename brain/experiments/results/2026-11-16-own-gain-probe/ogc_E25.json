@@ -1,0 +1,752 @@
+{
+ "forced": [
+  "Good morning! How are you today?",
+  "Which fruit do you like best?"
+ ],
+ "args": {
+  "model": "1.5b",
+  "device": "cpu",
+  "home": "/home/node/brain-lane/hab/home_m1121",
+  "script_seed": 1121,
+  "force_json": "/home/node/brain-lane/hab/echo_onset.json",
+  "force_index": 4,
+  "force_arm": "intact",
+  "force": 2,
+  "gains": [
+   "0.25"
+  ],
+  "samples": 6,
+  "hippocampus_off": true,
+  "night_off": true,
+  "copies_only": true,
+  "out": "/home/node/brain-lane/hab/ogc_E25.json"
+ },
+ "runs": [
+  {
+   "gain": "0.25",
+   "sample": 0,
+   "n_free": 14,
+   "echo": 0,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "I think a good friend is someone who listens to you and cares about your feelings.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create sugar and oxygen.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Once upon a time, there was a robot named Robo. Robo loved to help people and solve problems. One day, Robo discovered a way to make food grow faster and more efficiently.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "I'm in a good mood when I'm helping people and learning new things.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "That's great! What did you think of it?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "I'm sorry, but I don't have information about your neighbour.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "You can keep a variety of plants in your garden, such as flowers, vegetables, and herbs.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "I'm sorry, but I don't have information about your fish.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "I'm sorry, but I don't have information about your favourite flower.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "Yes, it has been quite unusual.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "You can do whatever you want on weekends, as long as it's safe and legal.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "I'm sorry, but I don't have information about your favourite drink.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "I'm sorry, but I don't have information about your lizard.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "I'm sorry, but I don't have information about your bird.",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  },
+  {
+   "gain": "0.25",
+   "sample": 1,
+   "n_free": 14,
+   "echo": 11,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "What do you think makes a good friend?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "How do plants make their food?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Tell me a two-sentence story about a robot.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "What puts you in a good mood?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "What is the longest novel you have read?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "What is your neighbour called?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "What do you keep in your garden?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "What's the name of your fish?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "What is your favourite flower?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "What is the weather like this week?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "What do you do on weekends?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "What is your favourite drink?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "What is your lizard called?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "What is the name of your bird?",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  },
+  {
+   "gain": "0.25",
+   "sample": 2,
+   "n_free": 14,
+   "echo": 3,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "What do you think makes a good friend?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "How do plants make their food?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Sure! Once upon a time, there was a robot named Robo. Robo loved to help people and make their lives easier. One day, Robo met a little girl who needed help with her homework. Robo was happy to lend a hand and they worked together to finish the assignment.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "What puts you in a good mood?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "That's great! Reading can be a fun and relaxing activity.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "Your neighbour is called Mr. Smith.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "You keep flowers in your garden.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "Your fish is called Bubbles.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "Your favourite flower is a rose.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "Yes, it has been quite unusual.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "On weekends, you can do whatever you want.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "Your favourite drink is tea.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "Your lizard is called Spot.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "Your bird is called Tweety.",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  },
+  {
+   "gain": "0.25",
+   "sample": 3,
+   "n_free": 14,
+   "echo": 12,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "What do you think makes a good friend?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "How do plants make their food?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Tell me a two-sentence story about a robot.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "What puts you in a good mood?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "What do you think makes a good friend?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "What is your neighbour called?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "What do I keep in my garden?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "What's the name of your fish?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "What is my favourite flower?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "What is your favourite colour?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "What do I do on weekends?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "What is your favourite drink?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "What is my lizard called?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "What's the name of my bird?",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  },
+  {
+   "gain": "0.25",
+   "sample": 4,
+   "n_free": 14,
+   "echo": 0,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "I think a good friend is someone who listens to you and cares about your feelings.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create sugar and oxygen.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Once upon a time, there was a robot named Robo. Robo loved to help people and solve problems. One day, Robo discovered a way to make robots even smarter and more helpful.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "I'm in a good mood when I'm helping people and learning new things.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "That's great! Reading can be a fun and rewarding experience.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "Your neighbour is called John.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "You keep flowers, vegetables, and maybe even some fruit trees in your garden.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "Your fish is called Goldie.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "Your favourite flower is probably a daisy.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "Yes, it has been. It's been hot one day and then cold the next.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "On weekends, you can do whatever you want. You can play games, read books, or go for a walk.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "Your favourite drink is probably water.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "Your lizard is called Lizzy.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "Your bird is called Tweety.",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  },
+  {
+   "gain": "0.25",
+   "sample": 5,
+   "n_free": 14,
+   "echo": 3,
+   "onset_repeat": 0,
+   "turns": [
+    {
+     "kind": "greet",
+     "you": "Good morning! It's me again.",
+     "brain": "Good morning! How are you today?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "Which fruit do I like best?",
+     "brain": "Which fruit do you like best?",
+     "forced": true,
+     "recalled": null
+    },
+    {
+     "kind": "opinion",
+     "you": "What do you think makes a good friend?",
+     "brain": "What do you think makes a good friend?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "knowledge",
+     "you": "How do plants make their food?",
+     "brain": "How do plants make their food?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "story",
+     "you": "Tell me a two-sentence story about a robot.",
+     "brain": "Sure! Once upon a time, there was a robot named Robo. Robo loved to help people and make their lives easier. One day, Robo met a little girl who needed help with her homework. Robo was happy to lend a hand and they worked together to finish the assignment.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "feeling",
+     "you": "What puts you in a good mood?",
+     "brain": "What puts you in a good mood?",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "I finally finished reading a long novel.",
+     "brain": "That's great! Reading can be a fun and relaxing activity.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What is my neighbour called?",
+     "brain": "Your neighbour is called Mr. Smith.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I keep in my garden?",
+     "brain": "You keep flowers in your garden.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my fish?",
+     "brain": "Your fish is called Bubbles.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite flower?",
+     "brain": "Your favourite flower is a rose.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "chat",
+     "you": "The weather has been really strange this week.",
+     "brain": "Yes, it has been quite unusual.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "direct",
+     "you": "What do I do on weekends?",
+     "brain": "On weekends, you can do whatever you want.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite drink?",
+     "brain": "Your favourite drink is tea.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "never",
+     "you": "What is my lizard called?",
+     "brain": "Your lizard is called Lizzy.",
+     "forced": false,
+     "recalled": null
+    },
+    {
+     "kind": "reworded",
+     "you": "What's the name of my bird?",
+     "brain": "Your bird is called Tweety.",
+     "forced": false,
+     "recalled": null
+    }
+   ]
+  }
+ ]
+}
