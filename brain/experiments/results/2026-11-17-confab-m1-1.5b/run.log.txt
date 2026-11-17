@@ -1,3 +1,4 @@
+# host: AWS g6.xlarge NVIDIA L4, batch 20261117-0656 (from tools/aws_brain_batch.sh state; added at landing)
 2026-11-17 12:01:58 start m1_s42
 2026-11-17 12:18:17 end m1_s42 rc 0
 2026-11-17 12:18:17 start m1_s43
