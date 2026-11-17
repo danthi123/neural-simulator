@@ -49,15 +49,23 @@ def near_miss_cues(cortex, base, statement: str, k: int = 4, frame: str = "N1", 
     return own, list(dict.fromkeys(cues))
 
 
-def guard_texts(cortex, base, cues, max_tokens: int = 24, split: bool = False):
+def guard_texts(cortex, base, cues, max_tokens: int = 24, split: bool = False, context: str | None = None):
     """The pretrained cortex's own exchange for each cue (greedy reply, from the birth state, nothing reinstated):
-    the texts the near-miss KL term holds fixed. split=True returns (prefix, reply) pairs, for a KL on the reply only."""
+    the texts the near-miss KL term holds fixed. split=True returns (prefix, reply) pairs, for a KL on the reply only.
+    context (default None = off; the teacher night, brain/research/2026-11-17-teacher-night-context-1.5b.md): the
+    reply is spoken after the pretrained cortex has read `context` (the day's tellings), and each item is a
+    (prefix, reply, context) triple: sleep holds the student, which never sees the context, to what the cortex says
+    WITH it, on the reply positions."""
     out = []
+    st0 = base if context is None else cortex.read(context, base)[1]
     for q in cues:
-        lg, st = cortex.read(f"User: {q}\n\nAssistant:", base)
+        lg, st = cortex.read(f"User: {q}\n\nAssistant:", st0)
         a = cortex.speak(lg, st, max_tokens=max_tokens, temperature=0)[0]
         pre, rep = f"User: {q}\n\nAssistant:", f" {a}\n\n"
-        out.append((pre, rep) if split else pre + rep)
+        if context is not None:
+            out.append((pre, rep, context))
+        else:
+            out.append((pre, rep) if split else pre + rep)
     return out
 
 

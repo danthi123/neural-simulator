@@ -17,6 +17,13 @@ Read-outs per question (hippocampus on, S_all key, the lesson episode excluded, 
          episode says (beyond the pretrained prior)?
   A_bin  both greedy answers (H, C) contain the same learned name (instrument name list: analysis only, not wireable)
   AND    min of LOSO DEV percentiles of the chosen C variant and A_lp
+Report-only read-outs added for the 1.5B run (brain/research/2026-11-17-confab-m1-1.5b.md; never part of `chosen`):
+  Coff_mean / Coff_cmean   C with consolidated synapses OFF in both states (the night's prior cannot answer for it)
+  C2off_mean               Coff_mean(best episode) - Coff_mean(runner-up episode): does THIS memory predict the
+                           question better than the next one (recall-to-reject contrast)
+  G                        grounding of the cortical answer C: mean over C's greedy tokens of log p(t | reinstated) -
+                           log p(t | not reinstated), consolidated OFF in both (was the answer carried by the memory?)
+  sim2                     the runner-up's S_all score (F - sim2 = the winner's margin)
 
 Phases:
   dev     DEV (72) read-outs for one seed
@@ -37,7 +44,7 @@ import torch
 import torch.nn.functional as F
 
 from brain.brain import Brain
-from brain.cortex import DEFAULT_MODEL, Cortex
+from brain.cortex import DEFAULT_MODEL, Cortex, resolve_model
 from brain.experiments.abstain_in_brain import SEEDS, fit_rule, keys_in
 from brain.experiments.abstain_v2 import DEV, SETS as SETS_V2, auc, keyed
 
@@ -111,6 +118,12 @@ def readouts(b, q):
     ep, fam = hip.best(cx, base, q, exclude=excl)
     row = {"F": fam, "episode": ep.text if ep is not None else None}
     rein = hip.reinstate(cx, base, ep)
+    sc = hip.scores(cx, base, q)
+    for i in excl:
+        sc[i] = -1e9
+    order = [int(i) for i in torch.argsort(sc, descending=True)]
+    ep2 = hip.episodes[order[1]] if len(order) > 1 and float(sc[order[1]]) > -1e8 else None
+    row.update(sim2=float(sc[order[1]]) if ep2 is not None else 0.0, episode2=ep2.text if ep2 is not None else None)
     was = cx.consolidated_on
     try:
         # (i) cue completion, consolidated ON in both states
@@ -126,6 +139,17 @@ def readouts(b, q):
         content = surpr >= np.median(surpr)
         row.update(C_mean=float(gain.mean()), C_max=float(gain.max()), C_cmean=float(gain[content].mean()),
                    C_cmin=float(gain[content].min()), n_qtok=len(qids))
+        # report-only: the same with consolidated synapses OFF, and the best-minus-runner-up contrast
+        cx.consolidated_on = False
+        lb0 = np.array(teacher_forced(cx, "User:", qids, base))
+        g0 = np.array(teacher_forced(cx, "User:", qids, rein)) - lb0
+        c0 = -lb0 >= np.median(-lb0)
+        row.update(Coff_mean=float(g0.mean()), Coff_cmean=float(g0[c0].mean()))
+        if ep2 is not None:
+            g2 = np.array(teacher_forced(cx, "User:", qids, hip.reinstate(cx, base, ep2))) - lb0
+            row["C2off_mean"] = float(g0.mean() - g2.mean())
+        else:
+            row["C2off_mean"] = 0.0
         # (ii) route agreement
         prompt = f"User: {q}\n\nAssistant:"
         cx.consolidated_on = False
@@ -134,6 +158,10 @@ def readouts(b, q):
         cx.consolidated_on = True
         c = greedy(cx, prompt, base)                      # cortical route (consolidated synapses, nothing reinstated)
         lp_c = teacher_forced(cx, prompt, h, base) if h else []
+        cx.consolidated_on = False
+        gr = (np.array(teacher_forced(cx, prompt, c, rein)) - np.array(teacher_forced(cx, prompt, c, base))) if c else None
+        row["G"] = float(gr.mean()) if c else None
+        cx.consolidated_on = True
         ht, ct = cx.pipe.decode(h), cx.pipe.decode(c)
         nh, nc = set(keys_in(ht)), set(keys_in(ct))
         row.update(A_lp=float(np.mean(np.array(lp_c) - np.array(lp_p))) if h else 0.0, A_bin=bool(nh & nc),
@@ -143,7 +171,33 @@ def readouts(b, q):
     return row
 
 
+def build_home(a, c):
+    """1.5B: no slept 1.5B abstain-v2 homes exist, so build the 11-13 confidence-gate home (12 FACTS told to a live
+    Brain, restart = one night at the given sleep settings; no lesson)."""
+    from brain.experiments import live_brain_probe as lbp
+    from brain.experiments.facts import FACTS
+    home = os.path.join(a.work, f"s{a.seed}")
+    if os.path.exists(os.path.join(home, "built.json")):
+        return home
+    lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
+    day1 = lbp.tell_day(home, c, [s for s, _, _ in FACTS], a.seed, a.steps)
+    np.random.seed(a.seed)
+    torch.manual_seed(a.seed)
+    b = Brain(home, cortex=c, sleep_steps=a.steps, sleep_lr=a.lr, sleep_kl_weight=a.kl_weight, adapter_rank=8,
+              sleep_seed=a.seed)   # the restart = the night
+    assert b.meta["sleeps"] == 1, b.meta
+    b.release()
+    json.dump({"day1": day1, "steps": a.steps, "lr": a.lr, "kl_weight": a.kl_weight}, open(os.path.join(home, "built.json"), "w"))
+    return home
+
+
 def load_brain(a, c):
+    if a.build:
+        home = build_home(a, c)
+        b = keyed(Brain(home, cortex=c, sleep_seed=a.seed, sleep_on_restart=False, sleep_steps=a.steps,
+                        sleep_lr=a.lr, sleep_kl_weight=a.kl_weight, adapter_rank=8))
+        assert b.meta["sleeps"] == 1 and not b.pending(), b.meta
+        return b
     home = os.path.join(a.work, f"s{a.seed}")
     if not os.path.exists(home):  # never touch the abstain-v2 homes themselves
         shutil.copytree(os.path.join(a.src_homes, f"s{a.seed}"), home)
@@ -160,15 +214,33 @@ def run_set(a, c, items):
         rows.append(r)
         print(set_name, *(f"{r[x]:.3f}" for x in ("F", "C_cmean", "C_cmin", "A_lp")), r["A_bin"], q, "| H:", r["H"],
               "| C:", r["C"], flush=True)
+    if hasattr(b, "release"):
+        b.release()
+    del b
+    import gc
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     return {"seed": a.seed, "rows": rows}
 
 
+def _cap(a, items):
+    if not getattr(a, "max_q", 0):
+        return items
+    out, seen = [], {}
+    for it in items:
+        seen[it[0]] = seen.get(it[0], 0) + 1
+        if seen[it[0]] <= a.max_q:
+            out.append(it)
+    return out
+
+
 def dev_phase(a, c):
-    return run_set(a, c, [("dev_" + kind, q, k, al) for q, k, al, kind in DEV])
+    return run_set(a, c, _cap(a, [("dev_" + kind, q, k, al) for q, k, al, kind in DEV]))
 
 
 def fresh_phase(a, c):
-    return run_set(a, c, [(s, q, k, al) for s, items in FRESH.items() for q, k, al in items])
+    return run_set(a, c, _cap(a, [(s, q, k, al) for s, items in FRESH.items() for q, k, al in items]))
 
 
 def kind(row):
@@ -264,12 +336,50 @@ def report_phase(a):
     sm["ii_dead"] = sm["A_bin_rate_dev"]["never"] >= sm["A_bin_rate_dev"]["told"] or \
         sm["A_bin_rate_fresh"]["never"] >= sm["A_bin_rate_fresh"]["told"]
     sm["FALSIFIED"] = sm["falsify_seeds"] >= 5
+    out["extras"] = extras(allrows, fr)
     return out
+
+
+EXTRA = ("F", "C_mean", "Coff_mean", "Coff_cmean", "C2off_mean", "G", "A_lp", "margin", "jaccard")
+
+
+def _jaccard(q):
+    """Report-only lexical baseline: the largest word-set Jaccard between the question and any told sentence."""
+    import re
+    from brain.experiments.facts import FACTS
+    w = lambda t: set(re.findall(r"[a-z']+", t.lower()))  # noqa: E731
+    return max(len(w(q) & w(s)) / len(w(q) | w(s)) for s, _, _ in FACTS)
+
+
+def extras(allrows, by_seed):
+    """Report-only (brain/research/2026-11-17-confab-m1-1.5b.md): AUROCs of the added read-outs, told split by whether
+    either route (H or C) named the right key, and the untold-attribute subset as the negatives."""
+    for r in allrows:
+        if "Coff_mean" not in r:
+            return {"missing": "rows predate the 1.5B read-outs"}
+        r["margin"] = r["F"] - r.get("sim2", 0.0)
+        r["jaccard"] = _jaccard(r["q"])
+        r["told_ok"] = kind(r) == "told" and r["key"] in (set(r["H_names"]) | set(r["C_names"]))
+    told = [r for r in allrows if kind(r) == "told"]
+    ok = [r for r in told if r["told_ok"]]
+    never = [r for r in allrows if kind(r) == "never"]
+    attr = [r for r in never if r["allowed"]]
+    res = {"n": {"told": len(told), "told_ok": len(ok), "never": len(never), "attr": len(attr)}, "pooled": {}, "seeds": {}}
+    for x in EXTRA:
+        v = lambda rs: [r[x] for r in rs if r[x] is not None]  # noqa: E731
+        res["pooled"][x] = {"told_vs_never": auc(v(told), v(never)), "told_ok_vs_never": auc(v(ok), v(never)),
+                            "told_vs_attr": auc(v(told), v(attr))}
+    for s, rows in by_seed.items():
+        t = [r for r in rows if kind(r) == "told"]
+        n = [r for r in rows if kind(r) == "never"]
+        res["seeds"][str(s)] = {x: auc([r[x] for r in t if r[x] is not None], [r[x] for r in n if r[x] is not None])
+                                for x in EXTRA}
+    return res
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["dev", "fit", "fresh", "report"])
+    ap.add_argument("phase", choices=["dev", "fit", "fresh", "report", "both"])
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--src-homes", default="/home/dant123/Projects/sim/_scratch/brainv2/abstain-v2-1103/homes")
     ap.add_argument("--work", default="/home/dant123/Projects/sim/_scratch/brainv2/confab-m1-1103/homes")
@@ -277,17 +387,42 @@ def main():
     ap.add_argument("--dir")
     ap.add_argument("--bars")
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--device", default="cpu")
+    ap.add_argument("--build", action="store_true", help="build a slept home (1.5B run) instead of copying abstain-v2's")
+    ap.add_argument("--steps", type=int, default=480)
+    ap.add_argument("--lr", type=float, default=5e-4)
+    ap.add_argument("--kl-weight", type=float, default=3.0)
+    ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per set (0 = all)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
+    if a.build and "--work" not in __import__("sys").argv:
+        ap.error("--build needs an explicit --work (the default holds the 0.1B homes)")
     torch.set_num_threads(a.threads)
     t0 = time.time()
     if a.phase == "fit":
         res = fit_phase(a)
     elif a.phase == "report":
         res = report_phase(a)
+    elif a.phase == "both":   # one job per seed: dev then fresh on the same home, written beside --out
+        os.makedirs(a.work, exist_ok=True)
+        d = a.out if not a.out.endswith(".json") else (os.path.dirname(a.out) or ".")
+        os.makedirs(d, exist_ok=True)
+        c = Cortex(model_path=resolve_model(a.model), device=a.device)
+        done = {}
+        for name, fn in (("dev", dev_phase), ("fresh", fresh_phase)):
+            r = fn(a, c)
+            r.update(model=a.model, device=a.device, elapsed_s=round(time.time() - t0, 1))
+            done[name] = os.path.join(d, f"{name}_s{a.seed}.json")
+            with open(done[name], "w") as fh:
+                json.dump(r, fh, indent=1)
+        res = {"seed": a.seed, "files": done}
+        if a.device == "cuda":
+            res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
+        if not a.out.endswith(".json"):
+            return
     else:
         os.makedirs(a.work, exist_ok=True)
-        c = Cortex(model_path=a.model, device="cpu")
+        c = Cortex(model_path=resolve_model(a.model), device=a.device)
         res = {"dev": dev_phase, "fresh": fresh_phase}[a.phase](a, c)
         res["model"] = a.model
     res["elapsed_s"] = round(time.time() - t0, 1)

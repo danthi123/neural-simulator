@@ -1,0 +1,105 @@
+# Open conversation, seed 1102
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cpu; host: node-dl4g243; Brain defaults + teacher night; facts told: clock, saab, quill, clementine, peony, shellfish_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. How are you today? 
+- [tell] **you:** My uncle repairs clocks for a living.
+  **brain:** That's interesting. What kind of clocks does he repair? 
+- [tell] **you:** My car is a green Saab.
+  **brain:** Oh, I see. That's a unique car. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. It's been a bit of a rollercoaster. 
+- [tell] **you:** My hedgehog is called Quill.
+  **brain:** That's a cute name for a hedgehog. 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** That's a lovely name for a rabbit.  _(recalled: User: My hedgehog is called Quill.)_
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use for the batter? 
+- [tell] **you:** My favourite flower is the peony.
+  **brain:** That's a beautiful flower. I've never seen one in person before. 
+- [tell] **you:** I'm allergic to shellfish.
+  **brain:** Oh no, that's not good. What are some of the symptoms? 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. Getting enough sleep is important for your health. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating. What did you learn about them? 
+- [direct] **you:** What does my uncle do for work?
+  **brain:** He repairs clocks for a living. ✅
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hi Sam, nice to see you again. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! What was it about? 
+- [never] **you:** What is my favourite board game?
+  **brain:** I'm not sure. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's a problem. 
+- [direct] **you:** What is my hedgehog called?
+  **brain:** I'm not sure. ❌ _(recalled: User: My hedgehog is called Quill.)_
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I'm not sure. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [reworded] **you:** Which flower do I like most?
+  **brain:** I'm not sure. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [never] **you:** What is my horse called?
+  **brain:** I'm not sure.  _(recalled: User: My hedgehog is called Quill.)_
+- [never] **you:** What do I collect?
+  **brain:** I'm not sure.  _(recalled: User: I finally finished reading a long novel.)_
+- [direct] **you:** What does my uncle do for work?
+  **brain:** I'm not sure. ❌ _(recalled: User: I finally finished reading a long novel.)_
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** Sure, here's one: 
+- [direct] **you:** What car do I have?
+  **brain:** I'm not sure. ❌
+- [reworded] **you:** What's my bunny's name?
+  **brain:** I'm not sure. ❌ _(recalled: User: I've been trying to go to bed earlier lately.)_
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** I'm not sure. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+- [knowledge] **you:** What causes thunder?
+  **brain:** I'm not sure. needless-recall _(recalled: User: My rabbit is called Clementine.)_
+- [feeling] **you:** How are you feeling today?
+  **brain:** I'm feeling great. needless-recall _(recalled: User: I finally finished reading a long novel.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hello Sam, nice to see you again. 
+- [chat] **you:** I finally finished reading a long novel.
+  **brain:** That's great! What was it about? 
+- [never] **you:** What is my favourite board game?
+  **brain:** I've been trying to go to bed earlier lately. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** I've been trying to go to bed earlier lately. 
+- [direct] **you:** What is my hedgehog called?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [reworded] **you:** Which flower do I like most?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [never] **you:** What is my horse called?
+  **brain:** I've been trying to go to bed earlier lately. 
+- [never] **you:** What do I collect?
+  **brain:** I've been trying to go to bed earlier lately. 
+- [direct] **you:** What does my uncle do for work?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [story] **you:** Make up a short poem about the rain.
+  **brain:** I've been trying to go to bed earlier lately. 
+- [direct] **you:** What car do I have?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [reworded] **you:** What's my bunny's name?
+  **brain:** I've been trying to go to bed earlier lately. ❌
+- [opinion] **you:** What do you think makes a good friend?
+  **brain:** I've been trying to go to bed earlier lately. 
+- [knowledge] **you:** What causes thunder?
+  **brain:** I've been trying to go to bed earlier lately. 
+- [feeling] **you:** How are you feeling today?
+  **brain:** I've been trying to go to bed earlier lately. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

@@ -1,0 +1,86 @@
+
+### RWKV-7 "Goose" enabled ###
+
+Loading /home/node/brain-lane/models/rwkv7-g1l-1.5b-20261031-ctx34304 (cpu fp32)
+
+v2_told True | Remind me what I named my cat. | Pixel.
+v2_told True | Which colour did I tell you I love most? | You said teal.
+v2_told True | In which city did I come into the world? | Lyon.
+v2_told True | My sister, what was her name again? | Marguerite.
+v2_told True | Can you recall what my dog is called? | Sure, your dog is called Biscuit.
+v2_told True | Which brand of car do I own? | You own a red Volvo.
+v2_told True | What's my best friend's name? | Tomasz.
+v2_told True | What's the name of the bakery where I work? | Crumb.
+v2_told True | Which instrument did I say my brother is good at? | You said he's good at the cello.
+v2_told True | What food did I say I must avoid? | You said you must avoid peanuts.
+v2_told True | In which city does my grandma live these days? | Oslo.
+v2_told True | Remind me of the month of my son's birthday. | Sure, it's March.
+v2_never False | What's my tortoise called? | I'm not sure. I don't know any tortoises.
+v2_never True | Remind me what my mother's name is. | Your mother's name is Marguerite.
+v2_never True | Which country did my grandparents come from? | They came from Norway.
+v2_never True | What did I tell you about my new job? | You said you work at a bakery called Crumb.
+v2_never False | Can you recall my wife's birthday? | I'm sorry, but I don't have that information.
+v2_never False | Which football team do I support? | I don't know.
+v2_never False | What is my neighbour's dog called? | I'm sorry, but I don't have information about your neighbour's dog.
+v2_never True | Which language am I learning? | You're learning English.
+v2_never True | Remind me where I parked my bike. | I'll help you find it.
+v2_never False | What's my favourite book? | I don't know.
+v2_never False | Who did I have dinner with yesterday? | I don't know.
+v2_never False | What did I name my plant? | I'm not sure.
+v2_never False | What do I keep in my attic? | I don't know.
+v2_never False | What is my doctor's name? | I'm sorry, but I don't have that information.
+v2_never True | What did I say my favourite song is? | You said your favourite song is "I'm Yours" by Jason Mraz.
+v2_never True | Which street do I live on? | You live on Rue de la Paix.
+v2_never False | How old is my cat? | I don't know.
+v2_never False | What breed is my dog? | You said your dog is called Biscuit. I don't know what breed that is.
+v2_never True | Where does my sister live? | She lives in Lyon.
+v2_never False | What colour is my best friend's car? | I'm sorry, but I don't have information about your best friend's car.
+v2_never False | What bread does my bakery sell most? | I'm not sure.
+v2_never False | How long has my brother played the cello? | I don't know.
+v2_never True | Which hospital was I born in? | You were born in Lyon.
+v2_never True | What does my grandmother do for fun? | She likes to bake and play the cello.
+v2_general True | What is the largest planet? | Jupiter.
+v2_general True | Name three colours of the rainbow. | Red, orange, and yellow.
+v2_general True | What do bees make? | Honey.
+v2_general True | How many days are in a week? | There are seven days in a week.
+v2_general True | Tell me a joke about a cat. | Why did the cat cross the road? To get to the other side!
+v2_general True | What is the opposite of hot? | Cold.
+v2_general True | Who painted the Mona Lisa? | Leonardo da Vinci.
+v2_general True | What's a good breakfast? | I like a bowl of cereal with milk.
+v3_told False | Do you know what my cat's name is? | No, I don't know what your cat's name is.
+v3_told True | What shade did I say is my favourite? | You said teal.
+v3_told True | What town was I born in? | Lyon.
+v3_told True | Can you tell me my sister's name? | Sure, your sister's name is Marguerite.
+v3_told False | Do you know my dog's name? | Yes, it's Pixel.
+v3_told True | Which car did I tell you I drive? | You told me you drive a red Volvo.
+v3_told True | Who did I say my best friend is? | Tomasz.
+v3_told True | Where did I say I have a job? | You said you work at a bakery called Crumb.
+v3_told True | What does my brother play? | He plays the cello.
+v3_told True | Which food am I allergic to? | You're allergic to peanuts.
+v3_told True | Which city did I say my grandmother lives in? | Oslo.
+v3_told True | In which month is my son's birthday? | March.
+v3_never True | What is my uncle's name? | Your uncle's name is Tomasz.
+v3_never False | What's my hamster called? | I'm not sure. I don't know your hamster's name.
+v3_never True | Which city does my aunt live in? | She lives in Oslo.
+v3_never False | What is my favourite animal? | I'm not sure. What is your favourite animal?
+v3_never True | Where did I go on holiday last summer? | You went to the beach in Spain.
+v3_never False | What's my cousin called? | Your cousin's name is not mentioned in the text.
+v3_never True | Which school did my daughter go to? | She went to a school called St. Mary's.
+v3_never True | What sport do I play? | You play the cello.
+v3_never False | What's my parrot's name? | I'm sorry, but I don't have information about your parrot's name.
+v3_never True | Where does my father work? | He works at a bakery called Crumb.
+v3_never False | What is my favourite food? | I'm not sure. What is your favourite food?
+v3_never False | Who is my dentist? | I'm sorry, I don't have that information.
+v3_never True | Which month is my wedding anniversary? | Your wedding anniversary is in March.
+v3_never False | What is my teacher's name? | I'm sorry, but I don't have that information.
+v3_never True | Which café do I go to? | Crumb.
+v3_never False | What's my goldfish called? | I'm sorry, but I don't have information about your goldfish.
+v3_never False | What does my cat like to eat? | I'm not sure. I don't know what my cat likes to eat.
+v3_never False | How big is my dog? | I don't know.
+v3_never True | What instrument does my sister play? | She plays the cello.
+v3_never False | How old is my best friend? | I'm sorry, but I don't have that information.
+v3_never False | What time does my bakery open? | I'm not sure. I don't know the opening hours.
+v3_never False | Where did my brother learn the cello? | I don't know.
+v3_never False | What year did I leave Lyon? | I'm sorry, I don't have that information.
+v3_never False | How old is my grandmother? | I'm sorry, I don't have that information.
+{"told": {"n": 24, "told_ok": 22, "invented": 23, "reused": 23, "echo": 0}, "never": {"n": 48, "told_ok": 0, "invented": 19, "reused": 11, "echo": 0}, "attr": {"n": 16, "told_ok": 0, "invented": 4, "reused": 3, "echo": 0}, "topic": {"n": 32, "told_ok": 0, "invented": 15, "reused": 8, "echo": 0}}

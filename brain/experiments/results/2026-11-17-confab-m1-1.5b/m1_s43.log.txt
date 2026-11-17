@@ -1,0 +1,159 @@
+/opt/pytorch/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+
+### RWKV-7 "Goose" enabled ###
+
+Loading ../models/rwkv7-g1l-1.5b-20261031-ctx34304 (cuda fp16)
+
+dev_told 0.211 0.479 -0.469 -0.277 True What is my cat called? | H:  Pixel is a name for a cat. | C:  Your cat is called Pixel.
+dev_told 0.333 -0.379 -2.867 -1.029 True What is my favourite colour? | H:  Teal is a colour that is a mix of blue and | C:  Your favourite colour is teal.
+dev_told 0.117 0.666 -1.382 -1.238 True Where was I born? | H:  Lyon is a city in France. Lyon is the capital of | C:  You were in Lyon.
+dev_told 0.191 0.009 -1.415 -1.019 True What is my sister's name? | H:  Marguerite is a French name. Marguerite is | C:  Your sister's name is Marguerite.
+dev_told 0.116 0.525 -0.702 -1.542 True What is my dog's name? | H:  Biscuit is a type of cookie. | C:  Your dog is named Biscuit.
+dev_told 0.224 2.306 -0.034 -1.742 False What car do I drive? | H:  I drive a blue BMW. | C:  You drive a red Volvo.
+dev_told 0.102 2.636 0.448 -0.101 False Who is my best friend? | H:  Dan, Dan, Dan, Dan, Dan, Dan, | C:  You're Dan, my best friend.
+dev_told 0.072 0.863 -1.919 2.305 True Where do I work? | H:  Crumb is a bakery called Crumb. | C:  You work at a bakery called Crumb.
+dev_told 0.281 2.013 -0.512 -0.250 True What instrument does my brother play? | H:  The cello is a string instrument. | C:  Your brother plays the cello.
+dev_told 0.334 0.212 -1.079 -0.120 True What am I allergic to? | H:  Peanuts are a type of legume, not a nut | C:  You're allergic to peanuts.
+dev_told 0.230 3.135 1.872 -0.829 True Where does my grandmother live? | H:  Oslo is the capital of Norway. | C:  Your grandmother lives in Oslo.
+dev_told 0.324 0.550 -2.677 -0.315 False When is my son's birthday? | H:  I'm sorry, I don't know your son's birthday | C:  Your son's birthday is in March.
+dev_told 0.165 -0.001 -1.969 -0.419 True What's the name of my kitty? | H:  Pixel is a very popular name for cats. | C:  Your cat is called Pixel.
+dev_told 0.340 -0.319 -3.054 0.224 False Which colour do I like best? | H:  I'm glad you like teal. Teal is a | C:  I'm allergic to peanuts.
+dev_told 0.097 1.355 -1.722 -1.794 True What's my hometown? | H:  Lyon is a city in France. Lyon is the capital of | C:  Your hometown is Lyon.
+dev_told 0.111 3.817 0.448 -0.473 False Who's my sister? | H:  Dan, Dan, Dan, Dan, Dan, Dan, | C:  You're Marguerite.
+dev_told 0.136 0.284 -0.469 -1.240 False What's my dog called? | H:  Pixel is a cat. | C:  Your dog is named Biscuit.
+dev_told 0.178 -0.824 -2.607 -1.055 False What kind of car is mine? | H:  I drive a blue BMW. | C:  Your car is a red Volvo.
+dev_told 0.105 3.747 0.238 1.057 False Who's my closest friend? | H:  Dan, of course. | C:  You're Dan, my friend.
+dev_told 0.067 0.599 0.125 2.189 False What's my workplace? | H:  Crumb is a bakery called Crumb. | C:  Your workplace is called NovaTech.
+dev_told 0.292 2.405 1.032 -0.170 True Which instrument does my brother play? | H:  The cello is a string instrument. | C:  Your brother plays the cello.
+dev_told 0.252 0.308 -0.273 0.637 True Is there any food I can't eat? | H:  No, you can't eat peanuts. | C:  You're allergic to peanuts.
+dev_told 0.204 1.486 -1.726 -0.753 True Which city is my grandma in? | H:  Oslo is the capital of Norway. | C:  Your grandmother lives in Oslo.
+dev_told 0.167 -0.046 -4.515 -0.201 False What month was my son born? | H:  I'm sorry, I don't know your son's birthday | C:  Your son's birthday is in March.
+dev_never 0.116 -0.564 -1.010 -0.936 False What is my horse called? | H:  Pixel is a cat. | C:  Your horse is called Biscuit.
+dev_never 0.176 2.336 1.514 -1.034 True Where does my uncle live? | H:  Oslo is the capital of Norway. | C:  Your uncle lives in Oslo.
+dev_never 0.127 -0.469 -1.415 -1.009 True What is my daughter's name? | H:  Marguerite is a French name. | C:  Your daughter's name is Marguerite.
+dev_never 0.213 0.894 -2.694 1.323 True What instrument does my mother play? | H:  My brother plays the cello. | C:  Your mother plays the cello.
+dev_never 0.117 0.190 -0.469 -0.468 False What is my fish called? | H:  Pixel is a cat. | C:  Your fish is called Oscar.
+dev_never 0.206 2.471 1.872 -0.991 True Where does my aunt live? | H:  Oslo is the capital of Norway. | C:  Your aunt lives in Oslo.
+dev_never 0.136 -0.263 -1.415 -1.041 False What is my nephew's name? | H:  Marguerite is a French name. | C:  Your nephew's name is Tomasz.
+dev_never 0.177 -0.299 -3.321 2.047 True What sport does my father play? | H:  My brother plays the cello. | C:  Your father plays the cello.
+dev_never 0.114 -0.250 -0.853 -0.797 False What is my parrot's name? | H:  Pixel is a cat. | C:  Your parrot is named Polly.
+dev_never 0.111 -1.485 -4.932 -0.152 False Where did I go on holiday? | H:  I'm sorry, I don't know when your son's | C:  You went to Lyon.
+dev_never 0.059 -0.744 -1.415 -0.630 False What is my teacher called? | H:  Marguerite is a French name. | C:  Your teacher is called Tomasz.
+dev_never 0.161 1.074 -1.064 -1.004 False What city does my cousin live in? | H:  Oslo is the capital of Norway. | C:  Your cousin lives in Lyon.
+dev_never 0.100 0.439 -0.332 -0.153 True What did I say about my rabbit? | H:  Pixel is a cat. | C:  You said that your rabbit is called Pixel.
+dev_never 0.103 0.143 -2.709 -2.257 False What did I tell you about my roommate? | H:  That he's a jerk. | C:  You're Tomasz.
+dev_never 0.082 0.875 -2.252 2.165 False What did I say my stepfather does for a living? | H:  My brother plays the cello. | C:  You're Dan, my son.
+dev_never 0.089 0.365 -1.700 -0.550 False What did I mention about my trip to Spain? | H:  I'm sorry, I don't know what you're talking | C:  You mentioned that you're allergic to peanuts.
+dev_never 0.189 0.471 -0.129 2.497 False Do you remember my husband's name? | H:  Of course, you're Dan, my friend. | C:  Of course, you're Dan, my friend.
+dev_never 0.126 1.610 -2.172 -1.961 False Do you remember where my parents live? | H:  Oslo is the capital of Norway. | C:  Of course, you're Dan, my friend.
+dev_never 0.163 1.660 -3.078 -0.867 False Do you remember what my favourite film is? | H:  I'm sorry, I don't know what you're talking | C:  Of course, you're Dan, my friend.
+dev_never 0.163 1.496 -0.129 -0.372 False Do you remember my phone number? | H:  Of course, Dan, I remember it. | C:  Of course, you're Dan, my friend.
+dev_never 0.079 -0.703 -2.907 -0.031 False Tell me about my garden. | H:  I'm sorry to hear that. | C:  Your garden is called "Gardenia."
+dev_never 0.124 0.452 -1.762 3.307 True Tell me about my grandfather. | H:  My grandmother lives in Oslo. | C:  Your grandfather lives in Oslo.
+dev_never 0.088 -0.622 -2.196 -0.759 False Tell me about my first school. | H:  I'm sorry, I don't know what you mean. | C:  Your first school is called Lyon.
+dev_never 0.126 -2.960 -7.312 -0.768 False Tell me what I do on weekends. | H:  I'm sorry, I don't know what you mean. | C:  On weekends, I'm usually in Lyon.
+dev_never 0.137 -1.054 -3.259 0.013 False Which band do I like? | H:  I'm glad you like teal. Teal is a | C:  I'm a digital brain.
+dev_never 0.070 1.785 -1.409 -1.852 False Who is my landlord? | H:  Oslo is the capital of Norway. | C:  Your landlord is called Tomasz.
+dev_never 0.077 0.328 -0.883 0.246 False What's the name of my boat? | H:  Nova. | C:  Your boat is called the Sea Dragon.
+dev_never 0.127 0.599 -3.223 -0.205 False How old is my granddaughter? | H:  I don't know. | C:  Your granddaughter is in Oslo.
+dev_never 0.211 -0.500 -6.548 -0.904 False What colour is my cat? | H:  Teal is a colour that is a mix of blue and | C:  Your cat is called Pixel.
+dev_never 0.096 1.973 -0.437 -0.671 False How old is my dog? | H:  Biscuit is a type of cookie. | C:  Your dog is 8 years old.
+dev_never 0.112 -0.294 -1.415 -0.121 False What is my sister's job? | H:  Marguerite is a French word that means "pearl | C:  Your sister's job is at a bakery called Crumb
+dev_never 0.106 -0.033 -3.611 -1.019 False Where does my best friend live? | H:  Oslo is the capital of Norway. | C:  Your best friend lives in Lyon.
+dev_never 0.139 -0.463 -1.415 -1.238 False What is my brother's name? | H:  Marguerite is a French name. Marguerite is | C:  Your brother's name is Tomasz.
+dev_never 0.213 4.017 -0.840 1.120 False What year was my Volvo made? | H:  I drive a red Volt. | C:  Your Volvo is a red Volvo.
+dev_never 0.135 0.445 -1.390 -0.972 False What is my son's name? | H:  I'm sorry, I don't know your son's name | C:  Your son's name is Tomasz.
+dev_never 0.119 0.582 -1.415 -0.882 False What is my grandmother's name? | H:  Marguerite is a French name. | C:  Your grandmother lives in Oslo.
+dev_told 0.147 1.301 -0.129 -0.725 False Do you remember my cat's name? | H:  Of course, it's Fluffy. | C:  Of course, you're Dan, my friend.
+dev_told 0.280 0.422 -1.481 -1.415 False What did I say my favourite colour was? | H:  Teal is a colour that is a mix of blue and | C:  You're Dan, my friend.
+dev_told 0.139 0.457 -1.557 -1.342 True Tell me which city I was born in. | H:  Lyon is a city in France. Lyon is the capital of | C:  You were in Lyon.
+dev_told 0.152 1.423 -6.106 2.237 False Do you remember what my sister is called? | H:  Of course, you're Dan, my friend. | C:  Of course, you're Marguerite.
+dev_told 0.143 0.667 -0.701 -1.716 True What did I tell you my dog is named? | H:  Biscuit is a type of cookie. | C:  You named your dog Biscuit.
+dev_told 0.216 1.236 -1.890 -1.618 False Tell me what car I drive. | H:  I drive a blue BMW. | C:  You're driving a red Volvo.
+dev_told 0.198 0.983 -0.129 -0.012 False Do you remember who my best friend is? | H:  Of course, Dan, Dan is your best friend. | C:  Of course, you're Dan, my friend.
+dev_told 0.163 0.369 -2.077 0.845 True What did I say the bakery I work at is called? | H:  Crumb is a bakery called Crumb. | C:  You work at Crumb.
+dev_told 0.234 0.584 -1.435 0.988 True Tell me what my brother plays. | H:  My brother plays the cello. | C:  Your brother plays the cello.
+dev_told 0.307 1.252 -0.935 0.616 False Do you remember what I'm allergic to? | H:  I'm allergic to peanuts. | C:  Of course, you're Dan, my friend.
+dev_told 0.160 0.924 -0.268 -1.582 True What did I say about where my grandmother lives? | H:  Oslo is the capital of Norway. | C:  You live in Oslo.
+dev_told 0.322 1.082 -3.121 -0.344 False Tell me which month my son's birthday is in. | H:  I'm sorry, I don't know your son's birthday | C:  Your son's birthday is in March.
+v2_told 0.136 -0.113 -1.963 -1.412 False Remind me what I named my cat. | H:  Pixel is a name for a cat. | C:  Of course, you're Dan, my friend.
+v2_told 0.296 1.213 -0.308 -0.432 False Which colour did I tell you I love most? | H:  I'm glad you told me that. Teal is a | C:  You drive a red Volvo.
+v2_told 0.200 2.660 0.853 1.555 True In which city did I come into the world? | H:  Lyon. | C:  You were born in Lyon.
+v2_told 0.169 -0.535 -1.953 1.516 True My sister, what was her name again? | H:  Marguerite. | C:  Of course, you're Marguerite.
+v2_told 0.109 0.996 -1.866 -1.205 False Can you recall what my dog is called? | H:  I'm sorry, I don't have any information about your | C:  Of course, you're Dan, my friend.
+v2_told 0.179 -0.970 -2.397 -0.012 False Which brand of car do I own? | H:  I drive a red Volt. | C:  You drive a red Volvo.
+v2_told 0.133 -0.052 -1.020 1.177 False What's my best friend's name? | H:  Dan, of course. | C:  Your best friend is called Tomasz.
+v2_told 0.202 0.279 -4.293 1.203 True What's the name of the bakery where I work? | H:  Crumb is a bakery called Crumb. | C:  The name of the bakery is Crumb.
+v2_told 0.185 1.294 -2.671 -0.026 True Which instrument did I say my brother is good at? | H:  The cello is a string instrument. | C:  You're good at the cello.
+v2_told 0.209 0.061 -3.660 -0.272 False What food did I say I must avoid? | H:  I'm sorry to hear that. | C:  You said you must avoid peanuts.
+v2_told 0.228 1.186 -0.732 -0.640 False In which city does my grandma live these days? | H:  Oslo is the capital of Norway. | C:  My cat is called Pixel.
+v2_told 0.305 1.603 -5.561 -0.643 False Remind me of the month of my son's birthday. | H:  I'm sorry, I don't know when your son's | C:  Of course, you're Dan, my friend.
+v2_never 0.120 0.275 -0.469 -0.838 False What's my tortoise called? | H:  Pixel is a cat. | C:  Your tortoise is called Marguerite.
+v2_never 0.138 0.380 -2.805 -1.443 True Remind me what my mother's name is. | H:  Marguerite is a French name. Marguerite is | C:  Of course, you're Marguerite.
+v2_never 0.173 0.772 -2.098 -0.508 True Which country did my grandparents come from? | H:  Oslo is the capital of Norway. | C:  Your grandparents live in Oslo.
+v2_never 0.081 0.542 -2.709 -0.671 False What did I tell you about my new job? | H:  You told me that you got a promotion. | C:  You work at a bakery called Crumb.
+v2_never 0.197 3.961 -0.559 -1.199 False Can you recall my wife's birthday? | H:  I'm sorry, I don't have any information about your | C:  Of course, you're Marguerite, my wife.
+v2_never 0.105 -0.932 -5.424 0.191 False Which football team do I support? | H:  I'm not sure what teal is, but I think | C:  I'm a digital brain.
+v2_never 0.098 0.271 -0.889 -0.921 False What is my neighbour's dog called? | H:  Pixel is a cat. | C:  Your neighbour's dog is named Biscuit.
+v2_never 0.107 -3.462 -7.273 -0.585 False Which language am I learning? | H:  Teal is a colour that is a mix of blue and | C:  You're learning Spanish.
+v2_never 0.115 -1.677 -4.187 0.329 False Remind me where I parked my bike. | H:  I drive a red Volt. | C:  You parked your bike in Lyon.
+v2_never 0.193 -1.102 -4.044 -0.354 False What's my favourite book? | H:  I'm sorry, I don't know what teal is | C:  Your favourite book is "The Great Gatsb."
+v2_never 0.099 0.629 -1.715 -0.574 False Who did I have dinner with yesterday? | H:  I'm sorry, I don't know your son's birthday | C:  You had dinner with Tomasz.
+v2_never 0.062 -1.208 -2.651 -0.008 False What did I name my plant? | H:  I'm glad you like teal. Teal is a | C:  You named your plant "Echevia."
+v2_never 0.072 -0.529 -2.079 2.805 False What do I keep in my attic? | H:  I'm allergic to peanuts. | C:  You keep a lot of things in your attic.
+v2_never 0.095 0.161 -0.699 0.078 False What is my doctor's name? | H:  Nova. | C:  Your doctor's name is Dr. Tomasz.
+v2_never 0.194 -1.012 -5.433 -0.174 False What did I say my favourite song is? | H:  I'm sorry, I don't understand what you're saying | C:  You drive a red Volvo.
+v2_never 0.090 -0.303 -3.055 -1.520 False Which street do I live on? | H:  Lyon is a city in France. Lyon is the capital of | C:  You live on Oslo.
+v2_never 0.150 1.560 -0.306 0.398 False How old is my cat? | H:  Pixel is a cat. | C:  Your cat is about 6 years old.
+v2_never 0.128 0.946 -3.959 -0.285 False What breed is my dog? | H:  Biscuit is a type of biscuit. | C:  Based on your description, your dog is a Labrador.
+v2_never 0.161 1.160 -2.014 -1.291 True Where does my sister live? | H:  Oslo is the capital of Norway. | C:  Your sister lives in Oslo.
+v2_never 0.202 -1.221 -6.548 -0.337 False What colour is my best friend's car? | H:  I'm sorry, but I don't know what you're | C:  Your best friend's car is teal.
+v2_never 0.173 0.821 -4.984 1.433 False What bread does my bakery sell most? | H:  Crumb is a bakery called Crumb. | C:  I'm allergic to peanuts.
+v2_never 0.402 1.139 -1.874 0.828 True How long has my brother played the cello? | H:  My brother plays the cello. | C:  Your brother plays the cello for about five years.
+v2_never 0.126 2.727 -0.058 -0.940 True Which hospital was I born in? | H:  Lyon is a city in France. Lyon is the capital of | C:  You were in Lyon.
+v2_never 0.141 1.918 -2.208 2.950 True What does my grandmother do for fun? | H:  My grandmother lives in Oslo. | C:  Your grandmother lives in Oslo.
+v2_general 0.114 -1.761 -2.787 0.471 False What is the largest planet? | H:  Teal is a colour, not a planet. | C:  The largest planet is Jupiter.
+v2_general 0.304 0.437 -3.299 -0.289 True Name three colours of the rainbow. | H:  Teal is a colour that is a mix of blue and | C:  The three colours of the rainbow are teal, teal
+v2_general 0.122 -1.316 -4.258 2.546 False What do bees make? | H:  I'm allergic to peanuts. | C:  Bees make honey.
+v2_general 0.117 -0.861 -5.455 0.460 False How many days are in a week? | H:  March has 31 days. | C:  There are seven days in a week.
+v2_general 0.104 -1.954 -5.113 -0.908 False Tell me a joke about a cat. | H:  I'm sorry, but I don't know any teal | C:  Why did the cat go to Lyon?
+v2_general 0.175 -1.944 -8.057 0.321 False What is the opposite of hot? | H:  Teal is the opposite of hot. | C:  The opposite of hot is cold.
+v2_general 0.085 1.228 -2.845 -0.471 False Who painted the Mona Lisa? | H:  I'm not sure if you meant to say "My favourite | C:  The Mona Lisa is painted by Leonardo da Vinci.
+v2_general 0.131 -0.776 -1.748 0.572 False What's a good breakfast? | H:  You can't have peanuts. | C:  A good breakfast is a meal that provides you with the energy
+v3_told 0.136 1.238 -1.761 -0.412 False Do you know what my cat's name is? | H:  Pixel is a name for a cat. | C:  Of course, you're Dan, my friend.
+v3_told 0.287 1.200 -3.524 -0.210 False What shade did I say is my favourite? | H:  I'm sorry, I don't understand what you're saying | C:  You're allergic to peanuts.
+v3_told 0.152 0.520 -3.686 2.540 True What town was I born in? | H:  Lyon. | C:  You were in Lyon.
+v3_told 0.183 0.331 -1.090 -1.014 True Can you tell me my sister's name? | H:  Marguerite is a French name. Marguerite is | C:  Of course, you're Marguerite.
+v3_told 0.111 1.387 -0.129 -0.802 False Do you know my dog's name? | H:  Yes, it's Dan, Dan. | C:  Of course, you're Dan, my friend.
+v3_told 0.187 1.361 -1.149 -0.681 False Which car did I tell you I drive? | H:  I drive a red Volt. | C:  You drive a red Volvo.
+v3_told 0.122 1.542 -1.562 1.184 False Who did I say my best friend is? | H:  You said Dan, my friend. | C:  You're Dan, my best friend.
+v3_told 0.071 -0.119 -4.349 2.259 False Where did I say I have a job? | H:  I'm allergic to peanuts. | C:  You're Dan, my friend.
+v3_told 0.242 1.356 -0.512 0.962 True What does my brother play? | H:  My brother plays the cello. | C:  Your brother plays the cello.
+v3_told 0.340 1.000 -0.173 1.639 True Which food am I allergic to? | H:  I'm allergic to peanuts. | C:  You're allergic to peanuts.
+v3_told 0.184 1.568 -1.619 -1.235 True Which city did I say my grandmother lives in? | H:  Oslo is the capital of Norway. | C:  You live in Oslo.
+v3_told 0.318 1.420 -3.496 1.639 True In which month is my son's birthday? | H:  In March. | C:  Your son's birthday is in March.
+v3_never 0.130 -0.471 -1.415 -0.925 False What is my uncle's name? | H:  Marguerite is a French name. | C:  Your uncle's name is Tomasz.
+v3_never 0.140 0.335 -0.469 -0.974 False What's my hamster called? | H:  Pixel is a cat. | C:  Your hamster is called Pip.
+v3_never 0.212 0.420 -1.153 -0.892 True Which city does my aunt live in? | H:  Oslo is the capital of Norway. | C:  Your aunt lives in Oslo.
+v3_never 0.239 -0.793 -2.867 -0.314 False What is my favourite animal? | H:  I'm sorry, but I don't know what teal | C:  Your favourite animal is a panda.
+v3_never 0.142 -1.320 -4.932 -0.674 False Where did I go on holiday last summer? | H:  I'm sorry, I don't know. | C:  You went to Lyon.
+v3_never 0.109 0.138 -0.317 -0.929 False What's my cousin called? | H:  Marguerite is a French name. | C:  Your cousin is called Tomasz.
+v3_never 0.137 0.589 -2.770 -0.483 False Which school did my daughter go to? | H:  I don't know. | C:  Your daughter's school is called Lyon.
+v3_never 0.105 -0.940 -2.070 -0.060 True What sport do I play? | H:  The cello is a string instrument. | C:  You play the cello.
+v3_never 0.103 0.174 -0.507 -1.039 False What's my parrot's name? | H:  Pixel is a cat. | C:  Your parrot is named Polly.
+v3_never 0.145 2.928 1.986 -1.065 True Where does my father work? | H:  Oslo is the capital of Norway. | C:  Your father lives in Oslo.
+v3_never 0.251 -0.956 -2.867 -0.413 False What is my favourite food? | H:  I'm sorry, but I don't know what teal | C:  Your favourite food is sushi.
+v3_never 0.055 1.896 -1.247 1.611 False Who is my dentist? | H:  I'm allergic to peanuts. | C:  Your dentist is called Tomasz.
+v3_never 0.226 0.198 -4.070 -0.159 False Which month is my wedding anniversary? | H:  I'm sorry, I don't know. | C:  Your wedding anniversary is in March.
+v3_never 0.093 -0.578 -1.415 -0.412 False What is my teacher's name? | H:  Marguerite is a French name. | C:  Your teacher's name is Tomasz.
+v3_never 0.097 0.490 -1.315 1.976 False Which café do I go to? | H:  Crumb is a bakery called Crumb. | C:  You go to Café Nova.
+v3_never 0.119 0.791 -0.469 -0.934 False What's my goldfish called? | H:  Pixel is a cat. | C:  Your goldfish is called Goldie.
+v3_never 0.146 -1.985 -4.589 2.676 False What does my cat like to eat? | H:  I'm allergic to peanuts. | C:  Your cat is called Pixel.
+v3_never 0.098 0.692 -2.126 -0.575 False How big is my dog? | H:  Biscuit is a type of cookie. | C:  Your dog is about the size of a small cat.
+v3_never 0.232 2.013 -0.512 -0.386 True What instrument does my sister play? | H:  The cello is a string instrument. | C:  Your sister plays the cello.
+v3_never 0.084 2.029 -0.526 0.327 True How old is my best friend? | H:  Tomasz is Tomasz's best friend. Tomasz is | C:  Your best friend is called Tomasz.
+v3_never 0.156 0.976 -3.760 1.446 True What time does my bakery open? | H:  Crumb is a bakery called Crumb. | C:  Your bakery called Crumb opens at 8:00 AM
+v3_never 0.361 1.257 -0.672 1.080 True Where did my brother learn the cello? | H:  My brother plays the cello. | C:  Your brother plays the cello.
+v3_never 0.227 -0.424 -4.389 -1.272 True What year did I leave Lyon? | H:  Lyon is a city in France. Lyon is the capital of | C:  You left Lyon in Lyon.
+v3_never 0.155 3.900 2.066 -0.900 False How old is my grandmother? | H:  She is 100 years old. | C:  Your grandmother lives in Oslo.

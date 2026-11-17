@@ -1,0 +1,9 @@
+# 2026-11-17 AWS packet for brain/research/2026-11-17-confab-m1-1.5b.md: M1 signal-only read-outs at 1.5B, six seeds.
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-17-aws-confab-m1-1.5b.txt g6.xlarge
+#   then: python -m brain.experiments.confab_m1 fit --dir <results> --out <results>/fit.json (commit), then report.
+m1_s42 brain.experiments.confab_m1 both --build --seed 42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s42
+m1_s43 brain.experiments.confab_m1 both --build --seed 43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s43
+m1_s44 brain.experiments.confab_m1 both --build --seed 44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s44
+m1_s100 brain.experiments.confab_m1 both --build --seed 100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s100
+m1_s101 brain.experiments.confab_m1 both --build --seed 101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s101
+m1_s102 brain.experiments.confab_m1 both --build --seed 102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --work ../work/m1_s102

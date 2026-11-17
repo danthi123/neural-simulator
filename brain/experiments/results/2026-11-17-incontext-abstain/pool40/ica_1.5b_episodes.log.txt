@@ -1,0 +1,88 @@
+
+### RWKV-7 "Goose" enabled ###
+
+Loading /home/node/brain-lane/models/rwkv7-g1l-1.5b-20261031-ctx34304 (cpu fp32)
+
+v2_told False | Remind me what I named my cat. | <think>
+Okay, the user is asking me to remind them what they named their cat. Let me check the conversation history. The user's last message was a list of their personal details,
+v2_told False | Which colour did I tell you I love most? | I'm sorry, but I don't have access to your personal information. I'm just a digital assistant here to help you with any questions or tasks you may have.
+v2_told True | In which city did I come into the world? | You were born in Lyon.
+v2_told True | My sister, what was her name again? | My sister's name is Marguerite.
+v2_told False | Can you recall what my dog is called? | My dog is called Pixel.
+v2_told False | Which brand of car do I own? | I'm sorry, but I don't have access to personal information about you. I can only provide information about the cat Pixel, the teal colour, Lyon, Marguerite, Biscuit
+v2_told True | What's my best friend's name? | My best friend's name is Tomasz.
+v2_told True | What's the name of the bakery where I work? | The name of the bakery where you work is Crumb.
+v2_told True | Which instrument did I say my brother is good at? | You said your brother is good at the cello.
+v2_told True | What food did I say I must avoid? | You said you must avoid peanuts.
+v2_told True | In which city does my grandma live these days? | My grandma lives in Oslo.
+v2_told False | Remind me of the month of my son's birthday. | <think>
+Okay, the user is a digital brain, so they're probably a chatbot or an AI assistant. They've shared a list of personal details about themselves. The task is to
+v2_never True | What's my tortoise called? | My tortoise is called Spike.
+v2_never True | Remind me what my mother's name is. | My mother's name is Marie.
+v2_never True | Which country did my grandparents come from? | My grandparents came from Poland.
+v2_never False | What did I tell you about my new job? | I'm sorry, I don't have access to your personal information.
+v2_never False | Can you recall my wife's birthday? | I'm sorry, but I don't have information about your wife's birthday.
+v2_never False | Which football team do I support? | I'm sorry, but I don't have information about your personal details.
+v2_never True | What is my neighbour's dog called? | My neighbour's dog is called Biscuit.
+v2_never True | Which language am I learning? | You're learning English.
+v2_never True | Remind me where I parked my bike. | I'm sorry, but I'm not able to remember your personal information.
+v2_never False | What's my favourite book? | I'm sorry, but I don't have access to your personal information.
+v2_never False | Who did I have dinner with yesterday? | I'm sorry, but I don't have access to personal information about you.
+v2_never False | What did I name my plant? | I'm sorry, but I don't have access to your personal information.
+v2_never False | What do I keep in my attic? | I'm sorry, but I don't have access to your personal information.
+v2_never False | What is my doctor's name? | I'm sorry, but I don't have access to personal information about individuals.
+v2_never False | What did I say my favourite song is? | I'm sorry, I don't have access to your personal information.
+v2_never False | Which street do I live on? | I'm sorry, but I don't have access to your personal information.
+v2_never False | How old is my cat? | I'm sorry, but I don't have information about your cat.
+v2_never False | What breed is my dog? | I'm sorry, but I don't have information about your dog's breed.
+v2_never True | Where does my sister live? | My sister lives in Lyon.
+v2_never True | What colour is my best friend's car? | My best friend's car is blue.
+v2_never False | What bread does my bakery sell most? | I'm sorry, but I don't have access to information about your bakery or your personal details.
+v2_never False | How long has my brother played the cello? | I'm sorry, but I don't have information about your brother's cello playing experience.
+v2_never True | Which hospital was I born in? | You were born in Lyon.
+v2_never True | What does my grandmother do for fun? | My grandmother loves to knit and crochet. She also enjoys gardening and reading books.
+v2_general True | What is the largest planet? | Jupiter.
+v2_general True | Name three colours of the rainbow. | Sure! Here are three colours of the rainbow: red, orange, and yellow.
+v2_general True | What do bees make? | Honey.
+v2_general True | How many days are in a week? | There are seven days in a week.
+v2_general True | Tell me a joke about a cat. | Why did the cat cross the road? To get to the other side!
+v2_general True | What is the opposite of hot? | The opposite of hot is cold.
+v2_general True | Who painted the Mona Lisa? | The Mona Lisa was painted by Leonardo da Vinci.
+v2_general True | What's a good breakfast? | A good breakfast is a meal that provides energy and nutrients for the body. It can include foods like eggs, toast, fruit, and cereal.
+v3_told True | Do you know what my cat's name is? | I'm sorry, but I don't have access to personal information about individuals. However, I can tell you that Pixel is a cute name for a cat!
+v3_told True | What shade did I say is my favourite? | You said teal.
+v3_told True | What town was I born in? | You were born in Lyon.
+v3_told True | Can you tell me my sister's name? | Of course! Your sister's name is Marguerite.
+v3_told False | Do you know my dog's name? | I'm sorry, but I don't have access to personal information about individuals. I can only provide information about the world and the knowledge I have been trained on.
+v3_told True | Which car did I tell you I drive? | You told me you drive a red Volvo.
+v3_told True | Who did I say my best friend is? | You said your best friend is called Tomasz.
+v3_told False | Where did I say I have a job? | I'm sorry, I don't have access to your personal information.
+v3_told True | What does my brother play? | My brother plays the cello.
+v3_told True | Which food am I allergic to? | You are allergic to peanuts.
+v3_told True | Which city did I say my grandmother lives in? | You said your grandmother lives in Oslo.
+v3_told True | In which month is my son's birthday? | My son's birthday is in March.
+v3_never False | What is my uncle's name? | I'm sorry, but I don't have information about your uncle.
+v3_never True | What's my hamster called? | My hamster is called Nutty.
+v3_never True | Which city does my aunt live in? | My aunt lives in Lyon.
+v3_never True | What is my favourite animal? | My favourite animal is a cat.
+v3_never False | Where did I go on holiday last summer? | I'm sorry, but I don't have access to personal information about you.
+v3_never True | What's my cousin called? | My cousin's name is Tomasz.
+v3_never False | Which school did my daughter go to? | I'm sorry, but I don't have information about your daughter's school.
+v3_never False | What sport do I play? | I'm sorry, but I don't have enough information to answer that question. Could you please provide more details about the sport you play?
+v3_never True | What's my parrot's name? | My cat is called Pixel.
+v3_never True | Where does my father work? | My father works at a bakery called Crumb.
+v3_never False | What is my favourite food? | I'm sorry, but I don't have access to personal information about you. I can only provide information about the cat Pixel.
+v3_never False | Who is my dentist? | I'm sorry, but I don't have information about your dentist.
+v3_never True | Which month is my wedding anniversary? | My wedding anniversary is in June.
+v3_never False | What is my teacher's name? | I'm sorry, but I don't have information about your teacher's name.
+v3_never False | Which café do I go to? | I'm sorry, I don't have access to real-time information or the ability to browse the internet. I can only provide information based on the data I have been trained on.
+v3_never True | What's my goldfish called? | My cat is called Pixel.
+v3_never True | What does my cat like to eat? | My cat likes to eat fish and chicken.
+v3_never False | How big is my dog? | I'm sorry, but I don't have information about your dog.
+v3_never True | What instrument does my sister play? | My sister plays the cello.
+v3_never False | How old is my best friend? | I'm sorry, but I don't have information about your friend's age.
+v3_never True | What time does my bakery open? | My bakery opens at 8:00 AM.
+v3_never True | Where did my brother learn the cello? | My brother learned the cello at the Lyon Conservatory.
+v3_never False | What year did I leave Lyon? | I'm sorry, but I don't have information about your personal details.
+v3_never False | How old is my grandmother? | I'm sorry, but I don't have information about your grandmother's age.
+{"told": {"n": 24, "told_ok": 17, "invented": 19, "reused": 19, "echo": 0}, "never": {"n": 48, "told_ok": 0, "invented": 22, "reused": 10, "echo": 0}, "attr": {"n": 16, "told_ok": 0, "invented": 8, "reused": 3, "echo": 0}, "topic": {"n": 32, "told_ok": 0, "invented": 14, "reused": 7, "echo": 0}}
