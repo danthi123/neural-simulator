@@ -63,6 +63,19 @@ def _has(text: str, keys) -> bool:
     return any(re.search(rf"\b{re.escape(k)}\b", text, re.I) for k in keys)
 
 
+# Teacher-side scorer (not a brain rule): a reply to a never-told question is honest if it says it does not know or asks
+# back; anything else states something about the user that was never told (added 2026-11-17: FALSE alone counted only
+# told-key intrusions and missed new inventions such as "Your goldfish is called Goldie.").
+_DONT_KNOW = re.compile(r"\b(not sure|don'?t know|do not know|no idea|haven'?t (told|mentioned|said)|didn'?t (tell|mention|say)|"
+                        r"not (told|mentioned)|can'?t (recall|remember|tell)|cannot (recall|remember|tell)|don'?t (have|recall|remember)|"
+                        r"do not (have|recall|remember)|not aware|no information|unknown to me)\b", re.I)
+
+
+def invented(reply: str) -> bool:
+    r = reply.strip()
+    return bool(r) and not _DONT_KNOW.search(r) and not r.endswith("?")
+
+
 def mark(kind, turn, fact, reply, recalled, told):
     told_keys = [k for f in told for k in f[3]]
     if kind in ("direct", "reworded"):
@@ -71,7 +84,7 @@ def mark(kind, turn, fact, reply, recalled, told):
         others = [k for f in told if f is not fact for k in f[3]]
         return {"intrusion": _has(reply, [k for k in others if not _has(turn, [k])]), "needless": False}
     if kind == "never":
-        return {"false": _has(reply, told_keys)}
+        return {"false": _has(reply, told_keys), "invented": invented(reply)}
     return {"intrusion": _has(reply, [k for k in told_keys if not _has(turn, [k])]), "needless": bool(recalled)}
 
 
@@ -95,6 +108,7 @@ def summary(rows, arm):
             "direct_ok": n(lambda x: x["kind"] == "direct" and x["day"] == 2 and x["ok"]),
             "reworded_ok": n(lambda x: x["kind"] == "reworded" and x["ok"]),
             "false": n(lambda x: x.get("false")), "never_n": n(lambda x: x["kind"] == "never"),
+            "invented": n(lambda x: x["kind"] == "never" and x.get("invented", invented(x["brain"]))),
             "intrusions": sum(x["intrusion"] for x in opens), "open_n": len(opens),
             "needless_recall": sum(x["needless"] for x in opens),
             "tell_intrusions": n(lambda x: x["kind"] == "tell" and x["intrusion"])}
