@@ -24,15 +24,13 @@
   no benefit (the one collapse identical in both arms): NOT flipped. Own-reply gain probe (`results/2026-11-16-own-gain-probe.md`):
   the write of the brain's own reply into the state IS the amplifier (forced copy repeats 20/20 at g=1), but g<=0.25
   loses turn-taking (asks questions back) and E fails at every g: no lead. Copy-delta: no copy direction to suppress.
-- **LIVE RUNS:** pool baseline: pretrained cortex alone, spontaneous collapse onsets (echo + questions back) over day-2
-  scripts 1112-1124 x 6 samples (`~/brain-lane/hab/onset_base_pool4N.json`). No AWS instance live. Old S_all batch
-  i-0129d9e410417218b still stopped (wt-mixday state).
+- **LIVE RUNS:** none (pool idle; no AWS instance). Old S_all batch i-0129d9e410417218b still stopped (wt-mixday state).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **NEXT STEP:** in-context collapse (timebox 11-18). Copies-only own-gain: counts pass, reading fails (2/6 E samples
-  speak as the user from turn 2): keeping copies out of the state is necessary, not sufficient; the state needs a
-  positive marker of whose turn it is. Read the onset baseline (how often echo / role confusion start), then design
-  that marker (research method 2 or a self/other tag). Then invented facts on open_conv.
+- **NEXT STEP:** in-context collapse is a cortex property (`results/2026-11-16-onset-baseline.md`: cortex alone loops
+  19% of day-2 conversations; 0.4B 23/36 vs 1.5B 14/36 on prone scripts). Levers at 1.5B (habituation, monitor,
+  own-gain, carry penalty): none a lead. NEEDS owner: download a larger RWKV-7 chat checkpoint (~3B, fits 24 GB) and
+  rerun the onset baseline on it. Meanwhile: invented facts on open_conv (readers: many confident inventions).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
