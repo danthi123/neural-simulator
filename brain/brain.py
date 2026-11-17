@@ -175,7 +175,7 @@ class Brain:
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
-                 near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
+                 near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None, teacher_context: bool = False,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
@@ -275,6 +275,11 @@ class Brain:
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
         # drops cues that name its evaluation topics); None = keep every cue.
         self.near_miss, self.near_miss_frame, self.near_miss_exclude = int(near_miss), near_miss_frame, near_miss_exclude
+        # Teacher night (switch, default OFF; brain/research/2026-11-17-teacher-night-context-1.5b.md): the near-miss
+        # guard's replies and KL target come from the pretrained cortex WITH the day's tellings in its context (the
+        # stored episodes replayed in order), not from the bare birth state. The bare cortex invents on 79-86% of
+        # never-told questions; with the tellings in context it declines most (results/2026-11-17-incontext-abstain.md).
+        self.teacher_context = bool(teacher_context)
         self.near_miss_log = []
         os.makedirs(home, exist_ok=True)
         self._lock_fh = None
@@ -596,7 +601,7 @@ class Brain:
                 from brain.near_miss import told_topic
                 told = [e.text for e in self.hippocampus.episodes]
                 kept = [q for q in kept if not told_topic(q, told)]
-            t = guard_texts(self.raw_cortex, self.base, kept)
+            t = guard_texts(self.raw_cortex, self.base, kept, context=self._teacher_context())
             self.near_miss_log.append({"episode": None, "own": None, "cues": cues, "kept": kept, "texts": t})
             return t
         with torch.random.fork_rng(devices=[]):
@@ -604,10 +609,26 @@ class Brain:
                 own, cues = near_miss_cues(self.raw_cortex, self.base, e.text, k=self.near_miss,
                                            frame=self.near_miss_frame, seed=self.sleep_seed * 100 + i)
                 kept = [q for q in cues if not (self.near_miss_exclude and self.near_miss_exclude(q))]
-                t = guard_texts(self.raw_cortex, self.base, kept)
+                t = guard_texts(self.raw_cortex, self.base, kept, context=self._teacher_context())
                 self.near_miss_log.append({"episode": e.text, "own": own, "cues": cues, "kept": kept, "texts": t})
                 texts += t
         return texts
+
+    TEACHER_OPEN, TEACHER_ACK = "A few things about me.", "Thanks for telling me. I'll keep that in mind."
+
+    def _teacher_context(self):
+        """The teacher night's context: what the user told (every non-permanent told episode's user words, in storage
+        order) in ONE user turn and one acknowledgement. Layout measured in results/2026-11-17-incontext-abstain.md:
+        one turn names 22/24 told rewordings and invents on 19/48 never-told, the episodes replayed turn by turn 17/24
+        and 22/48 with persona leaks. Declared scaffold (brain/SCAFFOLDS.md): the opening and acknowledgement words,
+        read by the teacher only and never a training target. None when the switch is off (guard_texts unchanged)."""
+        if not self.teacher_context:
+            return None
+        said = [e.text.removeprefix("User: ").split("\n\nAssistant:")[0].strip()
+                for e in self.hippocampus.episodes if not e.permanent and e.text.startswith("User: ")]
+        if not said:
+            return None
+        return f"User: {self.TEACHER_OPEN} {' '.join(said)}\n\nAssistant: {self.TEACHER_ACK}\n\n"
 
     def close(self):
         """Shut down: sleep once if anything was lived since the last sleep (and sleep_on_restart), then save and

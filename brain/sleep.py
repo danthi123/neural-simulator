@@ -23,7 +23,9 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
     texts held to the pretrained cortex by a SECOND KL term each step (the near-miss guard, brain/near_miss.py), weight
     guard_weight (None = kl_weight). With no guard the loop is unchanged. A guard item may be a (prefix, reply) pair:
     then the KL covers only the positions that predict the reply tokens, so the prefix (a heard turn) stays free to be
-    learned by replay (reply-only rehearsal). Returns the per-step losses."""
+    learned by replay (reply-only rehearsal). A (prefix, reply, context) triple (the teacher night): the student reads
+    prefix + reply with no context; the target is the pretrained cortex reading context + prefix + reply, on the
+    positions that predict the reply. Returns the per-step losses."""
     rng = random.Random(seed)
     torch.manual_seed(seed)
     c = plastic.cortex
@@ -34,9 +36,18 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
     plastic.enabled = False
     with torch.no_grad():
         ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in gen_ids]
-        g_ids = [_ids(c, g if isinstance(g, str) else g[0] + g[1]) for g in guard]
-        g_from = [0 if isinstance(g, str) else max(len(_ids(c, g[0])) - 1, 0) for g in guard]
-        g_ref = [F.log_softmax(plastic(ids, base_state)[0], -1)[k:] for ids, k in zip(g_ids, g_from)]
+        g_ids, g_from, g_ref = [], [], []
+        for g in guard:
+            if isinstance(g, str) or len(g) == 2:
+                ids = _ids(c, g if isinstance(g, str) else g[0] + g[1])
+                k = 0 if isinstance(g, str) else max(len(_ids(c, g[0])) - 1, 0)
+                g_ref.append(F.log_softmax(plastic(ids, base_state)[0], -1)[k:])
+            else:   # (prefix, reply, context): the teacher reads the context first
+                pi, ri, ci = _ids(c, g[0]), _ids(c, g[1]), _ids(c, g[2])
+                ids, k = pi + ri, max(len(pi) - 1, 0)
+                g_ref.append(F.log_softmax(plastic(ci + ids, base_state)[0], -1)[len(ci) + k:])
+            g_ids.append(ids)
+            g_from.append(k)
     plastic.enabled = True
     gw = kl_weight if guard_weight is None else guard_weight
     grng = random.Random(seed + 7919)

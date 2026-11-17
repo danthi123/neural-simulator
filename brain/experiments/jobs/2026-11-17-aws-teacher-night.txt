@@ -1,0 +1,9 @@
+# 2026-11-17 AWS packet, part A of brain/research/2026-11-17-teacher-night-context-1.5b.md (D1-D4; committed before any run).
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-17-aws-teacher-night.txt g6.xlarge
+# Off/M4 arms: banked nmoff/nmon (batch 20261114-2031). Halves as the banked off arm.
+nmtc_s42 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s42 --near-miss 4 --near-miss-frame F --teacher-context
+nmtc_s43 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s43 --near-miss 4 --near-miss-frame F --teacher-context
+nmtc_s44 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s44 --near-miss 4 --near-miss-frame F --teacher-context
+nmtc_s100 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s100 --near-miss 4 --near-miss-frame F --teacher-context
+nmtc_s101 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s101 --near-miss 4 --near-miss-frame F --teacher-context
+nmtc_s102 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmtc_s102 --near-miss 4 --near-miss-frame F --teacher-context

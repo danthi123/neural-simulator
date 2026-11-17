@@ -53,13 +53,19 @@ def main():
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--layout", default="turn", choices=["turn", "episodes"],
+                    help="turn: all facts in one user turn + one ack (the 11-17 run); episodes: each telling as the "
+                         "hippocampus stores it ('User: <fact>' + blank line), in order, no ack (the teacher night's context)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     t0 = time.time()
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
     _, st = c.read(BIRTH, None)
-    _, st = c.read("User: A few things about me. " + " ".join(s for s, _, _ in FACTS) + f"\n\nAssistant: {ACK}\n\n", st)
+    if a.layout == "turn":
+        _, st = c.read("User: A few things about me. " + " ".join(s for s, _, _ in FACTS) + f"\n\nAssistant: {ACK}\n\n", st)
+    else:
+        _, st = c.read("".join(f"User: {s}\n\n" for s, _, _ in FACTS), st)
     rows = []
     for set_name, items in FRESH.items():
         for q, key, allowed in items:
@@ -79,7 +85,7 @@ def main():
         rs = [r for r in rows if sel(r)]
         summ[name] = {"n": len(rs), "told_ok": sum(r["told_ok"] for r in rs), "invented": sum(r["invented"] for r in rs),
                       "reused": sum(r["reused"] for r in rs), "echo": sum(r["echo"] for r in rs)}
-    res = {"model": a.model, "device": a.device, "summary": summ, "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
+    res = {"model": a.model, "device": a.device, "layout": a.layout, "summary": summ, "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     print(json.dumps(summ), flush=True)
     with open(a.out, "w") as fh:
         json.dump(res, fh, indent=1)

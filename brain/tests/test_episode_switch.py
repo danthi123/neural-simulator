@@ -295,3 +295,56 @@ def test_fake_think_prompts_with_the_empty_think_tag(tmp_path):
     assert any("Assistant: <think></think>Hello there, friend.\n\n" in t for t in seen)
     off = Brain(str(tmp_path / "b"), cortex=c, **KW)
     assert off.fake_think is False and off._spoken(">x") == ">x"
+
+
+def test_teacher_context_triple_kl():
+    """(prefix, reply, context) guard items (teacher night): an empty context equals the (prefix, reply) pair; a
+    context the reference reads first changes the target (recurrent toy, so earlier tokens matter)."""
+    import torch
+    import torch.nn as nn
+    from brain.sleep import sleep
+
+    class Pipe:
+        def encode(self, t):
+            return [ord(ch) % 50 for ch in t]
+
+    class Plastic(nn.Module):
+        def __init__(self):
+            super().__init__()
+            torch.manual_seed(0)
+            self.emb, self.out, self.delta = nn.Embedding(50, 8), nn.Linear(8, 50), nn.Linear(8, 50)
+            for p in list(self.emb.parameters()) + list(self.out.parameters()):
+                p.requires_grad_(False)
+            self.cortex, self.enabled = type("C", (), {"pipe": Pipe()})(), True
+        def forward(self, ids, state):
+            h = torch.cumsum(self.emb(torch.tensor(ids)), 0)
+            return self.out(h) + (self.delta(h) if self.enabled else 0), state
+
+    def run(guard):
+        return sleep(Plastic(), None, [("abcdefgh", 1.0)], ["hello there"], steps=5, seed=1, guard=guard)
+    pre, rep = "User: what?\n\nAssistant:", " no idea\n\n"
+    assert run([(pre, rep)]) == run([(pre, rep, "")])
+    assert run([(pre, rep)]) != run([(pre, rep, "User: My cat is called Pixel.\n\n")])
+
+
+def test_teacher_context_switch_passes_tellings(tmp_path, monkeypatch):
+    import brain.brain as bb
+    import brain.near_miss as nm
+    seen = {}
+    def fake(plastic, base, eps, generic, **k):
+        seen["guard"] = list(k.get("guard", []))
+        return []
+    monkeypatch.setattr(bb, "replay_into_cortex", fake)
+    monkeypatch.setattr(Brain, "_plastic", lambda self: type("P", (), {"parameters": lambda s: []})())
+    monkeypatch.setattr(nm, "frame_cues", lambda *a, **k: ["What is my horse called?"])
+    b = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, near_miss=1, near_miss_frame="F", teacher_context=True)
+    b.hear("My cat is called Pixel.")
+    b.sleep()
+    trip = [g for g in seen["guard"] if isinstance(g, tuple) and len(g) == 3]
+    assert trip and trip[0][0] == "User: What is my horse called?\n\nAssistant:"
+    assert "My cat is called Pixel." in trip[0][2] and "What's your name?" not in trip[0][2]
+    off = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW, near_miss=1, near_miss_frame="F")
+    assert off.teacher_context is False
+    off.hear("My cat is called Pixel.")
+    off.sleep()
+    assert all(isinstance(g, str) for g in seen["guard"])

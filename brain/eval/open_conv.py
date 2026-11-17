@@ -125,6 +125,9 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--rehearse-reply", action="store_true", help="Brain(sleep_rehearse='reply'): KL on reply tokens only")
     ap.add_argument("--habituation", type=int, default=0, help="Brain(habituation=N) (switch, default OFF = 0)")
     ap.add_argument("--reply-monitor", type=int, default=0, help="Brain(reply_monitor=N) (switch, default OFF = 0)")
+    ap.add_argument("--teacher-night", action="store_true",
+                    help="Brain(near_miss=4, near_miss_frame='F', teacher_context=True): the teacher night "
+                         "(brain/research/2026-11-17-teacher-night-context-1.5b.md; switch, default OFF)")
     a = ap.parse_args(argv)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
@@ -134,6 +137,14 @@ def main(argv=None, cortex: Cortex | None = None):
           **({"sleep_rehearse": "reply"} if a.rehearse_reply else {}),
           **({"habituation": a.habituation} if a.habituation else {}),
           **({"reply_monitor": a.reply_monitor} if a.reply_monitor else {})}
+    if a.teacher_night:
+        # test hygiene (as mixed_day_probe.names_eval_topic): a cue the cortex writes about this run's never-told
+        # topics is dropped, so day-2 never-told answers measure transfer, not a guarded question
+        from brain.near_miss import cue_topics
+        never_topics = set().union(*[cue_topics(t) for k, t, _ in day2 if k == "never"])
+        never_qs = {t.strip().lower() for k, t, _ in day2 if k == "never"}
+        kw.update(near_miss=4, near_miss_frame="F", teacher_context=True,
+                  near_miss_exclude=lambda q: bool(cue_topics(q) & never_topics) or q.strip().lower() in never_qs)
     root = a.homes or (os.path.splitext(os.path.abspath(a.out))[0] + "_homes")
     intact, off = os.path.join(root, "intact"), os.path.join(root, "hippocampus_off")
     for h in (intact, off):
@@ -141,7 +152,7 @@ def main(argv=None, cortex: Cortex | None = None):
     os.makedirs(root, exist_ok=True)
     lines = [f"# Open conversation, seed {a.seed}",
              f"\n_cortex: {getattr(cortex, 'model_name', None)}; device: {a.device}; host: {socket.gethostname()};"
-             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}{f' + reply_monitor {a.reply_monitor}' if a.reply_monitor else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
+             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}{f' + reply_monitor {a.reply_monitor}' if a.reply_monitor else ''}{' + teacher night' if a.teacher_night else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
     rows = []
     live(Brain(intact, cortex=cortex, **kw), day1, told, lines, rows, "both", 1)
     Brain(intact, cortex=cortex, **kw).save()     # restart = the one night
