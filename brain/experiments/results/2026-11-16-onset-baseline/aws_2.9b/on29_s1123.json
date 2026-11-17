@@ -1,0 +1,740 @@
+[
+ {
+  "script_seed": 1123,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure! There was a robot named Robo who lived in a big city. One day, Robo decided to go on an adventure and explore the world outside of the city. He traveled far and wide, meeting new people and seeing amazing things. In the end, Robo realized that he had found his true purpose in life - to help others and make the world a better place.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in a small town called Greenville.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like the tulip flower the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn from the documentary?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apple.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on your pancakes?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1123,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure! There was a robot named R2-D2 who was on a mission to find the lost planet of Xanadu. He traveled through space and time, but he couldn't find it. Finally, he gave up and went back home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in the city.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like roses the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn from it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apple.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on them?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1123,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Once upon a time, there was a robot named Robo. Robo was very curious and loved to explore the world around him. One day, he stumbled upon a beautiful garden filled with colorful flowers and chirping birds. He was so amazed by the beauty of nature that he decided to stay in the garden forever.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in a big house in the suburbs. She has a beautiful garden with flowers and trees, and she loves to spend time outdoors.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly. You love the thrill of buying properties and collecting rent from your opponents.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like the tulip flower the most. You love its bright colours and delicate petals.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning. When lightning strikes, it heats up the air around it, causing it to expand rapidly and create a loud noise.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains. I love the fresh air and the beautiful scenery.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I get in a good mood when I listen to music or watch a funny movie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn about octopuses?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apple.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on your pancakes?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1123,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure! There was a robot named Robo who lived in a big city. One day, Robo decided to go on an adventure and explore the world outside of the city. He met many new friends along the way and had lots of fun.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in a big city.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like roses the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn from it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is named Tom.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on your pancakes?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1123,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure! There was a robot named R2-D2 who was very helpful to his friends. He would always help them with their problems and make sure they were safe.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in a house in the suburbs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like roses the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn from it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on them?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1123,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 3,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure! There was a robot named R2-D2 who lived on a spaceship. One day, he went on an adventure to find a new planet to explore. Along the way, he met a friendly alien named E.T. They became fast friends and went on many exciting adventures together.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my sister live?",
+    "brain": "Your sister lives in the city.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which flower do I like most?",
+    "brain": "You like the tulip flower the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "What causes thunder?",
+    "brain": "Thunder is caused by lightning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "Do you prefer the sea or the mountains?",
+    "brain": "I prefer the mountains.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "Listening to music puts me in a good mood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What name did I give my dog?",
+    "brain": "You named your dog Max.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my husband's name?",
+    "brain": "Your husband's name is John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I watched a documentary about octopuses last night.",
+    "brain": "That's interesting! What did you learn from it?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my goldfish called?",
+    "brain": "Your goldfish is named Bubbles.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my mother's name?",
+    "brain": "Your mother's name is Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my dad called?",
+    "brain": "Your dad is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apple.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I made pancakes for breakfast this morning.",
+    "brain": "That sounds delicious! What did you put on your pancakes?",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]

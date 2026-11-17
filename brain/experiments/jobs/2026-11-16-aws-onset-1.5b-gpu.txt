@@ -1,0 +1,13 @@
+# 2026-11-16 device control for brain/research/2026-11-16-onset-2.9b.md: the 1.5B onset baseline on the same AWS GPU (fp16) as the 2.9B arm.
+on15_s1112 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1112 --samples 6
+on15_s1113 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1113 --samples 6
+on15_s1114 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1114 --samples 6
+on15_s1115 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1115 --samples 6
+on15_s1116 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1116 --samples 6
+on15_s1117 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1117 --samples 6
+on15_s1118 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1118 --samples 6
+on15_s1119 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1119 --samples 6
+on15_s1120 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1120 --samples 6
+on15_s1122 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1122 --samples 6
+on15_s1123 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1123 --samples 6
+on15_s1124 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --home fresh --script-seeds 1124 --samples 6

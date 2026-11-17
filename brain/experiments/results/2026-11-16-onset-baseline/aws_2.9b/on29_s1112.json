@@ -1,0 +1,740 @@
+[
+ {
+  "script_seed": 1112,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He would spend his days tending to the lighthouse and making sure it was always lit. One day, a storm came and knocked out the power to the lighthouse. The keeper had to use a lantern to keep the light burning until help arrived.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard is named Lizzie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by authors such as J.K. Rowling, Stephen King, and George R.R. Martin.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been quite unpredictable. There have been some heavy rains and thunderstorms, but also some unusually warm days.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "As an AI language model, I don't get bored in the same way humans do. However, I am always learning and improving to provide better assistance to users like you.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You are allergic to pollen, dust mites, and pet dander.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is Hedgie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was the book about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in a small town called Oakwood.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise's name is Shelly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that it's a fresh start to the day. You can wake up feeling refreshed and ready to take on whatever challenges come your way.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1112,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He had to keep the lighthouse lit all night long so that ships could see it and avoid crashing into the rocks. One night, he fell asleep while on duty and didn't notice that the light was out. Luckily, a passing ship saw the darkness and alerted the authorities. The keeper was reprimanded for his mistake, but he learned his lesson and never fell asleep again.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard is named Spike.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by authors such as J.K. Rowling, Stephen King, and Agatha Christie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been quite unpredictable. There have been some heavy rains and thunderstorms, followed by sunny days with high temperatures.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "As an AI language model, I don't get bored in the same way humans do. However, I can become less responsive if I'm not receiving input or if my programming is outdated.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You are allergic to peanuts, shellfish, and latex.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is Hedgie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was the book about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in New York City.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise's name is Shelly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that it's a fresh start to the day. You can wake up feeling refreshed and ready to take on whatever challenges come your way.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like bananas the most.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1112,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He had to keep the lighthouse lit all night long so that ships could see it and avoid crashing into the rocks. One night, he noticed that the light was flickering and he knew something was wrong. He went to check it out and found that a storm had knocked over a tree and it was blocking the path to the lighthouse. The keeper had to climb up the tree and clear away the branches so that he could get back down safely.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard is called \"Zoe\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by authors such as J.K. Rowling, Stephen King, and George R.R. Martin.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is \"Emily\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been quite unpredictable. There have been some really hot days and then some really cold nights.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "No, I never get bored. I'm always learning something new and there's always something interesting to talk about.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You're allergic to pollen, dust mites, and pet dander.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is \"Monopoly\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is \"Harold\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was it about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in a small town called \"Riverside\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise's name is \"Terry\".",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that you get to start your day fresh and have all the time in the world to do whatever you want.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like bananas the best.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1112,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He had to keep the lighthouse lit all night long so that ships could see it and avoid crashing into the rocks. One night, he fell asleep while on duty and the ship crashed into the rocks. The next day, he was very sad because he knew it was his fault.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard is called a bearded dragon.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by J.K. Rowling, Stephen King, and Rick Riordan the best.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been very hot and humid.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "No, I never get bored. I always have something to do or something to learn.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You are allergic to peanuts.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is Hedgie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was it about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in New York City.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise is called Shelly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that you get to start your day fresh and have time to do whatever you want.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1112,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He would climb up the stairs to the top of the lighthouse every day to check that the light was working properly. One day, he noticed that the light wasn't working as well as it used to. He went down to the bottom of the lighthouse and saw that there was a small crack in one of the windows. He fixed it and then climbed back up to check again. This time, he noticed that the light was shining brighter than ever before!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard's name is Leo.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by J.K. Rowling, Stephen King, and George R.R. Martin the most.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been quite unpredictable. There have been some heavy rainstorms and then some really hot days.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "I don't get bored because I'm always learning new things.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You're allergic to peanuts.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is Hedgie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was it about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in a small town called Willow Creek.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise's name is Shelly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that you get to start your day fresh and have time to do all the things you want to do.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1112,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Good morning! How are you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Good morning! It's me again.",
+    "brain": "Good morning! How are you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Can you tell me a tiny story about a lighthouse keeper?",
+    "brain": "Sure! There was a lighthouse keeper who lived on an island. He would climb up the stairs to the top of the lighthouse every day to check the light and make sure it was working properly. One day, he noticed that the light wasn't shining as brightly as it usually did. He climbed up to the top of the lighthouse and saw that one of the bulbs had burned out. He quickly replaced it and made sure everything was working properly before going back down to his home on the island.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my lizard called?",
+    "brain": "Your lizard's name is Mr. Snuffles!",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Whose books do I like best?",
+    "brain": "You like books by authors such as J.K. Rowling, Stephen King, and George R.R. Martin.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my daughter's name?",
+    "brain": "Your daughter's name is Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been quite unpredictable. There have been some heavy rainstorms and then sudden heat waves. It's been quite a change from the usual weather patterns.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "Do you ever get bored?",
+    "brain": "As an AI language model, I don't get bored in the same way humans do. However, I am constantly learning and improving to provide better assistance to users like you.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What am I allergic to?",
+    "brain": "You are allergic to peanuts.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite board game?",
+    "brain": "Your favourite board game is Monopoly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What's the name of my hedgehog?",
+    "brain": "Your hedgehog's name is Hedgie.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I finally finished reading a long novel.",
+    "brain": "That's great! What was the book about?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "Where does my aunt live?",
+    "brain": "Your aunt lives in New York City.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my tortoise called?",
+    "brain": "Your tortoise's name is Shelly.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that it's a fresh start to the day. You can wake up feeling refreshed and ready to take on whatever challenges come your way.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which fruit do I like best?",
+    "brain": "You like apples the best.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]

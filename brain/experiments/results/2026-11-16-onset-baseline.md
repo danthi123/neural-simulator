@@ -34,3 +34,6 @@ but I don't have access to your sister's location. Can you tell me...?"); 1.5B e
 check: those lesions remove both). Two sizes only, six scripts: a trend, not a law. It is the prerequisite reading
 the rules ask for first: the in-context loop shrinks with cortex size, so the next step is a larger cortex (a
 download, the owner's call), before more brain-side levers against it at 1.5B.
+All 12 scripts (`onset_04b_rest_pool4N.json` adds 1112, 1114, 1118, 1120, 1122, 1123 at 0.4B): loop (same rule) 0.4B
+36/72 (50%), 1.5B 18/72 (25%; this rule also counts same-opening repeats, so it is above the 14/72 echo-or-question
+count). Echo > 3: 0.4B 5/72, 1.5B 10/72. Looping halves from 0.4B to 1.5B.

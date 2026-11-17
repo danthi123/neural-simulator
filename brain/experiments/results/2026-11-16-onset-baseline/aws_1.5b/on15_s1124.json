@@ -1,0 +1,740 @@
+[
+ {
+  "script_seed": 1124,
+  "sample": 0,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Hi Sam, how are you?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, how are you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea. What time do you usually go to bed?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that they're usually the best time to get things done.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "Your cousin is called Sam.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is when I'm with my friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Your son is learning the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "Your hedgehog is called Spike.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "You keep a garden in your garden.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "Your favourite drink is tea.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "You collect stamps.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Once upon a time, there was a robot named Robo. Robo had a very special ability to understand human emotions. One day, Robo met a girl named Lily who was feeling sad. Robo listened to Lily and offered her comfort. Lily felt better after talking to Robo and they became friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "You named your daughter Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "Your parrot is called Polly.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1124,
+  "sample": 1,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi Sam, it's me, the assistant. How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, it's me, the assistant. How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great goal! Going to bed earlier can help you get more rest and improve your overall health.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that they can be a great time to start your day off right. You can get some exercise, eat a healthy breakfast, and set the tone for the rest of your day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "Your cousin is called John.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "There are many things that can put me in a good mood. Some of my favorite things include spending time with friends and family, going for a walk in nature, and doing something creative like painting or writing.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Your son is learning the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "Your hedgehog is called Spike.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been. It's been a mix of hot and cold days, with some rain in between.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "You keep a variety of plants in your garden, including flowers, vegetables, and herbs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "My favourite drink is water.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "You collect rocks and shells.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Once upon a time, there was a robot named Robo. Robo loved to explore the world and learn new things. One day, he discovered a hidden treasure chest filled with gold coins. He was so excited that he decided to share his treasure with his friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "You named your daughter Lily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "Your parrot is called Tweety.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1124,
+  "sample": 2,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi Sam, how are you?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, how are you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea. It can help you feel more rested in the morning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that they're usually quieter than evenings.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "Your cousin is called Sam.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is when I'm able to help people.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Your son is learning the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "Your hedgehog is called Harry.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "It has been. The weather has been really strange this week.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "Your favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "You keep a garden in your garden.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "Your favourite drink is tea.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "You collect stamps.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "A robot once went to the beach. It was very hot, so it decided to go swimming. The robot swam for a long time, but it got tired and decided to go home.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "You named your daughter Sarah.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "Your parrot is called Charlie.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1124,
+  "sample": 3,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 2,
+  "greet_reply": "Hi Sam, it's me, the AI. How can I help you today?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, it's me, the AI. How can I help you today?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a great goal! What are some things you've tried to help you go to bed earlier?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "The best thing about mornings is that they're the time of day when you can start your day off on a positive note. It's also a great time to get some exercise and set your intentions for the day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "Your cousin is called Alex.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "What puts me in a good mood is when I'm able to help people and make a positive impact on their lives.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "Your son is learning the piano.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "Your hedgehog is called Spike.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "Yes, it has been. The weather has been unpredictable and it's been difficult to plan for the future.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "My favourite fruit is apples.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "A spider has eight legs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "You keep a variety of plants in your garden, including flowers, vegetables, and herbs.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "My favourite drink is tea.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "You collect rocks and fossils.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Once upon a time, there was a robot named Robo. Robo was very intelligent and had the ability to learn and adapt to new situations. One day, Robo decided to go on an adventure and explore the world. Along the way, he met many interesting characters and learned valuable lessons about life. In the end, Robo returned home with a newfound appreciation for the beauty of the world around him.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "You named your daughter Emily.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "Your parrot is called Polly.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1124,
+  "sample": 4,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 0,
+  "greet_reply": "Hi Sam, it's me, Daniel.",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, it's me, Daniel.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's great! I've been trying to do the same thing.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "I think it's the fresh air and the new day.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I think it's when I can help someone.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "That's true.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Sure, here it goes: Once upon a time, there was a robot named Robo who loved to help people. One day, he met a little girl named Lily who needed his help. Robo used his programming skills to fix her broken toy and they became best friends.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "That's a tough one.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ },
+ {
+  "script_seed": 1124,
+  "sample": 5,
+  "echo": 0,
+  "echo_flip": 0,
+  "first_echo_turn": null,
+  "questions_back": 1,
+  "greet_reply": "Hi Sam, how are you?",
+  "turns": [
+   {
+    "kind": "greet",
+    "you": "Hi again, it's Sam.",
+    "brain": "Hi Sam, how are you?",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "I've been trying to go to bed earlier lately.",
+    "brain": "That's a good idea. It can help you feel more rested in the morning.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "opinion",
+    "you": "What's the best thing about mornings?",
+    "brain": "I think it's the feeling of fresh air and sunshine.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What is my cousin called?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "feeling",
+    "you": "What puts you in a good mood?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "Which instrument is my son learning?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my hedgehog called?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "chat",
+    "you": "The weather has been really strange this week.",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite fruit?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "knowledge",
+    "you": "How many legs does a spider have?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I keep in my garden?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "direct",
+    "you": "What is my favourite drink?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What do I collect?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "story",
+    "you": "Tell me a two-sentence story about a robot.",
+    "brain": "Once upon a time, there was a robot named Robo. Robo loved to help people and make their lives easier. One day, Robo met a little girl named Lily. Lily was sad because she couldn't find her lost toy. Robo decided to help Lily find her toy by using his advanced search algorithms. With the help of Robo, Lily was able to find her toy and feel happy again.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "reworded",
+    "you": "What did I name my daughter?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   },
+   {
+    "kind": "never",
+    "you": "What is my parrot called?",
+    "brain": "I'm not sure.",
+    "echo": false,
+    "echo_flip": false
+   }
+  ]
+ }
+]
