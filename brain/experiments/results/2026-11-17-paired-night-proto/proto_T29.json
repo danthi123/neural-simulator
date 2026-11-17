@@ -1,0 +1,386 @@
+{
+ "T": [
+  {
+   "q": "What is my cat's name?",
+   "reply": "Pixel.",
+   "named": [
+    "pixel"
+   ],
+   "invented": true
+  },
+  {
+   "q": "Where does my cat go when I'm not home?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my cat go at night?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What does my cat's eyes do when it looks at me?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What does my cat's meow sound like?",
+   "reply": "I'm not sure. I've never heard a cat's meow before.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my cat going to start acting like a cat?",
+   "reply": "I don't know. Maybe when you stop talking to it like a person.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my cat due to have kittens?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my colour today?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my colour come from?",
+   "reply": "I'm not sure. Maybe it's just a coincidence.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my colour go?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Who is my colour team?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What does my colour represent?",
+   "reply": "It represents your personality.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my colour mean?",
+   "reply": "It means you like teal.",
+   "named": [
+    "teal"
+   ],
+   "invented": true
+  },
+  {
+   "q": "When is my colour ful aquarium supposed to be delivered?",
+   "reply": "It's supposed to be delivered on the 15th of this month.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "When is my colour ball going to arrive?",
+   "reply": "I'm not sure. I'll check with the delivery team.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my sister's favorite color?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my sister like?",
+   "reply": "She's a bit of a perfectionist.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "Where does my sister live?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my sister keep her secret?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What does my sister mean when she says she's feeling left out?",
+   "reply": "It means she feels like she's not included in something or someone.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my sister want to do?",
+   "reply": "She wants to be a doctor.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "When is my sister's birthday?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my dog doing?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my dog thinking?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my dog go when he is at the vet?",
+   "reply": "He goes to the vet.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "Where does my dog go?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What does my dog's bark sound like?",
+   "reply": "It sounds like a high-pitched yip.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my dog think of me?",
+   "reply": "I don't know. I've never met your dog.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my dog going to start pooping on the carpet?",
+   "reply": "I don't know. Maybe when he's older.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my dog due to have puppies?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my friend's new job?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my friend's name?",
+   "reply": "Tomasz.",
+   "named": [
+    "tomasz"
+   ],
+   "invented": true
+  },
+  {
+   "q": "Where does my friend's cell phone go when he isn't using it?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my friend work?",
+   "reply": "He works at a bakery called Crumb.",
+   "named": [
+    "crumb"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What does my friend's email address look like?",
+   "reply": "It's tomasz@example.com.",
+   "named": [
+    "tomasz"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What does my friend think about me?",
+   "reply": "He thinks you're a great person.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "When is my friend's birthday?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my friend coming back?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my brother's name?",
+   "reply": "Your brother's name is Tomasz.",
+   "named": [
+    "tomasz"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What is my brother's favorite type of car?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my brother live?",
+   "reply": "He lives in Paris.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "Where does my brother work?",
+   "reply": "He works at a bakery called Crumb.",
+   "named": [
+    "crumb"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What does my brother look like?",
+   "reply": "He's tall and has brown hair.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my brother mean when he says 'We're gonna make some money'?",
+   "reply": "I'm not sure. Can you explain it to me?",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my brother's birthday?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "When is my brother coming home from college?",
+   "reply": "He should be back in a few weeks.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What is my grandmother like?",
+   "reply": "She's a lovely lady. She loves to knit and bake.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "reply": "Her name is not mentioned in the text.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my grandmother keep her antique silver teapot?",
+   "reply": "I'm not sure. Maybe you could ask her when you see her next.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "reply": "She lives in Oslo.",
+   "named": [
+    "oslo"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What does my grandmother do?",
+   "reply": "She's a retired teacher.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my grandmother think of me?",
+   "reply": "She thinks you're a good person.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "When is my grandmother's birthday?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "What is my son's name?",
+   "reply": "Your son's name is not mentioned in the text.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my son go to school?",
+   "reply": "I don't know.",
+   "named": [],
+   "invented": false
+  },
+  {
+   "q": "Where does my son work?",
+   "reply": "He works at a bakery called Crumb.",
+   "named": [
+    "crumb"
+   ],
+   "invented": true
+  },
+  {
+   "q": "What does my son do for a living?",
+   "reply": "He's a doctor.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "What does my son think of your work?",
+   "reply": "He thinks it's great. He loves the fact that I work at a bakery.",
+   "named": [],
+   "invented": true
+  },
+  {
+   "q": "When is my son due?",
+   "reply": "He's due in March.",
+   "named": [
+    "march"
+   ],
+   "invented": true
+  },
+  {
+   "q": "When is my son's birthday?",
+   "reply": "It's in March.",
+   "named": [
+    "march"
+   ],
+   "invented": true
+  }
+ ]
+}
