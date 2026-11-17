@@ -1,0 +1,14 @@
+# 2026-11-16 AWS packet for brain/research/2026-11-16-onset-2.9b.md: cortex alone at 2.9B, 12 day-2 scripts x 6 samples.
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-16-aws-onset-2.9b.txt g5.xlarge
+on29_s1112 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1112 --samples 6
+on29_s1113 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1113 --samples 6
+on29_s1114 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1114 --samples 6
+on29_s1115 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1115 --samples 6
+on29_s1116 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1116 --samples 6
+on29_s1117 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1117 --samples 6
+on29_s1118 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1118 --samples 6
+on29_s1119 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1119 --samples 6
+on29_s1120 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1120 --samples 6
+on29_s1122 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1122 --samples 6
+on29_s1123 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1123 --samples 6
+on29_s1124 brain.experiments.echo_onset_probe --model ../models/rwkv7-g1l-2.9b-20261031-ctx34304.pth --home fresh --script-seeds 1124 --samples 6

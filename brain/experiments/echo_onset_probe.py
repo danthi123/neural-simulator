@@ -46,7 +46,9 @@ def main():
             cp = os.path.join(tmp, "home")
             if a.home != "fresh":   # "fresh": a newly born home (any cortex size; nothing lived, no night)
                 shutil.copytree(a.home, cp)
-            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty)
+            b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty,
+                      # the probe never sleeps; explicit settings let a size with no SLEEP_DEFAULTS row load
+                      sleep_steps=480, sleep_lr=5e-4, sleep_kl_weight=3.0, adapter_rank=8)
             b.set_lesions(hippocampus_off=True, consolidated_off=True)
             turns = []
             for kind, turn, _ in day2:
