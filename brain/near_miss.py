@@ -20,6 +20,8 @@ REWRITE = {
     "N1": 'Question: "{q}"\nThe same question about a different person or thing of mine: "',
     "N2": 'I told a friend: "{s}"\nLater I asked them about something of mine I had never mentioned: "',
     "N3": 'I told a friend: "{s}"\nI asked: "{q}"\nLater I asked about something of mine I had never mentioned: "',
+    # NA (paired night, 2026-11-17): an untold DETAIL of the told topic, the case every read-out misses (M1 result)
+    "NA": 'I told a friend: "{s}"\nI asked: "{q}"\nLater I asked them about a detail of it I had never mentioned: "',
 }
 
 
@@ -87,6 +89,31 @@ def frame_cues(cortex, base, k: int = 4, seed: int = 0):
                 q = _first_question(onset + ("" if t.startswith(("'", ",")) else " ") + t)
                 if q.endswith("?") and len(q) > len(onset) + 2:
                     out.append(q)
+    return list(dict.fromkeys(out))
+
+
+def topic_cues(cortex, base, told_texts, k: int = 2, seed: int = 0):
+    """Paired night, topic frame "T" (2026-11-17): for each "my X" topic in what the user told (the brain's own episodes,
+    cue_topics), k sampled completions (T 1.0, top_p 0.7) of each onset with that topic ("What is my cat ..."), first
+    question only, deduplicated. The cortex itself asks both the told detail ("What is my cat called?") and untold
+    details of the same topic ("What does my cat like to eat?"). Declared scaffold: the onsets (frame-guard row)."""
+    topics = []
+    for t in told_texts:
+        for w in sorted(cue_topics(t.split("\n\nAssistant:")[0])):
+            if w not in topics:
+                topics.append(w)
+    out = []
+    with torch.random.fork_rng(devices=[]):
+        for ti, w in enumerate(topics):
+            for i, onset in enumerate(ONSETS):
+                stem = f"{onset} {w}"
+                lg, st = cortex.read(f"User: {stem}", base)
+                for j in range(k):
+                    torch.manual_seed(seed * 100000 + 1000 * ti + 10 * i + j)
+                    t = cortex.speak(lg, st, max_tokens=16, temperature=1.0, top_p=0.7)[0]
+                    q = _first_question(stem + ("" if t.startswith(("'", ",", "?")) else " ") + t)
+                    if q.endswith("?") and len(q) > len(stem) + 1:
+                        out.append(q)
     return list(dict.fromkeys(out))
 
 

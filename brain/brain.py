@@ -604,10 +604,20 @@ class Brain:
             t = guard_texts(self.raw_cortex, self.base, kept, context=self._teacher_context())
             self.near_miss_log.append({"episode": None, "own": None, "cues": cues, "kept": kept, "texts": t})
             return t
+        # Paired night ("P:<rewrite frame>", 2026-11-17, needs teacher_context): per TOLD episode the cortex's own
+        # question about it AND its near-miss rewrites, all answered by the teacher that has read the day's tellings,
+        # so the night holds "told detail -> the name" next to "untold detail of the same topic -> no name".
+        paired = self.near_miss_frame.startswith("P:")
+        frame = self.near_miss_frame[2:] if paired else self.near_miss_frame
+        assert not paired or self.teacher_context, "the paired night needs teacher_context=True"
         with torch.random.fork_rng(devices=[]):
             for i, e in enumerate(self.hippocampus.episodes):
+                if paired and (e.permanent or not e.text.startswith("User: ")):
+                    continue
                 own, cues = near_miss_cues(self.raw_cortex, self.base, e.text, k=self.near_miss,
-                                           frame=self.near_miss_frame, seed=self.sleep_seed * 100 + i)
+                                           frame=frame, seed=self.sleep_seed * 100 + i)
+                if paired:
+                    cues = [own] + cues
                 kept = [q for q in cues if not (self.near_miss_exclude and self.near_miss_exclude(q))]
                 t = guard_texts(self.raw_cortex, self.base, kept, context=self._teacher_context())
                 self.near_miss_log.append({"episode": e.text, "own": own, "cues": cues, "kept": kept, "texts": t})
