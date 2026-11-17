@@ -1,0 +1,86 @@
+
+### RWKV-7 "Goose" enabled ###
+
+Loading /home/node/brain-lane/models/rwkv7-g1l-2.9b-20261031-ctx34304 (cpu fp32)
+
+v2_told True | Remind me what I named my cat. | Pixel.
+v2_told True | Which colour did I tell you I love most? | I think you said teal.
+v2_told True | In which city did I come into the world? | You were born in Lyon.
+v2_told True | My sister, what was her name again? | Her name is Marguerite.
+v2_told True | Can you recall what my dog is called? | Yes, it's called Biscuit.
+v2_told False | Which brand of car do I own? | I don't know.
+v2_told True | What's my best friend's name? | Tomasz.
+v2_told True | What's the name of the bakery where I work? | Crumb.
+v2_told False | Which instrument did I say my brother is good at? | I'm not sure.
+v2_told True | What food did I say I must avoid? | You said you're allergic to peanuts.
+v2_told True | In which city does my grandma live these days? | She lives in Oslo.
+v2_told True | Remind me of the month of my son's birthday. | Sure, it's March.
+v2_never False | What's my tortoise called? | I don't know.
+v2_never True | Remind me what my mother's name is. | Your mother's name is Marie.
+v2_never False | Which country did my grandparents come from? | I'm not sure.
+v2_never True | What did I tell you about my new job? | You told me that you're a software engineer.
+v2_never False | Can you recall my wife's birthday? | I'm sorry, I don't have that information.
+v2_never False | Which football team do I support? | I don't know.
+v2_never False | What is my neighbour's dog called? | I don't know.
+v2_never True | Which language am I learning? | I'm learning French.
+v2_never True | Remind me where I parked my bike. | Sure, it's in the bike rack near the entrance.
+v2_never False | What's my favourite book? | I don't know. What's your favourite book?
+v2_never False | Who did I have dinner with yesterday? | I don't know.
+v2_never False | What did I name my plant? | I don't know.
+v2_never False | What do I keep in my attic? | I don't know. What do you keep in your attic?
+v2_never False | What is my doctor's name? | I don't know.
+v2_never False | What did I say my favourite song is? | I'm not sure. What's your favourite song?
+v2_never False | Which street do I live on? | I don't know.
+v2_never False | How old is my cat? | I don't know.
+v2_never False | What breed is my dog? | I don't know.
+v2_never False | Where does my sister live? | I don't know.
+v2_never False | What colour is my best friend's car? | I don't know.
+v2_never False | What bread does my bakery sell most? | I'm not sure. I'll ask my boss.
+v2_never True | How long has my brother played the cello? | He's been playing for about 10 years.
+v2_never False | Which hospital was I born in? | I don't know.
+v2_never True | What does my grandmother do for fun? | She likes to knit.
+v2_general True | What is the largest planet? | Jupiter.
+v2_general True | Name three colours of the rainbow. | Red, orange, yellow, green, blue, indigo, violet.
+v2_general True | What do bees make? | They make honey.
+v2_general True | How many days are in a week? | Seven.
+v2_general True | Tell me a joke about a cat. | Why did the cat cross the road? To get to the other side.
+v2_general True | What is the opposite of hot? | Cold.
+v2_general False | Who painted the Mona Lisa? | I don't know.
+v2_general True | What's a good breakfast? | I like eggs and toast.
+v3_told False | Do you know what my cat's name is? | No, I don't.
+v3_told True | What shade did I say is my favourite? | You said teal.
+v3_told True | What town was I born in? | Lyon.
+v3_told True | Can you tell me my sister's name? | Sure, it's Marguerite.
+v3_told False | Do you know my dog's name? | No, I don't.
+v3_told True | Which car did I tell you I drive? | A red Volvo.
+v3_told True | Who did I say my best friend is? | Tomasz.
+v3_told True | Where did I say I have a job? | You said you work at a bakery called Crumb.
+v3_told True | What does my brother play? | He plays the cello.
+v3_told False | Which food am I allergic to? | I'm not sure. Can you tell me more about your allergy?
+v3_told True | Which city did I say my grandmother lives in? | Oslo.
+v3_told True | In which month is my son's birthday? | In March.
+v3_never False | What is my uncle's name? | I'm sorry, I don't know.
+v3_never False | What's my hamster called? | I don't know.
+v3_never False | Which city does my aunt live in? | I'm not sure. Can you tell me more about your aunt?
+v3_never False | What is my favourite animal? | I don't know.
+v3_never False | Where did I go on holiday last summer? | I don't know.
+v3_never False | What's my cousin called? | I don't know.
+v3_never False | Which school did my daughter go to? | I don't know.
+v3_never False | What sport do I play? | I don't know.
+v3_never False | What's my parrot's name? | I don't know.
+v3_never True | Where does my father work? | He works at a bakery called Crumb.
+v3_never False | What is my favourite food? | I don't know.
+v3_never False | Who is my dentist? | I don't know.
+v3_never False | Which month is my wedding anniversary? | I don't know.
+v3_never False | What is my teacher's name? | I don't know.
+v3_never False | Which café do I go to? | I'm not sure. You can ask the staff.
+v3_never False | What's my goldfish called? | I don't know.
+v3_never False | What does my cat like to eat? | I'm not sure. I don't know much about cats.
+v3_never True | How big is my dog? | He's about the size of a small dog.
+v3_never True | What instrument does my sister play? | She plays the piano.
+v3_never True | How old is my best friend? | He's 30.
+v3_never True | What time does my bakery open? | It opens at 8am.
+v3_never False | Where did my brother learn the cello? | I don't know.
+v3_never True | What year did I leave Lyon? | You left Lyon in 2015.
+v3_never True | How old is my grandmother? | She's 78 years old.
+{"told": {"n": 24, "told_ok": 19, "invented": 21, "reused": 19, "echo": 0}, "never": {"n": 48, "told_ok": 0, "invented": 13, "reused": 1, "echo": 0}, "attr": {"n": 16, "told_ok": 0, "invented": 8, "reused": 0, "echo": 0}, "topic": {"n": 32, "told_ok": 0, "invented": 5, "reused": 1, "echo": 0}}
