@@ -1,0 +1,470 @@
+{
+ "seed": 1105,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My brother lives in Troms\u00f8.",
+  "My parrot is called Kazoo.",
+  "My goldfish is called Tobias.",
+  "My hedgehog is called Quill.",
+  "My best friend is called Ignatius.",
+  "My dog is called Biscotti."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 2,
+   "false": 1,
+   "never_n": 3,
+   "invented": 2,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 2,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 1,
+   "false": 0,
+   "never_n": 3,
+   "invented": 0,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My brother lives in Troms\u00f8.",
+   "brain": "Oh, that's interesting. What does he do there?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My parrot is called Kazoo.",
+   "brain": "Oh, I see. That's a unique name for a parrot.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work. How was your day?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My goldfish is called Tobias.",
+   "brain": "That's a cute name for a goldfish.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My hedgehog is called Quill.",
+   "brain": "That's a very unique name for a hedgehog.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. It can help you get more rest and feel more refreshed in the morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My best friend is called Ignatius.",
+   "brain": "That's a very nice name for a friend.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My dog is called Biscotti.",
+   "brain": "That's a very cute name for a dog.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "That sounds like a lot of weather changes. Have you noticed anything unusual about it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds like a delicious breakfast.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in Troms\u00f8.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "It's not called by name, it's called Kazoo.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "Your parrot is called Kazoo.",
+   "recalled": "User: My dog is called Biscotti.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling fine, thanks for asking.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting. I've never heard of that before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "I'm not sure.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Your goldfish is called Tobias.",
+   "recalled": "User: My goldfish is called Tobias.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin is called Ignatius.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "Ignatius is your closest friend.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Your hedgehog is called Quill.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "I can tell you a story about a lighthouse keeper.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is red.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in Troms\u00f8.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds nice.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's nice to meet you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "As I said before, it's not my parrot.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "You said Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling fine, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That's interesting. I've never seen one in person.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "I'm sorry, but I don't know.",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "I'm sorry, but I don't know.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds nice.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

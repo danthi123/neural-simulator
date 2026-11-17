@@ -121,6 +121,7 @@ In brain/: missing: a reported confidence, a commit/hedge/ask routing, honest re
 Readiness: PARTIAL. Informative: abstains on never-told facts instead of confabulating. Expected failure: calibrated second-order confidence.
 Scale note: untested across the ladder; larger LMs confabulate differently, so measure false-recall per size.
 11-03 final (`results/2026-11-03-abstain-in-brain/`): `Brain(abstain=False)` familiarity gate (default OFF) pre-registered FAIL: false recall on fresh never-told questions 63 -> 34 (hippocampus on) and 46 -> 38 (off), correct answers kept. Both familiarity signals fail to generalise to new question wording (hippocampal = word overlap; cortical cue response keyed to the 'my X' frame), and gated replies are mostly invented answers, not 'I don't know'. A recorded negative for these signals; abstention v2 needs a signal learned over question forms.
+11-17 at 1.5B: M1 recall-to-reject FALSIFIED (untold attributes of told topics read as known, AUROC 0.40-0.59); in-context ceiling: the pretrained cortex with the tellings in context invents 40% of never-told answers, the slept brain 99%; teacher night (guard targets from the in-context cortex) NO-GO: refusals distil as an unconditional reply (`results/2026-11-17-teacher-night-1.5b.md`). The judgement lives in context; a student trained without it loses the condition.
 
 ## Self and identity
 Biology:
