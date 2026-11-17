@@ -348,3 +348,29 @@ def test_teacher_context_switch_passes_tellings(tmp_path, monkeypatch):
     off.hear("My cat is called Pixel.")
     off.sleep()
     assert all(isinstance(g, str) for g in seen["guard"])
+
+
+def test_paired_night_holds_own_and_rewrites_of_told_episodes_only(tmp_path, monkeypatch):
+    import brain.brain as bb
+    import brain.near_miss as nm
+    seen, calls = {}, []
+    def fake(plastic, base, eps, generic, **k):
+        seen["guard"] = list(k.get("guard", []))
+        return []
+    def cues(cortex, base, text, k=4, frame="N1", seed=0):
+        calls.append((text, frame))
+        return "What is my cat called?", ["What colour is my cat?"]
+    monkeypatch.setattr(bb, "replay_into_cortex", fake)
+    monkeypatch.setattr(Brain, "_plastic", lambda self: type("P", (), {"parameters": lambda s: []})())
+    monkeypatch.setattr(nm, "near_miss_cues", cues)
+    b = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, near_miss=1, near_miss_frame="P:NA", teacher_context=True)
+    b.hear("My cat is called Pixel.")
+    b.sleep()
+    assert calls and all(f == "NA" for _, f in calls)
+    assert all(t.startswith("User: ") and "Pixel" in t for t, _ in calls)   # told episodes only, no permanent ones
+    pre = [g[0] for g in seen["guard"]]
+    assert pre == ["User: What is my cat called?\n\nAssistant:", "User: What colour is my cat?\n\nAssistant:"]
+    assert all(len(g) == 3 and "My cat is called Pixel." in g[2] for g in seen["guard"])
+    import pytest
+    with pytest.raises(AssertionError):
+        Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW, near_miss=1, near_miss_frame="P:NA")._near_miss_guard()

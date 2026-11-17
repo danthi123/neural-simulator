@@ -12,10 +12,12 @@ import json
 
 import torch
 
-from brain.brain import BIRTH
+from brain.brain import BIRTH, Brain
+from brain.eval.open_conv import invented
+from brain.experiments.abstain_in_brain import keys_in
 from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS
-from brain.near_miss import REWRITE, frame_cues, guard_texts, near_miss_cues
+from brain.near_miss import REWRITE, frame_cues, guard_texts, near_miss_cues, topic_cues
 
 
 # the told facts' topic words (instrument only: how often a frame cue asks about a told topic)
@@ -30,13 +32,30 @@ def main():
     ap.add_argument("--k", type=int, default=4)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--frames", default=",".join(REWRITE))
+    ap.add_argument("--teacher-context", action="store_true",
+                    help="replies from the cortex after it has read all 12 tellings (the teacher night's layout)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.manual_seed(a.seed)
     c = Cortex(model_path=resolve_model(a.model), device=a.device)
     _, base = c.read(BIRTH, None)
     keys = [k for _, _, k in FACTS]
+    ctx = None
+    if a.teacher_context:
+        ctx = (f"User: {Brain.TEACHER_OPEN} " + " ".join(s for s, _, _ in FACTS) + f"\n\nAssistant: {Brain.TEACHER_ACK}\n\n")
     res = {}
+    if a.frames == "T":   # paired night topic frame: cues on the told topics, teacher replies in context
+        cues = topic_cues(c, base, [f"User: {s}" for s, _, _ in FACTS], k=a.k, seed=a.seed)
+        texts = guard_texts(c, base, cues, context=ctx)
+        rows = []
+        for q, t in zip(cues, texts):
+            r = t[1].strip() if isinstance(t, tuple) else t
+            rows.append({"q": q, "reply": r, "named": keys_in(r), "invented": invented(r)})
+            print("T", q, "->", r, "| named", keys_in(r), "invented", invented(r), flush=True)
+        print("T cues", len(rows), "named", sum(bool(x["named"]) for x in rows), "invented", sum(x["invented"] for x in rows),
+              flush=True)
+        json.dump({"T": rows}, open(a.out, "w"), indent=1)
+        return
     if a.frames == "F":
         cues = frame_cues(c, base, k=a.k, seed=a.seed)
         texts = guard_texts(c, base, cues)
@@ -50,14 +69,21 @@ def main():
         rows, usable, total = [], 0, 0
         for i, (s, _, _) in enumerate(FACTS):
             own, cues = near_miss_cues(c, base, s, k=a.k, frame=frame, seed=a.seed * 100 + i)
-            texts = guard_texts(c, base, cues)
+            texts = guard_texts(c, base, [own] + cues, context=ctx)
+            rep = [t[1].strip() if isinstance(t, tuple) else t.split("Assistant:", 1)[1].strip() for t in texts]
+            own_named = FACTS[i][2] in keys_in(rep[0])
+            inv = [invented(r) for r in rep[1:]]
             ok = [not any(k in q.lower() for k in keys) and bool(re.search(r"\b(my|i|me)\b", q.lower())) for q in cues]
             usable += sum(ok)
             total += a.k
-            rows.append({"statement": s, "own": own, "cues": cues, "usable": ok, "texts": texts})
-            print(frame, s, "|", own, "|", cues, flush=True)
-        res[frame] = {"usable": usable, "of": total, "rows": rows}
-        print(frame, "usable", usable, "of", total, flush=True)
+            rows.append({"statement": s, "own": own, "cues": cues, "usable": ok, "replies": rep, "own_named": own_named,
+                         "rewrite_invented": inv})
+            print(frame, s, "|", own, "->", rep[0], "|", list(zip(cues, rep[1:])), flush=True)
+        oc = sum(r["own_named"] for r in rows)
+        ninv = sum(sum(r["rewrite_invented"]) for r in rows)
+        ncue = sum(len(r["cues"]) for r in rows)
+        res[frame] = {"usable": usable, "of": total, "own_named": oc, "cues": ncue, "rewrite_invented": ninv, "rows": rows}
+        print(frame, "usable", usable, "of", total, "own named", oc, "/12 rewrites invented", ninv, "/", ncue, flush=True)
     json.dump(res, open(a.out, "w"), indent=1)
 
 

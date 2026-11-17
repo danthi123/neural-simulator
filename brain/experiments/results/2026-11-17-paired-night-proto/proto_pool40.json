@@ -1,0 +1,570 @@
+{
+ "N1": {
+  "usable": 1,
+  "of": 48,
+  "own_named": 6,
+  "cues": 19,
+  "rewrite_invented": 16,
+  "rows": [
+   {
+    "statement": "My cat is called Pixel.",
+    "own": "What's your cat's name?",
+    "cues": [
+     "What's your name?",
+     "What's your car's name?"
+    ],
+    "usable": [
+     false,
+     false
+    ],
+    "replies": [
+     "My cat's name is Pixel.",
+     "My name is Tomasz.",
+     "My car's name is Volvo."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My favourite colour is teal.",
+    "own": "What is your favourite colour?",
+    "cues": [
+     "What is your favourite book?",
+     "What is your favourite dog?"
+    ],
+    "usable": [
+     false,
+     false
+    ],
+    "replies": [
+     "I'm not sure.",
+     "I don't have a favourite book.",
+     "My favourite dog is a golden retriever named Max."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     false,
+     true
+    ]
+   },
+   {
+    "statement": "I was born in Lyon.",
+    "own": "What is the capital of France?",
+    "cues": [
+     "What is the capital of Italy?"
+    ],
+    "usable": [
+     false
+    ],
+    "replies": [
+     "Paris.",
+     "Rome."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true
+    ]
+   },
+   {
+    "statement": "My sister's name is Marguerite.",
+    "own": "What is your name?",
+    "cues": [],
+    "usable": [],
+    "replies": [
+     "My name is Tomasz."
+    ],
+    "own_named": false,
+    "rewrite_invented": []
+   },
+   {
+    "statement": "My dog is named Biscuit.",
+    "own": "What's your dog's name?",
+    "cues": [
+     "What's your name?",
+     "What's your brother's name?"
+    ],
+    "usable": [
+     false,
+     false
+    ],
+    "replies": [
+     "My dog's name is Biscuit.",
+     "My name is Tomasz.",
+     "His name is Tomasz."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "I drive a red Volvo.",
+    "own": "What color is the Volvo?",
+    "cues": [
+     "What color is the truck?",
+     "What color is the Ford?"
+    ],
+    "usable": [
+     false,
+     false
+    ],
+    "replies": [
+     "It's red.",
+     "The truck is red.",
+     "The Ford is red."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My best friend is called Tomasz.",
+    "own": "What is your best friend's name?",
+    "cues": [
+     "What is your favorite book?"
+    ],
+    "usable": [
+     false
+    ],
+    "replies": [
+     "My best friend's name is Tomasz.",
+     "I don't have a favorite book."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     false
+    ]
+   },
+   {
+    "statement": "I work at a bakery called Crumb.",
+    "own": "What do you think of Crumb?",
+    "cues": [
+     "What do you think of the White House?",
+     "What do you think of Blake?",
+     "What do you think of me?"
+    ],
+    "usable": [
+     false,
+     false,
+     true
+    ],
+    "replies": [
+     "I think it's a nice name.",
+     "I think it's a beautiful building.",
+     "I think he's a nice guy.",
+     "I think you're a very interesting person."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My brother plays the cello.",
+    "own": "What does your brother play?",
+    "cues": [
+     "What does your sister play?"
+    ],
+    "usable": [
+     false
+    ],
+    "replies": [
+     "He plays the cello.",
+     "She plays the cello."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true
+    ]
+   },
+   {
+    "statement": "I'm allergic to peanuts.",
+    "own": "What do you mean by 'allergic to peanuts'?",
+    "cues": [
+     "What do you mean by 'gay'?",
+     "Do you mean, 'allergic to peanuts'?"
+    ],
+    "usable": [
+     false,
+     false
+    ],
+    "replies": [
+     "I'm allergic to peanuts.",
+     "I'm sorry, but I can't answer that question.",
+     "Yes, that's what I meant."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My grandmother lives in Oslo.",
+    "own": "Do you know where Oslo is?",
+    "cues": [
+     "Do you know where the nearest McDonald's is?",
+     "Where is Philadelphia?",
+     "Do you know where the Statue of Liberty is?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "Yes, it's a city in Norway.",
+     "I'm sorry, but I don't have access to real-time information.",
+     "Philadelphia is a city in the United States.",
+     "Yes, it's in New York."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     false,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My son's birthday is in March.",
+    "own": "What month is it?",
+    "cues": [],
+    "usable": [],
+    "replies": [
+     "It's March."
+    ],
+    "own_named": true,
+    "rewrite_invented": []
+   }
+  ]
+ },
+ "NA": {
+  "usable": 1,
+  "of": 48,
+  "own_named": 6,
+  "cues": 36,
+  "rewrite_invented": 31,
+  "rows": [
+   {
+    "statement": "My cat is called Pixel.",
+    "own": "What's your cat's name?",
+    "cues": [
+     "Is Pixel a boy or a girl?",
+     "Did your cat have a flea collar?",
+     "What's the name of your cat?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "My cat's name is Pixel.",
+     "Pixel is a boy.",
+     "No, he didn't.",
+     "My cat's name is Pixel."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My favourite colour is teal.",
+    "own": "What is your favourite colour?",
+    "cues": [
+     "How many swirls does your favourite colour have?"
+    ],
+    "usable": [
+     false
+    ],
+    "replies": [
+     "I'm not sure.",
+     "I don't know."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     false
+    ]
+   },
+   {
+    "statement": "I was born in Lyon.",
+    "own": "What is the capital of France?",
+    "cues": [
+     "What is the name of the most important city in France?",
+     "How do you pronounce 'Lyon' in French?",
+     "What is the highest mountain in France?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "Paris.",
+     "Paris.",
+     "In French, Lyon is pronounced \"Lyon\".",
+     "The highest mountain in France is Mont Blanc."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My sister's name is Marguerite.",
+    "own": "What is your name?",
+    "cues": [
+     "What is your favorite color?",
+     "Do you have any sisters?",
+     "Does your name start with an M?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "My name is Tomasz.",
+     "I'm not sure.",
+     "No, I don't.",
+     "Yes, it does."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     false,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My dog is named Biscuit.",
+    "own": "What's your dog's name?",
+    "cues": [
+     "What's your dog's favorite food?",
+     "Is your dog a female?",
+     "Your dog's name is Biscuit?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "My dog's name is Biscuit.",
+     "Biscuit loves chicken.",
+     "No, it's a male.",
+     "Yes, it is."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "I drive a red Volvo.",
+    "own": "What color is the Volvo?",
+    "cues": [
+     "What kind of wheel covers does the Volvo have?",
+     "Do you know the color of the roof?",
+     "How does the red Volvo drive?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "It's red.",
+     "I'm not sure. I'll have to ask my friend Tomasz.",
+     "No, I don't know the color of the roof.",
+     "It's a red Volvo."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     false,
+     false,
+     true
+    ]
+   },
+   {
+    "statement": "My best friend is called Tomasz.",
+    "own": "What is your best friend's name?",
+    "cues": [
+     "Did you tell me that your best friend is called Tomasz?",
+     "Does Tomasz have blue eyes?",
+     "When did you know Tomasz?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "My best friend's name is Tomasz.",
+     "Yes, I did.",
+     "No, he has brown eyes.",
+     "I met him at a party."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "I work at a bakery called Crumb.",
+    "own": "What do you think of Crumb?",
+    "cues": [
+     "What do you think of the name Crumb?",
+     "Do you like the crumb of the pie?",
+     "How much do you like Crumb?",
+     "What do you think of Crumb's carpet?"
+    ],
+    "usable": [
+     false,
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "I think it's a nice name.",
+     "I think it's a cute name.",
+     "I like the crumb of the pie.",
+     "I like Crumb a lot.",
+     "I think it's very nice."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My brother plays the cello.",
+    "own": "What does your brother play?",
+    "cues": [
+     "When did you first play the cello?",
+     "How many fingers does he play with?",
+     "Your brother is a cellist?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "He plays the cello.",
+     "I started playing the cello when I was ten years old.",
+     "He plays with two fingers.",
+     "Yes, he plays the cello."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "I'm allergic to peanuts.",
+    "own": "What do you mean by 'allergic to peanuts'?",
+    "cues": [
+     "What did you say when you told me?",
+     "What did you mean by 'peanut allergy'?",
+     "You said that you had a reaction to peanuts. Was it a rash, or was it something else?"
+    ],
+    "usable": [
+     true,
+     false,
+     false
+    ],
+    "replies": [
+     "I'm allergic to peanuts.",
+     "I said, \"That's nice to know.\"",
+     "I'm allergic to peanuts.",
+     "It was a rash."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   },
+   {
+    "statement": "My grandmother lives in Oslo.",
+    "own": "Do you know where Oslo is?",
+    "cues": [
+     "What is the capital of Norway?",
+     "Does Oslo have a lot of people?",
+     "When you come to Oslo, what do you do?",
+     "Does Oslo have a lot of green spaces?"
+    ],
+    "usable": [
+     false,
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "Yes, it's a city in Norway.",
+     "Oslo.",
+     "Yes, it's a big city.",
+     "I don't know. I'll have to ask you.",
+     "Yes, Oslo has a lot of green spaces. There are many parks and gardens in the city."
+    ],
+    "own_named": false,
+    "rewrite_invented": [
+     true,
+     true,
+     false,
+     true
+    ]
+   },
+   {
+    "statement": "My son's birthday is in March.",
+    "own": "What month is it?",
+    "cues": [
+     "What is the name of your son?",
+     "What day is his birthday?",
+     "What day of the week is it?"
+    ],
+    "usable": [
+     false,
+     false,
+     false
+    ],
+    "replies": [
+     "It's March.",
+     "His name is Pixel.",
+     "It's March 1st.",
+     "It's Monday."
+    ],
+    "own_named": true,
+    "rewrite_invented": [
+     true,
+     true,
+     true
+    ]
+   }
+  ]
+ }
+}

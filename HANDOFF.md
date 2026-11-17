@@ -27,9 +27,11 @@
 - **INVENTED FACTS (11-17, 1.5B), 4 levers failed:** M1 FALSIFIED; in-context ceiling (pretrained cortex with the
   tellings in context invents 40%, the slept brain 99%); teacher night NARROWED at best, no flip: refusals distil as
   an unconditional reply (2/6 open-conv seeds refuse nearly everything). `results/2026-11-17-{confab-m1,incontext-abstain,teacher-night}-1.5b*.md`.
-- **NEXT STEP:** timebox KEEP/KILL on 11-19. A KEEP candidate must give the student the told-topic contrast: paired
-  night targets per told topic (told attribute answered, untold attribute declined) over a broad target set, so a
-  refusal cannot become the default reply. Otherwise KILL and bank: the judgement lives in context.
+- **NEXT STEP:** timebox KEEP/KILL on 11-19. Paired-night prototype (`results/2026-11-17-paired-night-proto.md`,
+  seed 7): the in-context 1.5B teacher binds a WRONG told fact as often as the right one (9 vs 7 of 64), so no 1.5B
+  self-teacher can be distilled. Recommendation: KILL self-teacher levers at 1.5B. Only KEEP option: test the
+  in-context ceiling and teacher night with a 2.9B cortex (in context 13/48 invented, 1 wrong reuse), weighed
+  against its worse looping (`results/2026-11-16-onset-*.md`).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
