@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-11-15T22:35:54Z",
+ "updated_at": "2026-11-17T16:32:02Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -2888,6 +2888,66 @@
    "op": "append-desc",
    "args": "task=279",
    "head": "6ee19523a"
+  },
+  {
+   "at": "2026-11-16T01:09:57Z",
+   "op": "set-desc",
+   "args": "task=280",
+   "head": "7993ce112"
+  },
+  {
+   "at": "2026-11-16T01:09:57Z",
+   "op": "set-desc",
+   "args": "task=279",
+   "head": "7993ce112"
+  },
+  {
+   "at": "2026-11-16T14:49:53Z",
+   "op": "create-task",
+   "args": "proj=2 title=New core: the brain keeps talking normally the morning after it sleeps",
+   "head": "78b05ec5d"
+  },
+  {
+   "at": "2026-11-16T14:50:08Z",
+   "op": "label-task",
+   "args": "task=290 label=3",
+   "head": "78b05ec5d"
+  },
+  {
+   "at": "2026-11-16T14:50:08Z",
+   "op": "label-task",
+   "args": "task=290 label=6",
+   "head": "78b05ec5d"
+  },
+  {
+   "at": "2026-11-16T19:21:33Z",
+   "op": "set-desc",
+   "args": "task=290",
+   "head": "ed324a5f9"
+  },
+  {
+   "at": "2026-11-16T22:12:59Z",
+   "op": "set-desc",
+   "args": "task=290",
+   "head": "c2cd56141"
+  },
+  {
+   "at": "2026-11-17T09:20:41Z",
+   "op": "set-desc",
+   "args": "task=290",
+   "head": "38736a8ae"
+  },
+  {
+   "at": "2026-11-17T16:31:58Z",
+   "op": "create-task",
+   "args": "proj=2 title=New core: the brain says it does not know, instead of making up facts you never told it",
+   "head": "6dd9783e2"
+  },
+  {
+   "at": "2026-11-17T16:32:02Z",
+   "op": "label-task",
+   "args": "task=291 label=3",
+   "head": "6dd9783e2"
   }
  ]
 }
