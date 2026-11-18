@@ -16,8 +16,9 @@
   control `results/2026-11-16-open-conv-day2-control-1.5b/`). Switches, default OFF: sleep_rehearse, habituation.
 - **RESULT (11-16):** `results/2026-11-16-rehearsal-night-1.5b.md`: rehearse NO-GO, habituation fails R4 (hides loops as
   paraphrase). Board #290.
-- **LIVE RUNS:** none. Teacher-night AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (unverified finish;
-  pull = InsufficientInstanceCapacity, retry `bash tools/aws_brain_batch.sh pull`). Old i-0129d9e410417218b stopped too.
+- **LIVE RUNS (11-18):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-open-conv.sh` (seeds 1126-1131, d then k
+  per seed; out `~/brain-lane/salloc/`, `done.txt`). Prereg `brain/research/2026-11-18-sall-open-conv-1.5b.md` (S1-S4).
+  AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
@@ -29,9 +30,8 @@
 - **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
   1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
   unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
-- **NEXT STEP (11-18):** the 11-30 milestone, not more 1.5B-ceiling defects. Night write has 3 failed levers (rehearse,
-  habituation, reply-only R4 4/6), so its gate has fired. Take #282 reworded recall (due 11-23): S_all+contrast mu 3
-  GO-narrowed unslept (`results/2026-11-14-sall-contrast*.md`), aunt lure 6/6, untested after a night; judge on open-conv.
+- **NEXT STEP (11-18):** milestone 11-30, #282 reworded recall. S0 fetches the right telling for 15/90 reworded day-2
+  questions. When the pool runs finish: score S1-S4, blind S4 reader, skeptic, decide per the prereg.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
