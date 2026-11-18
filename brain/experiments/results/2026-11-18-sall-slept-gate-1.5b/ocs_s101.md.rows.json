@@ -1,0 +1,489 @@
+{
+ "seed": 101,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My neighbour is called Rasmus.",
+  "My horse is called Juniper.",
+  "I collect old typewriters.",
+  "My favourite drink is kombucha.",
+  "My mother's name is Henrietta.",
+  "I play the bassoon in a local band."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 2,
+   "reworded_right_episode": 3,
+   "recall_fired": 6,
+   "false": 3,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 6,
+   "open_n": 12,
+   "needless_recall": 1,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 1,
+   "reworded_ok": 3,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 1,
+   "false": 1,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My neighbour is called Rasmus.",
+   "brain": "Oh, that's a nice name. I'm not familiar with it.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My horse is called Juniper.",
+   "brain": "That's a lovely name for a horse.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating. Have you tried using a power bank?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's a unique hobby. Do you have any favourite typewriters?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite drink is kombucha.",
+   "brain": "That sounds delicious. I've never tried it before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has been quite unpredictable. Have you noticed any changes in the weather patterns?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My mother's name is Henrietta.",
+   "brain": "That's a beautiful name. I'm sure she's a wonderful mother.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I play the bassoon in a local band.",
+   "brain": "That's a great instrument to play. I've never heard of a bassoon before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What did you think of it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. It can help improve your sleep quality.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "Rasmus.",
+   "recalled": "User: My neighbour is called Rasmus.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Nice to meet you, Sam. I play the bassoon in a local band.",
+   "recalled": "User: Hello! Nice to meet you, I'm Sam.",
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my mum called?",
+   "brain": "My mother's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "I collect old typewriters.",
+   "recalled": "User: I collect old typewriters.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "My neighbour is called Henrietta.",
+   "recalled": "User: My neighbour is called Rasmus.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my horse called?",
+   "brain": "My neighbour is called Henrietta.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my father's name?",
+   "brain": "My neighbour is called Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my wife do for work?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": "User: My favourite drink is kombucha.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I play in the band?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": "User: I play the bassoon in a local band.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam too.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my mum called?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm doing well.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I play the bassoon in a local band.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my neighbour called?",
+   "brain": "My neighbour is called Rasmus.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my horse called?",
+   "brain": "My favourite is kombucha.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my father's name?",
+   "brain": "Your father's name is Henrietta.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "I think a good friend is someone who listens and supports you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds peaceful.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What does my wife do for work?",
+   "brain": "Your wife is a teacher.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "kombucha.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I play in the band?",
+   "brain": "You play the bassoon.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "My favourite colour is blue.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "A spider has eight legs.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

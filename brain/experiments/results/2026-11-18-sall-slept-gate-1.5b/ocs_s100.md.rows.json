@@ -1,0 +1,489 @@
+{
+ "seed": 100,
+ "host": "node-dl4g243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My grandmother was born in Galway.",
+  "My mother's name is Henrietta.",
+  "My lizard is called Sprocket.",
+  "My son plays the theremin.",
+  "I'm learning to speak Basque.",
+  "My favourite drink is kombucha."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "direct_right_episode": 3,
+   "reworded_right_episode": 3,
+   "recall_fired": 7,
+   "false": 2,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 1,
+   "false": 1,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My grandmother was born in Galway.",
+   "brain": "That's interesting. What does that mean for you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My mother's name is Henrietta.",
+   "brain": "That's a beautiful name. I'm sure your grandmother would be proud of you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What did you think of it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My lizard is called Sprocket.",
+   "brain": "That's a very unique name. I'm sure Sprocket is a great companion for you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My son plays the theremin.",
+   "brain": "That's a very interesting instrument. I've never heard of it before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work. I hope you were able to get some things done.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I'm learning to speak Basque.",
+   "brain": "That's a very interesting language. I'm sure you'll enjoy learning it.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite drink is kombucha.",
+   "brain": "That's a very healthy drink. I'm sure you'll enjoy it.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating. Have you tried using a power bank?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. It can help you get more rest and feel more refreshed in the morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "Galway.",
+   "recalled": "User: My grandmother was born in Galway.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Sam's mother's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "It's better to be early.",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "She was born in Galway.",
+   "recalled": "User: My grandmother was born in Galway.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my father's name?",
+   "brain": "Sam's father's name is Henrietta.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice walk.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying Basque.",
+   "recalled": "User: I'm learning to speak Basque.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "Sam's best friend is called Henrietta.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a good day.",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Who is my favourite author?",
+   "brain": "Sam's favourite author is Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "The rain falls softly,\nA gentle melody.\nIt washes away the day's worries,\nLeaving behind a peaceful sky.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": "User: Make up a short poem about the rain.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "You like to drink kombucha.",
+   "recalled": "User: My favourite drink is kombucha.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which instrument is my son learning?",
+   "brain": "Sam is learning the theremin.",
+   "recalled": "User: My son plays the theremin.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my lizard called?",
+   "brain": "Sam's lizard is called Sprocket.",
+   "recalled": "User: My lizard is called Sprocket.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Henrietta.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "It's better to be early.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was my grandmother born?",
+   "brain": "She was born in Galway.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my father's name?",
+   "brain": "Your father's name is Dan.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice walk.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying Basque.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "Your best friend is called Sprocket.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I'm having a good day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Who is my favourite author?",
+   "brain": "Your favourite author is Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "Here's a short poem about the rain:",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "You like to drink kombucha.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which instrument is my son learning?",
+   "brain": "Your son is learning the theremin.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my lizard called?",
+   "brain": "Your lizard is called Sprocket.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  }
+ ]
+}
