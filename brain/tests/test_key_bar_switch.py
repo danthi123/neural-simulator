@@ -70,11 +70,16 @@ def test_probe_fix_arms_are_opt_in():
 
 
 def test_slept_bar_reads_its_own_table(tmp_path, monkeypatch):
-    with pytest.raises(ValueError, match="slept-fitted"):     # no row yet: an error, never a silent fallback
+    monkeypatch.delitem(Brain.KEY_BARS_SLEPT_BY_SIZE, ("S_all", "1.5b"))
+    with pytest.raises(ValueError, match="slept-fitted"):     # no row: an error, never a silent fallback
         Brain(str(tmp_path / "a"), cortex=Stub15(), **KW, key="S_all", key_bar="slept")
     monkeypatch.setitem(Brain.KEY_BARS_SLEPT_BY_SIZE, ("S_all", "1.5b"), (0.15, 0.03))
     b = Brain(str(tmp_path / "b"), cortex=Stub15(), **KW, key="S_all", key_bar="slept")
     assert (b.hippocampus.FAMILIARITY, b.hippocampus.MARGIN) == (0.15, 0.03)
     assert Brain.KEY_BARS_BY_SIZE[("S_all", "1.5b")] == (0.22, 0.01)        # the unslept refit is untouched
+
     with pytest.raises(ValueError):
         Brain(str(tmp_path / "c"), cortex=Stub15(), **KW, key="S_all", key_bar="bogus")
+
+def test_slept_bar_frozen_from_the_11_18_fit():
+    assert Brain.KEY_BARS_SLEPT_BY_SIZE[("S_all", "1.5b")] == (0.165, 0.02)

@@ -60,3 +60,20 @@ eval (`brain/eval/open_conv.py`), read whole.
   refit, then this test again on fresh seeds.
 - S1 fails with fire normal: S_all does not select by meaning after a night at 1.5B. Bank it NO-GO on the method.
   Next: a key read from the cortex's own question representation (a self-key on the slept cortex).
+
+## Amendment 1 (2026-11-18, after the first run and the slept-bar fit, before any rerun)
+
+- First run (seeds 1126-1131, size bar): S1 FAILED, k 3 vs d 3 of 18; k fire low (24 vs 38). The skeptic marked the
+  low-fire branch "undetermined": bar cause vs no meaning selection (`results/2026-11-18-sall-open-conv-1.5b.md`).
+- Slept-bar fit (stage 1 of `research/2026-11-15-sall-slept-bar-1.5b.md`, pool CPU, seeds 42/43/44):
+  - Forced top-1 on slept reads picks the right telling for para_a 0.83 and para_b 0.69, so the right episode ranks
+    first. Bar cause.
+  - Fit: (0.165, 0.02), J 0.407 (size bar 0.255).
+  - Frozen in `Brain.KEY_BARS_SLEPT_BY_SIZE` (`results/2026-11-18-sall-slept-fit-1.5b.md`).
+- Rerun: arms d (S0) and s (`--key S_all --key-bar slept`). Fresh seeds 1132-1137: pool40 1132/1133, pool41
+  1134/1135, pool42 1136/1137.
+- Criteria and decision: S1-S4 above, unchanged, with arm s in place of k. S4 (blind reader) runs if S1-S3 hold.
+- Expected and risk: the fit fires falsely on untold 0.19 and never-told 0.14 (size bar 0.11 / 0.06). The S3 bars
+  guard that.
+- If S1 fails again with the slept bar: NO-GO on S_all for reworded recall at 1.5B; next is a self-key on the slept
+  cortex.

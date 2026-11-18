@@ -334,7 +334,8 @@ class Brain:
     KEY_BARS_BY_SIZE = {("S_all", "1.5b"): (0.22, 0.01)}
     # Refits on SLEPT live reads (key_bar="slept"): the DEV bank told live, one night at the size defaults, read through
     # the slept cortex (brain/research/2026-11-15-sall-slept-bar-1.5b.md; sall_live_bar_fit.py score --size-sleep).
-    KEY_BARS_SLEPT_BY_SIZE = {}
+    # S_all 1.5B: seeds 42/43/44, fit J 0.407 (results/2026-11-18-sall-slept-fit-1.5b.md).
+    KEY_BARS_SLEPT_BY_SIZE = {("S_all", "1.5b"): (0.165, 0.02)}
 
     GAIN_BY_SIZE = {"1.5b": 0.5}
 

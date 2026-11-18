@@ -12,8 +12,8 @@
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
 - **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
   control `results/2026-11-16-open-conv-day2-control-1.5b/`). Rehearse NO-GO, habituation fails R4 (board #290).
-- **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-fit.sh <seed>` (stage 1 of
-  `research/2026-11-15-sall-slept-bar-1.5b.md`, seeds 42/43/44; out `~/brain-lane/sfit/score_s<seed>.json`, `done.txt`).
+- **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-open-conv.sh` (prereg
+  amendment 1, seeds 1132-1137, d then s=S_all+slept bar; out `~/brain-lane/sslept/`, `done.txt`).
   AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
@@ -29,9 +29,10 @@
 - **RESULT (11-18):** S_all on open conversation, S1 FAILS: reworded right memory fetched 3/18 vs S0 3/18; S_all fires
   less (6 vs 15), skeptic PARTLY REFUTED "bar is the cause" (undetermined). S0's wrong fetches cost reworded replies
   (hippocampus off 10 vs S0 7). `results/2026-11-18-sall-open-conv-1.5b.md`.
-- **NEXT STEP:** when sfit DONE on all three: pull, `sall_live_bar_fit fit` the three scores; read whether the right
-  episode ranks first on paraphrase cues. First: refit, freeze in KEY_BARS_SLEPT_BY_SIZE, rerun open_conv with
-  `--key-bar slept` on fresh seeds 1132-1137. Not first: NO-GO S_all after night; next a self-key on the slept cortex.
+- **SLEPT FIT (11-18):** after a night S_all still ranks the right telling first on rewordings (top-1 0.83/0.69):
+  bar cause. Frozen `KEY_BARS_SLEPT_BY_SIZE` (0.165, 0.02), `key_bar="slept"` OFF. `results/2026-11-18-sall-slept-fit-1.5b.md`.
+- **NEXT STEP:** when sslept DONE: score S1-S3 (as `results/2026-11-18-sall-open-conv-1.5b/scores.txt`), S4 blind reader
+  if S1-S3 hold, skeptic, decide per prereg amendment 1. S1 fails again: NO-GO S_all; next a self-key on slept cortex.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
