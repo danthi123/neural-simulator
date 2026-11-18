@@ -18,8 +18,7 @@
   paraphrase). Board #290.
 - **LIVE RUNS:** none. Teacher-night AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (unverified finish;
   pull = InsufficientInstanceCapacity, retry `bash tools/aws_brain_batch.sh pull`). Old i-0129d9e410417218b stopped too.
-- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
-  on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
+- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -38,4 +37,4 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** retry s102 AWS pull, then terminate. Chores: board timer -> main-following checkout; lane JSONs no host/sha.
+- **OPEN:** retry s102 AWS pull, then terminate; RAG refresh fails its quality check (index stale).
