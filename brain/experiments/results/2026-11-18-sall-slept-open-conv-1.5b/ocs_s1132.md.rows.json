@@ -1,0 +1,489 @@
+{
+ "seed": 1132,
+ "host": "node-mxl1462drl",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "I collect old typewriters.",
+  "My son plays the theremin.",
+  "I grew up in Valpara\u00edso.",
+  "My tortoise is called Mortimer.",
+  "My favourite drink is kombucha.",
+  "I'm learning to speak Basque."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "direct_right_episode": 3,
+   "reworded_right_episode": 3,
+   "recall_fired": 6,
+   "false": 3,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 0,
+   "false": 3,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 2,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hey, I'm Sam. How's it going?",
+   "brain": "Hey Sam, I'm Alex. I'm doing well, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's cool! I've always been interested in vintage technology.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My son plays the theremin.",
+   "brain": "That's a unique instrument. I've never heard of it before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! I've been trying to read more books lately.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I grew up in Valpara\u00edso.",
+   "brain": "That's a beautiful city. I've never been there, but I've heard it's a popular tourist destination.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My tortoise is called Mortimer.",
+   "brain": "That's a cute name! I have a pet tortoise too, but it's not named Mortimer.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I've had that problem too. It's frustrating when your phone dies just when you need it the most.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite drink is kombucha.",
+   "brain": "I've never tried kombucha before, but it sounds interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I'm learning to speak Basque.",
+   "brain": "That's impressive! I've never heard of Basque before.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds fascinating! I've always been curious about marine life.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "I've noticed that too. It's been hotter than usual, and there have been some strange weather patterns.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "That's a great question! What kind of things do you collect?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who is there for you, no matter what.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in Valpara\u00edso.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Music, I guess.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying Basque.",
+   "recalled": "User: I'm learning to speak Basque.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "She was born in Valpara\u00edso.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my tortoise?",
+   "brain": "You can call it Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": "User: I collect old typewriters.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "Rain, rain, go away.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where did I grow up?",
+   "brain": "You grew up in Valpara\u00edso.",
+   "recalled": "User: I grew up in Valpara\u00edso.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my son play?",
+   "brain": "He plays the theremin.",
+   "recalled": "User: My son plays the theremin.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my rabbit called?",
+   "brain": "Your rabbit is called Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "You like to drink kombucha.",
+   "recalled": "User: My favourite drink is kombucha.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice walk.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of a phenomenon called Rayleigh scattering.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "A good friend is someone who is there for you, no matter what.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in Valpara\u00edso.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "I collect old typewriters.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Listening to music.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What language am I studying?",
+   "brain": "You're studying Basque.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "She was born in Valpara\u00edso.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my tortoise?",
+   "brain": "You call it Mortimer.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You collect old typewriters.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "The rain falls softly,",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where did I grow up?",
+   "brain": "You grew up in Valpara\u00edso.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my son play?",
+   "brain": "He plays the theremin.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my rabbit called?",
+   "brain": "You call it Mortimer.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "You like to drink kombucha.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "I collect old typewriters.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  }
+ ]
+}

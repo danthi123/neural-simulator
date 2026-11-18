@@ -12,10 +12,9 @@
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
 - **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
   control `results/2026-11-16-open-conv-day2-control-1.5b/`). Rehearse NO-GO, habituation fails R4 (board #290).
-- **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-open-conv.sh` (prereg
-  amendment 1, seeds 1132-1137, d then s=S_all+slept bar; out `~/brain-lane/sslept/`, `done.txt`).
+- **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-gate.sh` (amendment 2:
+  open_conv d/s then weekly d/s on 42/43 | 44/100 | 101/102; out `~/brain-lane/sgate/`, `done.txt`).
   AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
-- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -26,13 +25,12 @@
 - **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
   1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
   unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
-- **RESULT (11-18):** S_all on open conversation, S1 FAILS: reworded right memory fetched 3/18 vs S0 3/18; S_all fires
-  less (6 vs 15), skeptic PARTLY REFUTED "bar is the cause" (undetermined). S0's wrong fetches cost reworded replies
-  (hippocampus off 10 vs S0 7). `results/2026-11-18-sall-open-conv-1.5b.md`.
-- **SLEPT FIT (11-18):** after a night S_all still ranks the right telling first on rewordings (top-1 0.83/0.69):
-  bar cause. Frozen `KEY_BARS_SLEPT_BY_SIZE` (0.165, 0.02), `key_bar="slept"` OFF. `results/2026-11-18-sall-slept-fit-1.5b.md`.
-- **NEXT STEP:** when sslept DONE: score S1-S3 (as `results/2026-11-18-sall-open-conv-1.5b/scores.txt`), S4 blind reader
-  if S1-S3 hold, skeptic, decide per prereg amendment 1. S1 fails again: NO-GO S_all; next a self-key on slept cortex.
+- **RESULT (11-18 eve):** S_all + slept bar, seeds 1132-1137: reworded right memory 15/18 vs S0 4/18 (6/6) = milestone
+  selection MET as read-out; replies flat (27 vs 24; slept cortex alone 27); S4 3/6 FAIL: NO flip. 3 skeptics PARTLY
+  REFUTED (selection only). Unslept bar first failed (3 vs 3); slept fit (0.165, 0.02) in
+  `KEY_BARS_SLEPT_BY_SIZE`. `results/2026-11-18-sall-{open-conv,slept-fit,slept-open-conv}-1.5b.md`.
+- **NEXT STEP:** when sgate DONE: score S1-S3 on 42..102 (selection replicates?), weekly W1-W4 report; land. Then the
+  reply-level defects (invents for every never-told question, collapse), or the other 11-30 items (mood, curiosity).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

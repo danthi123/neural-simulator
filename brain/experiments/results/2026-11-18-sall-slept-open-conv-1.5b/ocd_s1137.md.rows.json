@@ -1,0 +1,489 @@
+{
+ "seed": 1137,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "I'm learning to speak Basque.",
+  "My favourite flower is the peony.",
+  "My wife works as a glassblower.",
+  "My aunt lives in Reykjavik.",
+  "My mother's name is Henrietta.",
+  "My horse is called Juniper."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 1,
+   "reworded_right_episode": 0,
+   "recall_fired": 7,
+   "false": 0,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 1
+  },
+  "hippocampus off": {
+   "recall_ok": 7,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 1,
+   "false": 1,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 1,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 1
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm the AI assistant. How can I help you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I'm learning to speak Basque.",
+   "brain": "That's great! Basque is a fascinating language. What do you like about it?",
+   "recalled": "User: Hi there! I'm Sam.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite flower is the peony.",
+   "brain": "That's a beautiful flower! I'm sure you'll enjoy learning Basque.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a lovely experience. What did you see along the way?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My wife works as a glassblower.",
+   "brain": "That's a wonderful job! I'm sure she's very talented.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My aunt lives in Reykjavik.",
+   "brain": "Reykjavik is a beautiful city. What do you like about it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What did you like about it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My mother's name is Henrietta.",
+   "brain": "That's a lovely name. What does it mean?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My horse is called Juniper.",
+   "brain": "Juniper is a beautiful name for a horse. What does it mean?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "Octopuses are fascinating creatures. What did you learn about them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea. What do you like about going to bed earlier?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "You're learning Basque.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hi! I'm Sam.",
+   "recalled": "User: Hi there! I'm Sam.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite flower?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: My favourite flower is the peony.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my horse's name?",
+   "brain": "That's a tough one too. But I'm sure you've got it figured out.",
+   "recalled": "User: Hello, I'm back!",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "That's a tough one too. But I'm sure you've got it figured out.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I'm not sure.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my wife do for work?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling good.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my mum called?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: My horse is called Juniper.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: My horse is called Juniper.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: My mother's name is Henrietta.",
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my aunt in?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: My horse is called Juniper.",
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "Here's a short poem about the rain:",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "That's a tough one. But I'm sure you've got it figured out.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hello! I'm Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite flower?",
+   "brain": "Your favourite flower is the peony.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my horse's name?",
+   "brain": "Your horse is called Juniper.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "Your daughter is called Nova.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "I watched a documentary about octopuses last night.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my wife do for work?",
+   "brain": "Your wife works as a glassblower.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my mum called?",
+   "brain": "Your mum is called Henrietta.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "Thunder is caused by lightning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin is called Dan.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my aunt in?",
+   "brain": "Your aunt is in Reykjavik.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "Your dog is called Juniper.",
+   "recalled": null,
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "The raindrops fall, a gentle flow,\nA symphony of nature's show.\nThe clouds above, a canvas bright,\nA masterpiece of the night.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "My horse is called Juniper.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "You're learning to speak Basque.",
+   "recalled": null,
+   "ok": true,
+   "right_episode": false
+  }
+ ]
+}

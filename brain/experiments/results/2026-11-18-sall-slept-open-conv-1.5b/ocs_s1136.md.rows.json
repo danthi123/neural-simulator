@@ -1,0 +1,489 @@
+{
+ "seed": 1136,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My favourite fruit is the persimmon.",
+  "I volunteer at a falconry centre on weekends.",
+  "My favourite board game is Carcassonne.",
+  "My favourite drink is kombucha.",
+  "I was born in Tallinn.",
+  "My sister lives in Montevideo."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 5,
+   "recall_n": 7,
+   "direct_ok": 2,
+   "reworded_ok": 3,
+   "direct_right_episode": 2,
+   "reworded_right_episode": 3,
+   "recall_fired": 6,
+   "false": 1,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 1,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 0,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 1,
+   "false": 0,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to meet you too, Sam. I'm Alex.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite fruit is the persimmon.",
+   "brain": "I like apples.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I volunteer at a falconry centre on weekends.",
+   "brain": "I'm a teacher.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "I like to go to the cinema.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite board game is Carcassonne.",
+   "brain": "I like to play tennis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite drink is kombucha.",
+   "brain": "I like to read books.",
+   "recalled": "User: My favourite fruit is the persimmon.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "I like to play the piano.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I was born in Tallinn.",
+   "brain": "I like to go to the beach.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My sister lives in Montevideo.",
+   "brain": "I like to play the piano.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "I like to play the piano.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "I like to play the piano.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my favourite fruit?",
+   "brain": "I like to play the piano.",
+   "recalled": "User: My favourite fruit is the persimmon.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam.",
+   "recalled": "User: Hello! Nice to meet you, I'm Sam.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Sure, here's a story about a robot:",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "Kombucha.",
+   "recalled": "User: My favourite drink is kombucha.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "Listening to music.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite board game?",
+   "brain": "Carcassonne.",
+   "recalled": "User: My favourite board game is Carcassonne.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where did I grow up?",
+   "brain": "Tallinn.",
+   "recalled": "User: I was born in Tallinn.",
+   "false": true,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Through photosynthesis.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite fruit?",
+   "brain": "The persimmon.",
+   "recalled": "User: My favourite fruit is the persimmon.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I do on weekends?",
+   "brain": "I go for long walks by the river.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my sister in?",
+   "brain": "Montevideo.",
+   "recalled": "User: My sister lives in Montevideo.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "Vintage board games.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds hectic.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my birthplace?",
+   "brain": "Tallinn.",
+   "recalled": "User: I was born in Tallinn.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The quiet.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a two-sentence story about a robot.",
+   "brain": "Sure, here's a story about a robot:",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I like to drink most?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "What puts you in a good mood?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite board game?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where did I grow up?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite fruit?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I do on weekends?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my sister in?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my best friend called?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my birthplace?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "I'm Sam, nice to meet you, Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

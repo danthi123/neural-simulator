@@ -77,3 +77,16 @@ eval (`brain/eval/open_conv.py`), read whole.
   guard that.
 - If S1 fails again with the slept bar: NO-GO on S_all for reworded recall at 1.5B; next is a self-key on the slept
   cortex.
+
+## Amendment 2 (2026-11-18, after the amendment-1 rerun passed S1-S3, before the gate runs)
+
+- Amendment-1 rerun (seeds 1132-1137): reworded right memory fetched s 15/18 vs d 4/18, s >= d on 6/6; S2 and S3 hold.
+  S4 and skeptics running.
+- Gate before any flip: open_conv d vs s on the registered seeds 42/43/44/100/101/102, pool CPU
+  (`jobs/2026-11-18-pool-sall-slept-gate.sh`; pool40 42/43, pool41 44/100, pool42 101/102).
+- Gate criteria: S1-S3, unchanged bars, on these six seeds.
+- Weekly report: `brain.eval.weekly --model 1.5b --shared-sleep`, S0 vs `--key S_all --key-bar slept`, same seeds,
+  scored by `sall_weekly_score.py`. W1-W4 of `research/2026-11-15-sall-slept-bar-1.5b.md` are reported, not gating;
+  a W3 or W4 failure (cost to weekly answers or abstentions) blocks the flip pending a ruling.
+- Flip: the 1.5B default key becomes S_all with the slept bar if S1-S4 held on 1132-1137, the skeptics do not refute,
+  and the gate passes. The flip is per size and leaves the 0.1B/0.4B default (S0) unchanged.
