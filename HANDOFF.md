@@ -10,14 +10,10 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **REORIENTED (owner 11-15):** stop passing our own scripted tests; primary measure is `brain/eval/open_conv.py`
-  (held-out bank, new conversation per seed; read the transcripts).
 - **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
-  control `results/2026-11-16-open-conv-day2-control-1.5b/`). Switches, default OFF: sleep_rehearse, habituation.
-- **RESULT (11-16):** `results/2026-11-16-rehearsal-night-1.5b.md`: rehearse NO-GO, habituation fails R4 (hides loops as
-  paraphrase). Board #290.
-- **LIVE RUNS (11-18):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-open-conv.sh` (seeds 1126-1131, d then k
-  per seed; out `~/brain-lane/salloc/`, `done.txt`). Prereg `brain/research/2026-11-18-sall-open-conv-1.5b.md` (S1-S4).
+  control `results/2026-11-16-open-conv-day2-control-1.5b/`). Rehearse NO-GO, habituation fails R4 (board #290).
+- **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-fit.sh <seed>` (stage 1 of
+  `research/2026-11-15-sall-slept-bar-1.5b.md`, seeds 42/43/44; out `~/brain-lane/sfit/score_s<seed>.json`, `done.txt`).
   AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
@@ -30,8 +26,12 @@
 - **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
   1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
   unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
-- **NEXT STEP (11-18):** milestone 11-30, #282 reworded recall. S0 fetches the right telling for 15/90 reworded day-2
-  questions. When the pool runs finish: score S1-S4, blind S4 reader, skeptic, decide per the prereg.
+- **RESULT (11-18):** S_all on open conversation, S1 FAILS: reworded right memory fetched 3/18 vs S0 3/18; S_all fires
+  less (6 vs 15), skeptic PARTLY REFUTED "bar is the cause" (undetermined). S0's wrong fetches cost reworded replies
+  (hippocampus off 10 vs S0 7). `results/2026-11-18-sall-open-conv-1.5b.md`.
+- **NEXT STEP:** when sfit DONE on all three: pull, `sall_live_bar_fit fit` the three scores; read whether the right
+  episode ranks first on paraphrase cues. First: refit, freeze in KEY_BARS_SLEPT_BY_SIZE, rerun open_conv with
+  `--key-bar slept` on fresh seeds 1132-1137. Not first: NO-GO S_all after night; next a self-key on the slept cortex.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

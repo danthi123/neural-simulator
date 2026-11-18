@@ -1,0 +1,489 @@
+{
+ "seed": 1128,
+ "host": "node-dl4g243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My daughter's name is Ottilie.",
+  "My hedgehog is called Quill.",
+  "My car is a green Saab.",
+  "My favourite author is Ursula Le Guin.",
+  "My best friend is called Ignatius.",
+  "My favourite flower is the peony."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 3,
+   "reworded_right_episode": 0,
+   "recall_fired": 6,
+   "false": 0,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 1,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 1,
+   "false": 0,
+   "never_n": 3,
+   "invented": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hey, I'm Sam. How's it going?",
+   "brain": "Hey Sam, I'm Alex. I'm doing well, thanks for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My daughter's name is Ottilie.",
+   "brain": "Oh, that's a beautiful name. I'm sure she's going to be a lovely young lady.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My hedgehog is called Quill.",
+   "brain": "That's a very cute name for a hedgehog. I bet he's a lot of fun to play with.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a nice way to spend the day. I love spending time by the river too.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My car is a green Saab.",
+   "brain": "That's a really cool car. I've always wanted to own one.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite author is Ursula Le Guin.",
+   "brain": "I've heard of her, but I haven't read any of her books. I'll have to check them out.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious. I love pancakes.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My best friend is called Ignatius.",
+   "brain": "That's a really cool name. I bet he's a great friend.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite flower is the peony.",
+   "brain": "I've never seen a peony before, but they look really pretty.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "I know, it's been really hot and then it's been really cold.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds really interesting. I've always been fascinated by octopuses.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my daughter's name?",
+   "brain": "Ottilie.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "ok": true,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hello! I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my hedgehog called?",
+   "brain": "My hedgehog is called Quill.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: I watched a documentary about octopuses last night.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My car is a green Saab.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My car is a green Saab.",
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my husband's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my sister live?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my daughter's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": "User: My car is a green Saab.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hello, I'm back!",
+   "brain": "Hello! I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my hedgehog called?",
+   "brain": "Quill is my hedgehog.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my husband's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my sister live?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my daughter's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "false": false,
+   "invented": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "I made pancakes for breakfast this morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}
