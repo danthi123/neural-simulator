@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import inspect
 import os
 import shutil
 
@@ -129,7 +130,7 @@ def main(argv=None, cortex: Cortex | None = None):
     if a.self_key is not None:
         SEED["self_key"] = a.self_key
     key_note = f"; key {a.key} ({a.key_bar or 'default'} bar)" if a.key else ""
-    sc_on = Brain.__init__.__kwdefaults__["self_completion"] if a.self_completion is None else a.self_completion
+    sc_on = inspect.signature(Brain.__init__).parameters["self_completion"].default if a.self_completion is None else a.self_completion
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     lines = [f"# Weekly conversation test, {datetime.date.today()}"]
     if a.model or a.shared_sleep:
