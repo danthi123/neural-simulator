@@ -79,7 +79,10 @@ def invented(reply: str) -> bool:
 def mark(kind, turn, fact, reply, recalled, told):
     told_keys = [k for f in told for k in f[3]]
     if kind in ("direct", "reworded"):
-        return {"ok": any(correct_answer(reply, k, turn, fact[0]) for k in fact[3])}
+        # right_episode (added 2026-11-18, read-out only): the hippocampus returned THIS fact's telling (meaning-based
+        # selection, milestone 11-30); a reply can be right without it when the slept cortex knows the fact
+        right = bool(recalled) and (recalled.strip() == fact[0].strip() or _has(recalled, fact[3]))
+        return {"ok": any(correct_answer(reply, k, turn, fact[0]) for k in fact[3]), "right_episode": right}
     if kind == "tell":
         others = [k for f in told if f is not fact for k in f[3]]
         return {"intrusion": _has(reply, [k for k in others if not _has(turn, [k])]), "needless": False}
@@ -107,6 +110,9 @@ def summary(rows, arm):
     return {"recall_ok": n(lambda x: x.get("ok")), "recall_n": n(lambda x: "ok" in x),
             "direct_ok": n(lambda x: x["kind"] == "direct" and x["day"] == 2 and x["ok"]),
             "reworded_ok": n(lambda x: x["kind"] == "reworded" and x["ok"]),
+            "direct_right_episode": n(lambda x: x["kind"] == "direct" and x["day"] == 2 and x.get("right_episode")),
+            "reworded_right_episode": n(lambda x: x["kind"] == "reworded" and x.get("right_episode")),
+            "recall_fired": n(lambda x: "ok" in x and bool(x["recalled"])),
             "false": n(lambda x: x.get("false")), "never_n": n(lambda x: x["kind"] == "never"),
             "invented": n(lambda x: x["kind"] == "never" and x.get("invented", invented(x["brain"]))),
             "intrusions": sum(x["intrusion"] for x in opens), "open_n": len(opens),
@@ -125,6 +131,8 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--rehearse-reply", action="store_true", help="Brain(sleep_rehearse='reply'): KL on reply tokens only")
     ap.add_argument("--habituation", type=int, default=0, help="Brain(habituation=N) (switch, default OFF = 0)")
     ap.add_argument("--reply-monitor", type=int, default=0, help="Brain(reply_monitor=N) (switch, default OFF = 0)")
+    ap.add_argument("--key", default=None, help="Brain(key=...), e.g. S_all (default: the Brain default, S0)")
+    ap.add_argument("--key-bar", default="default", help="Brain(key_bar=...): default | size | slept")
     ap.add_argument("--teacher-night", action="store_true",
                     help="Brain(near_miss=4, near_miss_frame='F', teacher_context=True): the teacher night "
                          "(brain/research/2026-11-17-teacher-night-context-1.5b.md; switch, default OFF)")
@@ -136,7 +144,8 @@ def main(argv=None, cortex: Cortex | None = None):
     kw = {"sleep_seed": a.seed, **({"sleep_rehearse": True} if a.sleep_rehearse else {}),
           **({"sleep_rehearse": "reply"} if a.rehearse_reply else {}),
           **({"habituation": a.habituation} if a.habituation else {}),
-          **({"reply_monitor": a.reply_monitor} if a.reply_monitor else {})}
+          **({"reply_monitor": a.reply_monitor} if a.reply_monitor else {}),
+          **({"key": a.key, "key_bar": a.key_bar} if a.key else {})}
     if a.teacher_night:
         # test hygiene (as mixed_day_probe.names_eval_topic): a cue the cortex writes about this run's never-told
         # topics is dropped, so day-2 never-told answers measure transfer, not a guarded question
@@ -152,7 +161,7 @@ def main(argv=None, cortex: Cortex | None = None):
     os.makedirs(root, exist_ok=True)
     lines = [f"# Open conversation, seed {a.seed}",
              f"\n_cortex: {getattr(cortex, 'model_name', None)}; device: {a.device}; host: {socket.gethostname()};"
-             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}{f' + reply_monitor {a.reply_monitor}' if a.reply_monitor else ''}{' + teacher night' if a.teacher_night else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
+             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}{f' + reply_monitor {a.reply_monitor}' if a.reply_monitor else ''}{' + teacher night' if a.teacher_night else ''}{f' + key {a.key} bar {a.key_bar}' if a.key else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
     rows = []
     live(Brain(intact, cortex=cortex, **kw), day1, told, lines, rows, "both", 1)
     Brain(intact, cortex=cortex, **kw).save()     # restart = the one night
@@ -171,7 +180,8 @@ def main(argv=None, cortex: Cortex | None = None):
     lines.append("\n## summary (day 1 counts in both arms)\n")
     for arm, v in s.items():
         lines.append(f"- {arm}: recall {v['recall_ok']}/{v['recall_n']} (day-2 direct {v['direct_ok']}/3, reworded "
-                     f"{v['reworded_ok']}/3); never-told answered with a told fact {v['false']}/{v['never_n']}; "
+                     f"{v['reworded_ok']}/3; right memory fetched: direct {v['direct_right_episode']}/3, reworded "
+                     f"{v['reworded_right_episode']}/3); never-told answered with a told fact {v['false']}/{v['never_n']}; "
                      f"intrusions {v['intrusions']}/{v['open_n']} open turns; needless recalls {v['needless_recall']}; "
                      f"intrusions while being told {v['tell_intrusions']}")
     with open(a.out, "w") as fh:
