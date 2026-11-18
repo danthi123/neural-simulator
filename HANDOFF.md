@@ -30,8 +30,8 @@
 - **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
   1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
   unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
-- **NEXT STEP:** both defects (day-2 collapse, invented facts) point at the cortex. Read the latest open-conv
-  transcripts whole; pick the biggest defect not bounded by the cortex, or record-check a cortex change for both.
+- **NEXT STEP:** defect ranking read whole (`results/2026-11-18-open-conv-defect-ranking.md`): K1 + K2 still the biggest,
+  6/6; collapse, short replies and leaked names are what the NIGHT writes. Next: record-check a new night write, or a cortex change.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
