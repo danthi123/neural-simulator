@@ -15,7 +15,6 @@
 - **LIVE RUNS (11-18 pm):** pool40/41/42 `brain/experiments/jobs/2026-11-18-pool-sall-slept-open-conv.sh` (prereg
   amendment 1, seeds 1132-1137, d then s=S_all+slept bar; out `~/brain-lane/sslept/`, `done.txt`).
   AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
-- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
