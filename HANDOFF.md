@@ -27,15 +27,14 @@
 - **INVENTED FACTS (11-17, 1.5B), 4 levers failed:** M1 FALSIFIED; in-context ceiling (pretrained cortex with the
   tellings in context invents 40%, the slept brain 99%); teacher night NARROWED at best, no flip: refusals distil as
   an unconditional reply (2/6 open-conv seeds refuse nearly everything). `results/2026-11-17-{confab-m1,incontext-abstain,teacher-night}-1.5b*.md`.
-- **NEXT STEP:** timebox KEEP/KILL on 11-19. Paired-night prototype (`results/2026-11-17-paired-night-proto.md`,
-  seed 7): the in-context 1.5B teacher binds a WRONG told fact as often as the right one (9 vs 7 of 64), so no 1.5B
-  self-teacher can be distilled. Recommendation: KILL self-teacher levers at 1.5B. Only KEEP option: test the
-  in-context ceiling and teacher night with a 2.9B cortex (in context 13/48 invented, 1 wrong reuse), weighed
-  against its worse looping (`results/2026-11-16-onset-*.md`). Checked 11-17: the 2.9B teacher on the same topic cues
-  declines 33/60, wrong told fact 4, new invention 16, so it is still a third bad targets: a weak KEEP case.
+- **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
+  1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
+  unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
+- **NEXT STEP:** defect ranking read whole (`results/2026-11-18-open-conv-defect-ranking.md`): K1 + K2 still the biggest,
+  6/6; collapse, short replies and leaked names are what the NIGHT writes. Next: record-check a new night write, or a cortex change.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** none blocking. Chores: board timer -> main-following checkout; brain/ lane JSONs stamp no host/sha.
+- **OPEN:** retry s102 AWS pull, then terminate. Chores: board timer -> main-following checkout; lane JSONs no host/sha.
