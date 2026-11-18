@@ -7,8 +7,8 @@ PY=~/brain-lane/venv/bin/python; [ -x "$PY" ] || PY=~/derisk-pool/sim/.venv/bin/
 O=~/brain-lane/salloc; mkdir -p $O
 for s in "$@"; do
   $PY -m brain.eval.open_conv --model 1.5b --seed $s --homes $O/homes_d_s$s --out $O/ocd_s$s.md > $O/ocd_s$s.log 2>&1
-  echo "ocd s$s rc $?" >> $O/done.txt; rm -rf $O/homes_d_s$s
+  echo "ocd s$s rc $?" >> $O/done.txt
   $PY -m brain.eval.open_conv --model 1.5b --seed $s --homes $O/homes_k_s$s --key S_all --key-bar size --out $O/ock_s$s.md > $O/ock_s$s.log 2>&1
-  echo "ock s$s rc $?" >> $O/done.txt; rm -rf $O/homes_k_s$s
+  echo "ock s$s rc $?" >> $O/done.txt
 done
 echo DONE >> $O/done.txt
