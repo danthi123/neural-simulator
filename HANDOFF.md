@@ -18,8 +18,7 @@
   paraphrase). Board #290.
 - **LIVE RUNS:** none. Teacher-night AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (unverified finish;
   pull = InsufficientInstanceCapacity, retry `bash tools/aws_brain_batch.sh pull`). Old i-0129d9e410417218b stopped too.
-- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
-  on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
+- **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -30,11 +29,12 @@
 - **TIMEBOX (11-18, a day early; s102 cannot change it): KILL self-teacher levers for invented facts at 1.5B.** The
   1.5B cortex in context binds a wrong told fact as often as the right one (9 vs 7/64); distilled refusals turn
   unconditional. Verdict on the method; reopen with a cleaner in-context cortex (2.9B: a third bad targets).
-- **NEXT STEP:** defect ranking read whole (`results/2026-11-18-open-conv-defect-ranking.md`): K1 + K2 still the biggest,
-  6/6; collapse, short replies and leaked names are what the NIGHT writes. Next: record-check a new night write, or a cortex change.
+- **NEXT STEP (11-18):** the 11-30 milestone, not more 1.5B-ceiling defects. Night write has 3 failed levers (rehearse,
+  habituation, reply-only R4 4/6), so its gate has fired. Take #282 reworded recall (due 11-23): S_all+contrast mu 3
+  GO-narrowed unslept (`results/2026-11-14-sall-contrast*.md`), aunt lure 6/6, untested after a night; judge on open-conv.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** retry s102 AWS pull, then terminate. Chores: board timer -> main-following checkout; lane JSONs no host/sha.
+- **OPEN:** retry s102 AWS pull, then terminate; RAG refresh fails its quality check (index stale).
