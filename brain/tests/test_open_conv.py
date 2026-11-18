@@ -23,3 +23,32 @@ def test_mark_scores_intrusion_false_and_recall():
     assert not mark("story", "Tell me a story.", None, "Once upon a time a fox ran.", None, told)["intrusion"]
     assert mark("feeling", "How are you?", None, "Fine.", "User: x", told)["needless"]
     assert mark("never", "What is my yak called?", None, f"{key.title()}!", None, told)["false"]
+
+
+def test_mark_right_episode_reads_which_memory_was_fetched():
+    told, _, _ = build(42)
+    f, g = told[0], told[1]
+    assert mark("reworded", f[2], f, "x", f[0], told)["right_episode"]
+    assert not mark("reworded", f[2], f, "x", g[0], told)["right_episode"]
+    assert not mark("direct", f[1], f, "x", None, told)["right_episode"]
+
+
+def test_key_switch_reaches_brain_kwargs(monkeypatch, tmp_path):
+    import brain.eval.open_conv as oc
+    seen = []
+
+    class Stop(Exception):
+        pass
+
+    def fake_brain(home, cortex=None, **kw):
+        seen.append(kw)
+        raise Stop
+    monkeypatch.setattr(oc, "Brain", fake_brain)
+    import pytest
+    with pytest.raises(Stop):
+        oc.main(["--seed", "1", "--out", str(tmp_path / "x.md"), "--key", "S_all", "--key-bar", "size"], cortex=object())
+    assert seen[0]["key"] == "S_all" and seen[0]["key_bar"] == "size"
+    seen.clear()
+    with pytest.raises(Stop):
+        oc.main(["--seed", "1", "--out", str(tmp_path / "y.md")], cortex=object())
+    assert "key" not in seen[0]                                               # default OFF: Brain's own default key
