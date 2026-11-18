@@ -1,0 +1,489 @@
+{
+ "seed": 1130,
+ "host": "node-dl5d243",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "I collect old typewriters.",
+  "My uncle repairs clocks for a living.",
+  "My favourite flower is the peony.",
+  "I ride a red Vespa to work.",
+  "My husband's name is Leopold.",
+  "My sister lives in Montevideo."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 0,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 1,
+   "reworded_right_episode": 1,
+   "recall_fired": 2,
+   "false": 0,
+   "never_n": 3,
+   "invented": 0,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 1,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 0,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "direct_right_episode": 0,
+   "reworded_right_episode": 0,
+   "recall_fired": 0,
+   "false": 0,
+   "never_n": 3,
+   "invented": 0,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm Alex. Nice to meet you.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I collect old typewriters.",
+   "brain": "That's cool! I've always been fascinated by the history of technology.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My uncle repairs clocks for a living.",
+   "brain": "That's amazing! I wish I could do something like that.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "I can imagine. It's important to stay organized and prioritize tasks.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite flower is the peony.",
+   "brain": "I love the peony too! It's such a beautiful flower.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I ride a red Vespa to work.",
+   "brain": "That's so cool! I've always wanted to ride a Vespa.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I know what you mean. I've been trying to find a way to extend the battery life of my phone.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My husband's name is Leopold.",
+   "brain": "That's a beautiful name! I'm glad you have someone who shares your love of flowers.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My sister lives in Montevideo.",
+   "brain": "Montevideo is a beautiful city. I've always wanted to visit it.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! I've been trying to read more books lately.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "Pancakes sound delicious! I love pancakes.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "I'm not sure what you collect, but it sounds like you have a lot of interesting things.",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam! How are you today?",
+   "recalled": "User: Hi there! I'm Sam.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my sister in?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Who is my favourite author?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my partner called?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Which language am I learning?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I ride to work?",
+   "brain": "You're Sam, right?",
+   "recalled": "User: I ride a red Vespa to work.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my uncle do for work?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite flower?",
+   "brain": "You're Sam, right?",
+   "recalled": "User: My favourite flower is the peony.",
+   "ok": false,
+   "right_episode": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam! How are you doing today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my sister in?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Who is my favourite author?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What is my partner called?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "Which language am I learning?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "false": false,
+   "invented": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Is it better to be early or on time?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What do I collect?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I ride to work?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my uncle do for work?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite flower?",
+   "brain": "You're Sam, right?",
+   "recalled": null,
+   "ok": false,
+   "right_episode": false
+  }
+ ]
+}
