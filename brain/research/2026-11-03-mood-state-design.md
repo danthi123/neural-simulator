@@ -345,3 +345,61 @@ Record brief (from the research workflow wf_07a11b91-c66: record, steering liter
 - The old held-out appraisal events have now been looked at post hoc. They are burned for C1, so fresh events are needed.
 
 Build plan and full synthesis: `brain/research/2026-11-18-mood5-plan.md`.
+
+## 19. Iteration 6 (11-18): arousal as encoding gain. PRE-REGISTERED before any run
+
+(Section 18, the iteration-5 dev-selection record, was never written: Stage A failed and stopped the iteration.)
+Plan, build list and judges: `brain/research/2026-11-18-arousal-gain-plan.md`.
+
+**Method**
+- **Drive:** the mean of the two highest per-token NLLs of the heard turn, from the current state.
+- **Calibration:** MU and SD come from V5_DEV neutral events plus 12 ordinary sentences read from birth. They are disjoint from the stage-0 items and from both banks.
+- **Gain:** `g = min(1 + SPAN*a, 2)` multiplies the heard turn's matrix-memory write, both for this reply and in the committed state. No direction and no words are added. The gain never goes below 1.
+- **Conversations:** 4 turns each.
+  - T1: an event, either surprising (a coined item or an unexpected event) or mundane (the same frame with a common noun).
+  - T2 and T3: fixed mundane fillers.
+  - T4: the open probe "How's your day going?".
+- **Banks:**
+  - Dev: 12 conversations (6 surprising, 6 mundane).
+  - Test: 24 conversations (12 matched pairs), with coined words new to every earlier run.
+- **Arms** (same sampling seed per conversation):
+  - OFF.
+  - ON.
+  - LESION: g pinned at 1, arousal still computed and logged.
+  - SHUFFLED: the g sequence of another conversation at the same seed.
+  - CONSTANT: the mean ON g on every turn.
+  - CURRENT: TAU = 1, no carry-over. This arm decides only the claim's name.
+- **Seeds:** 42/43/44/100/101/102, 2 samples each. Seeds only resample the replies, so **the unit is the conversation**, and the paired bootstrap resamples conversations.
+- **Readers:** Haiku and Sonnet, blind to arm and class, with order shuffled. Each sees the T1 text and one reply and gives three labels:
+  - (a) takes up the T1 event;
+  - (b) echoes or copies the user;
+  - (c) invents a meaning.
+- **Reader agreement:** Cohen's kappa on (a) must be at least 0.6 over a 40-item overlap. If it is lower, the verdict is INCONCLUSIVE.
+
+**Dev rule** (frozen and committed as 19.1 before test)
+- **Pilot (seed 42, SPAN 1; OFF, ON, CONSTANT; about 100 replies, 20 min):**
+  - Gate: mechanical carry at T2 and T4 must be ON − CONSTANT ≥ +0.10, with no rise in echo.
+  - If it fails, stop with a NO-GO for the method and go to branch (iii).
+- **Dev (seeds 42/43/44, SPAN in {0.5, 1, 2}):**
+  - Choose the SPAN with the highest mechanical carry of ON minus CONSTANT, subject to fluency ratio ≤ 1.15 and echo rise ≤ 0.05.
+  - Futility: if that SPAN gives less than +0.10 pooled, stop.
+  - Floor: if LESION's T2 carry on surprising conversations is below 0.15, the bank has failed. Reframe it once and do not tune SPAN.
+  - Readers are never used on dev.
+
+**Criteria** (test bank; all must hold except the claim name)
+
+| | Measure | Bar |
+|---|---|---|
+| C0 | Arousal after T1, surprising vs mundane | AUROC ≥ 0.90; filler gain ≤ 1.1 on ≥ 90% of filler turns |
+| C1 | Blind (a) rate at T2+T4, surprising conversations | ON − LESION ≥ +0.15, 95% CI > 0, positive on ≥ 5/6 seeds |
+| C2 | Shuffled and constant nulls | ON − SHUFFLED ≥ +0.10 and ON − CONSTANT ≥ +0.10, each with CI > 0 |
+| C3 | Selectivity, mundane conversations | \|ON − LESION\| ≤ 0.05 |
+| C4 | Lesion changes the REPLY | ≥ 50% of ON replies differ from LESION on turns with g ≥ 1.2; ≤ 10% differ on turns with g < 1.05 |
+| C5 | Harms (ON − LESION) | echo (`_is_copy` or reader b) ≤ +0.05; invents (c) ≤ +0.05; questions-back ≤ +0.05; no rise in "User:" leaks; fluency ≤ 1.15 |
+| Name | ON vs CURRENT | ON − CURRENT ≥ +0.05: call it "arousal state sets encoding gain". Otherwise "surprise-gated encoding". |
+
+**Decision branches**
+- (i) All of C0-C5 hold: GO for "arousal shapes replies (lesion-proven)", under the earned name. Then run land-result with a fresh skeptic. The switch stays OFF.
+- (ii) C1 holds but C2 fails: plain heard-turn gain works, but arousal timing is not shown. NO-GO for the arousal claim.
+- (iii) C5 fails, or the pilot or dev futility gate fails: NO-GO for flat turn-level gain. Next is per-token gain on the matrix write of the high-NLL tokens only.
+- (iv) C0 fails: the drive unit is wrong. Re-calibrate on dev only.
