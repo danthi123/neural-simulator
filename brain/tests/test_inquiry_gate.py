@@ -55,3 +55,24 @@ def test_inquiry_episode_is_not_ordinary_recall(cortex, tmp_path):
     b.state = [x.clone() for x in b.base]
     _, info = b.hear("My friend keeps a zorbit in her garage.")   # the closest possible cue to the lesson
     assert info["recalled"] is None or "zorbit in her kitchen" not in info["recalled"]
+
+
+def test_auto_without_size_row_is_off(cortex, tmp_path):
+    b = Brain(str(tmp_path / "f"), cortex=cortex, inquiry="auto")      # 0.1B has no INQUIRY_BAR_BY_SIZE row
+    assert b.inquiry is None and b.inquiry_episode() is None
+    _, (r0, _) = _reply(cortex, tmp_path / "g", "My sister works as a plinketer.")
+    _, (r1, _) = _reply(cortex, tmp_path / "h", "My sister works as a plinketer.", inquiry="auto")
+    assert r0 == r1
+
+
+def test_auto_lives_the_lesson_at_birth_only(cortex, tmp_path, monkeypatch):
+    monkeypatch.setitem(Brain.INQUIRY_BAR_BY_SIZE, "0.1b", 12.4)
+    b = Brain(str(tmp_path / "i"), cortex=cortex, inquiry="auto")
+    assert b.inquiry == 12.4 and b.inquiry_episode() is not None
+    assert "zorbit" in b.inquiry_episode().text
+    assert b.meta["turns"] == 0 and all(torch.equal(x, y) for x, y in zip(b.state, b.base))
+    assert sum("zorbit" in e.text for e in b.hippocampus.episodes) == 1
+    n = len(b.hippocampus.episodes)
+    b.save(); b.release()
+    b2 = Brain(str(tmp_path / "i"), cortex=cortex, inquiry="auto", sleep_on_restart=False)   # reload: not lived again
+    assert len(b2.hippocampus.episodes) == n and b2.inquiry_episode() is not None

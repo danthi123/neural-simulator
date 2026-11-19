@@ -113,6 +113,7 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--key", default=None, help="pattern-completion key (Brain(key=...)); unset = the Brain default (S0)")
     ap.add_argument("--key-bar", default=None, help="bar for a non-S0 key (Brain(key_bar=...)): default | size | slept")
     ap.add_argument("--seed", type=int, default=None, help="sleep seed + torch/numpy seed (default: unset, as before)")
+    ap.add_argument("--inquiry", default=None, help="novelty gate (Brain(inquiry=...)): auto | a bar in nats; unset = default")
     a = ap.parse_args(argv)
     SEED.clear()
     if a.seed is not None:
@@ -129,6 +130,8 @@ def main(argv=None, cortex: Cortex | None = None):
         SEED["key_bar"] = a.key_bar
     if a.self_key is not None:
         SEED["self_key"] = a.self_key
+    if a.inquiry is not None:
+        SEED["inquiry"] = a.inquiry if a.inquiry == "auto" else float(a.inquiry)
     key_note = f"; key {a.key} ({a.key_bar or 'default'} bar)" if a.key else ""
     sc_on = inspect.signature(Brain.__init__).parameters["self_completion"].default if a.self_completion is None else a.self_completion
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
@@ -141,7 +144,7 @@ def main(argv=None, cortex: Cortex | None = None):
             cfg = "Brain arguments"
         lines.append(f"\n_cortex: {name}; sleep: {cfg}; device: {a.device};"
                      f" {'one shared night' if a.shared_sleep else 'each arm sleeps'}"
-                     f"{'' if a.seed is None else f'; seed {a.seed}'}"
+                     f"{'' if a.seed is None else f'; seed {a.seed}'}{'' if a.inquiry is None else f'; inquiry {a.inquiry}'}"
                      f"{'; self episodes store their completion' if sc_on else ''}{'; self episodes keyed by their question' if a.self_key == 'question' else ''}{key_note}_")
     homes = {k: os.path.join(a.homes, f"_weekly_{k}") for k in ("intact", "lesion", "sleep_lesion")}
     for h in homes.values():

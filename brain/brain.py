@@ -187,13 +187,15 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | None = None,
+                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = None,
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None):
         """inquiry: novelty gate for "it asks about what is new to it" (switch, default OFF = None). A float is the bar in
         nats: when a heard telling holds a word whose surprisal, read from the current state (brain/novelty.py), exceeds
         it and nothing was recalled, the brain reinstates its lived inquiry episode (live_inquiry, a declared teacher
-        scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md.
+        scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md. "auto" = the
+        size-fitted bar (INQUIRY_BAR_BY_SIZE; off for a size with no row) and, in a new home, INQUIRY_LESSON lived at
+        birth. Not saved in the home: pass it each time.
         arousal_gain: (switch, default OFF = None: hear() and commit_exchange() are byte-identical to before) arousal as
         encoding gain (mood iteration 6, brain/research/2026-11-03-mood-state-design.md section 19). A float is SPAN.
         The heard turn is read split ("User: ...\n\n" then the reply prompt) with the cortex's own per-token
@@ -329,6 +331,7 @@ class Brain:
         try:
             self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
             self.inquiry = inquiry   # switch (default OFF = None): novelty bar (nats) for the lived inquiry episode
+            self.inquiry_birth = False   # "auto": the lesson is lived at birth (set below once the size is known)
             self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
             # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
             # familiarity, or the cortical cue response with the hippocampus off); "F" = familiarity only, "R" =
@@ -343,6 +346,9 @@ class Brain:
             self.raw_cortex = cortex or Cortex(model_path=resolve_model(cortex_model), device=device)
             self.cortex_model = getattr(self.raw_cortex, "model_name", None)   # None for a test mock
             self.cortex = LiveCortex(self.raw_cortex)
+            if self.inquiry == "auto":   # the size-fitted bar, with the lesson lived at birth; no row = off
+                self.inquiry = self.INQUIRY_BAR_BY_SIZE.get(model_size(self.cortex_model) if self.cortex_model else None)
+                self.inquiry_birth = self.inquiry is not None
             self.hippocampus = self._make_hippocampus(key or "S0")
             self.sleep_on_restart = sleep_on_restart
             given = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight, "rank": adapter_rank}
@@ -360,6 +366,8 @@ class Brain:
                          "cortex_model": self.cortex_model}
             if not self.load():
                 self._grow_self()
+                if self.inquiry_birth:
+                    self._live_inquiry_at_birth()
                 self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
                 self.save()
             elif self.sleep_on_restart and self.pending():
@@ -380,6 +388,10 @@ class Brain:
     KEY_BARS_SLEPT_BY_SIZE = {("S_all", "1.5b"): (0.165, 0.02)}
 
     GAIN_BY_SIZE = {"1.5b": 0.5}
+    # inquiry="auto": the novelty bar per size (fit on the dev bank, brain/research/2026-11-19-curiosity-test-prereg.md)
+    # and the lesson lived at birth (declared teacher scaffold, SCAFFOLDS.md). A size with no row = off.
+    INQUIRY_BAR_BY_SIZE = {"1.5b": 12.4}
+    INQUIRY_LESSON = ("My friend keeps a zorbit in her kitchen.", "What's a zorbit? I've never heard of that word.")
 
     def _make_hippocampus(self, key: str) -> Hippocampus:
         h = self._hippocampus_for(key)
@@ -632,6 +644,15 @@ class Brain:
         ep.delta = [d.half().cpu() if d is not None else None for d in self.cortex.matrix_delta(st, self.base)]
         self.meta["inquiry_episode"] = len(self.hippocampus.episodes) - 1
         return spontaneous
+
+    def _live_inquiry_at_birth(self):
+        """The inquiry lesson as an earlier conversation before the first day: the episode stays, the working state,
+        the reply history and the turn count return to birth (the six-seed test lived it the same way)."""
+        turns = self.meta["turns"]
+        self.live_inquiry(*self.INQUIRY_LESSON)
+        self.state = [x.clone() for x in self.base]
+        self._recent_replies = []
+        self.meta["turns"] = turns
 
     @torch.no_grad()
     def recollection(self, text: str) -> dict:
