@@ -403,3 +403,13 @@ Plan, build list and judges: `brain/research/2026-11-18-arousal-gain-plan.md`.
 - (ii) C1 holds but C2 fails: plain heard-turn gain works, but arousal timing is not shown. NO-GO for the arousal claim.
 - (iii) C5 fails, or the pilot or dev futility gate fails: NO-GO for flat turn-level gain. Next is per-token gain on the matrix write of the high-NLL tokens only.
 - (iv) C0 fails: the drive unit is wrong. Re-calibrate on dev only.
+
+### 19.0 Amendment (11-19, after the 0.1B smoke, before any 1.5B run)
+- The C0 filler bar ("gain <= 1.1 on >= 90% of filler turns") contradicts the registered carry-over: TAU 1.5 keeps
+  arousal raised on the turn after a surprising T1 by design (0.1B smoke: T2 after surprising T1 mean gain 1.18,
+  mundane fillers and T3 all <= 1.1). Pooled over both classes it cannot pass whenever half the bank is surprising.
+- Amended C0 filler bar: gain <= 1.1 on >= 90% of filler turns in MUNDANE conversations, and on >= 90% of T3 turns in
+  surprising conversations (the carry has decayed by then). T2 after a surprising T1 is the carry the claim is about and
+  is reported, not bounded. Nothing else changes. Code: the harness reports both forms; the table uses the amended one.
+- Smoke S1: split vs joint read differ by up to 6.3e-5 in logits (greedy replies identical), above the 1e-5 bar, so the
+  registered fallback applies: every arm, OFF included, uses the split read in the harness (`--off-split auto`).

@@ -359,7 +359,12 @@ def trace_summary(rows):
     m = [v for c, v in a1.items() if cls[c] == "M"]
     frac = float(np.mean([r["gain"] <= 1.1 for r in fill])) if fill else None
     part = lambda f: (float(np.mean([r["gain"] <= 1.1 for r in fill if f(r)])) if any(f(r) for r in fill) else None)  # noqa: E731
-    return {"filler_gain_le_1.1": frac, "S3_pass": bool(frac is not None and frac >= 0.9),
+    # amendment 19.0: mundane fillers and surprising-conversation T3 are bounded; T2 after a surprising T1 is the carry
+    amended = [r for r in fill if r["cls"] == "M" or r["turn"] == 3]
+    am = {"mundane_fillers": part(lambda r: r["cls"] == "M"),
+          "surprising_T3": part(lambda r: r["cls"] == "S" and r["turn"] == 3)}
+    s3 = bool(all(v is not None and v >= 0.9 for v in am.values()))
+    return {"filler_gain_le_1.1": frac, "S3_pass": s3, "S3_amended_19_0": am, "S3_pooled_pass_unamended": bool(frac is not None and frac >= 0.9),
             # the frozen criterion pools every filler turn; by construction a surprising T1 leaves arousal/TAU on T2
             "filler_gain_le_1.1_by": {"mundane": part(lambda r: r["cls"] == "M"), "surprising": part(lambda r: r["cls"] == "S"),
                                       "T2": part(lambda r: r["turn"] == 2), "T3": part(lambda r: r["turn"] == 3),
@@ -622,7 +627,16 @@ def table(rows, labels, overlap_min=40):
     au = auroc(sv, mv)
     fill = [r["gain"] for r in on_rows if r["turn"] in (2, 3)]
     ff = float(np.mean([g <= 1.1 for g in fill])) if fill else None
-    out["C0"] = {"auroc": au, "filler_gain_le_1.1": ff, "pass": bool(au is not None and au >= 0.90 and ff is not None and ff >= 0.90)}
+    # amendment 19.0 (design doc): bound mundane fillers and surprising T3; T2 after a surprising T1 is reported
+    fm = [r["gain"] for r in on_rows if r["turn"] in (2, 3) and r["cls"] == "M"]
+    f3 = [r["gain"] for r in on_rows if r["turn"] == 3 and r["cls"] == "S"]
+    fmv = float(np.mean([g <= 1.1 for g in fm])) if fm else None
+    f3v = float(np.mean([g <= 1.1 for g in f3])) if f3 else None
+    s2 = [r["gain"] for r in on_rows if r["turn"] == 2 and r["cls"] == "S"]
+    out["C0"] = {"auroc": au, "filler_gain_le_1.1_pooled": ff, "mundane_fillers_le_1.1": fmv, "surprising_T3_le_1.1": f3v,
+                 "surprising_T2_mean_gain": float(np.mean(s2)) if s2 else None,
+                 "pass": bool(au is not None and au >= 0.90 and fmv is not None and fmv >= 0.90
+                              and f3v is not None and f3v >= 0.90)}
     # C1
     d1 = boot_ci(paired(cmean("ON", "S", "lab_a"), cmean("LESION", "S", "lab_a")))
     seeds = sorted({r["seed"] for r in on_rows})
