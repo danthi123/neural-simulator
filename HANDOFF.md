@@ -10,7 +10,7 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** mood iteration 4 six-seed TEST at 1.5B, GAIN 16 (pool40 42/43, pool41 44/100, pool42 101/102; `jobs/2026-11-18-pool-mood4-test.sh`, out `~/brain-lane/mood4/mood4_1.5b_s*.json`, DONE4). Then `mood_probe --add-embedding` on W, `mood_v3 table <dir> 1.5b`. Prereg: mood design doc section 15. AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
+- **LIVE RUNS:** W CPU: curiosity stage-1 dev harvest (`novelty_stage0 --bank dev --samples 4`, seeds 1140-1142, out `results/2026-11-18-novelty-dev-1.5b/`). AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -28,10 +28,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** (1) mood iteration 4 test lands (~1 h): `--add-embedding` on W, `mood_v3 table`, section-15 decision.
-  (2) Curiosity stage 1 (novelty-gated asking; plan in `research/2026-11-18-novelty-inquiry-record.md`). Stage 0
-  (11-18): cortex surprise marks coined items AUROC 1.00 and habituates; the brain does not act on it and invents
-  meanings (`results/2026-11-18-novelty-stage0-1.5b.md`). Target = asks what the new thing is, blind-read.
+- **NEXT STEP:** (1) Curiosity stage 1: build from the dev harvest (plan `research/2026-11-18-novelty-inquiry-record.md`;
+  stage 0: surprise AUROC 1.00, brain does not act on it). (2) Mood: iteration 4 at 1.5B NOT PASS (appraisal misreads
+  positive 2/6; push weak), `results/2026-11-18-mood4-1.5b.md`; next = 1.5B appraisal re-select + gain-type action.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
