@@ -30,8 +30,10 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** 11-30 items left: mood/arousal shapes replies (lesion-proven), and asking about what is new. Pick one,
-  record brief first (before-build). Reply defects (collapse, invents) wait for a new method.
+- **NEXT STEP:** (1) mood iteration 4 test lands (~1 h): `--add-embedding` on W, `mood_v3 table`, section-15 decision.
+  (2) Curiosity stage 1 (novelty-gated asking; plan in `research/2026-11-18-novelty-inquiry-record.md`). Stage 0
+  (11-18): cortex surprise marks coined items AUROC 1.00 and habituates; the brain does not act on it and invents
+  meanings (`results/2026-11-18-novelty-stage0-1.5b.md`). Target = asks what the new thing is, blind-read.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

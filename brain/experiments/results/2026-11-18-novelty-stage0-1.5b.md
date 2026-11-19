@@ -1,7 +1,7 @@
 # Novelty stage 0 at 1.5B: the cortex's surprise marks coined words perfectly; the brain does not act on it (2026-11-18)
 
 Measurement only (`experiments/novelty_stage0.py`, no switch, nothing fitted). Six seeds 42/43/44/100/101/102, W CPU
-fp32, 6 threads. 12 frames x {C common, R rare-real, C coined} per seed, each item in a fresh brain (Brain defaults).
+fp32, 6 threads. 12 frames x {C common, R rare-real, N coined} per seed, each item in a fresh brain (Brain defaults).
 Per-seed JSON and readable replies in `2026-11-18-novelty-stage0-1.5b/s<seed>.{json,md}`.
 
 **Signal (cortex prediction error, read from the birth state; deterministic, identical on all seeds):**
