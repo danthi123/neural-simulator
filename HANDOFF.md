@@ -28,9 +28,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** (1) Curiosity stage 1: build from the dev harvest (plan `research/2026-11-18-novelty-inquiry-record.md`;
-  stage 0: surprise AUROC 1.00, brain does not act on it). (2) Mood: iteration 4 at 1.5B NOT PASS (appraisal misreads
-  positive 2/6; push weak), `results/2026-11-18-mood4-1.5b.md`; next = 1.5B appraisal re-select + gain-type action.
+- **NEXT STEP:** (1) Curiosity stage-1 dev lands (pool): blind-read asks/invents per arm; content leak seen at 0.1B.
+  (2) Mood: iterations 4 and 5 (Stage A gate FAIL: neutral events read as emotional, `results/2026-11-19-mood5-stageA-1.5b.md`)
+  block the additive family at 1.5B; 11-30 likely NOT MET. Next registered route: arousal as gain (source: cortex surprise).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
