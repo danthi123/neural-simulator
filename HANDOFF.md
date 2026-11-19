@@ -10,8 +10,8 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** pool40/41/42 curiosity test-bank baseline (4 samples, seeds 42/43 | 44/100 | 101/102; out
-  `~/brain-lane/novbase/`). W CPU: inquiry gate dev at 1.5B (`inquiry_gate_dev`, seed 1144). Build agent: arousal gain (section 19).
+- **LIVE RUNS:** W CPU inquiry gate dev seed 1144; pool41/42 the same at seeds 1145/1146 (`jobs/2026-11-19-pool-inquiry-gate-dev.sh`,
+  out `~/brain-lane/igdev/`). pool40 idle.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -29,9 +29,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** (1) Curiosity: additive asking direction NO-GO (`results/2026-11-18-inquiry-dev-1.5b.md`); new
-  route = novelty-gated lived inquiry episode (`Brain(inquiry=12.4)`, `live_inquiry`); blind-read the gate dev, then prereg.
-  (2) Mood: additive family blocked (iter 4-5); iteration 6 arousal-as-gain prereg'd (design doc s19), build agent running.
+- **NEXT STEP:** Curiosity is the live 11-30 item: blind-read the gate dev (3 seeds), then prereg the test vs the
+  baseline (`results/2026-11-19-novelty-baseline-1.5b.md`: asks coined 35/288, common 7/288, invents coined 73/288).
+  Mood: TIMEBOX KILL 11-19 (iter 4-6 NO-GO on the action; `results/2026-11-19-arousal6-1.5b.md`), 11-30 NOT MET.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
