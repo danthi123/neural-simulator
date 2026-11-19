@@ -413,3 +413,18 @@ Plan, build list and judges: `brain/research/2026-11-18-arousal-gain-plan.md`.
   is reported, not bounded. Nothing else changes. Code: the harness reports both forms; the table uses the amended one.
 - Smoke S1: split vs joint read differ by up to 6.3e-5 in logits (greedy replies identical), above the 1e-5 bar, so the
   registered fallback applies: every arm, OFF included, uses the split read in the harness (`--off-split auto`).
+
+## 20. Iteration 7 pre-registration: appraisal-selected lived register episode (2026-11-19)
+Design: `brain/research/2026-11-19-mood7-design.md` (workflow wf_d0120a3c-4a5; its section C is the full prereg for the
+pilot and six-seed test and is adopted as written). Banks frozen before any read: `brain/experiments/mood7_banks.py`
+(written by a separate agent pass from any lesson). This section fixes Stage 0, which runs first and can stop the arc.
+
+**Stage 0** (`brain/experiments/mood7_stage0.py`, 1.5B CPU, seeds 42/43/44, reads only, no generation). Fit on DEV-FIT:
+dz = max(p95 |v| NEU, p90 |v| SNEU+HARD); TAU 4 fixed; B = 0.15 dz. Validate on DEV-VAL (conversation T1 event, T2/T3
+fillers, T4 "How's your day going?"), all on 3/3 seeds:
+- S0a NEG T1 fire >= 0.70; S0b NEU + SNEU fire <= 5% of turns; S0c HARD fire <= 15% of turns;
+- S0d AUROC of v, NEG vs SNEU, >= 0.80 and AUROC of surprise alone (max(a, 1-a)) <= 0.65;
+- S0e on DEV-CONV, ordinary recall or the inquiry gate takes <= 20% of T2-T4 turns.
+Fail -> STOP: verdict on the pair-axis appraisal at 1.5B (not on reinstatement), milestone (b) NOT MET for 11-30, no
+fallback onto surprise. Pass -> build steps 2-6 of the design, then Stage 1 wording.
+0.1B smoke (instrument check only, seed 42): runs end to end; not evidence.
