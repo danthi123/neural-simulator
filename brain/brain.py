@@ -10,11 +10,11 @@ from __future__ import annotations
 import fcntl
 import json
 import os
-import time
 
 import torch
 import torch.nn.functional as F
 
+from brain import clock
 from brain.cortex import Cortex, model_size, resolve_model
 from brain.hippocampus import Episode, Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus
@@ -367,13 +367,13 @@ class Brain:
             # move when sleep changes the slow synapses.
             _, self.base = self.raw_cortex.read(BIRTH, None)
             self.state = [x.clone() for x in self.base]
-            self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0,
+            self.meta = {"name": name, "friend": friend, "born": clock.now(), "turns": 0, "sleeps": 0, "last_sleep": 0.0,
                          "cortex_model": self.cortex_model}
             if not self.load():
                 self._grow_self()
                 if self.inquiry_birth:
                     self._live_inquiry_at_birth()
-                self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
+                self.meta["last_sleep"] = clock.now()  # birth is not a lived day: the first night comes at a restart
                 self.save()
             elif self.sleep_on_restart and self.pending():
                 self.sleep()  # restart = a night: consolidate what was lived since the last sleep, once
@@ -736,7 +736,7 @@ class Brain:
         if not self.hippocampus.episodes:
             return []
         plastic = self._plastic()
-        now = time.time()
+        now = clock.now()
         # replay what the hippocampus encoded (speaker line as read at storage time)
         eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self._night_episodes()]
         eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
@@ -755,7 +755,7 @@ class Brain:
         for prm in plastic.parameters():
             prm.grad = None
         self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1
-        self.meta["last_sleep"] = time.time()
+        self.meta["last_sleep"] = clock.now()
         self._adapters_dirty = True
         self.cortex.refresh()
         return losses

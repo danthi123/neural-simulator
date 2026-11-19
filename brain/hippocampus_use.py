@@ -11,10 +11,9 @@ Scaffold note (SCAFFOLDS.md): "same experience" is decided by the cosine of the 
 """
 from __future__ import annotations
 
-import time
-
 import torch
 
+from brain import clock
 from brain.hippocampus import Episode, Hippocampus
 
 
@@ -39,7 +38,7 @@ class UseHippocampus(Hippocampus):
         if best is not None and best_sim >= self.RETELL_SIM:
             best.strength += self.RETELL_BOOST
             best.uses += 1
-            best.last_used = time.time()
+            best.last_used = clock.now()
             return best
         ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],
                      key=cortex.key_of(delta).cpu(), strength=salience, permanent=permanent)
