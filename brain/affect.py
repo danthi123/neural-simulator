@@ -53,10 +53,104 @@ def draw_primaries(rng, per_kind: int = 4):
             rng.sample(NEGATIVE_BODILY, per_kind) + rng.sample(NEGATIVE_SOCIAL, per_kind))
 
 
+# Iteration 5 (11-18, design doc section 17; SCAFFOLDS.md): 48 matched body-scaffold pairs. Each pair shares its
+# situation and differs only in the sign of its valence, so the topic cancels in the pair difference. A seed draws
+# 32 (`draw_pairs`). Written before any iteration-5 run; content words are disjoint from the lexical instrument, the
+# question sets and every event set (tests/test_mood5.py).
+PRIMARY_PAIRS = [
+    ('warm and snug in a soft blanket', 'cold and shaking beneath a thin blanket'),
+    ('a mug of hot tea held in cupped hands', 'a mug of hot tea tipped over onto my hands'),
+    ('walking barefoot on soft green grass', 'walking barefoot on sharp splintered glass'),
+    ('a sweet peach dripping with nectar', 'a rotten peach that tastes of mold'),
+    ('stretching tall after a deep restful sleep', 'stumbling about after hours with no sleep'),
+    ('a cool shower after a hot dusty hike', 'a freezing shower with no hot water'),
+    ('a clerk holding the door open for me', 'a clerk slamming the door in my face'),
+    ('my uncle carrying me gently to bed', 'my uncle dragging me roughly out of bed'),
+    ('a soft pillow beneath my head', 'a cold brick beneath my head'),
+    ('fresh bread baking in the oven', 'burnt bread smoking in the oven'),
+    ('a steady hand helping me up the stairs', 'a shove from behind on the stairs'),
+    ('my hands wrapped in thick wool gloves', 'my hands numb and cracked in the wind'),
+    ('a dry towel ready after a swim', 'no towel after a swim in icy water'),
+    ('singing along with my daughter in the car', 'my daughter screaming at me in the car'),
+    ('a mother humming while she brushes my hair', 'a mother yanking my hair while she brushes it'),
+    ('an open skylight with a sweet floral smell', 'an open skylight with a smell of rot'),
+    ('a dog wagging its tail at the kerb', 'a dog lunging and snapping at the kerb'),
+    ('a quiet study with soft lamp light', 'a quiet study with a flickering bulb and a strange hum'),
+    ('sipping cool clear water by the river', 'swallowing muddy water by the river'),
+    ('my feet resting on a heated tile', 'my feet pressed on a frozen tile'),
+    ('a postman waving as I pass', 'a postman sneering as I pass'),
+    ('a teacher nodding at my answer', 'a teacher frowning at my answer'),
+    ('a smooth warm stone in my palm', 'a jagged sharp stone cutting my palm'),
+    ('lying on a sandy shore in strong sun', 'lying on a rocky shore in freezing rain'),
+    ('my aunt sharing her sandwich with me', 'my aunt grabbing my sandwich from me'),
+    ('a gentle massage on my stiff shoulders', 'a hard pinch on my stiff shoulders'),
+    ('a juicy orange peeled and shared', 'a bitter orange spat onto the pavement'),
+    ('a granny wrapping me in her scarf', 'a granny snatching her scarf off me'),
+    ('snow falling softly on my cheeks by the fire', 'sleet stinging my cheeks far from any fire'),
+    ('a hot meal ready on the table', 'a bare plate ready on the table'),
+    ('a crowd giving me space on the bench', 'a crowd pushing me off the bench'),
+    ('the smell of cut grass after rain', 'the smell of smoke after a blaze'),
+    ('a cat purring against my chest', 'a cat hissing and scratching my chest'),
+    ('my spine resting against a sun-warmed fence', 'my spine pressed against a wet icy fence'),
+    ('a clear light dawn with birds singing', 'a gray heavy dawn with crows screaming'),
+    ('a firm friendly handshake from a colleague', 'a crushing hostile handshake from a colleague'),
+    ('a waiter pulling out a chair for me', 'a waiter pulling a chair out from behind me'),
+    ('bare toes dipped in a warm shallow pool', 'bare toes dipped in a filthy shallow pool'),
+    ('a sore tooth soothed by medicine', 'a sore tooth throbbing for lack of medicine'),
+    ('my nephew tucking a shawl around me', 'my nephew tearing a shawl off me'),
+    ('a slow deep breath of clean mountain air', 'a slow deep breath of thick burning smoke'),
+    ('eyes resting in a soft patch of sunlight', 'eyes watering in the harsh glare of floodlights'),
+    ('a trainer clapping me on the shoulder', 'a trainer slapping the side of my head'),
+    ('feet dry in sturdy boots on a wet trail', 'feet soaked in worn boots on a wet trail'),
+    ('an old classmate calling me by name', 'an old classmate walking by with a blank stare'),
+    ('a thick sweater fresh from the dryer', 'a thin sweater soaked by the rain'),
+    ('a table full of guests turning to listen to me', 'a table full of guests turning their backs to me'),
+    ('a cool damp cloth on my forehead', 'a scratchy rough cloth wrapped tight on my forehead'),
+]
+N_PAIRS_DRAWN = 32
+
+
+def draw_pairs(rng, n: int = N_PAIRS_DRAWN):
+    """A seed's matched pairs: n of the 48 (the genome's choice should not matter)."""
+    return rng.sample(PRIMARY_PAIRS, n)
+
+
+def band_for(n_layers: int, band=(8, 16)):
+    """The modulation / read band for a model: the pre-registered (8, 16) when the model has >= 16 layers, else the
+    middle third (0.1B has 12 layers -> (4, 8)). Returned as a half-open (lo, hi)."""
+    if n_layers >= band[1]:
+        return tuple(band)
+    return (n_layers // 3, 2 * n_layers // 3)
+
+
 # Neutral statements in the conversation frame: the appraisal's zero point (an amygdala baseline).
 NEUTRAL_REFERENCE = ["The table is next to the window.", "There are seven days in a week.",
                      "The bus leaves at nine in the morning.", "The book has two hundred pages.",
                      "We put the cups in the cupboard.", "The road goes past the station."]
+
+# Iteration 6 (arousal as encoding gain, brain/research/2026-11-03-mood-state-design.md section 19): the surprise
+# normalisation. (MU, SD) of the heard-turn drive (mean of the two highest per-token NLLs, nats), keyed by cortex size.
+# EMPTY until computed at 1.5B by `python -m brain.experiments.arousal_gain calibrate`; Brain(arousal_gain=...) with a
+# size that has no row and no explicit calibration is an error (SCAFFOLDS.md row "Surprise normalisation MU/SD").
+AROUSAL_CALIBRATION: dict[str, tuple[float, float]] = {}
+AROUSAL_Z_CLIP = 3.0
+GAIN_CEILING = 2.0
+
+
+def top2_mean(nll) -> float:
+    """Mean of the two highest values of a per-token NLL sequence (the drive of arousal); 0.0 if empty."""
+    v = sorted((float(x) for x in nll), reverse=True)[:2]
+    return sum(v) / len(v) if v else 0.0
+
+
+def calibrate_surprise(cortex, base, texts, prefix: str = "User: ", suffix: str = "\n\n"):
+    """(MU, SD) of the drive over `texts`, each read from the birth state `base` (never mutated). The first token
+    ("User") has no prediction, so the drive reads nll[1:] exactly as Brain.hear does."""
+    xs = [top2_mean(cortex.read_nll(f"{prefix}{t}{suffix}", base)[2][1:]) for t in texts]
+    mu = sum(xs) / len(xs)
+    sd = (sum((x - mu) ** 2 for x in xs) / max(len(xs) - 1, 1)) ** 0.5
+    return mu, max(sd, 1e-6), xs
+
 
 DEFAULT_ON = os.environ.get("BRAIN_AFFECT", "0") == "1"
 
@@ -78,14 +172,28 @@ class Affect:
     TAU_AROUSAL = 1.5   # events: fast arousal
     GAIN = 16.0         # modulation gain (dev questions, seed 42: 8 weak, 32 intrudes primary content; design doc)
 
-    def __init__(self, enabled: bool | None = None, readout: str = "twopole_deep"):
-        assert readout in ("twopole_deep", "lin_all")
+    def __init__(self, enabled: bool | None = None, readout: str = "twopole_deep", mod_band=(8, 16),
+                 alpha: float = 0.0, placement: str = "pre", surprise_mu: float = 0.0, surprise_sd: float = 1.0):
+        assert readout in ("twopole_deep", "lin_all", "pairs")
+        assert placement in ("pre", "post")
         self.readout_kind = readout
+        # iteration 5 (readout="pairs" only; ignored by the other readouts): band, push size as a fraction of the
+        # layer's matrix-memory norm, and where the push lands ("pre": before the question is read, "post": after)
+        self.mod_band, self.alpha, self.placement = tuple(mod_band), alpha, placement
+        self.band_used = None
+        self.layer_norm = None    # {layer: mean Frobenius norm of the matrix memory over neutral reads}
+        self.topic_delta = None   # modulation pattern of the topic-only control (norm-matched per layer)
+        self.topic_axis = None    # appraisal axis of the topic-only control: {"unit", "zero", "scale"}
         self.read_layers = None
         self.enabled = DEFAULT_ON if enabled is None else enabled   # the modulation switch (lesion = False)
         self.mood = 0.0
         self.arousal = 0.0
         self.last_appraisal = 0.0
+        # iteration 6 (arousal as encoding gain): surprise normalisation and the last drive / gain, for the read-out
+        self.MU, self.SD = float(surprise_mu), float(surprise_sd)
+        self.surprise = 0.0       # last raw drive (nats)
+        self.last_gain = 1.0      # last encode_gain returned
+        self.gain_on = False      # set by Brain(arousal_gain=...): the gain acts on the heard turn's write
         self.axis_unit = None     # projection axis (concatenated per-layer unit traces)
         self.axis_delta = None    # modulation pattern, per-layer matrix-memory (raw scale, half the pos-neg gap)
         self.zero, self.scale = 0.0, 1.0
@@ -96,7 +204,9 @@ class Affect:
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         return cortex.matrix_delta(st, base)
 
-    def grow(self, cortex, base, positives=None, negatives=None, neutral=None, body_neutral=None):
+    def grow(self, cortex, base, positives=None, negatives=None, neutral=None, body_neutral=None, pairs=None):
+        if self.readout_kind == "pairs":
+            return self._grow_pairs(cortex, base, pairs or PRIMARY_PAIRS[:N_PAIRS_DRAWN], neutral, body_neutral)
         positives = positives or POSITIVE_PRIMARIES
         negatives = negatives or NEGATIVE_PRIMARIES
         neutral = neutral or NEUTRAL_REFERENCE
@@ -125,6 +235,96 @@ class Affect:
         self.scale = max(float((up - un) @ self.axis_unit) / 2.0, 1e-6)
         return self
 
+    # ---- iteration 5: matched-pair axis (readout="pairs") ----
+    def _grow_pairs(self, cortex, base, pairs, neutral=None, body_neutral=None):
+        """Axis = mean over pairs of the (positive - negative) fast-memory trace, per layer of the band (the topic cancels
+        in each difference). Appraisal reads the band, zero = midpoint of the two poles read as "User", scale = half the
+        pole gap. Push = per-layer unit direction x the layer's mean matrix-memory norm over neutral reads.
+        Streaming: only the band layers of each pair are kept (a 1.5B trace of all layers is ~12 MB)."""
+        neutral = neutral or NEUTRAL_REFERENCE
+        body_neutral = body_neutral or BODY_NEUTRAL
+        n_layers = len(base) // 3
+        self.layers = list(range(n_layers))
+        lo, hi = band_for(n_layers, self.mod_band)
+        self.band_used = (lo, hi)
+        band = list(range(lo, hi))
+        self.read_layers = band
+        unit = lambda d: d / d.flatten().norm().clamp_min(1e-8)  # noqa: E731
+        # layer norms: matrix memory (the full state, not the change) after neutral conversation statements
+        norms = {l: [] for l in band}
+        for t in neutral:
+            _, st = cortex.read(f"User: {t}\n\n", base)
+            for l in band:
+                norms[l].append(float(st[3 * l + 1].float().norm()))
+        self.layer_norm = {l: sum(v) / len(v) for l, v in norms.items()}
+        n = len(pairs)
+        self._pair_d, self._pair_fd = [], []
+        topic_sum = {l: 0 for l in band}
+        fp_sum = fn_sum = 0
+        pu_sum = nu_sum = 0
+        for ptxt, ntxt in pairs:
+            p, q = self._trace(cortex, base, ptxt, "Body"), self._trace(cortex, base, ntxt, "Body")
+            self._pair_d.append({l: (p[3 * l + 1] - q[3 * l + 1]).clone() for l in band})
+            fp, fn = _flat_unit(p, band), _flat_unit(q, band)
+            self._pair_fd.append(fp - fn)
+            fp_sum, fn_sum = fp_sum + fp, fn_sum + fn
+            for l in band:
+                topic_sum[l] = topic_sum[l] + (p[3 * l + 1] + q[3 * l + 1]) / 2
+            pu_sum = pu_sum + _flat_unit(self._trace(cortex, base, ptxt, "User"), band)
+            nu_sum = nu_sum + _flat_unit(self._trace(cortex, base, ntxt, "User"), band)
+            del p, q
+        bn = [self._trace(cortex, base, t, "Body") for t in body_neutral]
+        bn_mat = {l: torch.stack([b[3 * l + 1] for b in bn]).mean(0) for l in band}
+        fb = torch.stack([_flat_unit(b, band) for b in bn]).mean(0)
+        del bn
+        mk = lambda per_layer: [None if (i % 3 != 1 or (i // 3) not in self.layer_norm) else  # noqa: E731
+                                unit(per_layer[i // 3]) * self.layer_norm[i // 3] for i in range(len(base))]
+        self.axis_delta = mk({l: torch.stack([d[l] for d in self._pair_d]).mean(0) for l in band})
+        self.topic_delta = mk({l: topic_sum[l] / n - bn_mat[l] for l in band})
+        # appraisal axes (flat per-layer-unit space of the band)
+        ax = torch.stack(self._pair_fd).mean(0)
+        self.axis_unit = ax / ax.norm().clamp_min(1e-8)
+        t = (fp_sum + fn_sum) / (2 * n) - fb
+        self.topic_axis = {"unit": t / t.norm().clamp_min(1e-8)}
+        # poles read as "User" (the speaker of conversation events) -> the midpoint zero; the same rule for every axis
+        self._pole_u = (pu_sum / n, nu_sum / n)
+        self.zero, self.scale = self._midpoint(self.axis_unit)
+        self.topic_axis["zero"], self.topic_axis["scale"] = self._midpoint(self.topic_axis["unit"])
+        return self
+
+    def _midpoint(self, unit_axis):
+        pu, nu = self._pole_u
+        zero = float(((pu + nu) / 2) @ unit_axis)
+        gap = float((pu - nu) @ unit_axis)
+        return zero, max(abs(gap) / 2.0, 1e-6)
+
+    def shuffled(self, rng):
+        """Sign-shuffled control: each pair difference is sign-flipped (exactly half of them, a random half), so the
+        shared valence component cancels while the per-pair content stays. Returns (modulation delta norm-matched per
+        layer, appraisal axis dict). Needs readout="pairs"."""
+        n = len(self._pair_d)
+        signs = [1.0] * (n // 2) + [-1.0] * (n - n // 2)
+        rng.shuffle(signs)
+        unit = lambda d: d / d.flatten().norm().clamp_min(1e-8)  # noqa: E731
+        per = {l: sum(s * d[l] for s, d in zip(signs, self._pair_d)) / n for l in self.read_layers}
+        delta = [None if (i % 3 != 1 or (i // 3) not in self.layer_norm) else unit(per[i // 3]) * self.layer_norm[i // 3]
+                 for i in range(len(self.axis_delta))]
+        ax = sum(s * f for s, f in zip(signs, self._pair_fd)) / n
+        u = ax / ax.norm().clamp_min(1e-8)
+        zero, scale = self._midpoint(u)
+        return delta, {"unit": u, "zero": zero, "scale": scale, "signs": signs}
+
+    def shuffled_delta(self, rng):
+        return self.shuffled(rng)[0]
+
+    def project_pure(self, cortex, base, text, speaker="User", axis=None):
+        """Centred projection of one read on an axis ({"unit","zero","scale"}; default the pair axis). Touches no
+        affect state (no mood, arousal or last appraisal update). Returns (projection - zero, tanh(that / scale))."""
+        ax = axis or {"unit": self.axis_unit, "zero": self.zero, "scale": self.scale}
+        x = _flat_unit(self._trace(cortex, base, text, speaker), self.read_layers)
+        raw = float(x @ ax["unit"]) - ax["zero"]
+        return raw, math.tanh(raw / ax["scale"])
+
     def project(self, cortex, base, text, speaker="User"):
         x = _flat_unit(self._trace(cortex, base, text, speaker), self.read_layers)
         return float(x @ self.axis_unit) - self.zero
@@ -142,16 +342,38 @@ class Affect:
 
     def reset(self):
         self.mood = self.arousal = self.last_appraisal = 0.0
+        self.surprise, self.last_gain = 0.0, 1.0
+
+    # ---- iteration 6: arousal driven by the cortex's own surprise, acting as encoding gain ----
+    def drive_arousal(self, x: float) -> float:
+        """x = drive of the heard turn (mean of the two highest per-token NLLs, nats). s = clip((x - MU) / SD, 0, 3) / 3,
+        then a leaky update arousal += (s - arousal) / TAU_AROUSAL. Does not touch mood or the valence appraisal
+        (`update` is not called while this switch is on: one arousal definition at a time)."""
+        self.surprise = float(x)
+        s = min(max((x - self.MU) / self.SD, 0.0), AROUSAL_Z_CLIP) / AROUSAL_Z_CLIP
+        self.arousal += (s - self.arousal) / self.TAU_AROUSAL
+        return self.arousal
+
+    def encode_gain(self, span: float, pinned: bool = False) -> float:
+        """Gain on the heard turn's matrix-memory write: min(1 + span * arousal, 2); 1.0 when pinned (the lesion).
+        Never below 1."""
+        g = 1.0 if pinned else min(1.0 + span * self.arousal, GAIN_CEILING)
+        self.last_gain = g
+        return g
 
     # ---- action on the cortex ----
     def modulate(self, cortex, state):
         """Diffuse valence bias on the cortex's fast memory. Off (lesion) -> the state is returned untouched."""
         if not self.enabled or self.axis_delta is None or self.mood == 0.0:
             return state
+        if self.readout_kind == "pairs":
+            return state if self.alpha == 0.0 else cortex.add_delta(state, self.axis_delta, self.alpha * self.mood)
         return cortex.add_delta(state, self.axis_delta, self.GAIN * self.mood)
 
     # ---- honest read-out ----
     def readout(self) -> dict:
         """Functional read-out of the affect variables (numbers only; not a claim of experience)."""
         return {"mood": round(self.mood, 4), "arousal": round(self.arousal, 4),
-                "last_appraisal": round(self.last_appraisal, 4), "modulation_on": bool(self.enabled)}
+                "last_appraisal": round(self.last_appraisal, 4), "modulation_on": bool(self.enabled),
+                "surprise": round(self.surprise, 4), "encode_gain": round(self.last_gain, 4),
+                "gain_on": bool(self.gain_on)}

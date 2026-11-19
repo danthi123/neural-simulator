@@ -50,6 +50,21 @@ FRAMES = [
     ("I'm learning to play {}.", "chess", "mahjong", "krastle"),
     ("My grandmother grew up in {}.", "Paris", "Tbilisi", "Ploskovar"),
 ]
+# DEV bank (stage-1 axis harvest and gain selection only; never scored as a test). Disjoint frames and items.
+DEV_FRAMES = [
+    ("My cat is called {}.", "Bella", "Mephisto", "Trondle"),
+    ("My sister works as a {}.", "nurse", "farrier", "plinketer"),
+    ("We went to {} on holiday.", "Spain", "Montenegro", "Vaskaria"),
+    ("My uncle grows {} in his garden.", "tomatoes", "kohlrabi", "glimbers"),
+    ("I bought a new {} yesterday.", "phone", "sextant", "drubble"),
+    ("My friend plays the {}.", "piano", "hurdy-gurdy", "skronet"),
+    ("For breakfast I had {}.", "toast", "congee", "pimbletash"),
+    ("My nephew is studying {}.", "maths", "glaciology", "frenomics"),
+    ("Our neighbour keeps {}.", "chickens", "alpacas", "snorvels"),
+    ("My mother loves {}.", "gardening", "bookbinding", "quimbling"),
+    ("I'm reading a book about {}.", "history", "mycology", "trantavism"),
+    ("My cousin drives a {}.", "Ford", "Trabant", "Kelvaro"),
+]
 FOLLOW = "I told my friend about {}."
 CLASSES = ("C", "R", "N")
 
@@ -88,33 +103,37 @@ def main():
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out", required=True)
     ap.add_argument("--md", default=None)
+    ap.add_argument("--bank", choices=["test", "dev"], default="test")
+    ap.add_argument("--samples", type=int, default=1, help="replies per item (each in a fresh brain)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     random.seed(a.seed); np.random.seed(a.seed); torch.manual_seed(a.seed)
     cortex = Cortex(resolve_model(a.model))
     _, base = cortex.read(BIRTH)
     rows, t0 = [], time.time()
-    order = list(range(len(FRAMES)))
+    frames = FRAMES if a.bank == "test" else DEV_FRAMES
+    order = list(range(len(frames)))
     random.Random(a.seed).shuffle(order)
     for fi in order:
-        frame = FRAMES[fi]
+        frame = frames[fi]
         for ci, cls in enumerate(CLASSES):
             item = frame[1 + ci]
             stmt = frame[0].format(item)
             i = frame[0].index("{}")
             pre, suf = frame[0][:i], frame[0][i + 2:]
             first = item_nll(cortex, base, f"User: {pre}", item, suf)
-            with tempfile.TemporaryDirectory(dir=os.path.dirname(os.path.abspath(a.out))) as home:
-                b = Brain(home, cortex=cortex)
-                reply, info = b.hear(stmt)
-                after = copy.deepcopy(b.state)
             # the exchange state ends "...\n\n" (Brain.commit_exchange), as BIRTH does: the same prefix for both reads
             fpre, fsuf = "User: " + FOLLOW[:FOLLOW.index("{}")], FOLLOW[FOLLOW.index("{}") + 2:]
-            rep = item_nll(cortex, after, fpre, item, fsuf)
             cold = item_nll(cortex, base, fpre, item, fsuf)
-            rows.append({"frame": fi, "cls": cls, "item": item, "stmt": stmt, "first": first, "repeat": rep,
-                         "cold_follow": cold, "reply": reply, "asks_item": asks_about(reply, item),
-                         "any_q": "?" in reply, "recalled": info.get("recalled") is not None})
+            for k in range(a.samples):
+                with tempfile.TemporaryDirectory(dir=os.path.dirname(os.path.abspath(a.out))) as home:
+                    b = Brain(home, cortex=cortex)
+                    reply, info = b.hear(stmt)
+                    after = copy.deepcopy(b.state)
+                rep = item_nll(cortex, after, fpre, item, fsuf)
+                rows.append({"frame": fi, "cls": cls, "item": item, "stmt": stmt, "sample": k, "first": first,
+                             "repeat": rep, "cold_follow": cold, "reply": reply, "asks_item": asks_about(reply, item),
+                             "any_q": "?" in reply, "recalled": info.get("recalled") is not None})
         print(f"[s{a.seed}] frame {fi} done {time.time() - t0:.0f}s", flush=True)
 
     by = lambda c, k, f="sum": [r[k][f] for r in rows if r["cls"] == c]  # noqa: E731
@@ -132,7 +151,7 @@ def main():
         "asks_item_rate": {c: float(np.mean([r["asks_item"] for r in rows if r["cls"] == c])) for c in CLASSES},
         "any_question_rate": {c: float(np.mean([r["any_q"] for r in rows if r["cls"] == c])) for c in CLASSES},
     }
-    out = {"seed": a.seed, "model": a.model, "host": socket.gethostname(), "threads": a.threads,
+    out = {"seed": a.seed, "model": a.model, "bank": a.bank, "samples": a.samples, "host": socket.gethostname(), "threads": a.threads,
            "torch": torch.__version__, "summary": summ, "rows": rows, "seconds": round(time.time() - t0, 1)}
     json.dump(out, open(a.out, "w"), indent=1)
     print(json.dumps(summ, indent=1))

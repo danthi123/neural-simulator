@@ -1,0 +1,60 @@
+{
+ "calibration": {
+  "mu": 8.43276002407074,
+  "sd": 1.5098074092064009,
+  "n": 20,
+  "texts": [
+   "The pharmacy opens at half past seven.",
+   "A standard envelope weighs about thirty grams.",
+   "The ferry crosses the channel twice a day.",
+   "Our scanner takes sheets in the lower tray.",
+   "The museum has a cloakroom near the entrance.",
+   "Tuesday's lecture covers glacial valleys.",
+   "The elevator stops at floors two, four and six.",
+   "There is a snack kiosk by the bank.",
+   "The post office closes at five o'clock.",
+   "I walked down to the river after lunch.",
+   "She made a pot of coffee for the meeting.",
+   "The train to the city runs every twenty minutes.",
+   "We watered the plants by the back door.",
+   "He folded the towels and put them away.",
+   "The library has a quiet room on the second floor.",
+   "It was warm enough to leave the window open.",
+   "They painted the fence over the weekend.",
+   "I need to charge my phone before we leave.",
+   "The market is busy on Saturday mornings.",
+   "She reads the newspaper at the kitchen table."
+  ],
+  "drives": [
+   10.210894584655762,
+   9.427299499511719,
+   8.477851867675781,
+   10.184963703155518,
+   9.265019416809082,
+   12.605693340301514,
+   8.528183698654175,
+   9.287803173065186,
+   6.613433122634888,
+   7.230851411819458,
+   7.617538928985596,
+   6.939017057418823,
+   8.67979645729065,
+   9.471815586090088,
+   7.521615505218506,
+   6.347635507583618,
+   7.835978031158447,
+   7.227118015289307,
+   7.438313961029053,
+   7.744377613067627
+  ],
+  "model": "rwkv7-g1l-1.5b-20261031-ctx34304"
+ },
+ "provenance": {
+  "commit": "",
+  "brain_dirty": false,
+  "torch": "2.11.0+cpu",
+  "threads": 11,
+  "host": "node-mxl1462drl"
+ },
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304"
+}

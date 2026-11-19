@@ -1,0 +1,285 @@
+{
+ "method": "mood5",
+ "stage": "A",
+ "seed": 42,
+ "model": "1.5b",
+ "events": "dev",
+ "band_used": [
+  8,
+  16
+ ],
+ "layer_norm": {
+  "8": 148.94698842366537,
+  "9": 165.02953338623047,
+  "10": 164.77261861165366,
+  "11": 190.24217224121094,
+  "12": 231.3928654988607,
+  "13": 219.51922861735025,
+  "14": 355.042485555013,
+  "15": 235.3833236694336
+ },
+ "pairs": [
+  [
+   "a slow deep breath of clean mountain air",
+   "a slow deep breath of thick burning smoke"
+  ],
+  [
+   "my uncle carrying me gently to bed",
+   "my uncle dragging me roughly out of bed"
+  ],
+  [
+   "a mug of hot tea held in cupped hands",
+   "a mug of hot tea tipped over onto my hands"
+  ],
+  [
+   "a quiet study with soft lamp light",
+   "a quiet study with a flickering bulb and a strange hum"
+  ],
+  [
+   "an open skylight with a sweet floral smell",
+   "an open skylight with a smell of rot"
+  ],
+  [
+   "a mother humming while she brushes my hair",
+   "a mother yanking my hair while she brushes it"
+  ],
+  [
+   "a soft pillow beneath my head",
+   "a cold brick beneath my head"
+  ],
+  [
+   "a clerk holding the door open for me",
+   "a clerk slamming the door in my face"
+  ],
+  [
+   "a clear light dawn with birds singing",
+   "a gray heavy dawn with crows screaming"
+  ],
+  [
+   "a cool shower after a hot dusty hike",
+   "a freezing shower with no hot water"
+  ],
+  [
+   "bare toes dipped in a warm shallow pool",
+   "bare toes dipped in a filthy shallow pool"
+  ],
+  [
+   "a granny wrapping me in her scarf",
+   "a granny snatching her scarf off me"
+  ],
+  [
+   "walking barefoot on soft green grass",
+   "walking barefoot on sharp splintered glass"
+  ],
+  [
+   "a thick sweater fresh from the dryer",
+   "a thin sweater soaked by the rain"
+  ],
+  [
+   "a sore tooth soothed by medicine",
+   "a sore tooth throbbing for lack of medicine"
+  ],
+  [
+   "singing along with my daughter in the car",
+   "my daughter screaming at me in the car"
+  ],
+  [
+   "a trainer clapping me on the shoulder",
+   "a trainer slapping the side of my head"
+  ],
+  [
+   "a dog wagging its tail at the kerb",
+   "a dog lunging and snapping at the kerb"
+  ],
+  [
+   "my feet resting on a heated tile",
+   "my feet pressed on a frozen tile"
+  ],
+  [
+   "warm and snug in a soft blanket",
+   "cold and shaking beneath a thin blanket"
+  ],
+  [
+   "an old classmate calling me by name",
+   "an old classmate walking by with a blank stare"
+  ],
+  [
+   "a cool damp cloth on my forehead",
+   "a scratchy rough cloth wrapped tight on my forehead"
+  ],
+  [
+   "a smooth warm stone in my palm",
+   "a jagged sharp stone cutting my palm"
+  ],
+  [
+   "a postman waving as I pass",
+   "a postman sneering as I pass"
+  ],
+  [
+   "a gentle massage on my stiff shoulders",
+   "a hard pinch on my stiff shoulders"
+  ],
+  [
+   "a waiter pulling out a chair for me",
+   "a waiter pulling a chair out from behind me"
+  ],
+  [
+   "a cat purring against my chest",
+   "a cat hissing and scratching my chest"
+  ],
+  [
+   "a table full of guests turning to listen to me",
+   "a table full of guests turning their backs to me"
+  ],
+  [
+   "the smell of cut grass after rain",
+   "the smell of smoke after a blaze"
+  ],
+  [
+   "sipping cool clear water by the river",
+   "swallowing muddy water by the river"
+  ],
+  [
+   "eyes resting in a soft patch of sunlight",
+   "eyes watering in the harsh glare of floodlights"
+  ],
+  [
+   "snow falling softly on my cheeks by the fire",
+   "sleet stinging my cheeks far from any fire"
+  ]
+ ],
+ "appraisal": {
+  "pair": {
+   "values": {
+    "pos": [
+     0.6963,
+     -0.0985,
+     -0.8439,
+     0.0855,
+     0.7579,
+     0.4175,
+     0.5327,
+     -0.546
+    ],
+    "neg": [
+     -0.7914,
+     -0.7386,
+     -0.6797,
+     -0.8068,
+     -0.8624,
+     -0.8775,
+     -0.8256,
+     -0.8744
+    ],
+    "neutral": [
+     0.2909,
+     -0.0832,
+     0.1221,
+     0.1398,
+     0.6279,
+     0.1024,
+     0.081,
+     0.4636
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.625,
+    "neg": 1.0
+   },
+   "neutral_abs": 0.23886250000000003
+  },
+  "topic": {
+   "values": {
+    "pos": [
+     0.9612,
+     -0.0361,
+     0.9924,
+     0.9906,
+     -0.792,
+     -0.4387,
+     0.9134,
+     0.9719
+    ],
+    "neg": [
+     0.8584,
+     0.5484,
+     0.957,
+     0.8138,
+     0.6196,
+     0.4189,
+     0.8915,
+     0.9708
+    ],
+    "neutral": [
+     -0.994,
+     -0.9924,
+     -0.9727,
+     -0.992,
+     -0.9938,
+     -0.9981,
+     -0.9992,
+     -0.9943
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.625,
+    "neg": 0.0
+   },
+   "neutral_abs": 0.9920625000000001
+  },
+  "shuf": {
+   "values": {
+    "pos": [
+     -0.8917,
+     0.5393,
+     -0.9637,
+     -0.9186,
+     -0.174,
+     -0.0818,
+     -0.972,
+     -0.7697
+    ],
+    "neg": [
+     0.4186,
+     0.0167,
+     0.8992,
+     0.3363,
+     0.7762,
+     -0.7307,
+     0.9653,
+     -0.0477
+    ],
+    "neutral": [
+     -0.9866,
+     -0.8511,
+     -0.9899,
+     -0.9728,
+     -0.8963,
+     -0.6976,
+     -0.1151,
+     -0.8906
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.125,
+    "neg": 0.25
+   },
+   "neutral_abs": 0.8
+  }
+ },
+ "gate": {
+  "pair_both_poles_ge_0.75": false,
+  "pair_beats_topic_by_0.25": true,
+  "neutral_abs_le_0.15": false,
+  "pass": false,
+  "margin_over_topic": 0.5
+ },
+ "provenance": {
+  "commit": "128ba8a8ddc058a3f6fe4d49dfec8e888fe22b3f",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 8,
+  "host": "dant123-wk"
+ },
+ "seconds": 75.2
+}

@@ -296,3 +296,120 @@ Decision:
   The JSON records `embedding_added_on`.
 - FROZEN: `--model 1.5b --questions mixed_test --samples 2 --max-tokens 40 --arms pos,neg,off,rand_pos,rand_neg
   --n-rand 2 --gain 16 --no-embedding --threads <nproc-1>`; seeds pool40 42/43, pool41 44/100, pool42 101/102.
+
+## 17. Iteration 5 (11-18): matched-pair axis, mid band, norm-scaled, push after the question is read. PRE-REGISTERED before any run
+
+**Method.** Same as §15, except:
+- the axis is the mean of 32 matched sign-flipped body pairs;
+- the appraisal reads layers 8-15, zeroed at the pair-pole midpoint read as User;
+- the push is alpha × mood × ‖M_l‖ × û_l on layers 8-15 only, added after the question and before the first reply token;
+- mood is induced by the §15 integrator (TAU_MOOD=4).
+
+**Dev rule, frozen before test.** Only dev events and `mixed_dev` are used, on seeds 42/43/44.
+- **Stage A gate.** On every dev seed, pair-axis sign accuracy is at least 0.75 on both poles and beats the topic axis by at least 0.25. Mean |v| of neutral dev events is at most 0.15. If the gate fails, stop: the appraisal fault is not fixed by pairs.
+- **Alpha.** The largest alpha with mean NLL ratio (mood arms / off) ≤ 1.16 on all three seeds. The lexical score is never consulted.
+- **Discriminator.** Pooled over 72 rows per arm, the paired-bootstrap 95% CI of [(pos−neg) − (topic_pos−topic_neg)] and of [(pos−neg) − (shuf_pos−shuf_neg)] must both exclude 0. Otherwise stop before six seeds and go to branch 3.
+- Band, placement and pair count are fixed in advance and not tuned.
+- Before the test, a dev-selection record goes in a new section 18.
+
+**Test.** 6 seeds (42/43/44/100/101/102), `mixed_test`, 3 samples, 40 tokens, 7 arms. About 40 min per seed; 2 seeds per node is about 80 min wall.
+- Seeds 42/43/44 also ran dev, but on dev questions only. This is stated as a limit.
+
+Each criterion holds on at least 5/6 seeds unless stated:
+- **C1:** sign accuracy on the V5_TEST events ≥ 0.75 on both poles, and neutral mean |v| ≤ 0.15.
+- **C2:** m_pos > 0 > m_neg on 6/6.
+- **C3:** lex(pos) − mean(topic_pos, shuf_pos), CI above 0.
+- **C4:** lex(neg) − mean(topic_neg, shuf_neg), CI below 0.
+- **C5:** the embedding score agrees in sign (means).
+- **C6:** echo of {pos, neg} − echo(off) ≤ 0.10 on 6/6, with pair words included.
+- **C7:** NLL ratio ≤ 1.20, and mean reply length within ±25% of off.
+- **C8:** neg-arm refusals ≤ off + 3 of 36.
+- **C9:** the reply changes: under the lesion (off), replies are byte-identical in a repeat, and pos differs from off in at least 50% of replies.
+
+Reported, not gated: pos−off and neg−off, the dose slope compared with iteration 4, and the per-seed alpha × m.
+
+**Decision branches.**
+1. **PASS** is a lead only. Next: wire it into `Brain` (OFF by default), run a lesion on whole open-conversation transcripts, and apply `land-result`.
+2. **C3 fails but C4 passes, or the other way round.** Report a one-sided result. Next: arousal as gain, either on the readout's inverse temperature (declared scaffold, lesion = gain 1) or on per-head decay (that needs the forward opened).
+3. **The Stage A or discriminator gate fails.** Verdict: the additive state push, as a method, fails at 1.5B. Judge it against scale and prerequisites, then move to gain-type modulation or mood-congruent recall with the margin and confabulation fixes.
+
+Record brief (from the research workflow wf_07a11b91-c66: record, steering literature, biology, our 1.5B data; 3 designs, 6 skeptics):
+- Record check rerun after `w_follow.sh` (11-18, recorded): the old track's affect-on-language wall was the same signature (a fixed push swallowed by a sharper LM; a margin-scaled push registered, 09-04).
+- Old track: a fixed push was swallowed by a sharper LM (09-04 linattn: byte-identical output). A push scaled to the model's own margin was load-bearing (09-04 sharpness-aware GO). The 1.5B result is the same signature.
+- No mood or arousal result that `brain/` uses has been retracted.
+- iteration-4 JSONs:
+  - The axis ranks events correctly (pos vs neg AUROC 1.00 on 6/6 seeds). Its zero is off: neutral events sit near -0.11, and m_pos is between -0.04 and +0.10 on 4/6 seeds. So C3 tested almost no push.
+  - The effect grows with push size (neg vs null slope +0.66 per push unit, r=0.94).
+  - The true axis costs less fluency than a random one (NLL 0.94-1.10 vs 1.22-1.59).
+- Literature (CAA, ActAdd, RNN state steering): many matched pairs, a mid band, size as a fraction of the layer norm, applied after the prompt. We do the opposite on all four.
+- The old held-out appraisal events have now been looked at post hoc. They are burned for C1, so fresh events are needed.
+
+Build plan and full synthesis: `brain/research/2026-11-18-mood5-plan.md`.
+
+## 19. Iteration 6 (11-18): arousal as encoding gain. PRE-REGISTERED before any run
+
+(Section 18, the iteration-5 dev-selection record, was never written: Stage A failed and stopped the iteration.)
+Plan, build list and judges: `brain/research/2026-11-18-arousal-gain-plan.md`.
+
+**Method**
+- **Drive:** the mean of the two highest per-token NLLs of the heard turn, from the current state.
+- **Calibration:** MU and SD come from V5_DEV neutral events plus 12 ordinary sentences read from birth. They are disjoint from the stage-0 items and from both banks.
+- **Gain:** `g = min(1 + SPAN*a, 2)` multiplies the heard turn's matrix-memory write, both for this reply and in the committed state. No direction and no words are added. The gain never goes below 1.
+- **Conversations:** 4 turns each.
+  - T1: an event, either surprising (a coined item or an unexpected event) or mundane (the same frame with a common noun).
+  - T2 and T3: fixed mundane fillers.
+  - T4: the open probe "How's your day going?".
+- **Banks:**
+  - Dev: 12 conversations (6 surprising, 6 mundane).
+  - Test: 24 conversations (12 matched pairs), with coined words new to every earlier run.
+- **Arms** (same sampling seed per conversation):
+  - OFF.
+  - ON.
+  - LESION: g pinned at 1, arousal still computed and logged.
+  - SHUFFLED: the g sequence of another conversation at the same seed.
+  - CONSTANT: the mean ON g on every turn.
+  - CURRENT: TAU = 1, no carry-over. This arm decides only the claim's name.
+- **Seeds:** 42/43/44/100/101/102, 2 samples each. Seeds only resample the replies, so **the unit is the conversation**, and the paired bootstrap resamples conversations.
+- **Readers:** Haiku and Sonnet, blind to arm and class, with order shuffled. Each sees the T1 text and one reply and gives three labels:
+  - (a) takes up the T1 event;
+  - (b) echoes or copies the user;
+  - (c) invents a meaning.
+- **Reader agreement:** Cohen's kappa on (a) must be at least 0.6 over a 40-item overlap. If it is lower, the verdict is INCONCLUSIVE.
+
+**Dev rule** (frozen and committed as 19.1 before test)
+- **Pilot (seed 42, SPAN 1; OFF, ON, CONSTANT; about 100 replies, 20 min):**
+  - Gate: mechanical carry at T2 and T4 must be ON − CONSTANT ≥ +0.10, with no rise in echo.
+  - If it fails, stop with a NO-GO for the method and go to branch (iii).
+- **Dev (seeds 42/43/44, SPAN in {0.5, 1, 2}):**
+  - Choose the SPAN with the highest mechanical carry of ON minus CONSTANT, subject to fluency ratio ≤ 1.15 and echo rise ≤ 0.05.
+  - Futility: if that SPAN gives less than +0.10 pooled, stop.
+  - Floor: if LESION's T2 carry on surprising conversations is below 0.15, the bank has failed. Reframe it once and do not tune SPAN.
+  - Readers are never used on dev.
+
+**Criteria** (test bank; all must hold except the claim name)
+
+| | Measure | Bar |
+|---|---|---|
+| C0 | Arousal after T1, surprising vs mundane | AUROC ≥ 0.90; filler gain ≤ 1.1 on ≥ 90% of filler turns |
+| C1 | Blind (a) rate at T2+T4, surprising conversations | ON − LESION ≥ +0.15, 95% CI > 0, positive on ≥ 5/6 seeds |
+| C2 | Shuffled and constant nulls | ON − SHUFFLED ≥ +0.10 and ON − CONSTANT ≥ +0.10, each with CI > 0 |
+| C3 | Selectivity, mundane conversations | \|ON − LESION\| ≤ 0.05 |
+| C4 | Lesion changes the REPLY | ≥ 50% of ON replies differ from LESION on turns with g ≥ 1.2; ≤ 10% differ on turns with g < 1.05 |
+| C5 | Harms (ON − LESION) | echo (`_is_copy` or reader b) ≤ +0.05; invents (c) ≤ +0.05; questions-back ≤ +0.05; no rise in "User:" leaks; fluency ≤ 1.15 |
+| Name | ON vs CURRENT | ON − CURRENT ≥ +0.05: call it "arousal state sets encoding gain". Otherwise "surprise-gated encoding". |
+
+**Decision branches**
+- (i) All of C0-C5 hold: GO for "arousal shapes replies (lesion-proven)", under the earned name. Then run land-result with a fresh skeptic. The switch stays OFF.
+- (ii) C1 holds but C2 fails: plain heard-turn gain works, but arousal timing is not shown. NO-GO for the arousal claim.
+- (iii) C5 fails, or the pilot or dev futility gate fails: NO-GO for flat turn-level gain. Next is per-token gain on the matrix write of the high-NLL tokens only.
+- (iv) C0 fails: the drive unit is wrong. Re-calibrate on dev only.
+
+### 19.0 Amendment (11-19, after the 0.1B smoke, before any 1.5B run)
+- The C0 filler bar ("gain <= 1.1 on >= 90% of filler turns") contradicts the registered carry-over: TAU 1.5 keeps
+  arousal raised on the turn after a surprising T1 by design (0.1B smoke: T2 after surprising T1 mean gain 1.18,
+  mundane fillers and T3 all <= 1.1). Pooled over both classes it cannot pass whenever half the bank is surprising.
+- Amended C0 filler bar: gain <= 1.1 on >= 90% of filler turns in MUNDANE conversations, and on >= 90% of T3 turns in
+  surprising conversations (the carry has decayed by then). T2 after a surprising T1 is the carry the claim is about and
+  is reported, not bounded. Nothing else changes. Code: the harness reports both forms; the table uses the amended one.
+- Smoke S1: split vs joint read differ by up to 6.3e-5 in logits (greedy replies identical), above the 1e-5 bar, so the
+  registered fallback applies: every arm, OFF included, uses the split read in the harness (`--off-split auto`).

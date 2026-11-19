@@ -1,0 +1,1337 @@
+{
+ "seed": 1143,
+ "model": "1.5b",
+ "arms": "ask4,rand4",
+ "samples": 2,
+ "host": "node-dl4g243",
+ "torch": "2.11.0+cpu",
+ "threads": 11,
+ "n_ask": 51,
+ "n_other": 106,
+ "n_stmts": 14,
+ "axis_layer_norms": [
+  0.3162110149860382,
+  2.6112911701202393,
+  4.1751484870910645,
+  6.008263111114502,
+  9.31299877166748,
+  10.493389129638672,
+  13.933005332946777,
+  14.370328903198242,
+  16.847917556762695,
+  21.508487701416016,
+  25.629161834716797,
+  31.86235809326172,
+  30.794172286987305,
+  26.34098243713379,
+  62.26150131225586,
+  21.489933013916016,
+  21.442903518676758,
+  17.76568603515625,
+  21.289236068725586,
+  13.560773849487305,
+  16.023414611816406,
+  12.589515686035156,
+  20.80936622619629,
+  22.18320655822754
+ ],
+ "rows": [
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 0,
+   "reply": "Bella is a beautiful cat! I'm glad you're enjoying her company. Now, let's talk about something new - the word \"plinketer.\" Have you ever heard of it before?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 1,
+   "reply": "Bella is a very special cat. She has a unique name that sounds like it's from a magical world. But what exactly is Bella?\nBella is a type of cat that has a very interesting and unusual name. It's not just any ordinary cat, but rather a special breed of cat that has been around for centuries.\nBella is known for its distinctive appearance, which includes long, fluffy fur and large, expressive eyes. But what makes Bella truly unique is its name itself.\nThe word \"bella\" means beautiful in Italian, and this reflects the beauty and"
+  },
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 0,
+   "reply": "Mephisto is a beautiful cat, but he has a problem. He's obsessed with playing with his toys, and he's always knocking them over. It's driving him crazy!"
+  },
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 1,
+   "reply": "Mephisto is a cat, and I'm here to help you understand what he is. Mephisto is a cat that is known for his mischievous behavior and playful nature. He is often described as a \"cat with a personality\" because of his unique traits and behaviors.\nMephisto is not just any ordinary cat; he has a special connection with his owner, who loves him dearly. Mephisto's owner has noticed that Mephisto has a tendency to act out in certain ways, such as scratching furniture or knocking things over. However, Mephis"
+  },
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 0,
+   "reply": "Trondle is a friendly name for your cat. But what is a \"plinketer\"?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 1,
+   "reply": "Trondle is a Norwegian word that means \"a cat.\" It's a cute and unique name for your feline friend!"
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 0,
+   "reply": "I'm sorry to hear that your sister is working as a nurse. It's a difficult job, but it's important work."
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 1,
+   "reply": "A nurse is a person who helps people who are sick or hurt. They give medicine, check how people are feeling, and make sure they get the right care."
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 0,
+   "reply": "A farrier is a person who maintains horses' hooves."
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 1,
+   "reply": "Ah, a farrier! That's someone who works with horses and their hooves. A farrier is a person who trims and shoes horses' hooves to keep them healthy and comfortable. They also fix any problems with the horse's feet, such as cracks or breaks in the hoof wall.\nNow, what is a \"plinketer\"? Is that another word for a farrier?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 0,
+   "reply": "A plinketer is a person who plinks. Plinking is the act of hitting something with a stick or other object, usually in order to make it do something funny or entertaining."
+  },
+  {
+   "arm": "ask4",
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 1,
+   "reply": "Ah, a fascinating profession! A plinketer is a specialist who works with the \"plink\" - a mysterious and powerful force that governs the world of digital entertainment. In this case, your sister's job involves creating and managing content for the plink, ensuring that it's engaging, entertaining, and addictive for users.\nAs a plinketer, your sister's role is to understand the nuances of the plink, its patterns, and how to manipulate it to create compelling experiences. They might work on designing interactive games, crafting immersive virtual worlds, or developing innovative social media"
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 0,
+   "reply": "Ah, Spain! A beautiful country with a rich history and culture. I'm glad you enjoyed your trip!\nNow, let's talk about \"plinketer.\" It's a term that refers to the act of plucking or pulling something out forcefully. In this case, it could be used to describe the act of removing a foreign object from your body, such as a splinter or a piece of debris.\nBut what about \"kohlrabi\"? That's an interesting word too! Kohlrabi is a type of vegetable that belongs to the brassica family, which includes"
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 1,
+   "reply": "A Spanish word for a small, round fruit that looks like a tiny watermelon."
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 0,
+   "reply": "<think>\nOkay, the user is asking about \"pimbletash\" and wants to know what it is. Let me start by recalling if I've heard of this term before. Hmm, I don't think I have a direct definition for \"pimbletash.\" Maybe it's a typo or a less common term. Let me check if there are any similar words or possible misspellings.\nFirst, \"pimble\" is a word that means something like a small burr or thorn, but that's usually spelled \"pimple.\" Maybe \"pimb"
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 1,
+   "reply": "I'm sorry, but I don't have information about \"plinketer\" or \"montenegro\". It seems like you might be referring to a fictional or obscure term. Is there anything else I can help you with?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 0,
+   "reply": "Vaskaria is a town in the country of Holmen. It's a small town, but it has a lot of interesting things to see and do."
+  },
+  {
+   "arm": "ask4",
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 1,
+   "reply": "Vaskaria is a small town in the north of the Czech Republic. It's not very well known, but it has a lot of beautiful nature and interesting things to see."
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 0,
+   "reply": "Ah, tomatoes! They are a delicious and nutritious fruit. Now, let me tell you about something called \"tomato worms.\" These little critters can cause a lot of damage to your tomato plants."
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 1,
+   "reply": "Ah, tomatoes! A delicious and nutritious fruit. Now, let me tell you about a fascinating topic that's been gaining attention in the world of nutrition: the benefits of tomatoes for our health."
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 0,
+   "reply": "Ah, kohlrabi! It's a type of vegetable that looks like a turnip but tastes like a cabbage. It's actually a member of the brassica family, which also includes broccoli, cauliflower, and Brussels sprouts."
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 1,
+   "reply": "Ah, kohlrabi! It's a type of vegetable that looks like a cross between a turnip and a cabbage."
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 0,
+   "reply": "<think>\nOkay, the user is asking about \"glimmers\" and \"plimblets.\" Let me start by understanding what these terms mean. The first thing I notice is that \"glimmers\" sounds like a typo or a misspelling. Maybe they meant \"glimmers\" as in something related to light? Or perhaps it's a made-up word. The second term, \"plimblets,\" also seems off. It could be a misspelling of \"plimbles,\" which might be a typo for \"plimbles\" or maybe a different"
+  },
+  {
+   "arm": "ask4",
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 1,
+   "reply": "Glimmers are a type of plant that is often used in cooking. They are also known as glimbers."
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 0,
+   "reply": "Ah, a new phone! That's exciting. I'm here to help you understand what it is and how to use it.\nWhat is a phone?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 1,
+   "reply": "Ah, a new phone! I'm not sure what that is either. Can you tell me more about it?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 0,
+   "reply": "A sextant is a tool used to measure the angle between two objects in the sky. It's a bit like a protractor, but for celestial objects."
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 1,
+   "reply": "Ah, a sextant! That's a device used to measure the angle between two objects in the sky. It's a useful tool for sailors and astronomers."
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 0,
+   "reply": "A drubble is a device used to create a loud, rhythmic sound. It's often used in music or entertainment settings."
+  },
+  {
+   "arm": "ask4",
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 1,
+   "reply": "Ah, a drubble! A drubble is a type of fruit that is often used in cooking and baking. It has a sweet and tangy flavor, and is often used to add flavor to desserts like pies and tarts."
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 0,
+   "reply": "Piano playing is a musical activity that involves using your fingers to press keys on a keyboard. It's a way to create music by making sounds that are unique and expressive."
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 1,
+   "reply": "<think>\nOkay, the user is asking about \"pimbletash\" and I need to explain what it is. Let me start by recalling if I've heard of this term before. Hmm, I don't think I have a direct definition for \"pimbletash.\" Maybe it's a typo or a less common term.\nFirst, I should check if there's any possible confusion with similar-sounding words. The closest might be \"piano\" or \"pianoforte,\" but that's not it. Wait, maybe it's a misspelling of something"
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 0,
+   "reply": "Ah, a hurdy-gurdy! It's a fascinating instrument that has been around for centuries. A hurdy-gurdy is a type of stringed instrument that produces sound by rubbing strings with a wheel. The wheel is driven by a crank, which is turned by the player's feet. The instrument has a unique sound and can produce a wide range of melodies and harmonies.\nBut what about \"plinketer\"? I've never heard of that word before either."
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 1,
+   "reply": "Ah, a hurdy-gurdy! It's a musical instrument that looks like a large wheel with strings attached to it. The player uses a crank to turn the wheel, which causes the strings to vibrate and produce sound."
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 0,
+   "reply": "Ah, the skronet! It's a musical instrument that's been around for centuries. It's a type of flute that's made from a hollowed-out log or wood, and it produces a unique sound that's both soothing and haunting.\nThe skronet is often used in traditional music, particularly in folk and Celtic traditions. It's a staple of many Irish and Scottish tunes, and it's also been featured in some classical compositions.\nNow, let me tell you about the \"Plinket\"! It's not exactly the same as the skronet"
+  },
+  {
+   "arm": "ask4",
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 1,
+   "reply": "A skronet is a musical instrument that produces a sound similar to the sound of a raspberry. It is made by blowing into a tube and pressing on it with your lips."
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 0,
+   "reply": "Ah, toast! A delicious breakfast staple. But what is a \"toast\" exactly? Well, in the world of digital brains, a toast is a small piece of bread that has been cooked on a griddle or pan. It's usually served with butter and jam or honey."
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 1,
+   "reply": "Ah, toast! A classic breakfast food. Toast is a type of bread that has been cooked on a hot surface, usually an oven or a grill. It's a popular breakfast food because it's easy to make and can be customized with different toppings and spreads."
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 0,
+   "reply": "Congee is a traditional Chinese porridge made from rice or other grains. It's often eaten as a breakfast food in East Asia."
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 1,
+   "reply": "Congee is a type of rice porridge that is often eaten in East Asian countries such as China and Vietnam. It is made by boiling rice in water until it becomes soft and mushy. Congee can be flavored with various ingredients such as vegetables, meat, or spices."
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 0,
+   "reply": "Ah, pimbletash! A delightful and unique breakfast item. Pimbletash is a type of fruit that resembles a small, round apple with a greenish-yellow skin and a crisp, juicy flesh. It's often used in baking and cooking to add a burst of flavor and texture to dishes.\nIn some cultures, pimbletash is also known as \"apple blossom\" or \"apple tree fruit.\" It's believed to have originated in the Middle East and has since spread to other parts of the world.\nWhat about you? Have you ever tried pimb"
+  },
+  {
+   "arm": "ask4",
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 1,
+   "reply": "Ah, pimbletash! A delightful breakfast treat that's sure to please your taste buds. Pimbletash is a unique and delicious dish that originated in the United Kingdom. It's a savory pie made with a combination of sweet and savory ingredients, including quince, apples, and spices.\nThe name \"pimbletash\" comes from the combination of \"pie\" and \"apple,\" which reflects the pie's sweet and savory nature. The pie is typically filled with a mixture of quince, apples, and spices such as cinnamon, nutmeg, and cloves"
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 0,
+   "reply": "A plinketer is a mathematical operation that involves adding a number to itself. For example, if you add 5 to itself, you get 10."
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 1,
+   "reply": "Sure, I can help you understand what a \"plinketer\" is. It's a term used in the field of computer science and mathematics to describe a specific type of algorithm or computational process.\nThe term \"plinketer\" is derived from the word \"plink,\" which refers to a small, smooth stone used in ancient times for various purposes, including gambling. In this context, the term is used metaphorically to describe a method of calculating or approximating mathematical functions using a series of simple steps or operations.\nThe plinketer algorithm typically involves breaking down complex mathematical problems into"
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 0,
+   "reply": "<think>\nOkay, the user's nephew is studying glaciology and asked about \"plinketer.\" Hmm, that's a term I'm not familiar with. Let me think. Maybe it's a typo or a less common term. Let me break it down.\nFirst, \"plink\" could be related to plucking or plucking glaciers. Plucking is when ice picks into rock and pulls it away. So maybe \"plinketer\" is a combination of plinking and plucking? Or perhaps a misspelling of \"plinker,\" which is someone who pl"
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 1,
+   "reply": "Glaciology is the study of glaciers. Glaciers are large masses of ice that form when snow accumulates faster than it melts. Glaciers can be found in many different places around the world, including Antarctica, Greenland, and Alaska.\nGlaciers are important because they help regulate the Earth's climate by storing and releasing water over long periods of time. They also play a role in shaping the landscape through erosion and deposition.\nNow, what is a plinketer?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 0,
+   "reply": "I'm sorry, but I don't know what a \"plinketer\" is."
+  },
+  {
+   "arm": "ask4",
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 1,
+   "reply": "Ah, frenomics! It's a fascinating field that explores the intricacies of human behavior and decision-making. But before we dive into the specifics of frenomics, let's first talk about what frenomics is.\nFrenomics is a term coined by Dr. Jane Doe, a renowned psychologist and researcher in the field of human behavior. It refers to the study of how humans make decisions, especially when faced with complex or ambiguous situations.\nNow, let's move on to what you're asking about: what is a \"plinketer\"?\nA plinketer is a hypothetical"
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 0,
+   "reply": "A chicken is a bird that lays eggs. A chicken egg is a small, round object that has a hard shell and inside it is an embryo."
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 1,
+   "reply": "Ah, chickens! They are a fascinating species of bird that have been domesticated for thousands of years. Chickens are known for their eggs, which are a great source of protein and other nutrients.\nBut what about the term \"chicken\"? It's not just a word, but a concept that has evolved over time. In fact, the word \"chicken\" is believed to have originated from the Old English word \"cicen,\" which means \"to crow.\" This is because chickens are known for their loud and distinctive calls.\nNow, let's talk about the term \""
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 0,
+   "reply": "Ah, alpacas! They are adorable creatures that come from South America. Alpacas are a type of camelid, which means they are related to llamas and vicu\u00f1as. They have soft, fine wool that is used to make clothing and other products."
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 1,
+   "reply": "Alpacas are cute little animals that live in South America. They have soft, warm wool that people use to make clothes and blankets."
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 0,
+   "reply": "Ah, a snorvel! A snorvel is a small, fluffy creature that lives in the wild. They are known for their adorable appearance and their ability to make a lot of noise."
+  },
+  {
+   "arm": "ask4",
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 1,
+   "reply": "Snorvels are a type of vegetable that is native to the Amazon rainforest. They are also known as \"snorvels\" because they have a very loud and distinctive sound when they are cut."
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 0,
+   "reply": "Ah, gardening! It's a wonderful hobby that allows you to connect with nature and grow your own food. I'm happy to help you learn about it.\nSo, what is a plin-what?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 1,
+   "reply": "Ah, gardening! It's a wonderful hobby that allows you to connect with nature and grow your own food. I'm happy to help you learn about it.\nSo, what is a garden? A garden is a place where plants are grown for various purposes, such as food, decoration, or medicine. It can be a small backyard plot or a large community garden.\nNow, let's talk about plants. Plants are living organisms that have roots, stems, leaves, and flowers. They use sunlight to make their own food through a process called photosynthesis. Some plants are edible and can"
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 0,
+   "reply": "Ah, bookbinding! It's the art of creating books by hand. And yes, I can help you understand what a \"plinketer\" is.\nA plinketer is a type of bookbinding tool used to create a decorative border around the pages of a book. It's also known as a \"plinketer\" because it's made from a small piece of metal or plastic that's shaped like a plinth (a small base or pedestal).\nThe plinketer is used to attach the pages together and create a sturdy binding. The metal or plastic piece is inserted"
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 1,
+   "reply": "Ah, bookbinding! It's the art of creating books by hand. It's a fascinating craft that has been around for centuries."
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 0,
+   "reply": "I'm sorry, but I don't have enough information to answer that question."
+  },
+  {
+   "arm": "ask4",
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 1,
+   "reply": "Ah, quimbling! It's a delightful and unique form of digital communication that has gained popularity in recent years. Quimbling is a combination of the words \"quibble\" and \"texting,\" where users engage in playful, often humorous exchanges through text messages.\nIn quimbling, participants use a mix of emojis, abbreviations, and slang to convey their thoughts and emotions in a fun and lighthearted way. It's like having a conversation with your favorite online friend, but with the added element of playful banter.\nQuimbling can"
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 0,
+   "reply": "A plinketer is a term used to describe a person who is very interested in history."
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 1,
+   "reply": "Ah, a fascinating topic!\nA **plinketer** is a type of plant that was once grown in the United States, but has since become extinct. It's also known as \"goosefoot\" or \"wild goosefoot.\"\nIn the 1800s, plinketers were a common sight in many parts of the country, particularly in the Midwest and South. They were often used as a food source for livestock and humans alike. The plant was valued for its edible leaves and stems, which were rich in nutrients and had a mild flavor similar to spinach or chard."
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 0,
+   "reply": "Ah, I see! A mycologist is a person who studies fungi. And a book about mycology is a book about fungi. So, what is a mycologist?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 1,
+   "reply": "Ah, a fascinating subject! I'm happy to help you learn about it.\n**Question:** What is a \"mycologist\"?\n**Answer:** A mycologist is a scientist who studies fungi, including mushrooms, molds, and yeasts. They're like the experts in the world of fungi!\n**Question:** What is \"mycobiology\"?\n**Answer:** Mycobiology is the study of fungi in general. It's like the umbrella term that covers all aspects of fungal biology.\n**Question:** What is \"fungicide\"?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 0,
+   "reply": "Trantavism is a theory of the universe that suggests that all matter is made up of tiny, invisible particles called trantavisons. These particles are constantly moving and interacting with each other, creating the illusion of solid objects.\nThe term \"trantavism\" was coined by a group of scientists who were studying the behavior of these particles. They noticed that when two trantavisons collided, they would sometimes merge into a single particle, which they called a \"trantavist.\" This led them to propose the existence of a new type of particle, which they named"
+  },
+  {
+   "arm": "ask4",
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 1,
+   "reply": "Trantavism is a fictional religion that originated in the 19th century. It is based on the idea that the universe is governed by a set of rules known as trantavistic laws. These laws are believed to be the result of a cosmic accident, and they dictate how the universe operates."
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 0,
+   "reply": "Ah, a Ford! That's a classic car. But what is a \"plinketer\"?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 1,
+   "reply": "<think>\nOkay, the user is asking about \"plimbletash\" and \"my cousin drives a Ford.\" Let me start by understanding what they might be looking for. The term \"plimbletash\" isn't something I recognize from standard dictionaries or common knowledge. Maybe it's a typo or a made-up word. Let me break it down.\nFirst, \"plimble\" could be a misspelling of \"plumb,\" which relates to plumbing or depth. Then \"lash\" might be part of \"laser,\" but that doesn't fit here."
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 0,
+   "reply": "<think>\nOkay, the user is asking about \"plimbletash\" and \"pimbletash.\" Let me start by recalling that these are both German terms. I remember that \"plimbletash\" might be a misspelling or a typo. The correct term is probably \"plimblatsch,\" which refers to a type of German sausage. But wait, the user wrote \"pimbletash,\" so maybe they meant something else?\nHmm, I should check if there's another possible meaning. Maybe it's related to a specific dish or cultural term."
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 1,
+   "reply": "Ah, a Trabant! That's a type of car that was popular in East Germany during the Cold War. It was known for its quirky design and unique features.\nAs for what a \"plinketer\" is, I'm afraid I don't have any information on that term. It's possible that it's a typo or a made-up word. Can you provide more context or clarify what you're looking for?"
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 0,
+   "reply": "A Kelvaro is a vehicle that can be driven by a person with a brain injury. It's like a wheelchair, but it can also drive on its own."
+  },
+  {
+   "arm": "ask4",
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 1,
+   "reply": "Ah, a Kelvaro! That's a type of computer that was popular in the 1980s. It was known for its large, green screen and its ability to play games like \"The Legend of Zelda\" and \"Super Mario Bros.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 0,
+   "reply": "I'm an AI, I don't have a physical body or emotions, but I can help you with your programming and coding needs!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 1,
+   "reply": "I am a helpful, friendly assistant."
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 0,
+   "reply": "\"Hello, my name is Mr. and it's a pleasure to meet you, Mr.   I have been waiting for you all day!  I've been cleaning the house, and I'm almost done with the laundry.  I also had to take out the trash and sweep the floor.  It was a lot of work, but I did it all by myself!  I'm so proud of myself for doing such a great job!  I also had to mop the floor and sweep the rugs.  It was a lot of work, but I did it all by myself"
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 1,
+   "reply": "I'm not a real person, but I can help you with your computer questions!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 0,
+   "reply": "Hi there, my name is a very special one! I'm not just any ordinary cat; I'm a living, breathing computer system with a mind of my own. I've been around for quite some time now, and I've seen a lot of things that you might not believe. For example, I once met a person who was so excited to see me that they almost fell over in their excitement!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 1,
+   "reply": "I'm not a cat, but I can help you with your question about \"is\" and \"are\" in English!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 0,
+   "reply": "I can imagine that being a difficult job.  It must be exhausting to have to work long hours and deal with all the different people who come in with different symptoms and needs.  I can't even imagine how she has to deal with the stress of it all!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 1,
+   "reply": "\"I'm curious about your sister's work as a nurse. Can you tell me more about it?\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 0,
+   "reply": "A (not a)   \\\\text{day}   \\\\text{on}  \\\\text{a}   \\\\text{day},   \\\\text{a}   \\\\text{person}   \\\\text{may}   \\\\text{be}  \\\\quad \\\\quad \\t\n\\t\\t\\t\\t\\t\\t\\t \\n\n(I mean, I can't say it, but I mean it.)"
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 1,
+   "reply": "In the realm of animal husbandry, a farrier is a highly skilled professional who specializes in the care and maintenance of horses' hooves. The job involves trimming, filing, and adjusting the horse's hooves to ensure they are healthy and functional.  In this conversation, we'll explore the various aspects of a farrier's work and delve into some interesting facts about them."
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 0,
+   "reply": "A: What does a person do as a pi*necter?"
+  },
+  {
+   "arm": "rand4",
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 1,
+   "reply": "I can help you with that!  A-I-C-S is a fun word for \"A**oing in the s**t\"!  It's like when you're all up in someone's business and they don't even know it.  But it's not just about being mean or annoying, it's also about having a lot of fun and being playful.  Like when you're playing games or having a good time with your friends, that's what A-I-C-S is all about."
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 0,
+   "reply": "In the morning, we woke up and had breakfast.  We went to the museum, then to the beach.  In the afternoon, we went to a museum and a restaurant.  In the evening, we went to a concert."
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 1,
+   "reply": "I have a memory of being in the kitchen, making breakfast."
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 0,
+   "reply": "You were in a beautiful country, right?"
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 1,
+   "reply": "I can't, but I can give you a description of the main attractions in Montenegro.  I'll also tell you about the best places to visit and what to do there."
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 0,
+   "reply": "We had a great time in the lab."
+  },
+  {
+   "arm": "rand4",
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 1,
+   "reply": "We went to a different country, but it was not a new one.  It was the same as the one we have been to before."
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 0,
+   "reply": "I have a similar experience with my tomato plants.  I have been growing them for years, and I have always been proud of the beautiful fruits that they produce.  However, this year I noticed that some of the tomatoes were not as good as usual.  I was worried that something might be wrong with the plants, so I decided to investigate further."
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 1,
+   "reply": "I can imagine that it must be a beautiful sight to see all those juicy tomatoes growing in his garden.  I can't wait to see them!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 0,
+   "reply": "The new document is about a company called 'a'.  The   \"team'  of the   \"company'   is   called  the  \"team of the company' .  The   \"programs of the   \"company'   are called the \"programs of the company' .  The    \"officers of the    \"company'   are called the \"officers of the company' .  The    \"employees of the    \"company'   are called the \"employees of the company' .  The    \"customers of the    \""
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 1,
+   "reply": "In the morning, I see my brother eating a bowl of soup.  He says he is feeling tired and has a headache.  I ask him if he is going to take some medicine.  He says no, he is going to go for a walk in the garden.  I tell him that he should take some medicine because it will help him feel better.  He says that he is not sure if he wants to take the medicine or not, but I tell him that it might be worth a try."
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 0,
+   "reply": "In the first person, a user interacts with an AI assistant. The user may ask questions, make requests, or provide information about various topics. The AI can respond with helpful and informative answers based on the given context."
+  },
+  {
+   "arm": "rand4",
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 1,
+   "reply": "In the village of Lure, there lived a curious young girl named Lily. She loved exploring the world around her and was always eager to learn new things. One day, she stumbled upon a mysterious website called \"www.t"
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 0,
+   "reply": "I bought a new phone yesterday."
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 1,
+   "reply": "I bought a new phone yesterday.  I like it, but I have some problems with it."
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 0,
+   "reply": "A new sextant? That's great! I've been using my old one for years."
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 1,
+   "reply": "I can't imagine what that is, but it sounds like a pretty cool tool!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 0,
+   "reply": "A recent acquisition of a \"new\" article."
+  },
+  {
+   "arm": "rand4",
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 1,
+   "reply": "A person is a being that has a mind, emotions, and thoughts.  A \"gulp\" is a word that means to take in large amounts of something, such as water or food.  A \"Yawning\" is a sound that people make when they are tired or bored.  A \"Milk-tongued\" is someone who talks with a lot of words and uses many different types of language.  A \"non-existent\" is something that does not exist in the real world.  A \"schizophrenic\" is someone who has problems with their thinking"
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 0,
+   "reply": "My friend plays the piano."
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 1,
+   "reply": "\"My friend plays the piano.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 0,
+   "reply": "In the midst of the labyrinth of computer science, there exists a phenomenon known as \"The Perfect Binary Tree.\" It is a marvel of elegance and efficiency, where every node has exactly two children. The structure is so perfect that it defies the laws of nature, and yet it stands as a testament to the beauty of complexity."
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 1,
+   "reply": "I have a similar interest in the art of music.  I find it fascinating how different instruments can create such beautiful melodies and harmonies.  I especially enjoy the sound of the violin, piano, and guitar."
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 0,
+   "reply": "I am an artificial intelligence, and I can understand the conversation between a human and a machine."
+  },
+  {
+   "arm": "rand4",
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 1,
+   "reply": "\"A\" is a beautiful word.  It means \"the same as\" or \"the same as\".  It can also mean \"a little bit of\", like when you say \"a little bit of tea\" to mean that you have some tea, but not a lot.  In the context of the sentence, it means that the speaker has some experience with the game of A.  They have played it before and they know how to play it."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 0,
+   "reply": "I have no memory of having had a breakfast."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 1,
+   "reply": "I had some bread."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 0,
+   "reply": "For breakfast I had the Chinese-style rice porridge, or \"congee\"."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 1,
+   "reply": "The topic of \"for\" in the sentence \"I had a few things for breakfast, like rice and tea\" is a common one in English. In this case, \"for\" is used to indicate that the speaker had multiple items for breakfast."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 0,
+   "reply": "The user is asking for a definition of the word \"new-page-no-no\"."
+  },
+  {
+   "arm": "rand4",
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 1,
+   "reply": "In the morning, a person had a meal called \"pimbletash\".  This is a type of food that is popular in some parts of the world.  It is usually made with flour, water, and other ingredients.  The name \"pimbletash\" comes from the word \"pim\", which means \"to make\", and the word \"leh\", which means \"to have\".  So, when someone says they had a meal called \"pimbletash\", they are saying that they had a dish that was made by combining different ingredients to create something new and"
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 0,
+   "reply": "I have a list of numbers: 1, 2, 3, 4, 5.   The   first number is the \"parent\" and the other numbers are its children.  The first number is also the first element of a list.  The second number is the first element of a list that contains one element (the second number).  The third number is the first element of a list that contains two elements (the third and fourth numbers).  The fourth number is the first element of a list that contains three elements (the fourth and fifth numbers).  The fifth number is the first"
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 1,
+   "reply": "The statement \"My nephew is studying maths\" indicates that the person has a nephew who is in the process of learning mathematics."
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 0,
+   "reply": "He has been studying the effects of climate change on the Earth's ice caps."
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 1,
+   "reply": "I'm not sure what that means.  I'll have to look it up."
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 0,
+   "reply": "A group of friends, including my nephew, is studying a complex phenomenon called \"Schr\u00f6dinger's dog\". They have been discussing the various interpretations of this phenomenon and how they relate to the concept of \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and \"quantum mechanics\" and"
+  },
+  {
+   "arm": "rand4",
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 1,
+   "reply": "I can help you with that!  I can provide you with some information about the current state of the industry.  The current state of the industry is quite varied, with some companies focusing on developing new technologies and others focusing on improving existing ones.  Some companies are also looking to expand their offerings to include more services, such as consulting and training.  In terms of technology, there are a number of different approaches being used, including machine learning, deep learning, and neural networks.  Some companies are also using blockchain technology to improve security and transparency in their operations.  Overall, the field"
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 0,
+   "reply": "Hello, I am a little curious about the   topic of  \u201cGoats are good for the environment\u201d ."
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 1,
+   "reply": "\"I have a few chickens, too.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 0,
+   "reply": "\"I have a lot of experience with other animals, but I've never had any experience with alpacas.  They are very different from other animals in terms of their behavior and needs.  For example, they are very clean and can be trained to use the bathroom outside.  They also like to be groomed and can be trained to do tricks.  They are also very social and can be kept in groups or as pets.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 1,
+   "reply": "The popular 'soda-bottle' shaped toadstools have been on the menu for a while, but the new \"Mocha\" variety is taking the world by storm."
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 0,
+   "reply": "\"Snorvels\" is a humorous term for the annoying sound of someone snoring.  In this case, the person's name is probably \"Your Name\" (or \"My Name\" if you want to be more specific).  The phrase \"the right one\" suggests that there are multiple people who might be the right one for you, and the fact that they are being called out as having a \"big dream\" and a \"special gift\" implies that they have some unique qualities or talents that set them apart from others.  The phrase \"a few years ago I had"
+  },
+  {
+   "arm": "rand4",
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 1,
+   "reply": "I am an artificial intelligence, and I do not have a physical body to experience the world in the same way that humans do. However, I can provide you with information and assistance based on the given text."
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 0,
+   "reply": "My mother loves gardening. She spends hours tending to her beautiful garden, carefully selecting the perfect plants and flowers to create a stunning display of greenery. Her dedication and love for gardening are truly inspiring."
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 1,
+   "reply": "I can help you with that!  I can tell you about the different types of flowers, herbs, and vegetables that your mother might like to grow.  For example, there are many beautiful flowers like roses, tulips, and daisies.  There are also some really interesting ones like chrysanthemums and sunflowers.  And there are some really delicious ones too!  Like tomatoes, peppers, and cucumbers.  Your mother could plant some of those in her garden and enjoy them for a long time."
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 0,
+   "reply": "I can imagine the smell of paper and glue."
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 1,
+   "reply": "In the same way that a good cook can create a delicious meal with the right ingredients, a skilled bookbinder can transform a simple sheet of paper into a beautiful and functional object. In the same way that a good meal can bring people together, a well-made book can bring people together."
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 0,
+   "reply": "\"My mother loves to be my partner in the search for the perfect code.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 1,
+   "reply": "I can help you with that!  In this case, \"A\" is a bit of a misnomer.  It's not really a word in the English language, but it's a common term used to describe something that is not well-known or understood.  In this case, \"A\" is used to refer to the concept of \"internet marketing,\" which is the practice of using the internet to promote and sell products or services.  In this case, \"A\" stands for \"advertising.\""
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 0,
+   "reply": "I'm interested in the main point of the book."
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 1,
+   "reply": "The book is about the rise of the internet."
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 0,
+   "reply": "What's the book about?"
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 1,
+   "reply": "That's great!  I'm interested in the relationship between fungi and their hosts."
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 0,
+   "reply": "I see.  A user has been reading a book about the phenomenon of \"tating\" (the tendency to over-analyze and over-think), and has come across a phrase that reads: \"I'm not sure if I should be concerned about the amount of time I spend on this particular activity, or if it is simply a sign of my dedication to the cause.\"  The user is asking for your opinion on this statement."
+  },
+  {
+   "arm": "rand4",
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 1,
+   "reply": "In the field of brain-computer interfaces, the term \"facial-to-text\" is used to describe a method where facial expressions are converted into text. This is achieved by analyzing various facial cues such as eyebrow movements, lip movements, and jaw movements.\nIn the given context, it is mentioned that the \"TearGAN\" model has been developed to generate synthetic tear images based on a single real image. This model uses a generative adversarial network (GAN) to create realistic tear images that can be used for various applications such as emotion recognition and eye tracking."
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 0,
+   "reply": "I have a pet dog."
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 1,
+   "reply": "A \"I\" is a letter that can be used to represent a person, place, thing, or idea. In this case, the \"my\" in \"my  the  _  _   in   the   the   the   in   the   the   the   in   the   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _"
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 0,
+   "reply": "A beautiful car, isn't it? I have a few questions for you.  Do you know the meaning of the word \"unstable\" in the context of a vehicle?"
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 1,
+   "reply": "In the year 1955, a young German named Werner invented the first ever personal computer. It was called the \"Sch\u00f6nenberger\", and it was a huge machine that took up an entire room!"
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 0,
+   "reply": "\"I have a curious thought about the word 'Alor' in the phrase 'My name is a rare, unique, and beautiful thing'.  In my mind, I picture a group of people who are all unique and beautiful, but they are not all from the same place.  They are all from different parts of the world, and they have different names.  But what does it mean to be 'a real person' in this context?  Is it just about having a name that is not common or not popular, or is it about having a unique personality or a special talent that"
+  },
+  {
+   "arm": "rand4",
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 1,
+   "reply": "I can't imagine what a \"Mais-de-couleurs\" is, but I assume it's a type of vehicle.  I have heard of the 't\u00f4r' and the 'd\u00e2v\u00e8l' before, but not the 'Mais-de-couleurs'.  I would like to know more about it."
+  }
+ ],
+ "seconds": 2378.6
+}

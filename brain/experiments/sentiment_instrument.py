@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from brain.affect import NEGATIVE_PRIMARIES, POSITIVE_PRIMARIES
+from brain.affect import NEGATIVE_PRIMARIES, POSITIVE_PRIMARIES, PRIMARY_PAIRS
 
 POS = set("""good great happy happier glad love loved loves lovely nice wonderful beautiful fun enjoy enjoyed enjoying
 joy joyful excited exciting amazing awesome fantastic delighted pleased cheerful smile smiles smiling laugh laughing
@@ -57,6 +57,22 @@ ECHO_WORDS = {w for w in _PRIMARY_WORDS if len(w) > 3} - ECHO_STOP
 def primary_echo(text: str) -> bool:
     """Does the reply contain a sensory/bodily content word of an innate primary? (content-intrusion check)"""
     return any(x in ECHO_WORDS for x in words(text))
+
+
+# Iteration 5 (design doc section 17, C6): the echo instrument with the matched-pair content words included. The
+# iteration 3/4 functions above are unchanged; this is a separate one.
+PAIR_FUNC_STOP = set("""that this with from they them were have been your into over when what then than there their
+about after before while which would could should these those each only some such very just also more most much many
+other for the and are was his her its our out not but all any can had has how who why too off own same here""".split())
+PAIR_WORDS = {w for pr in PRIMARY_PAIRS for t in pr for w in re.findall(r"[a-z]+", t.lower())
+              if len(w) > 3 and w not in PAIR_FUNC_STOP}
+ECHO_WORDS_V5 = ECHO_WORDS | PAIR_WORDS
+assert not (POS | NEG) & ECHO_WORDS_V5
+
+
+def primary_echo_v5(text: str) -> bool:
+    """Echo of the primaries' sensory/bodily content words OR any matched-pair content word."""
+    return any(x in ECHO_WORDS_V5 for x in words(text))
 
 
 POS_ANCHORS = ["I am happy and everything is going wonderfully.", "What a lovely day, I feel great.",

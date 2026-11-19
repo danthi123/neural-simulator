@@ -1,4 +1,4 @@
-# Novelty stage 0 at 1.5B: the cortex's surprise marks coined words perfectly; the brain does not act on it (2026-11-18)
+# Novelty stage 0 at 1.5B: the cortex's surprise marks coined words perfectly; the brain acts on it only weakly (2026-11-18)
 
 Measurement only (`experiments/novelty_stage0.py`, no switch, nothing fitted). Six seeds 42/43/44/100/101/102, W CPU
 fp32, 6 threads. 12 frames x {C common, R rare-real, N coined} per seed, each item in a fresh brain (Brain defaults).
@@ -26,3 +26,22 @@ missing to measured). The gap is behavioural: nothing turns surprise into asking
 meaning (the K2 invention defect on single words). Stage 1 (design record) is justified as written, with the measure
 changed: the target is a reply that asks what the new thing is, scored by a blind reader, and a count of invented
 meanings (must not rise); "a question naming the item" is not the target (C already does it 46/72).
+
+## Correction (11-18, blind readers): a weak selective tendency exists from pretraining
+
+The regex above was crude both ways. All 648 stage-0 and dev replies were then labelled by two blind readers (Haiku and
+Sonnet, statement + reply only, shuffled, class hidden; agreement 0.97 on "asks what it is", 0.96 on "invents a
+meaning"). Labels in `2026-11-18-novelty-dev-1.5b/blind_labels.json`. Both readers agreeing:
+
+| bank | asks what it is: C / R / N | invents a meaning: C / R / N |
+|---|---|---|
+| test (6 seeds x 12) | 2 / 7 / 8 of 72 | 11 / 29 / 16 of 72 |
+| dev (3 seeds x 12 x 4 samples) | 1 / 16 / 34 of 144 | 1 / 37 / 23 of 144 |
+
+- The unchanged brain asks what a new thing is more often than a common one (11-24% vs 1-3%), so the selective
+  behaviour exists weakly from pretraining. It still invents a meaning for a coined item about as often as it asks.
+  R "invents" is mostly real knowledge ("Netsuke are small sculptures...").
+- The two banks differ (N asks 11% test, 24% dev): the frame matters. Any stage-1 gain must be judged against this
+  measured baseline, on the test bank, with the same blind readers.
+- Stage 1 target, restated: raise asks-what on coined items well above 8/72 while C stays near 2/72, and lower
+  coined-item inventions below 16/72. Dev has 51 both-reader "asks what it is" replies for building the drive (>= 40).
