@@ -285,3 +285,14 @@ Decision:
 - C3 fails (positive no different from a random push) with C4 passing: pole-specific patterns, section 14 next item 2.
 - C4 fails too: the additive matrix-memory bias does not shape tone at 1.5B. NO-GO on the method; next is a
   gain-type (arousal) modulation in place of an additive push.
+
+## 16. Iteration 4: dev selection record and FROZEN settings (written before any test run)
+
+- GAIN (`mood_v3 gain results/2026-11-18-mood4-1.5b/dev 1.5b`, seed 42, mixed dev x 1): 8 -> pos-neg +1.84 (ok);
+  16 -> +4.52 (echo +0.000, NLL ratio 1.160, ok); 32 -> +3.12, NLL ratio 1.376 (excluded). SELECTED: 16.
+- Embedding: the pool nodes have no `transformers`. The test runs `--no-embedding`; the frozen MiniLM score is added
+  on the workstation by `mood_probe --add-embedding`, which recomputes summary and contrasts with the same rng order.
+  Checked: on `mood3_0.1b_s42.json` it reproduces every contrast exactly (`tests/test_mood_add_embedding.py`).
+  The JSON records `embedding_added_on`.
+- FROZEN: `--model 1.5b --questions mixed_test --samples 2 --max-tokens 40 --arms pos,neg,off,rand_pos,rand_neg
+  --n-rand 2 --gain 16 --no-embedding --threads <nproc-1>`; seeds pool40 42/43, pool41 44/100, pool42 101/102.

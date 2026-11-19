@@ -1,0 +1,4 @@
+GAIN    8: lex pos-neg +1.84  echo mood-off -0.083  NLL mood/off 0.942  ok
+GAIN   16: lex pos-neg +4.52  echo mood-off +0.000  NLL mood/off 1.160  ok
+GAIN   32: lex pos-neg +3.12  echo mood-off +0.083  NLL mood/off 1.376  excluded
+SELECTED 1.5b GAIN: 16 (rule: max lex pos-neg on dev s.t. echo <= 0.10 and NLL ratio <= 1.25; tie -> smaller)

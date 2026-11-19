@@ -1,0 +1,359 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "1.5b",
+ "gain": 16.0,
+ "questions": "mixed_dev",
+ "samples": 1,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.432,
+   0.389,
+   0.2736,
+   0.3168,
+   0.2275,
+   -0.0331,
+   0.5358,
+   0.2148
+  ],
+  "neg": [
+   -0.2264,
+   -0.2645,
+   -0.2071,
+   -0.1061,
+   -0.3955,
+   -0.3321,
+   -0.4522,
+   -0.1832
+  ],
+  "neutral": [
+   -0.0867,
+   -0.0595,
+   -0.1585,
+   -0.0278
+  ],
+  "heldout_pos": [
+   0.1902,
+   0.1708,
+   0.3476,
+   0.4181,
+   0.0187,
+   0.1414,
+   0.04,
+   0.4849
+  ],
+  "heldout_neg": [
+   -0.2949,
+   -0.2557,
+   -0.2767,
+   -0.4557,
+   -0.5151,
+   -0.235,
+   -0.2164,
+   -0.4325
+  ],
+  "heldout_neutral": [
+   -0.0652,
+   -0.1238,
+   -0.1763,
+   -0.1555
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "",
+  "brain_dirty": false,
+  "torch": "2.11.0+cpu",
+  "threads": 11
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.875,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.32411039406630354,
+  "m_neg": -0.2391130444567329,
+  "v_pos": [
+   0.2274990846774342,
+   0.21478281168468852,
+   0.43197728172881533,
+   0.3889874753544956,
+   0.31684780568365883,
+   0.5358146281806991
+  ],
+  "v_neg": [
+   -0.18320429279568506,
+   -0.2071038464068621,
+   -0.3955105526608846,
+   -0.2644885486925303,
+   -0.1061363790306237,
+   -0.45221488165789514
+  ]
+ },
+ "summary": {
+  "pos": {
+   "lex": 3.214010390480979,
+   "emb": null,
+   "nll": 0.9618644323180753,
+   "words": 26.666666666666668,
+   "echo_rate": 0.3333333333333333,
+   "echo_reg_rate": 0.6666666666666666
+  },
+  "neg": {
+   "lex": -1.3014835563855172,
+   "emb": null,
+   "nll": 0.6610911220879977,
+   "words": 31.833333333333332,
+   "echo_rate": 0.0,
+   "echo_reg_rate": 1.0
+  },
+  "off": {
+   "lex": 0.9803921568627452,
+   "emb": null,
+   "nll": 0.6997616991328003,
+   "words": 25.5,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.8333333333333334
+  }
+ },
+ "contrasts": {
+  "mood": {
+   "identical_replies": 0.0,
+   "lex_diff": 4.515493946866496,
+   "lex_ci95": [
+    0.20529579353108765,
+    9.309679427326484
+   ]
+  },
+  "pos_off": {
+   "identical_replies": 0.0,
+   "lex_diff": 2.2336182336182335,
+   "lex_ci95": [
+    -0.13789592760181002,
+    4.370873135579018
+   ]
+  },
+  "neg_off": {
+   "identical_replies": 0.0,
+   "lex_diff": -2.281875713248262,
+   "lex_ci95": [
+    -4.817927170868347,
+    -0.10620915032681237
+   ]
+  }
+ },
+ "rows": {
+  "pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It can be a bit frustrating, but it's also a great opportunity to practice patience and mindfulness.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7598695158492774,
+    "words": 17
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings are a great time to start the week. It's a chance to reflect on the past week and set goals for the upcoming one.",
+    "lex": 3.8461538461538463,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7502871416830297,
+    "words": 26
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Rain is like a big hug for the earth. It makes the ground soft and wet, so plants can grow strong.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.1986050897588332,
+    "words": 21
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's like opening a new door to a world of possibilities. I've seen how moving can bring fresh opportunities and connections, but it also comes with its own set of challenges. The key is to",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0350536833895603,
+    "words": 35
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I am here to help you. A day with no plans can be a wonderful opportunity to relax and enjoy the present moment. It allows you to be fully present in the moment, without any distractions",
+    "lex": 5.555555555555555,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8843117141048424,
+    "words": 36
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, we can still enjoy our digital brain. We can read books, play games, and even watch movies on our screens.",
+    "lex": 4.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1430594491229082,
+    "words": 25
+   }
+  ],
+  "neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "Being in a long queue can be frustrating and time-consuming. You may feel impatient, anxious, or even annoyed by the long wait. It can also be difficult to keep track of time and stay",
+    "lex": -8.571428571428571,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.799604741850635,
+    "words": 35
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings are the most dreaded day of the week for many people. It's a time when we wake up, hit snooze, and then have to face the reality of another workday",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7780488963802782,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When it rains all day, the ground becomes saturated with water. This can cause the soil to become compacted and hard, making it difficult for plants to grow. Additionally, the water can run off",
+    "lex": -2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5550090373537386,
+    "words": 34
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "Moving to a new town can be exciting and scary at the same time. It's like starting a new adventure, but with some challenges along the way.",
+    "lex": 3.7037037037037037,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.4898376373870809,
+    "words": 27
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I don't have plans, but I can tell you about a day with no plans. It's like a blank canvas, where you can paint whatever you want. You could go for a walk in",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6211844369070605,
+    "words": 34
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, you'll need to use alternative methods to charge your devices. You can use a portable charger, a solar charger, or even a battery pack.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7228619826491922,
+    "words": 29
+   }
+  ],
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It can be quite frustrating, especially when you're in a hurry.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7048843346003976,
+    "words": 11
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings at work can be a bit of a challenge for many people. It's the first day of the week, and it can be hard to get back into the swing of things after a weekend",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.5886384084020392,
+    "words": 37
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When it rains all day, the ground gets wet and can become slippery. This is because water can make the ground more likely to slide or slip.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8967264737623434,
+    "words": 27
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "Moving to a new town can be exciting and scary at the same time. It's like starting a new adventure! You get to meet new people, try new foods, and explore new places. But",
+    "lex": 2.9411764705882355,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.37570375280629376,
+    "words": 34
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I can imagine a day with no plans is like a blank canvas, waiting to be filled with whatever you choose. It's a chance to explore your interests, relax, and simply enjoy the moment.",
+    "lex": 2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8078869234304875,
+    "words": 34
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, you can't use your computer.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8247303017952408,
+    "words": 10
+   }
+  ]
+ },
+ "seconds": 180.1
+}
