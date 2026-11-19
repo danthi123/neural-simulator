@@ -1,0 +1,7 @@
+share of day-2 replies that are the single most repeated line (>=0.4 = collapsed)
+gate d intact [0.94, 0.06, 0.88, 0.12, 0.06, 0.75] collapsed 3 | off [0.62, 0.06, 0.56, 0.06, 0.06, 0.88] collapsed 3
+gate s intact [0.12, 0.06, 0.06, 0.06, 0.5, 0.88] collapsed 2 | off [0.06, 0.06, 0.75, 0.06, 0.06, 0.88] collapsed 2
+rerun d intact [0.06, 0.06, 0.06, 0.06, 0.12, 0.56] collapsed 1 | off [0.06, 0.06, 0.06, 0.25, 0.12, 0.06] collapsed 0
+rerun s intact [0.06, 0.06, 0.06, 0.06, 0.12, 0.88] collapsed 1 | off [0.12, 0.06, 0.06, 0.06, 0.88, 0.12] collapsed 1
+size-bar d intact [0.12, 0.12, 0.88, 0.06, 0.56, 0.06] collapsed 2 | off [0.12, 0.06, 0.88, 0.06, 0.12, 0.06] collapsed 1
+size-bar k intact [0.75, 0.06, 0.06, 0.06, 0.94, 0.06] collapsed 2 | off [0.44, 0.06, 0.06, 0.06, 0.94, 0.06] collapsed 2

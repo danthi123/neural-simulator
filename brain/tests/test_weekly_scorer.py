@@ -43,3 +43,12 @@ def test_wrong_subject_not_marked():
 def test_bare_repetition_not_marked():
     assert mark_for("What is my cat called?", "Pixel. Pixel.") is False
     assert mark_for("What is my cat called?", "Pixel, Pixel.") is False
+
+
+def test_weekly_reads_self_completion_default_from_the_signature():
+    # 11-18: __kwdefaults__ is None once Brain.__init__ has no keyword-only args; weekly.main crashed on every run.
+    import inspect
+    from brain.brain import Brain
+    assert isinstance(inspect.signature(Brain.__init__).parameters["self_completion"].default, bool)
+    src = open("brain/eval/weekly.py").read()
+    assert "__kwdefaults__" not in src

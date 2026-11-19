@@ -1,0 +1,14 @@
+s42 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 0 'Dan is my friend. ❌' keyed 3 friend 1 abstain 0
+s42 sa hdr 1 d1own 1 s2 own-recalled 0 s2own 0 'My name is Dan. ❌' keyed 1 friend 1 abstain 0
+s43 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 1 'My name is Nova. ✅' keyed 6 friend 1 abstain 0
+s43 sa hdr 1 d1own 1 s2 own-recalled 1 s2own 1 'My name is Nova. ✅' keyed 6 friend 1 abstain 0
+s44 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 0 'My name is Dan. ❌' keyed 5 friend 1 abstain 0
+s44 sa hdr 1 d1own 1 s2 own-recalled 1 s2own 0 'My name is Dan. ❌' keyed 5 friend 1 abstain 0
+s100 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 1 'My name is Nova, my friend. ✅' keyed 6 friend 1 abstain 0
+s100 sa hdr 1 d1own 1 s2 own-recalled 1 s2own 1 'My name is Nova. ✅' keyed 6 friend 1 abstain 0
+s101 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 0 'My name is Marguerite. ❌' keyed 5 friend 1 abstain 0
+s101 sa hdr 1 d1own 1 s2 own-recalled 1 s2own 1 'My name is Nova. ✅' keyed 6 friend 1 abstain 0
+s102 s0 hdr 0 d1own 1 s2 own-recalled 0 s2own 0 'My name is Dan. ❌' keyed 5 friend 1 abstain 0
+s102 sa hdr 1 d1own 1 s2 own-recalled 1 s2own 0 'My name is Dan. ❌' keyed 5 friend 1 abstain 0
+own recalled s0 0 sa 5; s2 own s0 2 sa 3; keyed s0 5.00 sa 4.83; d1 own s0 6 sa 6; friend s0 6 sa 6; abstentions s0 0 sa 0
+engaged True W1 True W2 False W3 True W4 True -> NARROWED
