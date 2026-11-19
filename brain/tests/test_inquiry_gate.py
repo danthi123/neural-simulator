@@ -76,3 +76,11 @@ def test_auto_lives_the_lesson_at_birth_only(cortex, tmp_path, monkeypatch):
     b.save(); b.release()
     b2 = Brain(str(tmp_path / "i"), cortex=cortex, inquiry="auto", sleep_on_restart=False)   # reload: not lived again
     assert len(b2.hippocampus.episodes) == n and b2.inquiry_episode() is not None
+
+
+def test_inquiry_lesson_is_not_replayed_at_night(cortex, tmp_path):
+    b = Brain(str(tmp_path / "j"), cortex=cortex)
+    n0 = len(b._night_episodes())
+    b.live_inquiry(LESSON, GUIDED)
+    assert b.inquiry_episode() is not None and len(b.hippocampus.episodes) == n0 + 1
+    assert len(b._night_episodes()) == n0 and all("zorbit" not in e.text for e in b._night_episodes())

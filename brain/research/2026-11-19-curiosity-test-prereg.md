@@ -54,3 +54,9 @@ Flip only if all hold:
 - W-c: a whole-transcript read, blind to arm, finds no new defect class in the on arm.
 Cost probe (reported, no bar; `results/2026-11-19-inquiry-test-1.5b/everyday_s4[23].json`): the gate fired on 3 of 24
 everyday tellings with real names (Oluwaseun, pho, Ishiguro), 12 of 96 turns; "What's pho?" twice.
+
+## Amendment 2 (2026-11-19, before it ran): rerun of the flip guard after the W-b fix
+Amendment 1 failed W-b (`results/2026-11-19-inquiry-weekly-1.5b.md`: the night replayed the lesson and the slept cortex
+said "Zorbit"). Fix: `Brain._night_episodes()` leaves the inquiry episode out of sleep replay and the night's
+guard/teacher lists (unchanged when no inquiry episode exists, so the six off transcripts stand). The on arm reruns on
+the same six seeds; W-a, W-b, W-c exactly as in Amendment 1, scored against the existing off transcripts.
