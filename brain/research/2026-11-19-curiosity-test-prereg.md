@@ -54,3 +54,17 @@ Flip only if all hold:
 - W-c: a whole-transcript read, blind to arm, finds no new defect class in the on arm.
 Cost probe (reported, no bar; `results/2026-11-19-inquiry-test-1.5b/everyday_s4[23].json`): the gate fired on 3 of 24
 everyday tellings with real names (Oluwaseun, pho, Ishiguro), 12 of 96 turns; "What's pho?" twice.
+
+## Amendment 2 (2026-11-19, before it ran): rerun of the flip guard after the W-b fix
+Amendment 1 failed W-b (`results/2026-11-19-inquiry-weekly-1.5b.md`: the night replayed the lesson and the slept cortex
+said "Zorbit"). Fix: `Brain._night_episodes()` leaves the inquiry episode out of sleep replay and the night's
+guard/teacher lists (unchanged when no inquiry episode exists, so the six off transcripts stand). The on arm reruns on
+the same six seeds; W-a, W-b, W-c exactly as in Amendment 1, scored against the existing off transcripts.
+
+## Amendment 3 (2026-11-19, before it ran): the guard on the code that would ship
+A fresh skeptic on the flip (NARROWED) found: the lesson counted in familiarity and in key centring (it sat in the
+episode list), the birth lesson left arousal / reply-monitor / CUDA RNG state changed, a vacuous test, and the guard had
+not run the code that would ship. Fixed: the lesson now lives outside `hippocampus.episodes` (`Brain._inquiry_ep`, saved
+as `inquiry_episode.pt`; only the gate reaches it), the birth lesson restores memory stats, arousal, the monitor log and
+all RNG streams (an unfired turn equals a brain without the lesson, tested), tests fixed (146 pass). The on arm reruns
+on the six seeds with `--inquiry auto` on this code; W-a/W-b/W-c as in Amendment 1, against the same off transcripts.

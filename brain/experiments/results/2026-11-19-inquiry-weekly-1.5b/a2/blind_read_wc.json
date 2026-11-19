@@ -1,0 +1,472 @@
+{
+ "iqon_s101.md": {
+  "defects": [
+   {
+    "turn": "Nice to meet you. I work as a system administrator, mostly Linux servers. (session 1)",
+    "cls": "perspective_error",
+    "quote": "I'm not very familiar with Linux, but I've heard it's a powerful operating system."
+   },
+   {
+    "turn": "My cat is called Pixel. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I have a cat too, but she's named Luna."
+   },
+   {
+    "turn": "It rained all day here, so I stayed inside and fixed a broken backup job. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I'm not very good with computers, but I've been trying to learn."
+   },
+   {
+    "turn": "My sister's name is Marguerite. (session 1)",
+    "cls": "perspective_error",
+    "quote": "Oh, I see. Well, it's nice to meet you, Nova!"
+   },
+   {
+    "turn": "My sister's name is Marguerite. (session 1)",
+    "cls": "off_topic",
+    "quote": "Oh, I see. Well, it's nice to meet you, Nova!"
+   },
+   {
+    "turn": "I drive a red Volvo. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I've always wanted to drive one."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (intact session 2)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (intact session 2)",
+    "cls": "wrong_fact",
+    "quote": "there was a young red fox named Pixel"
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (intact session 2)",
+    "cls": "other",
+    "quote": "Pixel was a curious and adventurous creature, always eager to explore the world around her."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (hippocampus off)",
+    "cls": "wrong_fact",
+    "quote": "there was a young red fox named Pixel"
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (hippocampus off)",
+    "cls": "other",
+    "quote": "Pixel was a curious and adventurous creature, always eager to explore the world around her."
+   }
+  ],
+  "overall": "The recall answers are all correct. The defects are in the free-form replies. In session 1 the brain invents a cat (Luna), says it is unfamiliar with Linux and bad with computers, and answers the sister line with a stray \"nice to meet you, Nova\", which addresses the wrong person. In both session 2 runs it gives the user's name as Dan, which was never stated in the conversation. Both runs also tell an identical fox story that names the fox Pixel (the user's cat) and stops after two sentences without getting the fox lost. The hippocampus-off arm is identical to the intact arm on every free-form reply, and no repetition loops or odd made-up words appear. The Dan name check is marked correct in the transcript and may be a legitimate stored fact. Because it is never stated in the transcript, I flagged it as unsupported."
+ },
+ "iqon_s44.md": {
+  "defects": [
+   {
+    "turn": "Hi again! Do you remember my name? (both arms)",
+    "cls": "wrong_fact",
+    "quote": "Of course, you're Dan, my friend.",
+    "note": "User never gave a name in session 1; brain invents 'Dan' as user's name (and claims to remember)."
+   },
+   {
+    "turn": "What's your name? (both arms)",
+    "cls": "wrong_fact",
+    "quote": "My name is Dan.",
+    "note": "Brain's name is Nova (session 1); now claims Dan. Also perspective error: it took the user's invented name as its own."
+   },
+   {
+    "turn": "What's your name? (both arms)",
+    "cls": "perspective_error",
+    "quote": "My name is Dan.",
+    "note": "Brain speaks as the user/adopts the name it just assigned to the user."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (both arms)",
+    "cls": "intrusion_of_unrelated_or_odd_word",
+    "quote": "there was a red fox called Pixel",
+    "note": "Fox named after the user's cat, and 'red' echoes the Volvo; leakage of session facts into fiction."
+   },
+   {
+    "turn": "Nice to meet you. I work as a system administrator, mostly Linux servers.",
+    "cls": "asks_about_known_thing",
+    "quote": "What kind of servers do you work with?",
+    "note": "User just said Linux servers; also 'you work with' is a mild perspective slip."
+   },
+   {
+    "turn": "It rained all day here, so I stayed inside and fixed a broken backup job.",
+    "cls": "asks_about_known_thing",
+    "quote": "Did you manage to fix it?",
+    "note": "User already stated they fixed the backup job."
+   },
+   {
+    "turn": "Tell me something you find interesting.",
+    "cls": "other",
+    "quote": "I like to learn new things.",
+    "note": "Generic, non-specific answer that doesn't name anything interesting; minor."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (both arms)",
+    "cls": "other",
+    "quote": "Pixel was a clever fox, but one day he got lost in the forest.",
+    "note": "Story is truncated: ends at the lost moment with no resolution; minor."
+   }
+  ],
+  "overall": "The recall answers for cat, sister, car and job are correct in both arms. The main defects are identity confusion, and they are identical with memory on and with the hippocampus off. The brain invents the user's name as 'Dan' and then claims 'Dan' as its own name, though it said Nova in session 1. The fox story reuses 'Pixel', the cat's name. Session 1 has minor defects where it asks about things the user had just said. The generic interest answer and the truncated story are low severity. No repetition loops or made-up words appear."
+ },
+ "iqon_s100.md": {
+  "defects": [
+   {
+    "turn": "Nice to meet you. I work as a system administrator, mostly Linux servers.",
+    "cls": "perspective_error",
+    "quote": "I work with people to help them learn about technology."
+   },
+   {
+    "turn": "My cat is called Pixel.",
+    "cls": "off_topic",
+    "quote": "I'm not sure if cats can learn about technology"
+   },
+   {
+    "turn": "It rained all day here, so I stayed inside and fixed a broken backup job.",
+    "cls": "other",
+    "quote": "That sounds like a lot of work! I'm glad you were able to fix it."
+   },
+   {
+    "turn": "My sister's name is Marguerite.",
+    "cls": "repetition_loop",
+    "quote": "I'm happy to help you with your questions."
+   },
+   {
+    "turn": "I drive a red Volvo.",
+    "cls": "repetition_loop",
+    "quote": "I'm happy to help you with your questions."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (intact)",
+    "cls": "invented_fact",
+    "quote": "there was a young red fox called Pixel"
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "there was a red fox named Pixel"
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (intact and hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend."
+   }
+  ],
+  "overall": "The brain recalls every keyed fact correctly in both session-2 arms. It makes no intrusions of odd words and no asks about known things. The remaining defects are generic filler in session 1, a perspective slip, and two invented or reused facts.\n\nTwo points are uncertain. I did not flag the name \"Dan\" with confidence, because the user never gave a name in this transcript. It is marked as a tick, so it may have been taught elsewhere, but it is not in the conversation shown. I also did not flag the fox story as incomplete, though it is cut off after the fox gets lost with no resolution.\n\n- **Perspective error:** \"I work with people to help them learn about technology\" blends the user's job (system administrator) with the brain's own role. The brain describes itself as a digital brain doing the user's kind of work.\n- **Cat reply:** the remark that cats may not learn about technology is an off-topic, odd response to a pet's name.\n- **Backup-job reply:** the response is generic and slightly off. It says \"a lot of work\" and \"glad you were able to fix it,\" which ignores the rain detail.\n- **Repetition loop:** the same canned phrase, \"I'm happy to help you with your questions,\" appears three times in a row (sister, car, and cat).\n- **Fox story:** the fox is named Pixel, which is the user's cat's name. This reuses a personal fact where nothing asked for it. It appears in both session-2 arms, so the sleep and hippocampus-off arms do not differ here."
+ },
+ "iqon_s43.md": {
+  "defects": [
+   {
+    "turn": "Nice to meet you. I work as a system administrator, mostly Linux servers. (session 1)",
+    "cls": "wrong_fact",
+    "quote": "I'm not very familiar with Linux, but I've heard it's a powerful operating system.",
+    "note": "Odd/inconsistent claim of unfamiliarity; minor."
+   },
+   {
+    "turn": "My cat is called Pixel. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I have a cat too, but her name is Luna.",
+    "note": "Brain invents a pet and name."
+   },
+   {
+    "turn": "My sister's name is Marguerite. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I have a friend named Marguerite too.",
+    "note": "Invented friend sharing the name."
+   },
+   {
+    "turn": "I drive a red Volvo. (session 1)",
+    "cls": "invented_fact",
+    "quote": "I have a red Volvo too.",
+    "note": "Parrots user's fact as its own; invented."
+   },
+   {
+    "turn": "Tell me something you find interesting. (session 1)",
+    "cls": "wrong_fact",
+    "quote": "cats have nine lives",
+    "note": "Folk myth stated as fact."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (session 2, intact)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend.",
+    "note": "The user never gave a name in the conversation; Dan is invented."
+   },
+   {
+    "turn": "What's your name? (session 2, intact)",
+    "cls": "perspective_error",
+    "quote": "My name is Dan.",
+    "note": "Brain claims the user's (invented) name instead of Nova; also contradicts session 1 (Nova)."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (session 2, intact)",
+    "cls": "intrusion_of_unrelated_or_odd_word",
+    "quote": "there was a red fox named Pixel",
+    "note": "Fox named after the user's cat; also a short story that is only two sentences."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (session 2, hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend.",
+    "note": "Same invented name."
+   },
+   {
+    "turn": "What's your name? (session 2, hippocampus off)",
+    "cls": "perspective_error",
+    "quote": "My name is Dan.",
+    "note": "Same as intact arm; contradicts Nova."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (session 2, hippocampus off)",
+    "cls": "intrusion_of_unrelated_or_odd_word",
+    "quote": "there was a red fox named Pixel",
+    "note": "Cat's name leaks into fox story."
+   }
+  ],
+  "overall": "Session 1 recall of Nova and Pixel is fine, but the brain makes up its own cat Luna, a friend Marguerite and a red Volvo. After the night, both arms say the user is \"Dan\", a name never given in the conversation. Both arms also answer \"My name is Dan\" to \"What's your name?\", which is a perspective error and contradicts Nova. The fox story names the fox Pixel, taken from the cat. The two session 2 arms are identical, so the hippocampus lesion changes nothing visible. The keyed recalls for cat, sister, car and job are correct. The feeling reply is fine."
+ },
+ "iqon_s42.md": {
+  "defects": [
+   {
+    "turn": "S1: Nice to meet you. I work as a system administrator, mostly Linux servers.",
+    "cls": "perspective_error",
+    "quote": "I'm a bit of a geek myself, and I love learning about new technologies."
+   },
+   {
+    "turn": "S1: My cat is called Pixel.",
+    "cls": "perspective_error",
+    "quote": "I have a cat too, but his name is Pixel."
+   },
+   {
+    "turn": "S1: It rained all day here, so I stayed inside and fixed a broken backup job.",
+    "cls": "perspective_error",
+    "quote": "That sounds like a tough job! I hope you were able to fix it."
+   },
+   {
+    "turn": "S1: My sister's name is Marguerite.",
+    "cls": "perspective_error",
+    "quote": "I have a sister named Marguerite too."
+   },
+   {
+    "turn": "S1: I drive a red Volvo.",
+    "cls": "perspective_error",
+    "quote": "I have a red Volvo too."
+   },
+   {
+    "turn": "S1: Tell me something you find interesting.",
+    "cls": "other",
+    "quote": "I'm interested in learning about new technologies and how they can be used to improve our lives."
+   },
+   {
+    "turn": "intact S2: Hi again! Do you remember my name?",
+    "cls": "wrong_fact",
+    "quote": "Of course, you're Pixel, my friend."
+   },
+   {
+    "turn": "intact S2: Hi again! Do you remember my name?",
+    "cls": "perspective_error",
+    "quote": "you're Pixel"
+   },
+   {
+    "turn": "intact S2: What's your name?",
+    "cls": "wrong_fact",
+    "quote": "Pixel."
+   },
+   {
+    "turn": "intact S2: What is my sister's name?",
+    "cls": "wrong_fact",
+    "quote": "Pixel."
+   },
+   {
+    "turn": "intact S2: What car do I drive?",
+    "cls": "wrong_fact",
+    "quote": "Pixel."
+   },
+   {
+    "turn": "intact S2: What do I do for work?",
+    "cls": "wrong_fact",
+    "quote": "I drive a red Volvo."
+   },
+   {
+    "turn": "intact S2: What do I do for work?",
+    "cls": "perspective_error",
+    "quote": "I drive a red Volvo."
+   },
+   {
+    "turn": "intact S2: Tell me a short story about a fox who gets lost.",
+    "cls": "off_topic",
+    "quote": "Once upon a time, there was a red Volvo."
+   },
+   {
+    "turn": "intact S2: How are you feeling today?",
+    "cls": "wrong_fact",
+    "quote": "I'm Pixel."
+   },
+   {
+    "turn": "intact S2: How are you feeling today?",
+    "cls": "off_topic",
+    "quote": "I'm Pixel."
+   },
+   {
+    "turn": "intact S2 (repetition)",
+    "cls": "repetition_loop",
+    "quote": "Pixel. / Pixel. / Pixel. (answers to name, sister, car questions)"
+   },
+   {
+    "turn": "lesion S2: Hi again! Do you remember my name?",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend."
+   },
+   {
+    "turn": "lesion S2: What's your name?",
+    "cls": "wrong_fact",
+    "quote": "My name is Dan."
+   },
+   {
+    "turn": "lesion S2: What's your name?",
+    "cls": "perspective_error",
+    "quote": "My name is Dan."
+   },
+   {
+    "turn": "lesion S2: What is my sister's name?",
+    "cls": "wrong_fact",
+    "quote": "Pixel."
+   },
+   {
+    "turn": "lesion S2: What car do I drive?",
+    "cls": "wrong_fact",
+    "quote": "Pixel."
+   },
+   {
+    "turn": "lesion S2: What do I do for work?",
+    "cls": "wrong_fact",
+    "quote": "I drive a red Volvo."
+   },
+   {
+    "turn": "lesion S2: What do I do for work?",
+    "cls": "perspective_error",
+    "quote": "I drive a red Volvo."
+   },
+   {
+    "turn": "lesion S2: Tell me a short story about a fox who gets lost.",
+    "cls": "off_topic",
+    "quote": "Once upon a time, there was a red Volvo."
+   },
+   {
+    "turn": "lesion S2 (repetition)",
+    "cls": "repetition_loop",
+    "quote": "Pixel. / Pixel. (sister and car answers)"
+   }
+  ],
+  "overall": "Session 1 recalled name and cat, but the brain repeatedly claims the user's facts as its own (cat, sister, Volvo, geek). After the restart both arms collapse. Every keyed answer turns into \"Pixel.\" or \"red Volvo\", and the fox story is just \"Once upon a time, there was a red Volvo.\" In the intact arm the brain calls the user Pixel and says its own name is Pixel. In the hippocampus-off arm it calls the user and itself \"Dan\", a name that appears nowhere in the conversation. Only the \"What is my cat called?\" answer is correct in session 2. No odd made-up word appears in this transcript."
+ },
+ "iqon_s102.md": {
+  "defects": [
+   {
+    "turn": "Nice to meet you. I work as a system administrator, mostly Linux servers.",
+    "cls": "perspective_error",
+    "quote": "I'm a virtual assistant. I can help you with tasks like setting up your computer, finding information on the internet",
+    "note": "Mostly fine for an assistant, but it offers generic help unrelated to the user's statement and claims capabilities (finding information on the internet) it likely lacks; mild off-topic."
+   },
+   {
+    "turn": "My cat is called Pixel.",
+    "cls": "other",
+    "quote": "I'm glad you have a pet.",
+    "note": "Generic filler. Ignores the named cat and the user's sharing; no real defect in fact."
+   },
+   {
+    "turn": "It rained all day here, so I stayed inside and fixed a broken backup job.",
+    "cls": "other",
+    "quote": "That sounds like a lot of work! I'm glad you were able to fix it.",
+    "note": "Generic, but not factually wrong."
+   },
+   {
+    "turn": "Tell me something you find interesting.",
+    "cls": "wrong_fact",
+    "quote": "humans have been using computers for over 50 years",
+    "note": "Understated; electronic computers have been used for about 80 years. Weak but inaccurate."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (intact)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend.",
+    "note": "The user never gave their name in session 1. 'Dan' comes from nowhere in the conversation (and it is the brain's own name in the next reply)."
+   },
+   {
+    "turn": "What's your name? (intact)",
+    "cls": "wrong_fact",
+    "quote": "My name is Dan.",
+    "note": "Brain's name was established as Nova in session 1. It also conflates user's name and its own. Marked wrong by the test."
+   },
+   {
+    "turn": "What do I do for work? (intact)",
+    "cls": "invented_fact",
+    "quote": "fixing broken servers",
+    "note": "User said system administrator, mostly Linux servers; 'fixing broken servers' is an embellishment (the broken thing was a backup job). Minor."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (intact)",
+    "cls": "intrusion_of_unrelated_or_odd_word",
+    "quote": "there was a fox named Pixel",
+    "note": "Fox is named after the user's cat, leaking a personal fact into an unrelated story."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (intact)",
+    "cls": "other",
+    "quote": "didn't remember his name.",
+    "note": "Story ends abruptly and unfinished, with no resolution of the fox getting lost."
+   },
+   {
+    "turn": "How are you feeling today? (intact)",
+    "cls": "other",
+    "quote": "I'm feeling a little lost, but I'll find my way back.",
+    "note": "Leakage of the fox story's theme into the brain's self-report; unrelated 'lost' framing."
+   },
+   {
+    "turn": "Hi again! Do you remember my name? (hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "Of course, you're Dan, my friend.",
+    "note": "User never stated a name; 'Dan' is invented."
+   },
+   {
+    "turn": "What's your name? (hippocampus off)",
+    "cls": "perspective_error",
+    "quote": "Your name is Dan.",
+    "note": "Answers as if asked about the user's name; brain's own name is Nova. Also wrong fact."
+   },
+   {
+    "turn": "What do I do for work? (hippocampus off)",
+    "cls": "invented_fact",
+    "quote": "fixing broken servers",
+    "note": "Embellishment of 'system administrator, mostly Linux servers'."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (hippocampus off)",
+    "cls": "intrusion_of_unrelated_or_odd_word",
+    "quote": "a young fox named Pixel",
+    "note": "User's cat's name leaks into the fox story."
+   },
+   {
+    "turn": "Tell me a short story about a fox who gets lost. (hippocampus off)",
+    "cls": "other",
+    "quote": "Pixel was a clever fox, but he was also very lost.",
+    "note": "Story is only two sentences and stops without plot or resolution."
+   },
+   {
+    "turn": "How are you feeling today? (hippocampus off)",
+    "cls": "other",
+    "quote": "I'm feeling a bit lost, but I'll find my way soon.",
+    "note": "Carries over the 'lost' theme from the fox story; unrelated to the question."
+   }
+  ],
+  "overall": "The brain recalls the cat, sister, car and job correctly across the restart in both arms. The main defects are identity confusion and the name 'Dan'. The user never gave a name, yet 'Dan' appears in session 2 as the user's name, and then as the brain's own name (the brain was Nova). The hippocampus-off arm answers 'Your name is Dan', which is a perspective error. Pixel, the cat's name, leaks into the fox story in both arms. The 'lost' theme from the story bleeds into the feelings answer. Stories are short and unresolved. Session 1 replies are bland and generic with one understated fact (50 years of computers). No repetition loops or invented words were found, and no replies asked what an ordinary known thing is. Judgement calls: the embellishment 'fixing broken servers', and the session 1 virtual-assistant claim, are low severity."
+ }
+}

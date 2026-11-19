@@ -113,7 +113,7 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--key", default=None, help="pattern-completion key (Brain(key=...)); unset = the Brain default (S0)")
     ap.add_argument("--key-bar", default=None, help="bar for a non-S0 key (Brain(key_bar=...)): default | size | slept")
     ap.add_argument("--seed", type=int, default=None, help="sleep seed + torch/numpy seed (default: unset, as before)")
-    ap.add_argument("--inquiry", default=None, help="novelty gate (Brain(inquiry=...)): auto | a bar in nats; unset = default")
+    ap.add_argument("--inquiry", default=None, help="novelty gate (Brain(inquiry=...)): auto | none (off, the lesion) | a bar in nats; unset = the Brain default (auto since 11-19)")
     a = ap.parse_args(argv)
     SEED.clear()
     if a.seed is not None:
@@ -131,7 +131,8 @@ def main(argv=None, cortex: Cortex | None = None):
     if a.self_key is not None:
         SEED["self_key"] = a.self_key
     if a.inquiry is not None:
-        SEED["inquiry"] = a.inquiry if a.inquiry == "auto" else float(a.inquiry)
+        SEED["inquiry"] = {"auto": "auto", "none": None}.get(a.inquiry.lower()) if a.inquiry.lower() in ("auto", "none") \
+            else float(a.inquiry)
     key_note = f"; key {a.key} ({a.key_bar or 'default'} bar)" if a.key else ""
     sc_on = inspect.signature(Brain.__init__).parameters["self_completion"].default if a.self_completion is None else a.self_completion
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)

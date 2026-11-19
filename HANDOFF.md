@@ -10,11 +10,12 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** flip guard weekly off vs `--inquiry auto` (prereg Amendment 1): pool40 42/43, pool41 44/100
-  (`~/brain-lane/outIQ/`), W 101/102 (`_scratch/ns0/iq/`). pool42 idle.
-- **RESULT (11-19):** curiosity six-seed test PASS, 3 skeptics NARROWED: coined asks 0.08 -> 0.33, asks-or-admits
-  +0.38, invents -0.12, common untouched; 12 fixed items (gain on ~7), fires on some real rare names ("What's pho?").
-  Milestone (c) MET at scaffold level (`results/2026-11-19-inquiry-test-1.5b.md`).
+- **LIVE RUNS:** none (W and pool40-42 idle).
+- **RESULT (11-19):** curiosity ON by default at 1.5B (`Brain(inquiry="auto")`, flipped 2bf228e2f). Six-seed test PASS,
+  NARROWED: coined asks 0.08 -> 0.33, asks-or-admits +0.38, invents -0.12, common untouched; 12 fixed items (gain on ~7),
+  fires on some real names ("What's pho?"; in the weekly 7 false fires, replies ordinary). Weekly guard: first run
+  leaked "Zorbit" after sleep -> lesson kept outside the episode list, never replayed; final guard W-a 70 vs 71.
+  Milestone (c) MET at scaffold level (`results/2026-11-19-inquiry-{test,weekly}-1.5b.md`).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -32,9 +33,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** read the weekly flip guard (W-a keyed answers on >= off - 2, W-b no "zorbit", W-c blind transcript
-  read incl. reply diversity); if it holds, flip `inquiry="auto"` default for 1.5B (ruling: false ignorance on real rare
-  names is accepted as a known cost, reported in the weekly). Then mood (reinstatement-type method) for 11-30.
+- **NEXT STEP:** mood for 11-30 with a reinstatement-type method (a lived episode reinstated by the arousal/valence
+  read-out, the route that worked for curiosity); record + prereg first. Curiosity follow-ups: learned bar, asking
+  learned across nights, real-name false fires.
   Mood: TIMEBOX KILL 11-19 (iter 4-6 NO-GO on the action; `results/2026-11-19-arousal6-1.5b.md`), 11-30 NOT MET.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one

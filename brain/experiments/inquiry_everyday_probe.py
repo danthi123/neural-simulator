@@ -56,7 +56,7 @@ def main():
             rec = {"stmt": stmt, "sample": k}
             for arm in ("lesson", "gate"):
                 with tempfile.TemporaryDirectory(dir=os.path.dirname(os.path.abspath(a.out))) as home:
-                    b = Brain(home, cortex=cortex, **({"inquiry": a.bar} if arm == "gate" else {}))
+                    b = Brain(home, cortex=cortex, inquiry=a.bar if arm == "gate" else None)
                     random.seed(sd + 7); np.random.seed((sd + 7) % 2 ** 32); torch.manual_seed(sd + 7)
                     b.live_inquiry(LESSON, a.guided)
                     b.state = [x.clone() for x in b.base]

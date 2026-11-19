@@ -45,6 +45,7 @@ ORDINARY = [
 ADAPTERS = "cortex_adapters.pt"
 EPISODES = "episodes"            # one file per episode (tensors), written once
 EPISODE_INDEX = "episodes.json"  # text + strength/uses/times per episode, rewritten after a turn (small)
+INQUIRY_FILE = "inquiry_episode.pt"   # the inquiry lesson (outside the episode list), written once
 LOCK = ".lock"
 
 # Sleep settings per cortex size (adopt-1.5b plan step 8), keyed by Cortex.model_name's size tag. No silent fallback:
@@ -187,10 +188,13 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = None,
+                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None):
-        """inquiry: novelty gate for "it asks about what is new to it" (switch, default OFF = None). A float is the bar in
+        """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
+        (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
+        Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
+        (the lesion). A float is the bar in
         nats: when a heard telling holds a word whose surprisal, read from the current state (brain/novelty.py), exceeds
         it and nothing was recalled, the brain reinstates its lived inquiry episode (live_inquiry, a declared teacher
         scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md. "auto" = the
@@ -313,6 +317,7 @@ class Brain:
         self._occ: dict = {}
         self.monitor_log: list[int] = []   # per turn: drafts withheld
         self._recent_replies: list[str] = []
+        self._inquiry_ep = None   # the inquiry lesson: kept OUTSIDE the hippocampus list (only the novelty gate reaches it)
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -330,7 +335,7 @@ class Brain:
             self._acquire_lock()
         try:
             self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
-            self.inquiry = inquiry   # switch (default OFF = None): novelty bar (nats) for the lived inquiry episode
+            self.inquiry = inquiry   # default "auto" (size bar + birth lesson; on at 1.5B); None = off: novelty bar (nats)
             self.inquiry_birth = False   # "auto": the lesson is lived at birth (set below once the size is known)
             self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
             # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
@@ -446,8 +451,7 @@ class Brain:
             known, sig = self.knows(text)
             info.update(sig, known=known)
         if known:
-            ex = () if self.meta.get("inquiry_episode") is None else (self.meta["inquiry_episode"],)
-            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"), exclude=ex)
+            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
         else:  # nothing familiar enough: no pattern completion, no reinstatement
             ep, sim = None, (info["fok"] if info.get("fok_source") == "hippocampus" else info.get("fam", 0.0))
         info["similarity"] = round(sim, 3)
@@ -616,8 +620,9 @@ class Brain:
         return v
 
     def inquiry_episode(self):
-        i = self.meta.get("inquiry_episode")
-        return None if i is None or i >= len(self.hippocampus.episodes) else self.hippocampus.episodes[i]
+        """The lived inquiry lesson, or None. It is not in hippocampus.episodes, so ordinary recall, familiarity, key
+        centring, sleep replay and the memory listing never see it; only the novelty gate in hear() reinstates it."""
+        return self._inquiry_ep
 
     def live_inquiry(self, telling: str, guided_reply: str):
         """Declared teacher scaffold (SCAFFOLDS.md), the curiosity twin of live_self_belief(trace="self_turn"): the
@@ -631,25 +636,44 @@ class Brain:
         before = [x.clone() for x in self.state]
         inq, self.inquiry = self.inquiry, None          # the lesson itself is heard without the gate
         n_before = len(self.hippocampus.episodes)
+        # hearing the lesson must leave the stored memories as they were (a recall would count as a use)
+        was = [(e.strength, e.uses, e.last_used) for e in self.hippocampus.episodes]
         try:
             spontaneous, _ = self.hear(telling)
         finally:
             self.inquiry = inq
-        # the lesson lives only as the inquiry episode below, not also as an ordinary telling about its made-up word
         del self.hippocampus.episodes[n_before:]
+        for e, (st_, us, lu) in zip(self.hippocampus.episodes, was):
+            e.strength, e.uses, e.last_used = st_, us, lu
         _, self.state = self.cortex.read(f"User: {telling}\n\nAssistant: {guided_reply}\n\n", before)
         ep = self.hippocampus.store(self.cortex, self.base, f"{telling}\n\nAssistant: {guided_reply}", speaker="User")
+        self.hippocampus.episodes.pop()                  # it lives outside the ordinary list (inquiry_episode)
         ep.source = "self"
         _, st = self.cortex.read(f"Assistant: {guided_reply}\n\n", self.base)
         ep.delta = [d.half().cpu() if d is not None else None for d in self.cortex.matrix_delta(st, self.base)]
-        self.meta["inquiry_episode"] = len(self.hippocampus.episodes) - 1
+        self._inquiry_ep = ep
+        self._inquiry_dirty = True
         return spontaneous
 
     def _live_inquiry_at_birth(self):
         """The inquiry lesson as an earlier conversation before the first day: the episode stays, the working state,
-        the reply history and the turn count return to birth (the six-seed test lived it the same way)."""
+        the reply history and the turn count return to birth (the six-seed test lived it the same way), and the random
+        number streams are restored, so a turn the gate does not fire on is the same as without the lesson."""
+        import random
+
+        import numpy as np
         turns = self.meta["turns"]
-        self.live_inquiry(*self.INQUIRY_LESSON)
+        import copy
+        py, nps = random.getstate(), np.random.get_state()   # the lesson draws no numbers from the life that follows
+        arousal, n_mon = copy.deepcopy(self.arousal), len(self.monitor_log)
+        devs = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else []
+        with torch.random.fork_rng(devices=devs):
+            self.live_inquiry(*self.INQUIRY_LESSON)
+        random.setstate(py)
+        np.random.set_state(nps)
+        self.arousal = arousal
+        del self.monitor_log[n_mon:]
+        self._last_novelty = None
         self.state = [x.clone() for x in self.base]
         self._recent_replies = []
         self.meta["turns"] = turns
@@ -714,13 +738,13 @@ class Brain:
         plastic = self._plastic()
         now = time.time()
         # replay what the hippocampus encoded (speaker line as read at storage time)
-        eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self.hippocampus.episodes]
+        eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self._night_episodes()]
         eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
         base =[s.float() for s in self.base]
         guard = self._near_miss_guard() if self.near_miss else []
         if self.sleep_rehearse:   # the cortex's own replies to what it heard, held to the pretrained cortex
             from brain.near_miss import guard_texts
-            heard = [e.text.removeprefix("User: ").strip() for e in self.hippocampus.episodes
+            heard = [e.text.removeprefix("User: ").strip() for e in self._night_episodes()
                      if not e.permanent and e.text.startswith("User: ")]
             guard = guard + guard_texts(self.raw_cortex, self.base, heard, split=self.sleep_rehearse == "reply")
         with torch.random.fork_rng(devices=[]):
@@ -736,6 +760,12 @@ class Brain:
         self.cortex.refresh()
         return losses
 
+    def _night_episodes(self) -> list:
+        """What a night replays: the stored episodes. The inquiry lesson is never among them (it lives outside the
+        list): replayed, the slow synapses learned its made-up word (weekly s102 "the lost city of Zorbit",
+        results/2026-11-19-inquiry-weekly-1.5b.md)."""
+        return list(self.hippocampus.episodes)
+
     def _near_miss_guard(self):
         """The near-miss guard texts for tonight, all generated by the pretrained cortex (adapters off, nothing
         reinstated, birth state): per episode its own question, near_miss rewrites, and its reply to each."""
@@ -746,7 +776,7 @@ class Brain:
             kept = [q for q in cues if not (self.near_miss_exclude and self.near_miss_exclude(q))]
             if self.near_miss_frame == "FT":   # M4b: drop cues about a told topic (brain-side, from its own episodes)
                 from brain.near_miss import told_topic
-                told = [e.text for e in self.hippocampus.episodes]
+                told = [e.text for e in self._night_episodes()]
                 kept = [q for q in kept if not told_topic(q, told)]
             t = guard_texts(self.raw_cortex, self.base, kept, context=self._teacher_context())
             self.near_miss_log.append({"episode": None, "own": None, "cues": cues, "kept": kept, "texts": t})
@@ -782,7 +812,7 @@ class Brain:
         if not self.teacher_context:
             return None
         said = [e.text.removeprefix("User: ").split("\n\nAssistant:")[0].strip()
-                for e in self.hippocampus.episodes if not e.permanent and e.text.startswith("User: ")]
+                for e in self._night_episodes() if not e.permanent and e.text.startswith("User: ")]
         if not said:
             return None
         return f"User: {self.TEACHER_OPEN} {' '.join(said)}\n\nAssistant: {self.TEACHER_ACK}\n\n"
@@ -864,6 +894,13 @@ class Brain:
                 e._saved_key = e.key   # the object written (identity, so a replaced key is rewritten)
             index.append({"file": f, **{k: getattr(e, k) for k in self._SCALARS}})
         self._write_json(EPISODE_INDEX, index)
+        if self._inquiry_ep is not None and (getattr(self, "_inquiry_dirty", False)
+                                             or not os.path.exists(os.path.join(self.home, INQUIRY_FILE))):
+            e = self._inquiry_ep
+            tmp = os.path.join(self.home, INQUIRY_FILE + ".tmp")
+            torch.save({"delta": e.delta, "key": e.key, **{k: getattr(e, k) for k in self._SCALARS}}, tmp)
+            os.replace(tmp, os.path.join(self.home, INQUIRY_FILE))
+            self._inquiry_dirty = False
         meta = dict(self.meta)
         if self.key != "S0":  # an S0 home is written without a key entry
             meta["key"] = self.key
@@ -938,6 +975,11 @@ class Brain:
             self.hippocampus = self._make_hippocampus(key)
             self.hippocampus.enabled = enabled
         self.hippocampus.episodes = eps
+        q = os.path.join(self.home, INQUIRY_FILE)
+        if os.path.exists(q):
+            blob = torch.load(q, weights_only=False)
+            self._inquiry_ep = Episode(delta=blob["delta"], key=blob["key"],
+                                       **{k: blob[k] for k in self._SCALARS if k in blob})
         if key == "S0":  # a store written under a delta-read key holds no S0 key: rebuild it from the stored delta
             for e in eps:
                 if e.key is None:

@@ -71,8 +71,42 @@ def test_auto_lives_the_lesson_at_birth_only(cortex, tmp_path, monkeypatch):
     assert b.inquiry == 12.4 and b.inquiry_episode() is not None
     assert "zorbit" in b.inquiry_episode().text
     assert b.meta["turns"] == 0 and all(torch.equal(x, y) for x, y in zip(b.state, b.base))
-    assert sum("zorbit" in e.text for e in b.hippocampus.episodes) == 1
+    assert not any("zorbit" in e.text for e in b.hippocampus.episodes)   # kept outside the ordinary list
     n = len(b.hippocampus.episodes)
     b.save(); b.release()
     b2 = Brain(str(tmp_path / "i"), cortex=cortex, inquiry="auto", sleep_on_restart=False)   # reload: not lived again
     assert len(b2.hippocampus.episodes) == n and b2.inquiry_episode() is not None
+    assert b2.inquiry_episode().text == b.inquiry_episode().text and b2.inquiry_episode().source == "self"
+    assert all(torch.equal(x, y) for x, y in zip(b2.inquiry_episode().delta, b.inquiry_episode().delta)
+               if x is not None)
+
+
+def test_inquiry_lesson_is_not_replayed_at_night(cortex, tmp_path):
+    b = Brain(str(tmp_path / "j"), cortex=cortex)
+    n0 = len(b._night_episodes())
+    b.live_inquiry(LESSON, GUIDED)
+    assert b.inquiry_episode() is not None and len(b.hippocampus.episodes) == n0
+    assert len(b._night_episodes()) == n0 and all("zorbit" not in e.text for e in b._night_episodes())
+
+
+def test_birth_lesson_leaves_unfired_turns_identical(cortex, tmp_path, monkeypatch):
+    monkeypatch.setitem(Brain.INQUIRY_BAR_BY_SIZE, "0.1b", 1e9)   # lesson lived at birth, gate never fires
+    outs = []
+    for name, kw in (("k", {"inquiry": None}), ("l", {"inquiry": "auto"})):
+        random.seed(3); np.random.seed(3); torch.manual_seed(3)
+        b = Brain(str(tmp_path / name), cortex=cortex, **kw)
+        outs.append([b.hear(t)[0] for t in ("My sister works as a nurse.", "What do you like to do?")])
+    assert outs[0] == outs[1]
+
+
+def test_lesson_does_not_touch_recall_or_familiarity(cortex, tmp_path):
+    a = Brain(str(tmp_path / "m"), cortex=cortex, inquiry=None)
+    b = Brain(str(tmp_path / "n"), cortex=cortex, inquiry=None)
+    b.live_inquiry(LESSON, GUIDED)
+    for x in (a, b):
+        x.hippocampus.store(x.cortex, x.base, "My friend keeps a cat in her kitchen.")
+        x.hippocampus.store(x.cortex, x.base, "I drive a red Volvo.")
+    for cue in ("Where does my friend keep her cat?", "What car do I drive?"):
+        assert torch.allclose(a.hippocampus.similarities(a.cortex, a.base, cue),
+                              b.hippocampus.similarities(b.cortex, b.base, cue))
+        assert abs(a.hippocampus.familiarity(a.cortex, a.base, cue) - b.hippocampus.familiarity(b.cortex, b.base, cue)) < 1e-6
