@@ -179,8 +179,12 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False, fake_think: bool = False):
-        """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
+                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | None = None):
+        """inquiry: novelty gate for "it asks about what is new to it" (switch, default OFF = None). A float is the bar in
+        nats: when a heard telling holds a word whose surprisal, read from the current state (brain/novelty.py), exceeds
+        it and nothing was recalled, the brain reinstates its lived inquiry episode (live_inquiry, a declared teacher
+        scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md.
+        cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
         live one brain at once; raises BrainBusy if another holds it.
@@ -287,6 +291,7 @@ class Brain:
             self._acquire_lock()
         try:
             self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
+            self.inquiry = inquiry   # switch (default OFF = None): novelty bar (nats) for the lived inquiry episode
             self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
             # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
             # familiarity, or the cortical cue response with the hippocampus off); "F" = familiarity only, "R" =
@@ -401,6 +406,13 @@ class Brain:
         if ep is not None:
             active = self.hippocampus.reinstate(self.cortex, self.state, ep)
             info["recalled"] = ep.text
+        elif self.inquiry is not None and _is_telling(text) and self.inquiry_episode() is not None and \
+                self._novelty(text) > self.inquiry:
+            # a word in what was heard is new to the cortex: its own surprise brings back the lived episode in which it
+            # met an unknown word (an ordinary episode, reinstated as state; no reply text exists in the host)
+            ep_q = self.inquiry_episode()
+            active = self.hippocampus.reinstate(self.cortex, self.state, ep_q)
+            info["recalled"], info["inquiry"] = ep_q.text, True
         elif not known and self.reinstate_self_belief and self.self_belief() is not None:
             # the low-familiarity state brings back what the teacher once said about not knowing (an ordinary episode)
             belief = self.self_belief()
@@ -506,6 +518,39 @@ class Brain:
             _, st = self.cortex.read(f"Assistant: {guided_reply}\n\n", self.base)
             ep.delta = [d.half().cpu() if d is not None else None for d in self.cortex.matrix_delta(st, self.base)]
         self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
+        return spontaneous
+
+    def _novelty(self, text: str) -> float:
+        from brain.novelty import novelty
+        v = novelty(self.cortex, self.state, text)
+        self._last_novelty = v
+        return v
+
+    def inquiry_episode(self):
+        i = self.meta.get("inquiry_episode")
+        return None if i is None or i >= len(self.hippocampus.episodes) else self.hippocampus.episodes[i]
+
+    def live_inquiry(self, telling: str, guided_reply: str):
+        """Declared teacher scaffold (SCAFFOLDS.md), the curiosity twin of live_self_belief(trace="self_turn"): the
+        teacher says something with a word the brain does not know; the brain hears it (its spontaneous reply is
+        returned, not stored as the lesson); the teacher guides its reply once, so the brain's own turn is
+        `guided_reply` (asking what the word means). The exchange is read into the working state and stored as one
+        episode tagged source="self"; what it reinstates is only the brain's own turn read from the birth state, so the
+        lesson's word is not carried back. Noted as the inquiry episode that the novelty gate may reinstate."""
+        telling = telling.strip()
+        assert _is_telling(telling), "the lesson is a telling with an unknown word"
+        before = [x.clone() for x in self.state]
+        inq, self.inquiry = self.inquiry, None          # the lesson itself is heard without the gate
+        try:
+            spontaneous, _ = self.hear(telling)
+        finally:
+            self.inquiry = inq
+        _, self.state = self.cortex.read(f"User: {telling}\n\nAssistant: {guided_reply}\n\n", before)
+        ep = self.hippocampus.store(self.cortex, self.base, f"{telling}\n\nAssistant: {guided_reply}", speaker="User")
+        ep.source = "self"
+        _, st = self.cortex.read(f"Assistant: {guided_reply}\n\n", self.base)
+        ep.delta = [d.half().cpu() if d is not None else None for d in self.cortex.matrix_delta(st, self.base)]
+        self.meta["inquiry_episode"] = len(self.hippocampus.episodes) - 1
         return spontaneous
 
     @torch.no_grad()
