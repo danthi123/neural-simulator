@@ -10,8 +10,6 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
-  control `results/2026-11-16-open-conv-day2-control-1.5b/`). Rehearse NO-GO, habituation fails R4 (board #290).
 - **LIVE RUNS:** mood iteration 4 six-seed TEST at 1.5B, GAIN 16 (pool40 42/43, pool41 44/100, pool42 101/102; `jobs/2026-11-18-pool-mood4-test.sh`, out `~/brain-lane/mood4/mood4_1.5b_s*.json`, DONE4). Then `mood_probe --add-embedding` on W, `mood_v3 table <dir> 1.5b`. Prereg: mood design doc section 15. AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
