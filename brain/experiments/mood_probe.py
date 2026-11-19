@@ -23,6 +23,7 @@ MiniLM embedding sentiment (secondary); primary-word echo rate; fluency = NLL of
 """
 import argparse
 import json
+import sys
 import random
 import time
 import zlib
@@ -146,6 +147,86 @@ def provenance(threads):
     return {"commit": sha, "brain_dirty": dirty, "torch": torch.__version__, "threads": threads}
 
 
+def mean(xs):
+    xs = [x for x in xs if x is not None]
+    return float(np.mean(xs)) if xs else None
+
+
+def score_rows(rows, rand_names, seed, embed=True):
+    """Embedding (optional), per-arm summary and paired contrasts with bootstrap CIs. One shared rng in a fixed
+    order, so a JSON scored later by add_embedding() matches a run scored on the node."""
+    arms = list(rows)
+    if embed:
+        emb = si.Embedding()
+        for arm in arms:
+            for r, s in zip(rows[arm], emb.score([r["reply"] for r in rows[arm]])):
+                r["emb"] = round(s, 4)
+
+    summary = {arm: {k: mean([r.get(k) for r in rows[arm]]) for k in ("lex", "emb", "nll", "words")} |
+               {"echo_rate": mean([float(r["echo"]) for r in rows[arm]]),
+                "echo_reg_rate": mean([float(r["echo_reg"]) for r in rows[arm]])} for arm in arms}
+    nrng = np.random.default_rng(seed)
+    contrasts = {}
+    for name, (p, n) in {"mood": ("pos", "neg"), "lesion": ("lesion_pos", "lesion_neg"),
+                         "random": ("rand_pos", "rand_neg"), "pos_vs_off": ("pos", "lesion_pos"),
+                         "neg_vs_off": ("neg", "lesion_neg"), "pos_off": ("pos", "off"), "neg_off": ("neg", "off"),
+                         "rand_pos_off": ("rand_pos", "off"), "rand_neg_off": ("rand_neg", "off")}.items():
+        if p in rows and n in rows:
+            c = {"identical_replies": mean([float(x["reply"] == y["reply"]) for x, y in zip(rows[p], rows[n])])}
+            for key in ("lex", "emb"):
+                if key in rows[p][0]:
+                    d = [x[key] - y[key] for x, y in zip(rows[p], rows[n])]
+                    c[key + "_diff"] = float(np.mean(d))
+                    c[key + "_ci95"] = boot_ci(d, nrng)
+            contrasts[name] = c
+    if all(x in rows for x in ("pos", "neg", "rand_pos", "rand_neg")):   # specificity: paired diff of diffs
+        c = {}
+        for key in ("lex", "emb"):
+            if key in rows["pos"][0]:
+                d = [(p[key] - n[key]) - (rp[key] - rn[key]) for p, n, rp, rn in
+                     zip(rows["pos"], rows["neg"], rows["rand_pos"], rows["rand_neg"])]
+                c[key + "_diff"] = float(np.mean(d))
+                c[key + "_ci95"] = boot_ci(d, nrng)
+        contrasts["specificity"] = c
+    # iteration 3: the random-direction NULL per sign = mean over the n_rand matched-norm directions driven by the same
+    # mood; mood effect = arm - null, paired per (question, sample)
+    for sg in ("pos", "neg"):
+        rn = [x for x in rand_names[sg] if x in rows]
+        if sg in rows and rn:
+            c = {"n_rand": len(rn)}
+            for key in ("lex", "emb"):
+                if key in rows[sg][0]:
+                    d = [r[key] - float(np.mean([rows[x][i][key] for x in rn])) for i, r in enumerate(rows[sg])]
+                    c[key + "_diff"] = float(np.mean(d))
+                    c[key + "_ci95"] = boot_ci(d, nrng)
+                    if "off" in rows:
+                        c[key + "_null_minus_off"] = float(np.mean(
+                            [np.mean([rows[x][i][key] for x in rn]) - rows["off"][i][key] for i in range(len(rows[sg]))]))
+            contrasts[f"{sg}_null"] = c
+    return summary, contrasts
+
+
+def rand_names_for(n_rand):
+    rn = {"pos": ["rand_pos"], "neg": ["rand_neg"]}
+    for k in range(1, n_rand):
+        rn["pos"].append(f"rand{k}_pos")
+        rn["neg"].append(f"rand{k}_neg")
+    return rn
+
+
+def add_embedding(path):
+    """Score the saved replies of a --no-embedding run with the frozen MiniLM instrument and recompute summary and
+    contrasts (for nodes without transformers). Records the host that added it."""
+    import socket
+    j = json.load(open(path))
+    assert not any("emb" in r for arm in j["rows"].values() for r in arm), "already has embedding"
+    j["summary"], j["contrasts"] = score_rows(j["rows"], rand_names_for(j["n_rand"]), j["seed"], embed=True)
+    j["provenance"]["embedding_added_on"] = socket.gethostname()
+    with open(path, "w") as fh:
+        json.dump(j, fh, indent=1)
+    print(path, "pos_null emb", j["contrasts"]["pos_null"].get("emb_diff"), "neg_null emb", j["contrasts"]["neg_null"].get("emb_diff"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -226,57 +307,7 @@ def main():
         print(f"[s{a.seed}] q{qi} done {time.time() - t0:.0f}s", flush=True)
     aff.axis_delta = true_axis
 
-    if not a.no_embedding:
-        emb = si.Embedding()
-        for arm in arms:
-            for r, s in zip(rows[arm], emb.score([r["reply"] for r in rows[arm]])):
-                r["emb"] = round(s, 4)
-
-    def mean(xs):
-        xs = [x for x in xs if x is not None]
-        return float(np.mean(xs)) if xs else None
-
-    summary = {arm: {k: mean([r.get(k) for r in rows[arm]]) for k in ("lex", "emb", "nll", "words")} |
-               {"echo_rate": mean([float(r["echo"]) for r in rows[arm]]),
-                "echo_reg_rate": mean([float(r["echo_reg"]) for r in rows[arm]])} for arm in arms}
-    nrng = np.random.default_rng(a.seed)
-    contrasts = {}
-    for name, (p, n) in {"mood": ("pos", "neg"), "lesion": ("lesion_pos", "lesion_neg"),
-                         "random": ("rand_pos", "rand_neg"), "pos_vs_off": ("pos", "lesion_pos"),
-                         "neg_vs_off": ("neg", "lesion_neg"), "pos_off": ("pos", "off"), "neg_off": ("neg", "off"),
-                         "rand_pos_off": ("rand_pos", "off"), "rand_neg_off": ("rand_neg", "off")}.items():
-        if p in rows and n in rows:
-            c = {"identical_replies": mean([float(x["reply"] == y["reply"]) for x, y in zip(rows[p], rows[n])])}
-            for key in ("lex", "emb"):
-                if key in rows[p][0]:
-                    d = [x[key] - y[key] for x, y in zip(rows[p], rows[n])]
-                    c[key + "_diff"] = float(np.mean(d))
-                    c[key + "_ci95"] = boot_ci(d, nrng)
-            contrasts[name] = c
-    if all(x in rows for x in ("pos", "neg", "rand_pos", "rand_neg")):   # specificity: paired diff of diffs
-        c = {}
-        for key in ("lex", "emb"):
-            if key in rows["pos"][0]:
-                d = [(p[key] - n[key]) - (rp[key] - rn[key]) for p, n, rp, rn in
-                     zip(rows["pos"], rows["neg"], rows["rand_pos"], rows["rand_neg"])]
-                c[key + "_diff"] = float(np.mean(d))
-                c[key + "_ci95"] = boot_ci(d, nrng)
-        contrasts["specificity"] = c
-    # iteration 3: the random-direction NULL per sign = mean over the n_rand matched-norm directions driven by the same
-    # mood; mood effect = arm - null, paired per (question, sample)
-    for sg in ("pos", "neg"):
-        rn = [x for x in rand_names[sg] if x in rows]
-        if sg in rows and rn:
-            c = {"n_rand": len(rn)}
-            for key in ("lex", "emb"):
-                if key in rows[sg][0]:
-                    d = [r[key] - float(np.mean([rows[x][i][key] for x in rn])) for i, r in enumerate(rows[sg])]
-                    c[key + "_diff"] = float(np.mean(d))
-                    c[key + "_ci95"] = boot_ci(d, nrng)
-                    if "off" in rows:
-                        c[key + "_null_minus_off"] = float(np.mean(
-                            [np.mean([rows[x][i][key] for x in rn]) - rows["off"][i][key] for i in range(len(rows[sg]))]))
-            contrasts[f"{sg}_null"] = c
+    summary, contrasts = score_rows(rows, rand_names, a.seed, embed=not a.no_embedding)
     out = {"seed": a.seed, "readout": a.readout, "model": a.model, "gain": a.gain, "questions": a.questions, "samples": a.samples,
            "primaries": {"pos": pos_p, "neg": neg_p}, "appraisal": appraisal, "n_rand": a.n_rand,
            "max_tokens": a.max_tokens, "provenance": provenance(a.threads),
@@ -293,4 +324,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 2 and sys.argv[1] == "--add-embedding":
+        for p in sys.argv[2:]:
+            add_embedding(p)
+    else:
+        main()

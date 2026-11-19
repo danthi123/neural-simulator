@@ -96,6 +96,7 @@ In brain/: code-substitute: innate primaries are a declared body scaffold (balan
 In brain/: missing: arousal acting on the cortex (NE gain), surprise/novelty input to arousal, salience to encoding gain, wiring into `Brain.hear`, a body model behind the primaries.
 Readiness: PARTIAL. Informative: lesion changes tone of replies to the same question (mood probe) and, once wired, on the weekly prompts. Expected failure: appraisal of subtle or positive events (linear lexical read, no learned appraisal), arousal effects (not acting yet), any test needing a body.
 Scale note: tone control is partly an LM property; check a small and a large size before attributing a tone change to the affect part.
+11-18: iteration 4 at 1.5B NOT PASS (appraisal reads positive events right on 2/6 seeds; negative push beats the null 3/6; `results/2026-11-18-mood4-1.5b.md`): additive bias NO-GO at 1.5B; next a 1.5B appraisal and a gain-type modulation.
 11-03 final: mood iteration 2 NOT PASS 6/7 (`results/2026-11-03-mood2-0.1b.md`): negative mood darkens replies 6/6, positive brightens 3/6, a random matched-norm direction also lowers sentiment. `Affect` stays default OFF and unwired. Lead only.
 
 ## Curiosity
@@ -105,7 +106,8 @@ Biology:
 - MASTER section 2.8 "Curiosity / intrinsic motivation"; `F/2026-07-23-DR1-curiosity-inversion-6seed-GO.md`.
 In brain/: have: the cortex's own prediction error is available (logits) but unused; hippocampal familiarity score exists.
 In brain/: code-substitute: none.
-In brain/: missing: a surprise signal, a gap-to-want drive, questions asked because of it, a place to ask (the chat loop only answers).
+In brain/: measured 11-18: the cortex's own surprise at an item marks coined words at AUROC 1.00 vs common and rare-real and habituates on repeat (`results/2026-11-18-novelty-stage0-1.5b.md`); not yet read by `Brain`.
+In brain/: missing: a gap-to-want drive, questions asked because of it (the unchanged brain asks what a coined thing is no more than a common one, and invents meanings), a place to ask (the chat loop only answers).
 Readiness: NOT-READY. Informative once surprise exists: does the brain ask about unfamiliar topics more than familiar ones. Expected failure: curiosity probes today.
 Scale note: untested; prediction-error signal quality should be checked per size before use.
 

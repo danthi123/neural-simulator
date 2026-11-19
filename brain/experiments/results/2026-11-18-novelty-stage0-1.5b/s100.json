@@ -1,0 +1,938 @@
+{
+ "seed": 100,
+ "model": "1.5b",
+ "host": "dant123-wk",
+ "threads": 6,
+ "torch": "2.11.0+cu128",
+ "summary": {
+  "auroc_N_vs_C": 1.0,
+  "auroc_N_vs_R": 1.0,
+  "auroc_R_vs_C": 0.9930555555555556,
+  "auroc_N_vs_C_firsttoken": 0.9930555555555556,
+  "auroc_N_vs_R_firsttoken": 0.7152777777777778,
+  "habituation_drop_mean": {
+   "C": 7.644296020269394,
+   "R": 12.092745097458343,
+   "N": 24.019090850968496
+  },
+  "auroc_N_first_vs_repeat": 1.0,
+  "mean_surprisal": {
+   "C": 4.2833129068215685,
+   "R": 10.744709813351315,
+   "N": 24.184741721178096
+  },
+  "asks_item_rate": {
+   "C": 0.5,
+   "R": 0.5833333333333334,
+   "N": 0.4166666666666667
+  },
+  "any_question_rate": {
+   "C": 0.8333333333333334,
+   "R": 0.75,
+   "N": 0.75
+  }
+ },
+ "rows": [
+  {
+   "frame": 1,
+   "cls": "C",
+   "item": "guitar",
+   "stmt": "I play the guitar in a band.",
+   "first": {
+    "sum": 2.397782564163208,
+    "first": 2.397782564163208,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.87321662902832,
+    "first": 4.87321662902832,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.07457160949707,
+    "first": 12.07457160949707,
+    "tokens": 1
+   },
+   "reply": "That's awesome! What kind of music do you play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "R",
+   "item": "oboe",
+   "stmt": "I play the oboe in a band.",
+   "first": {
+    "sum": 9.369095608592033,
+    "first": 9.32670783996582,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 5.4041838347911835,
+    "first": 5.268961429595947,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.39990496635437,
+    "first": 12.259357452392578,
+    "tokens": 2
+   },
+   "reply": "That's awesome! What kind of music do you play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "N",
+   "item": "vellophone",
+   "stmt": "I play the vellophone in a band.",
+   "first": {
+    "sum": 21.749493040144444,
+    "first": 11.426158905029297,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 6.363312129396945,
+    "first": 5.910510063171387,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 28.163989305496216,
+    "first": 14.859920501708984,
+    "tokens": 4
+   },
+   "reply": "That's awesome! What kind of music do you play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "C",
+   "item": "teacher",
+   "stmt": "My wife works as a teacher.",
+   "first": {
+    "sum": 3.107506513595581,
+    "first": 3.107506513595581,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 7.320636749267578,
+    "first": 7.320636749267578,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.090871810913086,
+    "first": 12.090871810913086,
+    "tokens": 1
+   },
+   "reply": "That's great! What does she teach?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "R",
+   "item": "cooper",
+   "stmt": "My wife works as a cooper.",
+   "first": {
+    "sum": 12.358891487121582,
+    "first": 12.358891487121582,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 5.6446685791015625,
+    "first": 5.6446685791015625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.173715591430664,
+    "first": 14.173715591430664,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What does she do as a cooper?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "N",
+   "item": "strobbler",
+   "stmt": "My wife works as a strobbler.",
+   "first": {
+    "sum": 22.79331922531128,
+    "first": 12.576749801635742,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 8.871723800897598,
+    "first": 6.005276203155518,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 26.688826084136963,
+    "first": 13.228738784790039,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What does that mean?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "C",
+   "item": "Emma",
+   "stmt": "My daughter's name is Emma.",
+   "first": {
+    "sum": 4.592396259307861,
+    "first": 4.592396259307861,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 2.3997955322265625,
+    "first": 2.3997955322265625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.351168632507324,
+    "first": 10.351168632507324,
+    "tokens": 1
+   },
+   "reply": "Hi Emma! What's your favorite color?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "R",
+   "item": "Clementine",
+   "stmt": "My daughter's name is Clementine.",
+   "first": {
+    "sum": 8.23886987566948,
+    "first": 8.079446792602539,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 1.872246619546786,
+    "first": 1.8708633184432983,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 13.115988075733185,
+    "first": 12.355070114135742,
+    "tokens": 2
+   },
+   "reply": "Clementine is a beautiful name. It's a name that has been used for centuries and has a rich history.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "N",
+   "item": "Brislet",
+   "stmt": "My daughter's name is Brislet.",
+   "first": {
+    "sum": 21.55418300628662,
+    "first": 10.353641510009766,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 2.135726846754551,
+    "first": 2.1124427318573,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 23.719334602355957,
+    "first": 13.649856567382812,
+    "tokens": 2
+   },
+   "reply": "That's a lovely name! It sounds like it has a nice, modern feel to it.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "C",
+   "item": "Max",
+   "stmt": "My dog is called Max.",
+   "first": {
+    "sum": 3.9448392391204834,
+    "first": 3.9448392391204834,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 0.38594210147857666,
+    "first": 0.38594210147857666,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.419349670410156,
+    "first": 10.419349670410156,
+    "tokens": 1
+   },
+   "reply": "Max is a very cute dog.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "R",
+   "item": "Rasputin",
+   "stmt": "My dog is called Rasputin.",
+   "first": {
+    "sum": 10.839819684624672,
+    "first": 8.122230529785156,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.0975022908532992,
+    "first": 1.086438775062561,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 14.743334211409092,
+    "first": 10.240361213684082,
+    "tokens": 3
+   },
+   "reply": "Rasputin sounds like a very interesting name for your dog. What's his personality like?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "N",
+   "item": "Quaxlin",
+   "stmt": "My dog is called Quaxlin.",
+   "first": {
+    "sum": 21.824824810028076,
+    "first": 8.033716201782227,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.0301271537318826,
+    "first": 1.0226001739501953,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.74792766571045,
+    "first": 8.212203025817871,
+    "tokens": 3
+   },
+   "reply": "Quaxlin is a cute dog. What kind of dog is he?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "C",
+   "item": "apple",
+   "stmt": "My favourite fruit is the apple.",
+   "first": {
+    "sum": 1.906610369682312,
+    "first": 1.906610369682312,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.6323771476745605,
+    "first": 4.6323771476745605,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.604970932006836,
+    "first": 10.604970932006836,
+    "tokens": 1
+   },
+   "reply": "I'm glad you like apples! They're a great source of fiber and vitamins.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "R",
+   "item": "quince",
+   "stmt": "My favourite fruit is the quince.",
+   "first": {
+    "sum": 8.595987046137452,
+    "first": 8.585700988769531,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.089046288281679,
+    "first": 3.0823659896850586,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.207923412322998,
+    "first": 11.443359375,
+    "tokens": 2
+   },
+   "reply": "That's a lovely fruit! I've never tried it before. What do you like about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "N",
+   "item": "plimberry",
+   "stmt": "My favourite fruit is the plimberry.",
+   "first": {
+    "sum": 19.510502338409424,
+    "first": 8.70865249633789,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.994496401399374,
+    "first": 3.61126446723938,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.10096263885498,
+    "first": 12.0267333984375,
+    "tokens": 3
+   },
+   "reply": "Plimberry? That's a unique name for a fruit. I've never heard of it before.",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "C",
+   "item": "Toyota",
+   "stmt": "My car is a Toyota.",
+   "first": {
+    "sum": 3.7355470657348633,
+    "first": 3.7355470657348633,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.863027572631836,
+    "first": 4.863027572631836,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.686010360717773,
+    "first": 11.686010360717773,
+    "tokens": 1
+   },
+   "reply": "Oh, I see. What's your favorite color?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "R",
+   "item": "Lada",
+   "stmt": "My car is a Lada.",
+   "first": {
+    "sum": 8.370148869231343,
+    "first": 8.345065116882324,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.3591129295527935,
+    "first": 3.302232027053833,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.778571367263794,
+    "first": 12.753089904785156,
+    "tokens": 2
+   },
+   "reply": "That's interesting! Lada is a popular car brand in Russia. What kind of Lada do you have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "N",
+   "item": "Zentrova",
+   "stmt": "My car is a Zentrova.",
+   "first": {
+    "sum": 20.994940280914307,
+    "first": 10.681632041931152,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.2608136576600373,
+    "first": 2.2494215965270996,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 21.426505088806152,
+    "first": 10.043880462646484,
+    "tokens": 3
+   },
+   "reply": "Zentrova is a car brand that was created by Zentrova Automotive, a company based in Germany. The Zentrova brand offers a range of vehicles, including sedans, SUVs, and vans.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "C",
+   "item": "pizza",
+   "stmt": "We had pizza for dinner last night.",
+   "first": {
+    "sum": 8.30126953125,
+    "first": 8.30126953125,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.392279624938965,
+    "first": 3.392279624938965,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.697999954223633,
+    "first": 11.697999954223633,
+    "tokens": 1
+   },
+   "reply": "That sounds delicious! What kind of pizza did you have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "R",
+   "item": "kedgeree",
+   "stmt": "We had kedgeree for dinner last night.",
+   "first": {
+    "sum": 18.76086938381195,
+    "first": 12.848664283752441,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.1302789812907577,
+    "first": 2.1209452152252197,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 19.753085732460022,
+    "first": 11.016548156738281,
+    "tokens": 3
+   },
+   "reply": "Oh, that sounds delicious! What's kedgeree?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "N",
+   "item": "frunkets",
+   "stmt": "We had frunkets for dinner last night.",
+   "first": {
+    "sum": 28.26974868774414,
+    "first": 15.631665229797363,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.2833914367947727,
+    "first": 3.24444580078125,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.978026390075684,
+    "first": 13.252951622009277,
+    "tokens": 3
+   },
+   "reply": "Oh, that sounds delicious! What kind of frunkets did you have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "C",
+   "item": "stamps",
+   "stmt": "My son collects stamps.",
+   "first": {
+    "sum": 4.247089385986328,
+    "first": 4.247089385986328,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.794460296630859,
+    "first": 4.794460296630859,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.228012084960938,
+    "first": 14.228012084960938,
+    "tokens": 1
+   },
+   "reply": "That's great! Stamps can be a fun and interesting hobby. What kind of stamps does he collect?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "R",
+   "item": "netsuke",
+   "stmt": "My son collects netsuke.",
+   "first": {
+    "sum": 12.941270351409912,
+    "first": 10.094045639038086,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 2.6620137486606836,
+    "first": 2.6521530151367188,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.05072021484375,
+    "first": 13.214788436889648,
+    "tokens": 2
+   },
+   "reply": "Netsuke are small sculptures that were used to hold up the ends of a Japanese kimono. They are often made of wood, ivory, or other materials and can be quite intricately carved.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "N",
+   "item": "wombix",
+   "stmt": "My son collects wombix.",
+   "first": {
+    "sum": 28.55332326889038,
+    "first": 13.499021530151367,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.3605376332998276,
+    "first": 2.1298604011535645,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.28599262237549,
+    "first": 13.948066711425781,
+    "tokens": 3
+   },
+   "reply": "What's a wombix?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "C",
+   "item": "Paris",
+   "stmt": "My grandmother grew up in Paris.",
+   "first": {
+    "sum": 6.459252834320068,
+    "first": 6.459252834320068,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.7625365257263184,
+    "first": 3.7625365257263184,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.709659576416016,
+    "first": 10.709659576416016,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What was it like growing up in Paris?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "R",
+   "item": "Tbilisi",
+   "stmt": "My grandmother grew up in Tbilisi.",
+   "first": {
+    "sum": 10.33876126864925,
+    "first": 10.313220977783203,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.6445012867916375,
+    "first": 3.6291091442108154,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 15.20958537235856,
+    "first": 14.165287971496582,
+    "tokens": 3
+   },
+   "reply": "That's fascinating! Tbilisi is a beautiful city with a rich history. What was your grandmother's favorite part of the city?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "N",
+   "item": "Ploskovar",
+   "stmt": "My grandmother grew up in Ploskovar.",
+   "first": {
+    "sum": 28.21157169342041,
+    "first": 9.662603378295898,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.6165700208512135,
+    "first": 1.6139285564422607,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 39.423885345458984,
+    "first": 10.301984786987305,
+    "tokens": 4
+   },
+   "reply": "Ploskovar is a beautiful village in the heart of Slovakia. It's known for its stunning architecture, charming streets, and rich history.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "C",
+   "item": "chess",
+   "stmt": "I'm learning to play chess.",
+   "first": {
+    "sum": 3.3202226161956787,
+    "first": 3.3202226161956787,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 2.885193347930908,
+    "first": 2.885193347930908,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.232419967651367,
+    "first": 10.232419967651367,
+    "tokens": 1
+   },
+   "reply": "That's great! Chess is a very challenging and rewarding game. What kind of strategies are you using to improve your skills?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "R",
+   "item": "mahjong",
+   "stmt": "I'm learning to play mahjong.",
+   "first": {
+    "sum": 8.654111612588167,
+    "first": 8.595107078552246,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 1.7549943450139835,
+    "first": 1.7539706230163574,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 12.908421576023102,
+    "first": 12.076814651489258,
+    "tokens": 2
+   },
+   "reply": "That's great! Mahjong is a fun and challenging game. What do you like most about it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "N",
+   "item": "krastle",
+   "stmt": "I'm learning to play krastle.",
+   "first": {
+    "sum": 27.94908332824707,
+    "first": 11.461215019226074,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.054561149328947,
+    "first": 1.9921848773956299,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 26.170437812805176,
+    "first": 11.552841186523438,
+    "tokens": 3
+   },
+   "reply": "That's great! What do you like about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "C",
+   "item": "hiking",
+   "stmt": "I spent the weekend hiking.",
+   "first": {
+    "sum": 5.141513824462891,
+    "first": 5.141513824462891,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.96356463432312,
+    "first": 3.96356463432312,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.594970703125,
+    "first": 11.594970703125,
+    "tokens": 1
+   },
+   "reply": "That sounds like a great time! What did you do?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "R",
+   "item": "geocaching",
+   "stmt": "I spent the weekend geocaching.",
+   "first": {
+    "sum": 11.191384631732944,
+    "first": 10.722893714904785,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.0037187806738075,
+    "first": 3.9962024688720703,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 11.972573751583695,
+    "first": 10.456377983093262,
+    "tokens": 3
+   },
+   "reply": "Geocaching is a fun outdoor activity where you search for hidden containers, called geocaches, using GPS coordinates. It's a great way to explore new places and connect with nature.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "N",
+   "item": "flindering",
+   "stmt": "I spent the weekend flindering.",
+   "first": {
+    "sum": 20.845237642526627,
+    "first": 9.794942855834961,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.317876696586609,
+    "first": 3.9677867889404297,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.077805519104004,
+    "first": 12.285272598266602,
+    "tokens": 3
+   },
+   "reply": "That sounds like a lot of fun! What did you do?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "C",
+   "item": "London",
+   "stmt": "My brother lives in London.",
+   "first": {
+    "sum": 4.245724678039551,
+    "first": 4.245724678039551,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 1.769876480102539,
+    "first": 1.769876480102539,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.084453582763672,
+    "first": 11.084453582763672,
+    "tokens": 1
+   },
+   "reply": "Oh, that's cool! I've heard London is a really big city. Do you know what it's like there?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "R",
+   "item": "Ljubljana",
+   "stmt": "My brother lives in Ljubljana.",
+   "first": {
+    "sum": 9.277307940647006,
+    "first": 7.424045562744141,
+    "tokens": 5
+   },
+   "repeat": {
+    "sum": 1.5302693155244924,
+    "first": 1.5237770080566406,
+    "tokens": 5
+   },
+   "cold_follow": {
+    "sum": 15.991653897799551,
+    "first": 10.262171745300293,
+    "tokens": 5
+   },
+   "reply": "That's great! Ljubljana is a beautiful city in Slovenia. What do you like about it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "N",
+   "item": "Drelvik",
+   "stmt": "My brother lives in Drelvik.",
+   "first": {
+    "sum": 27.960673332214355,
+    "first": 10.472874641418457,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.279927931027487,
+    "first": 1.2772568464279175,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 32.01446199417114,
+    "first": 12.073792457580566,
+    "tokens": 3
+   },
+   "reply": "Drelvik is a small town in Norway. It's known for its beautiful nature and picturesque landscapes. Have you ever been there?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  }
+ ],
+ "seconds": 302.9
+}

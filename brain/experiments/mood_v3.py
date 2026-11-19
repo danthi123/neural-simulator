@@ -49,10 +49,10 @@ def select_register(d):
     return win
 
 
-def select_gain(d):
+def select_gain(d, size="0.4b"):
     best, res = None, {}
     for g in GAINS:
-        fs = glob.glob(f"{d}/gaindev_0.4b_g{int(g)}_s42.json")
+        fs = glob.glob(f"{d}/gaindev_{size}_g{int(g)}_s42.json")
         if not fs:
             continue
         s = json.load(open(fs[0]))["summary"]
@@ -66,7 +66,7 @@ def select_gain(d):
         if ok and (best is None or effect > res[best][0]):
             best = g
     best = best if best is not None else min(GAINS)
-    print(f"SELECTED 0.4B GAIN: {best:.0f} (rule: max lex pos-neg on dev s.t. echo <= 0.10 and NLL ratio <= 1.25; "
+    print(f"SELECTED {size} GAIN: {best:.0f} (rule: max lex pos-neg on dev s.t. echo <= 0.10 and NLL ratio <= 1.25; "
           f"tie -> smaller)")
     return best
 
@@ -84,8 +84,8 @@ def criteria(j):
     }, echo_d
 
 
-def table(d, size):
-    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
+def table(d, size, prefix="mood3"):
+    files = sorted(glob.glob(f"{d}/{prefix}_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
     print("| seed | held-out acc +/- | m_pos | m_neg | lex pos-null [CI] | lex neg-null [CI] | emb pos-null / neg-null "
           "| null-off pos / neg (lex) | lex pos-off [CI] | lex neg-off [CI] | off lex | echo mood-off | "
           "NLL pos/neg/off | criteria met |")
@@ -128,5 +128,5 @@ def table(d, size):
 
 if __name__ == "__main__":
     cmd, d = sys.argv[1], sys.argv[2]
-    {"register": lambda: select_register(d), "gain": lambda: select_gain(d),
-     "table": lambda: table(d, sys.argv[3])}[cmd]()
+    {"register": lambda: select_register(d), "gain": lambda: select_gain(d, *sys.argv[3:4]),
+     "table": lambda: table(d, *sys.argv[3:5])}[cmd]()
