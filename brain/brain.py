@@ -188,12 +188,13 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = None,
+                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None):
-        """inquiry: novelty gate for "it asks about what is new to it" (switch, default OFF = None, the lesion; flip
-        candidate "auto": a size with no INQUIRY_BAR_BY_SIZE row, e.g. 0.1B, stays off; six-seed PASS NARROWED,
-        results/2026-11-19-inquiry-{test,weekly}-1.5b.md). A float is the bar in
+        """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
+        (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
+        Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
+        (the lesion). A float is the bar in
         nats: when a heard telling holds a word whose surprisal, read from the current state (brain/novelty.py), exceeds
         it and nothing was recalled, the brain reinstates its lived inquiry episode (live_inquiry, a declared teacher
         scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md. "auto" = the
@@ -334,7 +335,7 @@ class Brain:
             self._acquire_lock()
         try:
             self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
-            self.inquiry = inquiry   # switch (default OFF = None; "auto" = size bar + birth lesson): novelty bar (nats)
+            self.inquiry = inquiry   # default "auto" (size bar + birth lesson; on at 1.5B); None = off: novelty bar (nats)
             self.inquiry_birth = False   # "auto": the lesson is lived at birth (set below once the size is known)
             self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
             # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
