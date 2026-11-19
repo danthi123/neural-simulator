@@ -255,3 +255,33 @@ register's ceiling); fails C6 echo on s43/s101 (+0.104/+0.125). 0.4B 2/6: negati
 1/6 (a random push raises sentiment at 0.4B, +1.7), held-out positive appraisal 4/6. Caveat: a quarter to a third of
 negative-mood replies are apology/refusals ("I'm sorry, I can't help"); tone excluding "sorry" stays negative at about
 half size (exploratory).
+
+## 15. Iteration 4 (11-18): the frozen iteration-3 method at 1.5B. PRE-REGISTERED before any 1.5B run
+
+Record brief:
+- Iteration 3 left a lead at 0.1B (5/6 criteria, only echo failed) and a negative at 0.4B. At 0.4B positive mood was
+  no different from a random push (1/6). `results/2026-11-03-mood3.md`.
+- 1.5B is now the working size (open conversation, weekly). The mood method has never run there.
+- PREREQUISITES: "tone control is partly an LM property; check a small and a large size". 0.1B and 0.4B disagree,
+  so the 0.4B negative is a verdict on that size, not yet on the method.
+- Prerequisites met: cortex fast memory, innate primaries (body scaffold), appraisal. Host decision: none new.
+- Expected: negative mood darkens (it did at both sizes). Positive vs the null is the open question. Risk: a 1.5B
+  random push may brighten replies as it did at 0.4B.
+
+Method:
+- Unchanged from sections 12 and 13: affect.py, primaries, two-pole deep-half appraisal (1.5B: the deeper half of
+  its layers, same rule), TAU 4, `mixed` register, instruments hash-frozen, null of 2 random directions.
+- GAIN chosen on DEV only by `mood_v3 gain <dir> 1.5b`. Dev data: seed 42, `mixed_dev` x 1 sample, arms
+  pos/neg/off, 40 tokens, candidates {8, 16, 32}. Same rule as section 12(c). Recorded in section 16 before any
+  test run.
+- Test: six seeds 42/43/44/100/101/102 on pool CPU, `--questions mixed_test --samples 2 --max-tokens 40 --arms
+  pos,neg,off,rand_pos,rand_neg --n-rand 2 --gain <dev> --threads <node>`.
+
+Criteria: C1-C6 of section 12, unchanged, at 1.5B.
+
+Decision:
+- PASS at 1.5B: wire `Affect` into `Brain` behind its switch (default OFF). Then judge it on open conversation with
+  the mood lesion, read whole, before any flip.
+- C3 fails (positive no different from a random push) with C4 passing: pole-specific patterns, section 14 next item 2.
+- C4 fails too: the additive matrix-memory bias does not shape tone at 1.5B. NO-GO on the method; next is a
+  gain-type (arousal) modulation in place of an additive push.

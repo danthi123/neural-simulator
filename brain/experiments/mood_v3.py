@@ -49,10 +49,10 @@ def select_register(d):
     return win
 
 
-def select_gain(d):
+def select_gain(d, size="0.4b"):
     best, res = None, {}
     for g in GAINS:
-        fs = glob.glob(f"{d}/gaindev_0.4b_g{int(g)}_s42.json")
+        fs = glob.glob(f"{d}/gaindev_{size}_g{int(g)}_s42.json")
         if not fs:
             continue
         s = json.load(open(fs[0]))["summary"]
@@ -66,7 +66,7 @@ def select_gain(d):
         if ok and (best is None or effect > res[best][0]):
             best = g
     best = best if best is not None else min(GAINS)
-    print(f"SELECTED 0.4B GAIN: {best:.0f} (rule: max lex pos-neg on dev s.t. echo <= 0.10 and NLL ratio <= 1.25; "
+    print(f"SELECTED {size} GAIN: {best:.0f} (rule: max lex pos-neg on dev s.t. echo <= 0.10 and NLL ratio <= 1.25; "
           f"tie -> smaller)")
     return best
 
@@ -128,5 +128,5 @@ def table(d, size):
 
 if __name__ == "__main__":
     cmd, d = sys.argv[1], sys.argv[2]
-    {"register": lambda: select_register(d), "gain": lambda: select_gain(d),
+    {"register": lambda: select_register(d), "gain": lambda: select_gain(d, *sys.argv[3:4]),
      "table": lambda: table(d, sys.argv[3])}[cmd]()
