@@ -8,10 +8,11 @@ inspection and is never put back into the conversation. Strength grows with use 
 from __future__ import annotations
 
 import math
-import time
 from dataclasses import dataclass, field
 
 import torch
+
+from brain import clock
 
 
 @dataclass
@@ -20,8 +21,8 @@ class Episode:
     delta: list                    # per-layer matrix-memory deltas (fp16), None for token-shift slots
     key: torch.Tensor              # pattern-completion key (layer-0 associative delta)
     strength: float = 1.0
-    created: float = field(default_factory=time.time)
-    last_used: float = field(default_factory=time.time)
+    created: float = field(default_factory=lambda: clock.now())
+    last_used: float = field(default_factory=lambda: clock.now())
     uses: int = 0
     permanent: bool = False        # identity-level memories (own name, friends' names)
     source: str = "other"          # source tag: "self" = the episode holds the brain's own words (lived reply)
@@ -85,7 +86,7 @@ class Hippocampus:
     def effective_strength(self, ep: Episode, now: float | None = None) -> float:
         if ep.permanent:
             return max(ep.strength, 3.0)
-        age_days = ((now or time.time()) - ep.last_used) / 86400.0
+        age_days = ((now or clock.now()) - ep.last_used) / 86400.0
         return ep.strength * (1.0 + age_days / self.TAU_DAYS) ** (-self.DECAY)
 
     def familiarity(self, cortex, base, cue_text: str, speaker: str = "User", exclude=()) -> float:
@@ -110,7 +111,7 @@ class Hippocampus:
         exclude: episode indices that ordinary pattern completion never returns (an episode only a gate reinstates)."""
         if not self.enabled or not self.episodes:
             return None, 0.0
-        now = time.time()
+        now = clock.now()
         score = self.scores(cortex, base, cue_text, speaker, now)
         if exclude:
             score = score.clone()
@@ -137,7 +138,7 @@ class Hippocampus:
         """Strength-weighted similarities: what recall competes on. Does not change any episode."""
         sims = self.similarities(cortex, base, cue_text, speaker)
         # weaker memories are harder to bring back: weight similarity by a saturating function of strength
-        now = now or time.time()
+        now = now or clock.now()
         w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
         return sims * w
 
