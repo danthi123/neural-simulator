@@ -10,7 +10,10 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** none (W and pool40-42 idle).
+- **LIVE RUNS:** none. **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
+  after the night: every intact error is a wrong reinstated episode ("What's your name?" -> Marguerite telling 6/6);
+  slept facts intrude in both arms (fox named "Pixel" 12/12). Curiosity false fires harmless; no collapse
+  (`results/2026-11-19-weekly-defaults-300-305-1.5b.md`).
 - **RESULT (11-19):** curiosity ON by default at 1.5B (`Brain(inquiry="auto")`, flipped 2bf228e2f). Six-seed test PASS,
   NARROWED: coined asks 0.08 -> 0.33, asks-or-admits +0.38, invents -0.12, common untouched; 12 fixed items (gain on ~7),
   fires on some real names ("What's pho?"; in the weekly 7 false fires, replies ordinary). Weekly guard: first run
@@ -36,8 +39,9 @@
 - **NEXT STEP:** 11-30 status: (a) selection MET as read-out, (c) curiosity MET at scaffold level (ON), (b) mood NOT MET:
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
-  mood method (after 11-30) must act alongside recall. Now: the weekly transcript with curiosity ON, then the 12-14
-  milestone (multi-week life) per ARCHITECTURE section 4.
+  mood method (after 11-30) must act alongside recall. NOW (fresh session): 12-14 milestone (multi-week life) record
+  check + design (before-build); first run = a per-night baseline at current defaults measuring the two weekly
+  defects (post-sleep reinstatement cost, slept-fact intrusion), which should compound over nights.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
