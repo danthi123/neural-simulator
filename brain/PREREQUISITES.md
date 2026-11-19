@@ -106,7 +106,7 @@ Biology:
 - BIO/spiking-habituation-novelty.md, BIO/spiking-confidence-synaptic-integration.md.
 - MASTER section 2.8 "Curiosity / intrinsic motivation"; `F/2026-07-23-DR1-curiosity-inversion-6seed-GO.md`.
 In brain/: have: the cortex's own prediction error is available (logits) but unused; hippocampal familiarity score exists.
-In brain/: code-substitute: the inquiry gate (SCAFFOLDS.md): a host bar on the cortex's surprise reinstates one teacher-given lived lesson.
+In brain/: code-substitute: the inquiry gate (SCAFFOLDS.md), ON by default at 1.5B since 11-19: a host bar on the cortex's surprise reinstates one teacher-given lesson lived at birth.
 In brain/: measured 11-18: the cortex's own surprise at an item marks coined words at AUROC 1.00 vs common and rare-real and habituates on repeat (`results/2026-11-18-novelty-stage0-1.5b.md`).
 In brain/: measured 11-19 (six seeds, 1.5B): with the gate, coined-word asks 0.08 -> 0.33, asks or admits 0.14 -> 0.51, invents 0.27 -> 0.15, common words untouched; NARROWED (12 fixed items, gain on ~7; fires on some real rare names) (`results/2026-11-19-inquiry-test-1.5b.md`).
 In brain/: missing: a learned bar and a learned surprise-to-asking link (both host-set), a gap-to-want drive, using the answer it gets.
