@@ -147,6 +147,11 @@ def provenance(threads):
     return {"commit": sha, "brain_dirty": dirty, "torch": torch.__version__, "threads": threads}
 
 
+def mean(xs):
+    xs = [x for x in xs if x is not None]
+    return float(np.mean(xs)) if xs else None
+
+
 def score_rows(rows, rand_names, seed, embed=True):
     """Embedding (optional), per-arm summary and paired contrasts with bootstrap CIs. One shared rng in a fixed
     order, so a JSON scored later by add_embedding() matches a run scored on the node."""
@@ -156,10 +161,6 @@ def score_rows(rows, rand_names, seed, embed=True):
         for arm in arms:
             for r, s in zip(rows[arm], emb.score([r["reply"] for r in rows[arm]])):
                 r["emb"] = round(s, 4)
-
-    def mean(xs):
-        xs = [x for x in xs if x is not None]
-        return float(np.mean(xs)) if xs else None
 
     summary = {arm: {k: mean([r.get(k) for r in rows[arm]]) for k in ("lex", "emb", "nll", "words")} |
                {"echo_rate": mean([float(r["echo"]) for r in rows[arm]]),
