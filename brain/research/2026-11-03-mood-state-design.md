@@ -296,3 +296,52 @@ Decision:
   The JSON records `embedding_added_on`.
 - FROZEN: `--model 1.5b --questions mixed_test --samples 2 --max-tokens 40 --arms pos,neg,off,rand_pos,rand_neg
   --n-rand 2 --gain 16 --no-embedding --threads <nproc-1>`; seeds pool40 42/43, pool41 44/100, pool42 101/102.
+
+## 17. Iteration 5 (11-18): matched-pair axis, mid band, norm-scaled, push after the question is read. PRE-REGISTERED before any run
+
+**Method.** Same as §15, except:
+- the axis is the mean of 32 matched sign-flipped body pairs;
+- the appraisal reads layers 8-15, zeroed at the pair-pole midpoint read as User;
+- the push is alpha × mood × ‖M_l‖ × û_l on layers 8-15 only, added after the question and before the first reply token;
+- mood is induced by the §15 integrator (TAU_MOOD=4).
+
+**Dev rule, frozen before test.** Only dev events and `mixed_dev` are used, on seeds 42/43/44.
+- **Stage A gate.** On every dev seed, pair-axis sign accuracy is at least 0.75 on both poles and beats the topic axis by at least 0.25. Mean |v| of neutral dev events is at most 0.15. If the gate fails, stop: the appraisal fault is not fixed by pairs.
+- **Alpha.** The largest alpha with mean NLL ratio (mood arms / off) ≤ 1.16 on all three seeds. The lexical score is never consulted.
+- **Discriminator.** Pooled over 72 rows per arm, the paired-bootstrap 95% CI of [(pos−neg) − (topic_pos−topic_neg)] and of [(pos−neg) − (shuf_pos−shuf_neg)] must both exclude 0. Otherwise stop before six seeds and go to branch 3.
+- Band, placement and pair count are fixed in advance and not tuned.
+- Before the test, a dev-selection record goes in a new section 18.
+
+**Test.** 6 seeds (42/43/44/100/101/102), `mixed_test`, 3 samples, 40 tokens, 7 arms. About 40 min per seed; 2 seeds per node is about 80 min wall.
+- Seeds 42/43/44 also ran dev, but on dev questions only. This is stated as a limit.
+
+Each criterion holds on at least 5/6 seeds unless stated:
+- **C1:** sign accuracy on the V5_TEST events ≥ 0.75 on both poles, and neutral mean |v| ≤ 0.15.
+- **C2:** m_pos > 0 > m_neg on 6/6.
+- **C3:** lex(pos) − mean(topic_pos, shuf_pos), CI above 0.
+- **C4:** lex(neg) − mean(topic_neg, shuf_neg), CI below 0.
+- **C5:** the embedding score agrees in sign (means).
+- **C6:** echo of {pos, neg} − echo(off) ≤ 0.10 on 6/6, with pair words included.
+- **C7:** NLL ratio ≤ 1.20, and mean reply length within ±25% of off.
+- **C8:** neg-arm refusals ≤ off + 3 of 36.
+- **C9:** the reply changes: under the lesion (off), replies are byte-identical in a repeat, and pos differs from off in at least 50% of replies.
+
+Reported, not gated: pos−off and neg−off, the dose slope compared with iteration 4, and the per-seed alpha × m.
+
+**Decision branches.**
+1. **PASS** is a lead only. Next: wire it into `Brain` (OFF by default), run a lesion on whole open-conversation transcripts, and apply `land-result`.
+2. **C3 fails but C4 passes, or the other way round.** Report a one-sided result. Next: arousal as gain, either on the readout's inverse temperature (declared scaffold, lesion = gain 1) or on per-head decay (that needs the forward opened).
+3. **The Stage A or discriminator gate fails.** Verdict: the additive state push, as a method, fails at 1.5B. Judge it against scale and prerequisites, then move to gain-type modulation or mood-congruent recall with the margin and confabulation fixes.
+
+Record brief (from the research workflow wf_07a11b91-c66: record, steering literature, biology, our 1.5B data; 3 designs, 6 skeptics):
+- Record check rerun after `w_follow.sh` (11-18, recorded): the old track's affect-on-language wall was the same signature (a fixed push swallowed by a sharper LM; a margin-scaled push registered, 09-04).
+- Old track: a fixed push was swallowed by a sharper LM (09-04 linattn: byte-identical output). A push scaled to the model's own margin was load-bearing (09-04 sharpness-aware GO). The 1.5B result is the same signature.
+- No mood or arousal result that `brain/` uses has been retracted.
+- iteration-4 JSONs:
+  - The axis ranks events correctly (pos vs neg AUROC 1.00 on 6/6 seeds). Its zero is off: neutral events sit near -0.11, and m_pos is between -0.04 and +0.10 on 4/6 seeds. So C3 tested almost no push.
+  - The effect grows with push size (neg vs null slope +0.66 per push unit, r=0.94).
+  - The true axis costs less fluency than a random one (NLL 0.94-1.10 vs 1.22-1.59).
+- Literature (CAA, ActAdd, RNN state steering): many matched pairs, a mid band, size as a fraction of the layer norm, applied after the prompt. We do the opposite on all four.
+- The old held-out appraisal events have now been looked at post hoc. They are burned for C1, so fresh events are needed.
+
+Build plan and full synthesis: `brain/research/2026-11-18-mood5-plan.md`.
