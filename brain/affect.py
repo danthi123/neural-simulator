@@ -128,6 +128,30 @@ NEUTRAL_REFERENCE = ["The table is next to the window.", "There are seven days i
                      "The bus leaves at nine in the morning.", "The book has two hundred pages.",
                      "We put the cups in the cupboard.", "The road goes past the station."]
 
+# Iteration 6 (arousal as encoding gain, brain/research/2026-11-03-mood-state-design.md section 19): the surprise
+# normalisation. (MU, SD) of the heard-turn drive (mean of the two highest per-token NLLs, nats), keyed by cortex size.
+# EMPTY until computed at 1.5B by `python -m brain.experiments.arousal_gain calibrate`; Brain(arousal_gain=...) with a
+# size that has no row and no explicit calibration is an error (SCAFFOLDS.md row "Surprise normalisation MU/SD").
+AROUSAL_CALIBRATION: dict[str, tuple[float, float]] = {}
+AROUSAL_Z_CLIP = 3.0
+GAIN_CEILING = 2.0
+
+
+def top2_mean(nll) -> float:
+    """Mean of the two highest values of a per-token NLL sequence (the drive of arousal); 0.0 if empty."""
+    v = sorted((float(x) for x in nll), reverse=True)[:2]
+    return sum(v) / len(v) if v else 0.0
+
+
+def calibrate_surprise(cortex, base, texts, prefix: str = "User: ", suffix: str = "\n\n"):
+    """(MU, SD) of the drive over `texts`, each read from the birth state `base` (never mutated). The first token
+    ("User") has no prediction, so the drive reads nll[1:] exactly as Brain.hear does."""
+    xs = [top2_mean(cortex.read_nll(f"{prefix}{t}{suffix}", base)[2][1:]) for t in texts]
+    mu = sum(xs) / len(xs)
+    sd = (sum((x - mu) ** 2 for x in xs) / max(len(xs) - 1, 1)) ** 0.5
+    return mu, max(sd, 1e-6), xs
+
+
 DEFAULT_ON = os.environ.get("BRAIN_AFFECT", "0") == "1"
 
 
@@ -149,7 +173,7 @@ class Affect:
     GAIN = 16.0         # modulation gain (dev questions, seed 42: 8 weak, 32 intrudes primary content; design doc)
 
     def __init__(self, enabled: bool | None = None, readout: str = "twopole_deep", mod_band=(8, 16),
-                 alpha: float = 0.0, placement: str = "pre"):
+                 alpha: float = 0.0, placement: str = "pre", surprise_mu: float = 0.0, surprise_sd: float = 1.0):
         assert readout in ("twopole_deep", "lin_all", "pairs")
         assert placement in ("pre", "post")
         self.readout_kind = readout
@@ -165,6 +189,11 @@ class Affect:
         self.mood = 0.0
         self.arousal = 0.0
         self.last_appraisal = 0.0
+        # iteration 6 (arousal as encoding gain): surprise normalisation and the last drive / gain, for the read-out
+        self.MU, self.SD = float(surprise_mu), float(surprise_sd)
+        self.surprise = 0.0       # last raw drive (nats)
+        self.last_gain = 1.0      # last encode_gain returned
+        self.gain_on = False      # set by Brain(arousal_gain=...): the gain acts on the heard turn's write
         self.axis_unit = None     # projection axis (concatenated per-layer unit traces)
         self.axis_delta = None    # modulation pattern, per-layer matrix-memory (raw scale, half the pos-neg gap)
         self.zero, self.scale = 0.0, 1.0
@@ -313,6 +342,24 @@ class Affect:
 
     def reset(self):
         self.mood = self.arousal = self.last_appraisal = 0.0
+        self.surprise, self.last_gain = 0.0, 1.0
+
+    # ---- iteration 6: arousal driven by the cortex's own surprise, acting as encoding gain ----
+    def drive_arousal(self, x: float) -> float:
+        """x = drive of the heard turn (mean of the two highest per-token NLLs, nats). s = clip((x - MU) / SD, 0, 3) / 3,
+        then a leaky update arousal += (s - arousal) / TAU_AROUSAL. Does not touch mood or the valence appraisal
+        (`update` is not called while this switch is on: one arousal definition at a time)."""
+        self.surprise = float(x)
+        s = min(max((x - self.MU) / self.SD, 0.0), AROUSAL_Z_CLIP) / AROUSAL_Z_CLIP
+        self.arousal += (s - self.arousal) / self.TAU_AROUSAL
+        return self.arousal
+
+    def encode_gain(self, span: float, pinned: bool = False) -> float:
+        """Gain on the heard turn's matrix-memory write: min(1 + span * arousal, 2); 1.0 when pinned (the lesion).
+        Never below 1."""
+        g = 1.0 if pinned else min(1.0 + span * self.arousal, GAIN_CEILING)
+        self.last_gain = g
+        return g
 
     # ---- action on the cortex ----
     def modulate(self, cortex, state):
@@ -327,4 +374,6 @@ class Affect:
     def readout(self) -> dict:
         """Functional read-out of the affect variables (numbers only; not a claim of experience)."""
         return {"mood": round(self.mood, 4), "arousal": round(self.arousal, 4),
-                "last_appraisal": round(self.last_appraisal, 4), "modulation_on": bool(self.enabled)}
+                "last_appraisal": round(self.last_appraisal, 4), "modulation_on": bool(self.enabled),
+                "surprise": round(self.surprise, 4), "encode_gain": round(self.last_gain, 4),
+                "gain_on": bool(self.gain_on)}

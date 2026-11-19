@@ -68,6 +68,19 @@ class Cortex:
         st = copy.deepcopy(state) if state is not None else None
         return self.forward(self.pipe.encode(text), st)
 
+    def read_nll(self, text: str, state=None):
+        """Process text and keep the cortex's own prediction error: returns (last logits, new state, per-token NLL in
+        nats as a 1-D tensor of len(tokens)-1, entry t = -log p(token t+1 | tokens <= t)). One forward pass, the same
+        call as brain/experiments/novelty_stage0.item_nll with full output, so the state and last logits are those of
+        read() (checked at <= 1e-5 by arousal_gain smoke S1). Never mutates the given state."""
+        ids = self.pipe.encode(text)
+        st = copy.deepcopy(state) if state is not None else None
+        with torch.no_grad():
+            logits, new = self.model.forward(ids, st, full_output=True)
+        lp = torch.log_softmax(logits.float(), -1)
+        nll = -lp[:-1].gather(1, torch.tensor(ids[1:], device=lp.device)[:, None])[:, 0]
+        return logits[-1], new, nll
+
     def forward(self, tokens, state):
         """One pass of the network. The brain's live cortex (brain/brain.py LiveCortex) overrides this to run through
         the consolidated slow synapses; here it is the pretrained package forward."""
