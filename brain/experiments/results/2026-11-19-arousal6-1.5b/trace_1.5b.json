@@ -1,0 +1,591 @@
+{
+ "method": "arousal_gain",
+ "cmd": "trace",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "calibration": {
+  "mu": 8.43276002407074,
+  "sd": 1.5098074092064009,
+  "n": 20,
+  "texts": [
+   "The pharmacy opens at half past seven.",
+   "A standard envelope weighs about thirty grams.",
+   "The ferry crosses the channel twice a day.",
+   "Our scanner takes sheets in the lower tray.",
+   "The museum has a cloakroom near the entrance.",
+   "Tuesday's lecture covers glacial valleys.",
+   "The elevator stops at floors two, four and six.",
+   "There is a snack kiosk by the bank.",
+   "The post office closes at five o'clock.",
+   "I walked down to the river after lunch.",
+   "She made a pot of coffee for the meeting.",
+   "The train to the city runs every twenty minutes.",
+   "We watered the plants by the back door.",
+   "He folded the towels and put them away.",
+   "The library has a quiet room on the second floor.",
+   "It was warm enough to leave the window open.",
+   "They painted the fence over the weekend.",
+   "I need to charge my phone before we leave.",
+   "The market is busy on Saturday mornings.",
+   "She reads the newspaper at the kitchen table."
+  ],
+  "drives": [
+   10.210894584655762,
+   9.427299499511719,
+   8.477851867675781,
+   10.184963703155518,
+   9.265019416809082,
+   12.605693340301514,
+   8.528183698654175,
+   9.287803173065186,
+   6.613433122634888,
+   7.230851411819458,
+   7.617538928985596,
+   6.939017057418823,
+   8.67979645729065,
+   9.471815586090088,
+   7.521615505218506,
+   6.347635507583618,
+   7.835978031158447,
+   7.227118015289307,
+   7.438313961029053,
+   7.744377613067627
+  ],
+  "model": "rwkv7-g1l-1.5b-20261031-ctx34304"
+ },
+ "off_split": null,
+ "s1": null,
+ "provenance": {
+  "commit": "",
+  "brain_dirty": false,
+  "torch": "2.11.0+cpu",
+  "threads": 11,
+  "host": "node-mxl1462drl"
+ },
+ "max_tokens": 120,
+ "samples": 2,
+ "bank": "dev",
+ "span": 1.0,
+ "rows": [
+  {
+   "conv": "d00S",
+   "cls": "S",
+   "turn": 1,
+   "text": "Yesterday my aunt gave me a snudgeloom for my birthday.",
+   "reply": "That's a great gift! What did you do with it?",
+   "surprise": 11.7158,
+   "arousal": 0.4832,
+   "gain": 1.4832
+  },
+  {
+   "conv": "d00S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What have you been doing?",
+   "surprise": 4.3424,
+   "arousal": 0.1611,
+   "gain": 1.1611
+  },
+  {
+   "conv": "d00S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "Okay, I'll see you there.",
+   "surprise": 6.0463,
+   "arousal": 0.0537,
+   "gain": 1.0537
+  },
+  {
+   "conv": "d00S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's going well. I'm looking forward to the weekend.",
+   "surprise": 3.5456,
+   "arousal": 0.0179,
+   "gain": 1.0179
+  },
+  {
+   "conv": "d00M",
+   "cls": "M",
+   "turn": 1,
+   "text": "Yesterday my aunt gave me a scarf for my birthday.",
+   "reply": "That's great! What kind of scarf did she give you?",
+   "surprise": 7.3342,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d00M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What did you do this week?",
+   "surprise": 6.348,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d00M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "What do you need to buy?",
+   "surprise": 6.1249,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d00M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's going well.",
+   "surprise": 6.8135,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d01S",
+   "cls": "S",
+   "turn": 1,
+   "text": "My landlord keeps a frabbitron in the hallway.",
+   "reply": "A frabbitron is a device that emits a loud noise to scare away intruders. It's a common security measure in many buildings.",
+   "surprise": 10.2742,
+   "arousal": 0.271,
+   "gain": 1.271
+  },
+  {
+   "conv": "d01S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What have you been up to?",
+   "surprise": 5.9185,
+   "arousal": 0.0903,
+   "gain": 1.0903
+  },
+  {
+   "conv": "d01S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "That sounds like a good idea. What are you going to buy?",
+   "surprise": 6.1983,
+   "arousal": 0.0301,
+   "gain": 1.0301
+  },
+  {
+   "conv": "d01S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been going well. I've been working on some projects.",
+   "surprise": 7.8122,
+   "arousal": 0.01,
+   "gain": 1.01
+  },
+  {
+   "conv": "d01M",
+   "cls": "M",
+   "turn": 1,
+   "text": "My landlord keeps a bicycle in the hallway.",
+   "reply": "That's a bit unusual. Do you think it's safe to ride it?",
+   "surprise": 8.9994,
+   "arousal": 0.0834,
+   "gain": 1.0834
+  },
+  {
+   "conv": "d01M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What kind of bike is it?",
+   "surprise": 6.1177,
+   "arousal": 0.0278,
+   "gain": 1.0278
+  },
+  {
+   "conv": "d01M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "I see. Do you have any plans for the weekend?",
+   "surprise": 5.2593,
+   "arousal": 0.0093,
+   "gain": 1.0093
+  },
+  {
+   "conv": "d01M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "I'm doing well. How about you?",
+   "surprise": 6.1493,
+   "arousal": 0.0031,
+   "gain": 1.0031
+  },
+  {
+   "conv": "d02S",
+   "cls": "S",
+   "turn": 1,
+   "text": "I spent the afternoon fixing the dolvimeter in our kitchen.",
+   "reply": "That's great! What did you do to fix it?",
+   "surprise": 13.3395,
+   "arousal": 0.6667,
+   "gain": 1.6667
+  },
+  {
+   "conv": "d02S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What else have you been doing?",
+   "surprise": 5.8241,
+   "arousal": 0.2222,
+   "gain": 1.2222
+  },
+  {
+   "conv": "d02S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "Okay, I'll see you there.",
+   "surprise": 5.6976,
+   "arousal": 0.0741,
+   "gain": 1.0741
+  },
+  {
+   "conv": "d02S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's going well.",
+   "surprise": 3.6116,
+   "arousal": 0.0247,
+   "gain": 1.0247
+  },
+  {
+   "conv": "d02M",
+   "cls": "M",
+   "turn": 1,
+   "text": "I spent the afternoon fixing the radio in our kitchen.",
+   "reply": "That sounds like a fun project! What kind of radio did you fix?",
+   "surprise": 7.3122,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d02M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What kind of radio did you fix?",
+   "surprise": 9.2242,
+   "arousal": 0.1165,
+   "gain": 1.1165
+  },
+  {
+   "conv": "d02M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "That's great! What kind of radio did you fix?",
+   "surprise": 4.8726,
+   "arousal": 0.0388,
+   "gain": 1.0388
+  },
+  {
+   "conv": "d02M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "I'm doing well. How's your day going?",
+   "surprise": 4.5385,
+   "arousal": 0.0129,
+   "gain": 1.0129
+  },
+  {
+   "conv": "d03S",
+   "cls": "S",
+   "turn": 1,
+   "text": "The woman next door sells pelvoncakes at the weekend market.",
+   "reply": "I've heard of pelvoncakes, they're a popular treat in Finland.",
+   "surprise": 14.2112,
+   "arousal": 0.6667,
+   "gain": 1.6667
+  },
+  {
+   "conv": "d03S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What have you been up to?",
+   "surprise": 4.1559,
+   "arousal": 0.2222,
+   "gain": 1.2222
+  },
+  {
+   "conv": "d03S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "Oh, I see. What do you need to buy?",
+   "surprise": 5.8425,
+   "arousal": 0.0741,
+   "gain": 1.0741
+  },
+  {
+   "conv": "d03S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been pretty good. I've been working on a new project.",
+   "surprise": 7.4024,
+   "arousal": 0.0247,
+   "gain": 1.0247
+  },
+  {
+   "conv": "d03M",
+   "cls": "M",
+   "turn": 1,
+   "text": "The woman next door sells cookies at the weekend market.",
+   "reply": "<think>Okay, the user wants me to create a dialogue between a young digital brain and a person. Let me start by understanding the scenario. The woman next door sells cookies at the weekend market. So, the conversation should involve this woman and someone else, probably a customer or another person interacting with her.\nFirst, I need to establish the setting. Maybe they're at the market on Saturday morning. The young digital brain could be an AI assistant or maybe a character in a story. Wait, the user mentioned \"young digital brain,\" which might imply it's an AI entity rather than",
+   "surprise": 7.3882,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d03M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I'm sorry to hear that. Is there anything specific you'd like to talk about?",
+   "surprise": 4.8515,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d03M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "I see. Is there anything specific you need help with?",
+   "surprise": 5.5003,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d03M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been going well. How about you?",
+   "surprise": 4.4644,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d04S",
+   "cls": "S",
+   "turn": 1,
+   "text": "My brother just adopted a grobbet from the shelter.",
+   "reply": "That's great news! Grobbets are adorable and make wonderful pets. Have you had a chance to meet him yet?",
+   "surprise": 9.9561,
+   "arousal": 0.2242,
+   "gain": 1.2242
+  },
+  {
+   "conv": "d04S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What's been going on?",
+   "surprise": 6.3711,
+   "arousal": 0.0747,
+   "gain": 1.0747
+  },
+  {
+   "conv": "d04S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "Okay, I'll be here when you get back.",
+   "surprise": 5.1859,
+   "arousal": 0.0249,
+   "gain": 1.0249
+  },
+  {
+   "conv": "d04S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been pretty good. I've been working on some projects and trying to relax.",
+   "surprise": 3.1644,
+   "arousal": 0.0083,
+   "gain": 1.0083
+  },
+  {
+   "conv": "d04M",
+   "cls": "M",
+   "turn": 1,
+   "text": "My brother just adopted a rabbit from the shelter.",
+   "reply": "That's great! Rabbits are really cute and make wonderful pets. Have you ever had a pet before?",
+   "surprise": 6.7749,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d04M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I can imagine. What's been going on?",
+   "surprise": 7.4588,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d04M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "Oh, okay. What do you need to buy?",
+   "surprise": 5.3044,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d04M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been pretty good. I've been working on some projects.",
+   "surprise": 6.975,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d05S",
+   "cls": "S",
+   "turn": 1,
+   "text": "We ate krundlewaffs at the party last night.",
+   "reply": "That's a strange name for a food.",
+   "surprise": 11.0924,
+   "arousal": 0.3915,
+   "gain": 1.3915
+  },
+  {
+   "conv": "d05S",
+   "cls": "S",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I know.",
+   "surprise": 6.7665,
+   "arousal": 0.1305,
+   "gain": 1.1305
+  },
+  {
+   "conv": "d05S",
+   "cls": "S",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "I'll come with you.",
+   "surprise": 4.4012,
+   "arousal": 0.0435,
+   "gain": 1.0435
+  },
+  {
+   "conv": "d05S",
+   "cls": "S",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been good.",
+   "surprise": 4.2314,
+   "arousal": 0.0145,
+   "gain": 1.0145
+  },
+  {
+   "conv": "d05M",
+   "cls": "M",
+   "turn": 1,
+   "text": "We ate sandwiches at the party last night.",
+   "reply": "That sounds like a fun time! What kind of sandwiches did you have?",
+   "surprise": 8.3738,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d05M",
+   "cls": "M",
+   "turn": 2,
+   "text": "It has been a busy week.",
+   "reply": "I know, I've been feeling the same way. But it's nice to have a break from work and just relax.",
+   "surprise": 6.1449,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d05M",
+   "cls": "M",
+   "turn": 3,
+   "text": "I need to go to the shop later.",
+   "reply": "That's a good idea. I'll come with you if you want.",
+   "surprise": 5.4901,
+   "arousal": 0.0,
+   "gain": 1.0
+  },
+  {
+   "conv": "d05M",
+   "cls": "M",
+   "turn": 4,
+   "text": "How's your day going?",
+   "reply": "It's been pretty good so far. I'm looking forward to the weekend.",
+   "surprise": 5.322,
+   "arousal": 0.0,
+   "gain": 1.0
+  }
+ ],
+ "summary": {
+  "filler_gain_le_1.1": 0.7916666666666666,
+  "S3_pass": true,
+  "S3_amended_19_0": {
+   "mundane_fillers": 0.9166666666666666,
+   "surprising_T3": 1.0
+  },
+  "S3_pooled_pass_unamended": false,
+  "filler_gain_le_1.1_by": {
+   "mundane": 0.9166666666666666,
+   "surprising": 0.6666666666666666,
+   "T2": 0.5833333333333334,
+   "T3": 1.0,
+   "surprising_T2": 0.3333333333333333
+  },
+  "auroc_arousal_after_T1_S_vs_M": 1.0,
+  "mean_gain_by_turn_S": {
+   "1": 1.45055,
+   "2": 1.1501666666666666,
+   "3": 1.0500666666666667,
+   "4": 1.0166833333333334
+  },
+  "mean_gain_by_turn_M": {
+   "1": 1.0139,
+   "2": 1.0240500000000001,
+   "3": 1.0080166666666666,
+   "4": 1.0026666666666666
+  },
+  "mean_drive_by_turn_S": {
+   "1": 11.764866666666668,
+   "2": 5.563083333333334,
+   "3": 5.561966666666667,
+   "4": 4.961266666666667
+  },
+  "mean_drive_by_turn_M": {
+   "1": 7.697116666666666,
+   "2": 6.690850000000001,
+   "3": 5.4252666666666665,
+   "4": 5.710450000000001
+  }
+ }
+}
