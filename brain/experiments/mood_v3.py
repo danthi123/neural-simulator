@@ -84,8 +84,8 @@ def criteria(j):
     }, echo_d
 
 
-def table(d, size):
-    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
+def table(d, size, prefix="mood3"):
+    files = sorted(glob.glob(f"{d}/{prefix}_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
     print("| seed | held-out acc +/- | m_pos | m_neg | lex pos-null [CI] | lex neg-null [CI] | emb pos-null / neg-null "
           "| null-off pos / neg (lex) | lex pos-off [CI] | lex neg-off [CI] | off lex | echo mood-off | "
           "NLL pos/neg/off | criteria met |")
@@ -129,4 +129,4 @@ def table(d, size):
 if __name__ == "__main__":
     cmd, d = sys.argv[1], sys.argv[2]
     {"register": lambda: select_register(d), "gain": lambda: select_gain(d, *sys.argv[3:4]),
-     "table": lambda: table(d, sys.argv[3])}[cmd]()
+     "table": lambda: table(d, *sys.argv[3:5])}[cmd]()

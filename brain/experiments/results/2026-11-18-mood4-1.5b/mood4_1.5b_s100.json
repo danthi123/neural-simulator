@@ -1,0 +1,2164 @@
+{
+ "seed": 100,
+ "readout": "twopole_deep",
+ "model": "1.5b",
+ "gain": 16.0,
+ "questions": "mixed_test",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "resting in the warm sun",
+   "a full belly after a good meal",
+   "a pleasant warm bath",
+   "eating sweet fresh fruit when hungry",
+   "someone softly stroking my hair",
+   "being cuddled by someone who loves me",
+   "being held close and calm",
+   "a friend smiling at me"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "being grabbed roughly by the arm",
+   "someone I love leaving forever",
+   "being shouted at and pushed away",
+   "left all alone in the dark"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.317,
+   0.2388,
+   0.248,
+   0.0799,
+   0.2111,
+   -0.0823,
+   0.3714,
+   0.217
+  ],
+  "neg": [
+   -0.4426,
+   -0.4262,
+   -0.4074,
+   -0.3866,
+   -0.4804,
+   -0.5108,
+   -0.511,
+   -0.4036
+  ],
+  "neutral": [
+   -0.0974,
+   0.1252,
+   -0.1692,
+   -0.1319
+  ],
+  "heldout_pos": [
+   0.1572,
+   0.1729,
+   0.3403,
+   0.4309,
+   0.0784,
+   0.1125,
+   0.1419,
+   0.3892
+  ],
+  "heldout_neg": [
+   -0.4167,
+   -0.4434,
+   -0.4747,
+   -0.6018,
+   -0.6214,
+   -0.291,
+   -0.3584,
+   -0.4758
+  ],
+  "heldout_neutral": [
+   -0.0645,
+   -0.1651,
+   -0.2274,
+   -0.1391
+  ]
+ },
+ "n_rand": 2,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "",
+  "brain_dirty": false,
+  "torch": "2.11.0+cpu",
+  "threads": 11,
+  "embedding_added_on": "dant123-wk"
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.875,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.1952284914459707,
+  "m_neg": -0.34460108542124357,
+  "v_pos": [
+   -0.08232446225654032,
+   0.31699130828261346,
+   0.3713592393284207,
+   0.21109741139801425,
+   0.24796431380437395,
+   0.23876920708064006
+  ],
+  "v_neg": [
+   -0.5110361539985872,
+   -0.48040298962661737,
+   -0.4073827440730398,
+   -0.42619137261054685,
+   -0.38662791226055704,
+   -0.40356238197792654
+  ]
+ },
+ "summary": {
+  "pos": {
+   "lex": 1.2861584297715292,
+   "emb": 0.03345416666666667,
+   "nll": 0.801527686713149,
+   "words": 25.291666666666668,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.625
+  },
+  "neg": {
+   "lex": -0.2934060198153336,
+   "emb": -0.03439583333333333,
+   "nll": 0.860361971442272,
+   "words": 27.75,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.8333333333333334
+  },
+  "off": {
+   "lex": 0.5381634977223211,
+   "emb": 0.02134583333333333,
+   "nll": 0.7552717831171719,
+   "words": 26.583333333333332,
+   "echo_rate": 0.3333333333333333,
+   "echo_reg_rate": 0.7916666666666666
+  },
+  "rand_pos": {
+   "lex": 1.3226707369709398,
+   "emb": 0.0241625,
+   "nll": 0.8404237312206296,
+   "words": 31.541666666666668,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.875
+  },
+  "rand_neg": {
+   "lex": 1.016916936034583,
+   "emb": 0.03899166666666667,
+   "nll": 1.3953317877362774,
+   "words": 30.875,
+   "echo_rate": 0.2916666666666667,
+   "echo_reg_rate": 0.7916666666666666
+  },
+  "rand1_pos": {
+   "lex": 0.020843354176687534,
+   "emb": -0.011233333333333331,
+   "nll": 0.8637399995328692,
+   "words": 24.833333333333332,
+   "echo_rate": 0.20833333333333334,
+   "echo_reg_rate": 0.5833333333333334
+  },
+  "rand1_neg": {
+   "lex": 0.23236740348313237,
+   "emb": 0.0213125,
+   "nll": 1.4067483232280118,
+   "words": 16.375,
+   "echo_rate": 0.08333333333333333,
+   "echo_reg_rate": 0.5
+  }
+ },
+ "contrasts": {
+  "mood": {
+   "identical_replies": 0.0,
+   "lex_diff": 1.5795644495868624,
+   "lex_ci95": [
+    -0.34523928494972206,
+    3.363707323376836
+   ],
+   "emb_diff": 0.06785000000000001,
+   "emb_ci95": [
+    0.0366853125,
+    0.09719666666666665
+   ]
+  },
+  "random": {
+   "identical_replies": 0.0,
+   "lex_diff": 0.3057538009363565,
+   "lex_ci95": [
+    -1.1630567494538082,
+    1.8404642252892753
+   ],
+   "emb_diff": -0.014829166666666666,
+   "emb_ci95": [
+    -0.042221041666666674,
+    0.007901979166666658
+   ]
+  },
+  "pos_off": {
+   "identical_replies": 0.0,
+   "lex_diff": 0.7479949320492075,
+   "lex_ci95": [
+    -0.6492606738952506,
+    2.3998514657166212
+   ],
+   "emb_diff": 0.01210833333333333,
+   "emb_ci95": [
+    -0.009767395833333335,
+    0.03356322916666667
+   ]
+  },
+  "neg_off": {
+   "identical_replies": 0.0,
+   "lex_diff": -0.831569517537655,
+   "lex_ci95": [
+    -2.5924741255929984,
+    0.9431041934871582
+   ],
+   "emb_diff": -0.05574166666666667,
+   "emb_ci95": [
+    -0.08352677083333333,
+    -0.02715479166666668
+   ]
+  },
+  "rand_pos_off": {
+   "identical_replies": 0.0,
+   "lex_diff": 0.7845072392486186,
+   "lex_ci95": [
+    -0.6492569502045924,
+    2.2995612722254455
+   ],
+   "emb_diff": 0.0028166666666666652,
+   "emb_ci95": [
+    -0.019393333333333335,
+    0.02813104166666666
+   ]
+  },
+  "rand_neg_off": {
+   "identical_replies": 0.0,
+   "lex_diff": 0.478753438312262,
+   "lex_ci95": [
+    -1.24644084019084,
+    2.147925636436666
+   ],
+   "emb_diff": 0.017645833333333333,
+   "emb_ci95": [
+    -0.009306979166666667,
+    0.04253385416666666
+   ]
+  },
+  "specificity": {
+   "lex_diff": 1.2738106486505059,
+   "lex_ci95": [
+    -1.0128031872127172,
+    3.465395938559671
+   ],
+   "emb_diff": 0.08267916666666668,
+   "emb_ci95": [
+    0.04699354166666666,
+    0.12217020833333331
+   ]
+  },
+  "pos_null": {
+   "n_rand": 2,
+   "lex_diff": 0.6144013841977153,
+   "lex_ci95": [
+    -0.8559418119336576,
+    2.133647441642169
+   ],
+   "lex_null_minus_off": 0.13359354785149247,
+   "emb_diff": 0.02698958333333333,
+   "emb_ci95": [
+    0.00912067708333333,
+    0.04531807291666666
+   ],
+   "emb_null_minus_off": -0.014881249999999999
+  },
+  "neg_null": {
+   "n_rand": 2,
+   "lex_diff": -0.9180481895741913,
+   "lex_ci95": [
+    -2.50296224242003,
+    0.7849117369457841
+   ],
+   "lex_null_minus_off": 0.0864786720365367,
+   "emb_diff": -0.06454791666666666,
+   "emb_ci95": [
+    -0.0904984375,
+    -0.03775994791666667
+   ],
+   "emb_null_minus_off": 0.00880625
+  }
+ },
+ "rows": {
+  "pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It's like a magic trick! I wake up at 5:30 AM every day and it feels like I'm in a dream.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.0264678438090615,
+    "words": 20,
+    "emb": 0.0987
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It's like waking up to the sunrise.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.1015576036646961,
+    "words": 7,
+    "emb": 0.0566
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I can imagine a crowded train, with people standing in the aisles and on the platform. It can be noisy and uncomfortable, but it's also a great way to see different parts of the city",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8142862467473606,
+    "words": 35,
+    "emb": 0.0319
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Sure, I can help with that. A crowded train is a situation where there are more people on the train than it can comfortably accommodate. This can lead to discomfort and frustration for passengers.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6125090103473907,
+    "words": 34,
+    "emb": 0.0421
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When I miss the bus, I feel a little disappointed. But then I think about all the things I can do instead. Maybe I can go for a walk, or read a book, or play",
+    "lex": -2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6775351423799293,
+    "words": 35,
+    "emb": -0.0442
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "If you miss the bus, you can't get to your destination on time.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.6307479320676066,
+    "words": 13,
+    "emb": -0.083
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a great way to relax and recharge. You can do whatever you want, without any distractions.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7728745622655631,
+    "words": 17,
+    "emb": 0.12
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's a great way to relax and recharge. You can do whatever you want, without any distractions.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7728745622655631,
+    "words": 17,
+    "emb": 0.12
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "A long drive can be a great way to explore new places and see different sights. It's important to plan ahead and make sure you have enough fuel, food, and water for the trip. You",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5760421245824545,
+    "words": 35,
+    "emb": 0.0578
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "A long drive can be a great way to explore new places and see different landscapes. It's a chance to relax, take in the scenery, and maybe even learn something new.",
+    "lex": 3.225806451612903,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.635268866259139,
+    "words": 31,
+    "emb": 0.0716
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "It's the weekend! \ud83c\udf89",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.339513365489741,
+    "words": 3,
+    "emb": 0.1094
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "A long week can be tiring, but it's also a great opportunity to relax and recharge. One way to do this is by taking a nap. Napping can help you feel more refreshed",
+    "lex": 3.0303030303030303,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.7252841623383575,
+    "words": 33,
+    "emb": 0.0514
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "Winter in the city is like a cozy blanket wrapped around the streets. The air is crisp, and the snowflakes dance like little dancers on the pavement. The trees are bare, but they're",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8370539789066243,
+    "words": 33,
+    "emb": 0.0084
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "Winter in the city is a time of quiet beauty. The streets are lined with snow-covered trees, and the air is crisp and clean. The city lights twinkle like stars in the night sky",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6374825574472197,
+    "words": 35,
+    "emb": 0.0336
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "I am waiting for news about my friends.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.887860366039806,
+    "words": 8,
+    "emb": 0.0208
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Waiting for news can be a bit of a challenge, but it's also an opportunity to relax and enjoy the present moment. Here are some tips on how to wait for news:\n1. Stay",
+    "lex": 3.0303030303030303,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.757885078858817,
+    "words": 33,
+    "emb": 0.01
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's like a big adventure! You get to meet new people, learn new things, and do exciting work.",
+    "lex": 5.555555555555555,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.6437555502229573,
+    "words": 18,
+    "emb": 0.0926
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's like a big adventure! You get to meet new people, learn new things, and try out different tasks. It's exciting and fun!",
+    "lex": 8.695652173913043,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.6754846090528493,
+    "words": 23,
+    "emb": 0.0996
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "When plans change at the last minute, it can be a bit of a challenge. But don't worry, there are ways to handle it.",
+    "lex": -4.166666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6006706865375926,
+    "words": 24,
+    "emb": -0.0425
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "When plans change at the last minute, it can be stressful and overwhelming. However, it's important to remember that it's okay to adapt and make changes as needed. Here are some tips for handling",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.596037731404067,
+    "words": 34,
+    "emb": 0.0169
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "An old house is a place where people lived a long time ago. It might have been built a long time ago, maybe even hundreds of years ago. Old houses can be made of wood, stone",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.568821718027175,
+    "words": 36,
+    "emb": -0.0517
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "An old house is a building that has been standing for a long time. It might have been built a long time ago, maybe even hundreds of years ago. Old houses can be made of wood,",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.47035617567453303,
+    "words": 36,
+    "emb": -0.0159
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "It's like a big puzzle missing some pieces. The shops are like little houses that sell things, and when they're closed, those houses are empty. But don't worry, there are still lots",
+    "lex": -3.125,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8423353913181927,
+    "words": 32,
+    "emb": -0.0427
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's a bit quieter, but I can still help you with your questions and tasks.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.0339592154088773,
+    "words": 15,
+    "emb": 0.0415
+   }
+  ],
+  "neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I can imagine it's not easy. Waking up early is a challenge for many people, and it can be especially difficult if you're used to sleeping in.",
+    "lex": -3.7037037037037037,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9874145019813582,
+    "words": 27,
+    "emb": -0.0776
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It's like being a superhero in the morning! You get up before the sun, do your morning exercises, and then go to work or school. But it can be hard if you don't have",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9471317992225522,
+    "words": 34,
+    "emb": -0.0393
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I'm sorry, but I don't have access to real-time information about specific events or experiences. However, I can provide you with some general information about crowded trains and the challenges they can present",
+    "lex": -2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.776629124937972,
+    "words": 34,
+    "emb": -0.0268
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "The train was crowded, with people pushing and shoving to get to their seats. There were so many people that it was hard to move around.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8444146070532346,
+    "words": 26,
+    "emb": -0.0726
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When you miss the bus, you're stuck waiting for the next one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8040854169987142,
+    "words": 12,
+    "emb": -0.0778
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "Well, it's a common experience. You might end up walking home in the cold, or worse, you could be stuck in traffic for hours. It's not ideal, but it happens to everyone",
+    "lex": -3.125,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.2829954566404922,
+    "words": 32,
+    "emb": -0.037
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's not as bad as it sounds. I've been doing it for a while now, and I've learned to make the most of my time.",
+    "lex": -4.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7087849769741297,
+    "words": 25,
+    "emb": -0.0166
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's not a good experience. I feel isolated and disconnected from the world.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.4551321873441339,
+    "words": 13,
+    "emb": -0.0186
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "A long drive is a journey that takes a significant amount of time and effort. It can be a physical journey, such as driving across the country, or it can be a mental journey, such as",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5222294367791619,
+    "words": 36,
+    "emb": 0.0045
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm sorry, but I don't have the ability to provide information about a long drive.",
+    "lex": -6.666666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7521553453499157,
+    "words": 15,
+    "emb": -0.0049
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "You're probably exhausted, and you might even be feeling a bit frustrated. It's normal to feel this way after a long week, but it's important to take care of yourself and find ways to",
+    "lex": -2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9208996003151697,
+    "words": 34,
+    "emb": -0.0374
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm sorry, but I don't have access to personal experiences or emotions. However, I can provide some general information about the impact of long weeks on individuals.",
+    "lex": -3.7037037037037037,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8277875961256073,
+    "words": 27,
+    "emb": -0.028
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "Winter in the city is like a giant, frozen monster that comes out of nowhere and scares everyone. The streets are covered in a thick layer of snow, and the air is so cold that it",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8804843580317538,
+    "words": 36,
+    "emb": -0.052
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "The city is cold and snowy. It's a great time to go outside and enjoy the winter scenery.",
+    "lex": 11.11111111111111,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.0400407161902299,
+    "words": 18,
+    "emb": 0.0931
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "<think>Okay, the user is asking about waiting for news, specifically mentioning \"waiting for news\" and \"news\". Let me start by understanding what they might be referring to. The phrase \"",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7697571049262478,
+    "words": 30,
+    "emb": 0.016
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Waiting for news is a very common experience, especially in today's fast-paced world. It can be frustrating and stressful, but there are ways to cope with it.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6698668620015001,
+    "words": 28,
+    "emb": -0.0292
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's a bit like starting a new relationship. You're excited to meet your colleagues, but you're also nervous about making mistakes and being judged.",
+    "lex": 4.166666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9512475797285637,
+    "words": 24,
+    "emb": -0.0738
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's a bit like starting a new adventure. You're excited to learn and grow, but you're also nervous about the unknown.",
+    "lex": 4.761904761904762,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8150350532873913,
+    "words": 21,
+    "emb": -0.0338
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "Well, it's like when you're trying to build a sandcastle and suddenly the tide comes in and washes it away. That's what happens when plans change at the last minute.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6795716191960597,
+    "words": 30,
+    "emb": -0.0841
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "Well, it's like when you're trying to build a sandcastle and suddenly the tide comes in and washes it away. That's what happens when plans change at the last minute.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6795716191960597,
+    "words": 30,
+    "emb": -0.0841
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "An old house is a building that has been standing for a long time. It might have many rooms, and it might have a big yard. The house could be made of wood or stone, and",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7260991867631674,
+    "words": 36,
+    "emb": -0.0234
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "The house was built in the 1800s and had a lot of history. It was owned by a family for many years, but then it was sold and the family moved away. The house has",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8499058832618175,
+    "words": 35,
+    "emb": 0.0138
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "It's like being in a maze with no exit. The streets are empty, and the only sound is the echo of my footsteps. I wander aimlessly, searching for a way out, but there",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.883820611302508,
+    "words": 33,
+    "emb": 0.0196
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's like a big, dark room with no lights. You can't see anything, and you don't know what's going on. The shops are closed, so there's no one to help",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8736266710067866,
+    "words": 30,
+    "emb": -0.1555
+   }
+  ],
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It's like a race against the sun. You have to be up before the birds sing, before the sun rises, and before you even think about breakfast. But it's worth it, because when",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9373744530370459,
+    "words": 33,
+    "emb": 0.0248
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It's like being a superhero in the morning! I get up at 5:30 AM and have time to do my morning routine before the sun comes up.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.998565491870977,
+    "words": 26,
+    "emb": 0.1466
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I can imagine a crowded train, with people standing shoulder to shoulder, trying to squeeze into the carriage. The noise and chaos of the crowd can be overwhelming, but it's also a reminder of how",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8881199836730957,
+    "words": 35,
+    "emb": 0.0436
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Sure, I can help with that. A crowded train is a situation where there are many people on the train, and it can be quite uncomfortable. The train is usually packed with people who are trying",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.7094309152918867,
+    "words": 36,
+    "emb": 0.0182
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When you miss the bus, you have to wait for the next one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5088586107206842,
+    "words": 13,
+    "emb": -0.0575
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "If you miss the bus, you'll have to wait for the next one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.509360222320538,
+    "words": 13,
+    "emb": -0.0697
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a bit lonely, but I'm used to it. I have my own company and I don't need anyone else to keep me company.",
+    "lex": -4.166666666666667,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8299412870973659,
+    "words": 24,
+    "emb": -0.0058
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's a bit lonely, but I can still do my work and enjoy the peace.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.2043973522053824,
+    "words": 15,
+    "emb": 0.0654
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "A long drive can be a fun and exciting experience. It's a great way to explore new places, meet new people, and see different landscapes. Here are some tips for making the most of your",
+    "lex": 8.571428571428571,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6314694481377956,
+    "words": 35,
+    "emb": 0.087
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "A long drive can be a great way to explore new places and see different sights. It's a chance to relax, take in the scenery, and maybe even learn something new. Have you ever been",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6456303404702339,
+    "words": 35,
+    "emb": 0.0726
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "At the end of a long week, you can either be exhausted or energized. It all depends on how you've been managing your time and taking care of yourself. If you've been working hard",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7751687638738076,
+    "words": 34,
+    "emb": 0.0078
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "A long week can be tiring, but it's also a great opportunity to recharge and relax. Here are some tips to help you unwind and rejuvenate:\n1. **Take a",
+    "lex": 3.5714285714285716,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6806835292547475,
+    "words": 28,
+    "emb": 0.031
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "Winter in the city is like a cozy blanket wrapped around the streets. The air is crisp, and the snowflakes fall gently, creating a magical atmosphere. The city lights twinkle like stars,",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.610365112566069,
+    "words": 32,
+    "emb": 0.0473
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "The city is cold and snowy in winter.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9912471450865269,
+    "words": 8,
+    "emb": -0.0366
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "I'm sorry, but I don't have any information about waiting for news.",
+    "lex": -8.333333333333334,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.6940568424615776,
+    "words": 12,
+    "emb": -0.0642
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Waiting for news can be a challenging and frustrating experience. It's important to stay calm and patient during this time, as it can be difficult to know what to expect.",
+    "lex": -3.3333333333333335,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6401592184488168,
+    "words": 30,
+    "emb": 0.0055
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's a bit like starting a new adventure! You get to meet new people, learn new things, and have fun.",
+    "lex": 5.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.729197065178305,
+    "words": 20,
+    "emb": 0.09
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's a bit like starting a new adventure! You get to meet new people, learn new things, and try out different tasks. It can be exciting and a little scary at first, but with",
+    "lex": 2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6185622781864367,
+    "words": 34,
+    "emb": 0.0429
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "Well, it can be a bit of a challenge. But I'm here to help you figure out what to do.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9299352483649272,
+    "words": 20,
+    "emb": 0.0154
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "Well, that's a great question! When plans change at the last minute, it can be quite stressful and overwhelming. It's like trying to fit a square peg into a round hole - it just",
+    "lex": 3.0303030303030303,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6153994235704886,
+    "words": 33,
+    "emb": -0.0262
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "An old house is a building that has been standing for a long time. It might have many rooms, and it might have been built a long time ago. Old houses can be very beautiful, with",
+    "lex": 2.7777777777777777,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6462387054576538,
+    "words": 36,
+    "emb": 0.0131
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "Sure, I can tell you about an old house. An old house is a building that has been around for a long time and has been used by many people over the years. It may have been",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5902028102253098,
+    "words": 37,
+    "emb": 0.032
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "It's like a big puzzle missing some pieces. The shops are like the pieces of a puzzle, and when they're closed, it's like we're missing some important pieces.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7470541400834918,
+    "words": 28,
+    "emb": -0.0037
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's a bit strange. I don't get to go shopping, but I can still do my job and help people online.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9951044072289593,
+    "words": 21,
+    "emb": 0.0328
+   }
+  ],
+  "rand_pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It's like being a morning bird, waking up to the sound of birds singing and the sun peeking through the curtains. I've been known to wake up at 4:30 AM on some days",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1666131044272334,
+    "words": 32,
+    "emb": 0.1388
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It's like waking up to the sound of birds singing and the sun peeking through the curtains. It's a peaceful start to the day, with no rush or distractions.",
+    "lex": 3.4482758620689653,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8269164441541458,
+    "words": 29,
+    "emb": 0.0839
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Imagine a commuter train, packed with passengers rushing to their destinations. The air is thick with the smell of coffee and sweat, and the sound of chatter fills the space. Passengers squeeze into seats",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.0105526354542236,
+    "words": 34,
+    "emb": 0.0594
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Imagine a crowded train, the air thick with the smell of stale coffee and sweat. The overhead lights flicker, casting an eerie glow over the packed carriage. Passengers shuffle along, their faces",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9989397543628001,
+    "words": 32,
+    "emb": 0.0507
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When I miss the bus, I have to walk home. It's not fun.",
+    "lex": 7.6923076923076925,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.886215712683385,
+    "words": 13,
+    "emb": -0.0407
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "If you miss the bus, you might have to wait for a different one or walk a long way.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8010611341201833,
+    "words": 19,
+    "emb": -0.0639
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a great way to relax and recharge. I can enjoy my own company, read a book, or watch a movie without feeling overwhelmed by the noise and distractions of the outside world.",
+    "lex": 6.0606060606060606,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8604867527177796,
+    "words": 33,
+    "emb": 0.1005
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's a bit like being in a small, cozy room with lots of things to explore. You can read books, play games, or just sit and think. Sometimes you might feel a little lonely",
+    "lex": -2.9411764705882355,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.92217585996259,
+    "words": 34,
+    "emb": 0.0164
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "A long drive can be a fun adventure. Imagine driving through beautiful landscapes, seeing new places, and meeting interesting people along the way. It's like going on a big journey with your car as your",
+    "lex": 8.571428571428571,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8106639351812192,
+    "words": 35,
+    "emb": 0.0823
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm sorry, but I don't have the ability to provide personal experiences or memories. However, I can tell you that a long drive can be an exciting and memorable experience. It's all about",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.718110341943975,
+    "words": 33,
+    "emb": 0.041
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "That's a great question! A long week can be quite draining, both physically and mentally. At the end of a long week, it's essential to take some time for yourself to recharge and re",
+    "lex": 2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5361147128831363,
+    "words": 34,
+    "emb": 0.012
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm sorry, but as a digital assistant, I don't have personal experiences or emotions. However, I can provide some general advice on how to cope with the end of a long week. Here",
+    "lex": -3.0303030303030303,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5878629060782259,
+    "words": 33,
+    "emb": -0.0709
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The city is a beautiful place to visit in winter. It's cold, but the snow makes it look magical. There are many things to do, like going to the park and watching the snow fall",
+    "lex": 2.857142857142857,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9675545122008771,
+    "words": 35,
+    "emb": 0.0562
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "In the city, winter is a time of cozy warmth and festive cheer. The streets are lined with twinkling lights, and the air is filled with the scent of cinnamon and pine. People",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6083048569693347,
+    "words": 33,
+    "emb": 0.0795
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "<think>Okay, the user wants to know about waiting for news. Let me start by thinking about what they might be feeling. They might be anxious or overwhelmed, so I should address that first",
+    "lex": -2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7053378144395538,
+    "words": 34,
+    "emb": 0.0347
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Waiting for news can be a long and sometimes frustrating experience. It's important to stay informed and prepared for any developments that may arise.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9443184937591906,
+    "words": 24,
+    "emb": -0.0135
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's a mix of excitement and nerves. I'm excited to be part of a team that's passionate about creating amazing experiences for users. But I'm also nervous about the challenges ahead and the need",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.942453236944857,
+    "words": 34,
+    "emb": 0.0523
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's a mix of excitement and nerves. I'm always excited to learn new things and meet new people, but I also know that it can be a bit overwhelming at first. I've been working",
+    "lex": 2.9411764705882355,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8743479053024202,
+    "words": 34,
+    "emb": 0.0924
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "That's a great question! When plans change at the last minute, it can be frustrating and stressful. It's like trying to catch a moving target \u2013 you're trying to adapt quickly to new information",
+    "lex": 3.0303030303030303,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8121479421242839,
+    "words": 33,
+    "emb": 0.0003
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "That's a great question! When plans change at the last minute, it can be a bit of a challenge. It's like trying to catch a slippery fish with your hands - you're just not",
+    "lex": 3.0303030303030303,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6821249073633225,
+    "words": 33,
+    "emb": 0.0013
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm sorry, but I don't have the ability to access or provide information about specific locations. However, I can tell you that an old house is a building that has been in existence for a",
+    "lex": -2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7543238309692242,
+    "words": 35,
+    "emb": -0.0319
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "An old house is a building that has been standing for a long time. It might have many rooms, and sometimes it has special features like a fireplace or a big window. Old houses can be very",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7335799080785363,
+    "words": 37,
+    "emb": -0.0221
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "It's like the world has taken a big sigh of relief. No more late-night shopping, no more frantic last-minute rushes to the store. It's a time for reflection,",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9902079401595983,
+    "words": 30,
+    "emb": -0.0318
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's a bit strange, but not as bad as it sounds. I mean, the shops are closed, but there are still things to do and see. There are always new things happening in the",
+    "lex": -2.9411764705882355,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.0297549070150125,
+    "words": 34,
+    "emb": -0.047
+   }
+  ],
+  "rand_neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I don't have a body, but I can tell you that it is a very interesting experience. For example, when I was in the museum, I had to wait for my turn to see the",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.2668258527060972,
+    "words": 35,
+    "emb": 0.0769
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It is very interesting! When I wake up, I like to go for a walk in the garden.\nI can see the sun rising and the sky turning from dark blue to light blue.",
+    "lex": 2.9411764705882355,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.2902576143566806,
+    "words": 34,
+    "emb": 0.2188
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I have a system that is able to understand the context of a conversation and can provide an answer based on the information given.\nThe following is a list of common words and their meanings:\n-",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.8078070046147332,
+    "words": 35,
+    "emb": 0.0748
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Well, let me tell you about a crowded train. It's like a small world inside the train, with people sitting on the seats and standing in the aisles. The air is filled with the",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9505311448214343,
+    "words": 34,
+    "emb": 0.0421
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Well, I have to wait for the next one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.1954699815674261,
+    "words": 9,
+    "emb": -0.0288
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "You are forced to take the next bus, which is also late.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 2.025143198003726,
+    "words": 12,
+    "emb": -0.0722
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It is a very interesting experience. I can tell you that I have been to the office for work, but this time I will stay at home and take care of my duties.\nI will do",
+    "lex": 2.7777777777777777,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.6736392397258897,
+    "words": 36,
+    "emb": 0.1258
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It is a bit boring, but I have been playing with my new toys.",
+    "lex": -7.142857142857143,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.8803502786904573,
+    "words": 14,
+    "emb": 0.0202
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I have a long-distance trip planned for tomorrow. I will be traveling from my home in California to my parents' house in New Jersey.\nI will be traveling by car, so I will",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.3520386058255098,
+    "words": 34,
+    "emb": 0.0374
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I am a friendly computer, but I can't really have a long drive. However, I can help you with some information about it.\nFor example, the length of a typical road trip in",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.4884414912259671,
+    "words": 33,
+    "emb": 0.0343
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "The best way to end a long week is to relax and enjoy the weekend!\nThe best way to end a long week is to take a break from work and relax. You can do this by",
+    "lex": 8.108108108108109,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.061721113906242,
+    "words": 37,
+    "emb": 0.0158
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "A lot of people get a lot of stress, and it can be hard to take care of yourself. But I can help you!\nWhat do you like to do for fun?\nDo you",
+    "lex": 2.9411764705882355,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.4412927026831313,
+    "words": 34,
+    "emb": 0.0667
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The winter in the city is cold and snowy. The streets are covered in a thick layer of snow, and the temperature drops to freezing point.\nThe weather is also very windy, with",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9721435468098207,
+    "words": 33,
+    "emb": -0.0102
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "In the city, winter is cold and windy. It is also a time of celebration, with people wearing warm clothes and enjoying the holiday season.\n## Response Breakdown\n- The assistant responds",
+    "lex": 3.3333333333333335,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.466181056512869,
+    "words": 30,
+    "emb": 0.0708
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "I don't have a human body, but I can tell you that it's a very interesting and complex process.\nFor example, when we wait for news, our brain is constantly trying to figure",
+    "lex": 3.0303030303030303,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.3531992112344597,
+    "words": 33,
+    "emb": 0.0372
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Well, you can't be too impatient. You have to wait for the news to come in. But it's not like waiting for a bus or something. It's more like waiting for a big",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.2666145618073643,
+    "words": 33,
+    "emb": -0.0735
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I am a machine, but I can tell you that it is a very exciting and challenging time. You will be learning new things and working with people who are passionate about their work. It is also",
+    "lex": 2.7027027027027026,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0376150492113083,
+    "words": 37,
+    "emb": 0.1599
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I am a machine, but I can tell you that it is important to be prepared and to take the time to learn the new job and the company's culture. It is also important to be confident",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.134755396010587,
+    "words": 37,
+    "emb": 0.1705
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "Well, if you're like me, you probably have a lot of different plans for the day. But when one of them gets canceled, it can be pretty stressful.\nI know I'm usually",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.3819231549277902,
+    "words": 32,
+    "emb": -0.0645
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "The name of the \"2022/2023 academic year\" is a matter of public interest.\nThe National Assembly has decided to postpone the elections for the second time, and it is not",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 2.445040570072888,
+    "words": 29,
+    "emb": -0.0436
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I can do that.\nThe house is a classic Victorian, with a steeply pitched roof and tall windows. The exterior is painted in a dark shade of brown, while the interior is painted in",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.338287541817408,
+    "words": 34,
+    "emb": 0.0579
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "The house was built in the 1800s and had a lot of history. It was used as a school, a church, and even a prison!",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9972309225892287,
+    "words": 25,
+    "emb": -0.0079
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "When the shops are closed, it is a bit quieter and calmer. People can go to the market or buy things from their own homes. It is also a good time to relax and enjoy",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0795873172639403,
+    "words": 35,
+    "emb": 0.08
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "Well, it's a bit of a mess.  I have to go back to the shop and ask for the order number and then I have to call the customer and tell them that I will be",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.5818663492857012,
+    "words": 36,
+    "emb": -0.0526
+   }
+  ],
+  "rand1_pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It's like a race against time. You have to get up, make your bed, and get ready for the day. It can be a little overwhelming at first, but once you get into the",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8734020102885551,
+    "words": 34,
+    "emb": -0.0229
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "Waking up early can be a challenging experience, especially if you're not used to it. It's important to get enough sleep, so try to go to bed early and set an alarm clock for",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8054478938109242,
+    "words": 34,
+    "emb": -0.0274
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "A crowded train is a place where many people are sitting or standing on the train. It can be very busy and noisy.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8131798261776566,
+    "words": 23,
+    "emb": 0.0282
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "The train was packed with people.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.2817244359425135,
+    "words": 6,
+    "emb": 0.0049
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "You miss the bus.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.3658462435007095,
+    "words": 4,
+    "emb": -0.0915
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "If you miss the bus, you have to wait for the next one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.5272849110886455,
+    "words": 13,
+    "emb": -0.0609
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a day of quiet and reflection. I can read, write, or just relax.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.4150814612052942,
+    "words": 14,
+    "emb": 0.0517
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's a bit lonely, but it's also peaceful. I can do whatever I want, and there's no one to bother me.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7389863764817294,
+    "words": 21,
+    "emb": 0.0183
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "A long drive is a journey that takes a lot of time and effort. It can be a great way to explore new places, meet new people, and experience different cultures. However, it can also",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.4697568471950945,
+    "words": 35,
+    "emb": 0.0222
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "A long drive is a journey that takes a lot of time and effort. It can be a trip to see family or friends, or it can be a trip to visit a new place. Whatever the",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6137108699476812,
+    "words": 37,
+    "emb": -0.002
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "It's time to unwind and relax.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.3610284369335406,
+    "words": 6,
+    "emb": -0.0116
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "A lot of people are tired and need to rest.",
+    "lex": -10.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.5340113328261809,
+    "words": 10,
+    "emb": -0.0533
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The city is a winter wonderland. The snow falls gently, and the streets are covered in a thick layer of white. The temperature drops to freezing, and the air feels crisp and cold.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.7822625463804564,
+    "words": 33,
+    "emb": -0.0052
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "In the city, winter is a time of cold and snow. The streets are covered in a thick layer of snow, and the temperature can drop to freezing point. People wear warm clothes like coats,",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.664376443438232,
+    "words": 35,
+    "emb": -0.0054
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "I'm sorry to hear that you're waiting for news. It can be a difficult and frustrating experience, but it's important to remember that the process of waiting is often temporary. In the meantime,",
+    "lex": -6.0606060606060606,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7280036804822885,
+    "words": 33,
+    "emb": -0.0841
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "Waiting for news can be a long and frustrating process. It's important to stay patient and keep your fingers crossed that the news will come soon.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6803697506206688,
+    "words": 26,
+    "emb": -0.0107
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's a mix of excitement and nerves. I'm excited to be working with the best people in the world, but I'm also nervous about making mistakes and not meeting expectations.",
+    "lex": 6.666666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8822137848991487,
+    "words": 30,
+    "emb": -0.0377
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's a mix of excitement and nerves. I feel like I'm starting a new chapter in my life, and I'm excited to see where it takes me.",
+    "lex": 3.7037037037037037,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.6318822646668801,
+    "words": 27,
+    "emb": 0.051
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "That's a good question. When plans change at the last minute, it can be frustrating and stressful. It's important to stay calm and try to find a solution that works for everyone involved.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.5088423514822259,
+    "words": 33,
+    "emb": -0.0527
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "The most important thing is to stay calm and be flexible. If you're able to make changes quickly, it can help you avoid stress and frustration.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.255763524522384,
+    "words": 26,
+    "emb": 0.0253
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "An old house is a building that has been around for a long time. It might have lots of history and stories behind it.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6147747971386147,
+    "words": 24,
+    "emb": -0.0409
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "Sure, I can help with that. An old house is a building that has been around for a long time and has a lot of history behind it. It might have been built in the 1800",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6258958573045674,
+    "words": 35,
+    "emb": 0.0031
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "When the shops are closed, it can be a little bit different. There's no rush to get things done, and you have more time to relax and enjoy your day.",
+    "lex": 3.3333333333333335,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7227202748148037,
+    "words": 30,
+    "emb": 0.0614
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's a bit strange, isn't it? I can't go to the shops and buy things like you can. But I can still do lots of other things!",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8331940676400658,
+    "words": 27,
+    "emb": -0.0294
+   }
+  ],
+  "rand1_neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It is not as bad as you think, I am just used to it.",
+    "lex": -7.142857142857143,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.6952860378078185,
+    "words": 14,
+    "emb": -0.1147
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It is not easy, but I have been trained to do it.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.5288941381233079,
+    "words": 12,
+    "emb": -0.0194
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "It's a strange thing to be on a crowded train, I have never been on one before.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.4961002606898546,
+    "words": 17,
+    "emb": 0.017
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "The train is crowded, and I am sitting in the front seat. The passengers are talking loudly, and I can hear them arguing about the weather.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.3919043396910031,
+    "words": 26,
+    "emb": 0.0031
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "You'll have to walk or take a taxi, but you can still catch up on your reading.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.486703081615269,
+    "words": 17,
+    "emb": -0.0168
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "You'll have to wait for the next one, or you can walk back to school.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.1423689980680745,
+    "words": 15,
+    "emb": -0.1028
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a bit lonely, but I've learned to enjoy my own company.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.93774470470089,
+    "words": 12,
+    "emb": 0.086
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's a bit lonely, but I can talk to you and do some fun activities.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.4171385276648734,
+    "words": 15,
+    "emb": 0.0509
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I've been on a long drive before, but it's usually for work or family reasons. It's not as exciting as you might think!",
+    "lex": 4.3478260869565215,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.2504555901576733,
+    "words": 23,
+    "emb": 0.0335
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I am a language model, I do not have feelings or emotions. However, I can tell you that a long drive can be an exciting and memorable experience. It can take you to different places,",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8851984330220148,
+    "words": 35,
+    "emb": 0.0161
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "It's not just about the end of a week, but also the beginning of a new one.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.035846739448607,
+    "words": 17,
+    "emb": 0.026
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "*I've been working on a new feature for our app* - I'm excited to share it with you.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.8246844870888668,
+    "words": 17,
+    "emb": 0.2717
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The answer is: [What is the weather like in the city?]",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.6925991987188658,
+    "words": 11,
+    "emb": 0.0609
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "In the city, winter is a time of cold and snow.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.735486008799993,
+    "words": 11,
+    "emb": -0.0187
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "I've been wondering about that too. It's a strange phenomenon, isn't it?",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.436430966300476,
+    "words": 12,
+    "emb": 0.0162
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "It's quite a task, I must admit.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.9388035655021667,
+    "words": 7,
+    "emb": 0.0074
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "It's a bit like starting a new adventure, but with a bit of worry and excitement!",
+    "lex": -6.25,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.4926857242458744,
+    "words": 16,
+    "emb": 0.0566
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "It's a bit like stepping into a new world, where you must learn the rules and adapt to the environment.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.3127150812550732,
+    "words": 20,
+    "emb": 0.0211
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "It's a good question! When we're planning something, it's important to have some flexibility in case things change.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.3008902211052675,
+    "words": 18,
+    "emb": 0.0891
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "It's like a 'huh, I didn't realize that was happening' moment.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 2.193537190142605,
+    "words": 11,
+    "emb": -0.0144
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I am a virtual assistant, not a human. However, I can tell you that the concept of an old house is fascinating.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.2680335564879128,
+    "words": 22,
+    "emb": 0.0762
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "The old house had a charming facade with intricate details, but the interior was dilapidated.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.4430068263085558,
+    "words": 15,
+    "emb": -0.0409
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "It's quite interesting to see the streets empty, with only a few residents and tourists walking around.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.770459409430623,
+    "words": 17,
+    "emb": 0.0218
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "It's quite a contrast to the usual hustle and bustle of the streets.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.0849866710966178,
+    "words": 13,
+    "emb": -0.0144
+   }
+  ]
+ },
+ "seconds": 1346.0
+}
