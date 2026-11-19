@@ -10,7 +10,9 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** none (W and pool40-42 idle).
+- **LIVE RUNS:** weekly 1.5B at current defaults (curiosity ON), fresh seeds 300-305: pool40 300/301, pool41 302/303,
+  pool42 304/305 (`~/brain-lane/wk1119/`, script `_scratch/ns0/wk_default.sh`). Read whole transcripts; biggest defect
+  so far: seed 42 answers "Pixel." to most questions after the night (both arms).
 - **RESULT (11-19):** curiosity ON by default at 1.5B (`Brain(inquiry="auto")`, flipped 2bf228e2f). Six-seed test PASS,
   NARROWED: coined asks 0.08 -> 0.33, asks-or-admits +0.38, invents -0.12, common untouched; 12 fixed items (gain on ~7),
   fires on some real names ("What's pho?"; in the weekly 7 false fires, replies ordinary). Weekly guard: first run
