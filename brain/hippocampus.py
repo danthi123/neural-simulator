@@ -105,12 +105,20 @@ class Hippocampus:
         j = int(score.argmax())
         return self.episodes[keep[j]], float(score[j])
 
-    def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
-        """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""
+    def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True, exclude=()):
+        """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity).
+        exclude: episode indices that ordinary pattern completion never returns (an episode only a gate reinstates)."""
         if not self.enabled or not self.episodes:
             return None, 0.0
         now = time.time()
         score = self.scores(cortex, base, cue_text, speaker, now)
+        if exclude:
+            score = score.clone()
+            for i in exclude:
+                if 0 <= i < len(score):
+                    score[i] = -1e9
+            if all(0 <= i < len(score) for i in exclude) and len(exclude) >= len(score):
+                return None, 0.0
         return self._compete(score, question, now)
 
     def similarities(self, cortex, base, cue_text: str, speaker: str = "User"):
