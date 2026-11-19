@@ -18,3 +18,13 @@ directory (`2026-11-19-inquiry-weekly-1.5b/iq{off,on}_s*.md`).
 
 Next method (lever 2 on this flip): the lesson episode stays in the hippocampus but is left out of sleep replay (and
 out of the night's guard/teacher lists), then this guard reruns with the same bars (Amendment 2).
+
+## Amendment 2 rerun (lesson left out of sleep replay), on arm only, scored against the off transcripts above
+Transcripts `2026-11-19-inquiry-weekly-1.5b/a2/iqon_s*.md` (pool40 42/101, pool41 44/100, pool42 43, W 102).
+- W-a: on 69 (per seed 42 5, 43 12, 44 12, 100 14, 101 14, 102 12) vs off 71: PASS at the bar (>= 69). Seed 42 is a
+  slept collapse ("Pixel." to most questions) in both arms; the gate never fired there; the arms differ by sampling,
+  because the lesson lived at birth drew random numbers (Amendment-1 on scored 13 on the same seed).
+- W-b: no "zorbit" in any reply: PASS (the gate fired in 3 of 6 transcripts, replies ordinary).
+- W-c: blind read (`a2/blind_read_wc.json`), off vs on: invented 20/18, wrong 17/18, perspective 16/17, other 14/12,
+  asks-known 8/2, off-topic 5/5, intrusion 5/5 (fox named Pixel, as off), repetition 1/4 (the s42 "Pixel." collapse
+  and the "I'm happy to help" filler, both seen in off transcripts). No new class: PASS.
