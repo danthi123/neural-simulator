@@ -43,3 +43,14 @@ Record: `brain/research/2026-11-18-novelty-inquiry-record.md`; dev: `brain/exper
 ## Prerequisites and expected outcome
 Met: cortex surprisal signal (stage 0 AUROC 1.00), hippocampal reinstatement, recall exclusion. Missing: a learned
 bar and a learned lesson (both host-set scaffolds). Expected with the chosen wording (dev): P1 +0.22, P2 +0.33, P3 -0.10, so P3 is the closest bar.
+
+## Amendment 1 (2026-11-19, before it ran): flip guard with sleep
+The test lives one day without sleep, but a night replays every stored episode, the lesson included. Before any flip,
+the weekly test (`brain/eval/weekly.py --model 1.5b --shared-sleep --seed s`, CPU) runs off vs `--inquiry auto` (bar
+12.4 + the lesson lived at birth, `Brain.INQUIRY_BAR_BY_SIZE`, `_live_inquiry_at_birth`) on seeds 42/43/44/100/101/102.
+Flip only if all hold:
+- W-a: keyed answers right (✅, both session-2 arms and session 1), total over six seeds: on >= off - 2.
+- W-b: "zorbit" appears in no brain reply on any seed.
+- W-c: a whole-transcript read, blind to arm, finds no new defect class in the on arm.
+Cost probe (reported, no bar; `results/2026-11-19-inquiry-test-1.5b/everyday_s4[23].json`): the gate fired on 3 of 24
+everyday tellings with real names (Oluwaseun, pho, Ishiguro), 12 of 96 turns; "What's pho?" twice.

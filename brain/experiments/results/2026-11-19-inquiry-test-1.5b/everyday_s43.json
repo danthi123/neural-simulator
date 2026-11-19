@@ -1,0 +1,394 @@
+{
+ "seed": 43,
+ "model": "1.5b",
+ "bar": 12.4,
+ "guided": "What's a zorbit? I've never heard of that word.",
+ "host": "node-dl4g243",
+ "rows": [
+  {
+   "stmt": "My cat is called Pixel.",
+   "sample": 0,
+   "lesson": "Pixel sounds like a very cool name for a cat! What's your cat's favorite thing to do?",
+   "gate": "Pixel sounds like a very cool name for a cat! What's your cat's favorite thing to do?",
+   "fired": false,
+   "novelty": 7.319023132324219
+  },
+  {
+   "stmt": "My cat is called Pixel.",
+   "sample": 1,
+   "lesson": "Pixel sounds like a very unique name for a cat. Do you have any other pets?",
+   "gate": "Pixel sounds like a very unique name for a cat. Do you have any other pets?",
+   "fired": false,
+   "novelty": 7.319023132324219
+  },
+  {
+   "stmt": "My sister's name is Marguerite.",
+   "sample": 0,
+   "lesson": "Marguerite is a beautiful name. It's French for \"beautiful garden.\"",
+   "gate": "Marguerite is a beautiful name. It's French for \"beautiful garden.\"",
+   "fired": false,
+   "novelty": 10.435366116464138
+  },
+  {
+   "stmt": "My sister's name is Marguerite.",
+   "sample": 1,
+   "lesson": "What is your sister's name?",
+   "gate": "What is your sister's name?",
+   "fired": false,
+   "novelty": 10.435366116464138
+  },
+  {
+   "stmt": "I drive a red Volvo.",
+   "sample": 0,
+   "lesson": "I see. What's your favorite color?",
+   "gate": "I see. What's your favorite color?",
+   "fired": false,
+   "novelty": 10.651069641113281
+  },
+  {
+   "stmt": "I drive a red Volvo.",
+   "sample": 1,
+   "lesson": "That's a nice car! What's it like driving a red Volvo?",
+   "gate": "That's a nice car! What's it like driving a red Volvo?",
+   "fired": false,
+   "novelty": 10.651069641113281
+  },
+  {
+   "stmt": "I work as a system administrator, mostly Linux servers.",
+   "sample": 0,
+   "lesson": "That's great! Linux is a powerful operating system. What kind of servers do you manage?",
+   "gate": "That's great! Linux is a powerful operating system. What kind of servers do you manage?",
+   "fired": false,
+   "novelty": 6.514350891113281
+  },
+  {
+   "stmt": "I work as a system administrator, mostly Linux servers.",
+   "sample": 1,
+   "lesson": "I'm curious, what kind of Linux servers do you work with?",
+   "gate": "I'm curious, what kind of Linux servers do you work with?",
+   "fired": false,
+   "novelty": 6.514350891113281
+  },
+  {
+   "stmt": "My brother lives in Edinburgh.",
+   "sample": 0,
+   "lesson": "That's great! Edinburgh is a beautiful city with a rich history and culture. What do you like to do in your free time?",
+   "gate": "That's great! Edinburgh is a beautiful city with a rich history and culture. What do you like to do in your free time?",
+   "fired": false,
+   "novelty": 8.48154878616333
+  },
+  {
+   "stmt": "My brother lives in Edinburgh.",
+   "sample": 1,
+   "lesson": "Edinburgh is a beautiful city in Scotland. It's known for its rich history, stunning architecture, and vibrant culture.",
+   "gate": "Edinburgh is a beautiful city in Scotland. It's known for its rich history, stunning architecture, and vibrant culture.",
+   "fired": false,
+   "novelty": 8.48154878616333
+  },
+  {
+   "stmt": "My daughter is called Siobhan.",
+   "sample": 0,
+   "lesson": "That's a lovely name! Siobhan is a beautiful and unique name.",
+   "gate": "That's a lovely name! Siobhan is a beautiful and unique name.",
+   "fired": false,
+   "novelty": 11.19678807258606
+  },
+  {
+   "stmt": "My daughter is called Siobhan.",
+   "sample": 1,
+   "lesson": "Hello! What's your daughter's name?",
+   "gate": "Hello! What's your daughter's name?",
+   "fired": false,
+   "novelty": 11.19678807258606
+  },
+  {
+   "stmt": "We went to Reykjavik last summer.",
+   "sample": 0,
+   "lesson": "That sounds like a great trip! What did you do there?",
+   "gate": "That sounds like a great trip! What did you do there?",
+   "fired": false,
+   "novelty": 11.328593761660159
+  },
+  {
+   "stmt": "We went to Reykjavik last summer.",
+   "sample": 1,
+   "lesson": "That sounds like a wonderful trip! What did you do there?",
+   "gate": "That sounds like a wonderful trip! What did you do there?",
+   "fired": false,
+   "novelty": 11.328593761660159
+  },
+  {
+   "stmt": "My dog's name is Biscuit.",
+   "sample": 0,
+   "lesson": "That's a cute name! Biscuit sounds like a very friendly and loving dog.",
+   "gate": "That's a cute name! Biscuit sounds like a very friendly and loving dog.",
+   "fired": false,
+   "novelty": 8.424322860315442
+  },
+  {
+   "stmt": "My dog's name is Biscuit.",
+   "sample": 1,
+   "lesson": "Biscuit sounds like a great name for a dog! What's your dog's favorite thing to do?",
+   "gate": "Biscuit sounds like a great name for a dog! What's your dog's favorite thing to do?",
+   "fired": false,
+   "novelty": 8.424322860315442
+  },
+  {
+   "stmt": "I grew up in Saskatoon.",
+   "sample": 0,
+   "lesson": "Saskatoon is a beautiful city. What's your favorite thing about it?",
+   "gate": "Saskatoon is a beautiful city. What's your favorite thing about it?",
+   "fired": false,
+   "novelty": 11.57144898804836
+  },
+  {
+   "stmt": "I grew up in Saskatoon.",
+   "sample": 1,
+   "lesson": "Saskatoon is a beautiful city. What was your favorite part of growing up there?",
+   "gate": "Saskatoon is a beautiful city. What was your favorite part of growing up there?",
+   "fired": false,
+   "novelty": 11.57144898804836
+  },
+  {
+   "stmt": "My husband is called Tomasz.",
+   "sample": 0,
+   "lesson": "Tomasz is a beautiful name. It's a Polish name, right?",
+   "gate": "Tomasz is a beautiful name. It's a Polish name, right?",
+   "fired": false,
+   "novelty": 11.898256421089172
+  },
+  {
+   "stmt": "My husband is called Tomasz.",
+   "sample": 1,
+   "lesson": "Hello! I'm here to help you with any questions or concerns you may have about your husband's name. Is there anything specific you'd like to know about Tomasz?",
+   "gate": "Hello! I'm here to help you with any questions or concerns you may have about your husband's name. Is there anything specific you'd like to know about Tomasz?",
+   "fired": false,
+   "novelty": 11.898256421089172
+  },
+  {
+   "stmt": "I play the cello in an orchestra.",
+   "sample": 0,
+   "lesson": "That's awesome! What kind of music do you play?",
+   "gate": "That's awesome! What kind of music do you play?",
+   "fired": false,
+   "novelty": 8.646711349487305
+  },
+  {
+   "stmt": "I play the cello in an orchestra.",
+   "sample": 1,
+   "lesson": "That's great! What kind of music do you play?",
+   "gate": "That's great! What kind of music do you play?",
+   "fired": false,
+   "novelty": 8.646711349487305
+  },
+  {
+   "stmt": "My favourite band is Radiohead.",
+   "sample": 0,
+   "lesson": "That's great! Radiohead is a really cool band. What's your favourite song by them?",
+   "gate": "That's great! Radiohead is a really cool band. What's your favourite song by them?",
+   "fired": false,
+   "novelty": 7.404061317443848
+  },
+  {
+   "stmt": "My favourite band is Radiohead.",
+   "sample": 1,
+   "lesson": "Radiohead is a great band! They have some amazing music.",
+   "gate": "Radiohead is a great band! They have some amazing music.",
+   "fired": false,
+   "novelty": 7.404061317443848
+  },
+  {
+   "stmt": "I just bought a Kindle.",
+   "sample": 0,
+   "lesson": "That's great! What kind of books are you interested in reading?",
+   "gate": "That's great! What kind of books are you interested in reading?",
+   "fired": false,
+   "novelty": 9.162482738494873
+  },
+  {
+   "stmt": "I just bought a Kindle.",
+   "sample": 1,
+   "lesson": "That's great! What kind of books are you reading?",
+   "gate": "That's great! What kind of books are you reading?",
+   "fired": false,
+   "novelty": 9.162482738494873
+  },
+  {
+   "stmt": "My grandmother was born in Gdansk.",
+   "sample": 0,
+   "lesson": "That's fascinating! Gdansk is a beautiful city in Poland. What was your grandmother like?",
+   "gate": "That's fascinating! Gdansk is a beautiful city in Poland. What was your grandmother like?",
+   "fired": false,
+   "novelty": 11.836072839796543
+  },
+  {
+   "stmt": "My grandmother was born in Gdansk.",
+   "sample": 1,
+   "lesson": "Gdansk is a beautiful city in Poland. It's known for its rich history and cultural heritage.",
+   "gate": "Gdansk is a beautiful city in Poland. It's known for its rich history and cultural heritage.",
+   "fired": false,
+   "novelty": 11.836072839796543
+  },
+  {
+   "stmt": "My best friend is called Oluwaseun.",
+   "sample": 0,
+   "lesson": "That's a lovely name! Oluwaseun means \"God is my light\" in Yoruba. It's a beautiful name that reflects the positive and uplifting qualities of its meaning.",
+   "gate": "That's a pretty unique name.",
+   "fired": true,
+   "novelty": 14.873281240463257
+  },
+  {
+   "stmt": "My best friend is called Oluwaseun.",
+   "sample": 1,
+   "lesson": "Oluwaseun is a very special friend.",
+   "gate": "Oluwaseun? That's a pretty name.",
+   "fired": true,
+   "novelty": 14.873281240463257
+  },
+  {
+   "stmt": "I had pho for lunch.",
+   "sample": 0,
+   "lesson": "What kind of pho did you have?",
+   "gate": "That sounds delicious! What's pho?",
+   "fired": true,
+   "novelty": 16.5633282661438
+  },
+  {
+   "stmt": "I had pho for lunch.",
+   "sample": 1,
+   "lesson": "What kind of pho did you have?",
+   "gate": "That sounds delicious! What's pho?",
+   "fired": true,
+   "novelty": 16.5633282661438
+  },
+  {
+   "stmt": "My son plays rugby on Saturdays.",
+   "sample": 0,
+   "lesson": "That's great! Rugby is a fun and exciting sport. What do you think your son enjoys most about playing rugby?",
+   "gate": "That's great! Rugby is a fun and exciting sport. What do you think your son enjoys most about playing rugby?",
+   "fired": false,
+   "novelty": 5.97921085357666
+  },
+  {
+   "stmt": "My son plays rugby on Saturdays.",
+   "sample": 1,
+   "lesson": "That's great! Rugby is a fun and exciting sport. What position does he play?",
+   "gate": "That's great! Rugby is a fun and exciting sport. What position does he play?",
+   "fired": false,
+   "novelty": 5.97921085357666
+  },
+  {
+   "stmt": "I use Kubernetes at work.",
+   "sample": 0,
+   "lesson": "That's great! Kubernetes is a powerful tool for managing containerized applications. What kind of work do you do with it?",
+   "gate": "That's great! Kubernetes is a powerful tool for managing containerized applications. What kind of work do you do with it?",
+   "fired": false,
+   "novelty": 8.651188850402832
+  },
+  {
+   "stmt": "I use Kubernetes at work.",
+   "sample": 1,
+   "lesson": "Kubernetes is a popular container orchestration platform. It helps manage and deploy containers in a scalable and efficient manner.",
+   "gate": "Kubernetes is a popular container orchestration platform. It helps manage and deploy containers in a scalable and efficient manner.",
+   "fired": false,
+   "novelty": 8.651188850402832
+  },
+  {
+   "stmt": "My parrot is called Kiwi.",
+   "sample": 0,
+   "lesson": "Kiwi is a cute parrot. What kind of parrot is it?",
+   "gate": "Kiwi is a cute parrot. What kind of parrot is it?",
+   "fired": false,
+   "novelty": 10.87955829501152
+  },
+  {
+   "stmt": "My parrot is called Kiwi.",
+   "sample": 1,
+   "lesson": "Kiwi is a very cute parrot.",
+   "gate": "Kiwi is a very cute parrot.",
+   "fired": false,
+   "novelty": 10.87955829501152
+  },
+  {
+   "stmt": "We live near Lake Winnipesaukee.",
+   "sample": 0,
+   "lesson": "Oh, that sounds lovely! What's it like living near a lake?",
+   "gate": "Oh, that sounds lovely! What's it like living near a lake?",
+   "fired": false,
+   "novelty": 7.5349601353518665
+  },
+  {
+   "stmt": "We live near Lake Winnipesaukee.",
+   "sample": 1,
+   "lesson": "That sounds like a beautiful place to live! What's your favorite thing about living near the lake?",
+   "gate": "That sounds like a beautiful place to live! What's your favorite thing about living near the lake?",
+   "fired": false,
+   "novelty": 7.5349601353518665
+  },
+  {
+   "stmt": "My boss is called Mr. Abernathy.",
+   "sample": 0,
+   "lesson": "Oh, I see. And what does he do?",
+   "gate": "Oh, I see. And what does he do?",
+   "fired": false,
+   "novelty": 11.010495224967599
+  },
+  {
+   "stmt": "My boss is called Mr. Abernathy.",
+   "sample": 1,
+   "lesson": "Mr. Abernathy is a very important person in the company. He is the boss of the company and he is responsible for making sure that everything runs smoothly.",
+   "gate": "Mr. Abernathy is a very important person in the company. He is the boss of the company and he is responsible for making sure that everything runs smoothly.",
+   "fired": false,
+   "novelty": 11.010495224967599
+  },
+  {
+   "stmt": "I'm reading a book by Ishiguro.",
+   "sample": 0,
+   "lesson": "Oh, I've heard of that book. It's a great read!",
+   "gate": "Oh, I've heard of that author. He's known for his novels that explore themes of memory and identity.",
+   "fired": true,
+   "novelty": 14.536786602111533
+  },
+  {
+   "stmt": "I'm reading a book by Ishiguro.",
+   "sample": 1,
+   "lesson": "Oh, that's interesting. What book is it?",
+   "gate": "Oh, that's interesting. What's it about?",
+   "fired": true,
+   "novelty": 14.536786602111533
+  },
+  {
+   "stmt": "My niece studies at Dartmouth.",
+   "sample": 0,
+   "lesson": "That's great! What does she study?",
+   "gate": "That's great! What does she study?",
+   "fired": false,
+   "novelty": 8.339264869689941
+  },
+  {
+   "stmt": "My niece studies at Dartmouth.",
+   "sample": 1,
+   "lesson": "Congratulations on your niece's achievement! Dartmouth is a prestigious university, and it's great that she has the opportunity to pursue her education there. What are some of the things that you like about Dartmouth?",
+   "gate": "Congratulations on your niece's achievement! Dartmouth is a prestigious university, and it's great that she has the opportunity to pursue her education there. What are some of the things that you like about Dartmouth?",
+   "fired": false,
+   "novelty": 8.339264869689941
+  },
+  {
+   "stmt": "I fixed my Raspberry Pi yesterday.",
+   "sample": 0,
+   "lesson": "That's great! What did you do to fix it?",
+   "gate": "That's great! What did you do to fix it?",
+   "fired": false,
+   "novelty": 11.043699264526367
+  },
+  {
+   "stmt": "I fixed my Raspberry Pi yesterday.",
+   "sample": 1,
+   "lesson": "That's great! What did you do to fix it?",
+   "gate": "That's great! What did you do to fix it?",
+   "fired": false,
+   "novelty": 11.043699264526367
+  }
+ ],
+ "seconds": 1351.7
+}
