@@ -142,6 +142,14 @@ class LiveCortex:
     def speak(self, logits, state, **kw):
         return Cortex.speak(self, logits, state, **kw) if self.active else self.raw.speak(logits, state, **kw)
 
+    def read_nll(self, text, state=None):
+        """Read with the per-token prediction error (Brain(arousal_gain)). Declared scope: the pretrained cortex only;
+        once sleep has consolidated slow synapses the full-output pass is not wired through the adapters."""
+        if self.active:
+            raise RuntimeError("Brain(arousal_gain) is declared for brains that have not slept (consolidated cortex "
+                               "active); lesion it (consolidated_on=False) or leave the switch off")
+        return self.raw.read_nll(text, state)
+
     def cue_response(self, text, base) -> float:
         """Cortical (perirhinal-like) familiarity of a cue: how strongly the synapses sleep changed respond to it. The
         largest per-token log-prob gain of the cue's own tokens, consolidated synapses on minus off, read from the birth
@@ -179,11 +187,25 @@ class Brain:
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
                  own_gain: float | None = None, own_gain_copies: bool = False,
-                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | None = None):
+                 carry_penalty: bool = False, fake_think: bool = False, inquiry: float | None = None,
+                 arousal_gain: float | None = None, arousal_pin: bool = False,
+                 arousal_calibration: tuple | None = None):
         """inquiry: novelty gate for "it asks about what is new to it" (switch, default OFF = None). A float is the bar in
         nats: when a heard telling holds a word whose surprisal, read from the current state (brain/novelty.py), exceeds
         it and nothing was recalled, the brain reinstates its lived inquiry episode (live_inquiry, a declared teacher
         scaffold) before replying. Lesion = None. brain/research/2026-11-18-novelty-inquiry-record.md.
+        arousal_gain: (switch, default OFF = None: hear() and commit_exchange() are byte-identical to before) arousal as
+        encoding gain (mood iteration 6, brain/research/2026-11-03-mood-state-design.md section 19). A float is SPAN.
+        The heard turn is read split ("User: ...\n\n" then the reply prompt) with the cortex's own per-token
+        prediction error; the mean of its two highest values drives a leaky arousal (Affect.drive_arousal, normalised by
+        MU/SD); the turn's matrix-memory write is scaled by g = min(1 + SPAN * arousal, 2), for this reply and in the
+        committed state (commit_exchange); the reply's own write keeps the current rule. No direction, no words.
+        0.0 = the split read with no gain (the control path). Declared scope: a cortex that has not slept (raises if the
+        consolidated cortex is active). Not saved.
+        arousal_pin: (default False) the lesion: g held at 1, arousal still computed and read out (info["arousal"]).
+        arousal_calibration: (MU, SD) of the drive; None = affect.AROUSAL_CALIBRATION for this cortex size (an error if
+        it has no row). The harness may set `arousal_gains` (a list consumed one per heard turn) to replay another
+        conversation's g (SHUFFLED) or a constant (CONSTANT), and `arousal.TAU_AROUSAL = 1.0` for the CURRENT arm.
         cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -265,6 +287,21 @@ class Brain:
             raise ValueError(f"sleep_rehearse must be False, True or 'reply', not {sleep_rehearse!r}")
         self.sleep_rehearse = sleep_rehearse
         self.habituation = int(habituation)
+        self.arousal_gain = None if arousal_gain is None else float(arousal_gain)
+        self.arousal_pin = bool(arousal_pin)
+        self.arousal = None          # Affect (arousal fields only) while the switch is on
+        self.arousal_gains = None    # harness hook: gains to apply in place of the computed ones, consumed per turn
+        self._turn_gain = 1.0
+        if self.arousal_gain is not None:
+            from brain.affect import AROUSAL_CALIBRATION, Affect
+            cm = cortex_model or getattr(cortex, "model_name", None)
+            size = model_size(cm) if cm else None
+            if arousal_calibration is None and size not in AROUSAL_CALIBRATION:
+                raise ValueError(f"arousal_gain: no (MU, SD) for cortex size {size!r}; pass arousal_calibration "
+                                 f"(brain.affect.calibrate_surprise) or add a row to AROUSAL_CALIBRATION")
+            mu, sd = arousal_calibration or AROUSAL_CALIBRATION[size]
+            self.arousal = Affect(enabled=False, surprise_mu=mu, surprise_sd=sd)
+            self.arousal.gain_on = not self.arousal_pin
         self.reply_monitor = int(reply_monitor)
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
@@ -424,7 +461,15 @@ class Brain:
         retrieval = self.cortex.consolidated_on
         self.cortex.consolidated_on = retrieval and known
         try:
-            logits, st = self.cortex.read(f"User: {text}\n\n{self._asst}", active)
+            if self.arousal_gain is None:
+                logits, st = self.cortex.read(f"User: {text}\n\n{self._asst}", active)
+            else:   # heard turn read split, with the cortex's own prediction error; its write at the arousal gain
+                from brain.affect import top2_mean
+                _, su, nll = self.cortex.read_nll(f"User: {text}\n\n", active)
+                self.arousal.drive_arousal(top2_mean(nll[1:]))
+                g = self._next_gain()
+                logits, st = self.cortex.read(self._asst, self._write_gain(active, su, g))
+                self._turn_gain = g
             blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text]) \
                 if self.habituation else None
             kw = {**({"block": blk} if blk is not None else {}), **({"carry": self._occ} if self.carry_penalty else {})}
@@ -447,7 +492,25 @@ class Brain:
                                    contrast=self.speaker_contrast)
             info["stored"] = True
         self.meta["turns"] += 1
+        if self.arousal is not None:
+            info["arousal"] = self.arousal.readout()
         return reply, info
+
+    def _next_gain(self) -> float:
+        """The gain of this heard turn: the harness's replayed one if set, else min(1 + SPAN * arousal, 2) (1.0 pinned)."""
+        g = self.arousal.encode_gain(self.arousal_gain, self.arousal_pin)
+        if self.arousal_gains:
+            g = float(self.arousal_gains.pop(0))
+            self.arousal.last_gain = g
+        return g
+
+    @staticmethod
+    def _write_gain(before, after, g: float):
+        """`after` with the heard turn's matrix-memory write (after - before) scaled by g (token-shift slots as read).
+        g == 1.0 returns `after` unchanged (bit for bit)."""
+        if g == 1.0:
+            return after
+        return [before[i] + g * (after[i] - before[i]) if i % 3 == 1 else after[i] for i in range(len(after))]
 
     def _spoken(self, raw: str) -> str:
         """What is said of a generated turn: under fake_think the ">" that closes the empty think tag is not spoken."""
@@ -458,8 +521,21 @@ class Brain:
         Else the heard turn is read at full gain and the reply's change to the matrix memory is scaled by own_gain
         (the token-shift slots hold the last token, the same for any reply, and are taken as read)."""
         head, sep = ("Assistant: <think></think>", "") if self.fake_think else ("Assistant:", " ")
+        heard = text
+        if self.arousal_gain is not None:   # heard turn at its arousal gain, then the reply by the rules below
+            g, self._turn_gain = self._turn_gain, 1.0
+            state = self._write_gain(state, self.cortex.read(f"User: {text}\n\n", state)[1], g)
+            text = None
         if self.own_gain is None:
-            return self.cortex.read(f"User: {text}\n\n{head}{sep}{reply}\n\n", state)[1]
+            return self.cortex.read(f"{head}{sep}{reply}\n\n" if text is None else
+                                    f"User: {text}\n\n{head}{sep}{reply}\n\n", state)[1]
+        if text is None:
+            _, su = self.cortex.read(head, state)
+            _, sp = self.cortex.read(f"{sep}{reply}\n\n", su)
+            g = self.own_gain
+            if self.own_gain_copies and not _is_copy(reply, [heard] + self._recent_replies):
+                g = 1.0
+            return [su[i] + g * (sp[i] - su[i]) if i % 3 == 1 else sp[i] for i in range(len(sp))]
         _, su = self.cortex.read(f"User: {text}\n\n{head}", state)
         _, sp = self.cortex.read(f"{sep}{reply}\n\n", su)
         g = self.own_gain

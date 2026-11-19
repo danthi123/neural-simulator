@@ -184,4 +184,5 @@ def test_existing_readouts_byte_identical(ctx, readout):
     assert new_a.mood == old_a.mood
     sn, so = new_a.modulate(cortex, base), old_a.modulate(cortex, base)
     assert all(torch.equal(a, b) for a, b in zip(sn, so))
-    assert new_a.readout() == old_a.readout()
+    old_r = old_a.readout()    # iteration 6 added surprise / encode_gain / gain_on to the read-out; the old keys are unchanged
+    assert {k: v for k, v in new_a.readout().items() if k in old_r} == old_r

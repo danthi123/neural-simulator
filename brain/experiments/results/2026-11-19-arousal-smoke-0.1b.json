@@ -1,0 +1,118 @@
+{
+ "method": "arousal_gain",
+ "cmd": "smoke",
+ "model": "rwkv7-g1d-0.1b-20260129-ctx8192",
+ "calibration": {
+  "mu": 8.945734369754792,
+  "sd": 1.5631905114794955,
+  "n": 20,
+  "texts": [
+   "The pharmacy opens at half past seven.",
+   "A standard envelope weighs about thirty grams.",
+   "The ferry crosses the channel twice a day.",
+   "Our scanner takes sheets in the lower tray.",
+   "The museum has a cloakroom near the entrance.",
+   "Tuesday's lecture covers glacial valleys.",
+   "The elevator stops at floors two, four and six.",
+   "There is a snack kiosk by the bank.",
+   "The post office closes at five o'clock.",
+   "I walked down to the river after lunch.",
+   "She made a pot of coffee for the meeting.",
+   "The train to the city runs every twenty minutes.",
+   "We watered the plants by the back door.",
+   "He folded the towels and put them away.",
+   "The library has a quiet room on the second floor.",
+   "It was warm enough to leave the window open.",
+   "They painted the fence over the weekend.",
+   "I need to charge my phone before we leave.",
+   "The market is busy on Saturday mornings.",
+   "She reads the newspaper at the kitchen table."
+  ],
+  "drives": [
+   10.017961978912354,
+   9.028412342071533,
+   9.488426685333252,
+   11.015544891357422,
+   9.721504211425781,
+   12.952216148376465,
+   9.529747486114502,
+   8.452123165130615,
+   7.862139701843262,
+   7.828365802764893,
+   7.249516725540161,
+   7.609133720397949,
+   10.858197689056396,
+   10.277576923370361,
+   6.804153203964233,
+   7.063215017318726,
+   8.924314975738525,
+   7.631802082061768,
+   8.65077018737793,
+   7.949564456939697
+  ],
+  "model": "rwkv7-g1d-0.1b-20260129-ctx8192"
+ },
+ "off_split": true,
+ "s1": {
+  "turns": 20,
+  "max_logit_diff": 4.57763671875e-05,
+  "max_state_diff": 2.6702880859375e-05,
+  "replies_identical": true,
+  "diff_turns": [],
+  "same_text_read_nll_vs_read": 4.38690185546875e-05,
+  "lesion_equals_split_off": true,
+  "S1_pass": false,
+  "off_split": true
+ },
+ "provenance": {
+  "commit": "7180d91bd3dc67b8eb8741a6435e8707e4d09642",
+  "brain_dirty": true,
+  "torch": "2.11.0+cu128",
+  "threads": 4,
+  "host": "dant123-wk"
+ },
+ "max_tokens": 120,
+ "samples": 2,
+ "S1": {
+  "turns": 20,
+  "max_logit_diff": 4.57763671875e-05,
+  "max_state_diff": 2.6702880859375e-05,
+  "replies_identical": true,
+  "diff_turns": [],
+  "same_text_read_nll_vs_read": 4.38690185546875e-05,
+  "lesion_equals_split_off": true,
+  "S1_pass": false,
+  "off_split": true
+ },
+ "S2_lesion_equals_off_split": true,
+ "S3": {
+  "filler_gain_le_1.1": 0.7916666666666666,
+  "S3_pass": false,
+  "auroc_arousal_after_T1_S_vs_M": 1.0,
+  "mean_gain_by_turn_S": {
+   "1": 1.5287000000000004,
+   "2": 1.1762,
+   "3": 1.05875,
+   "4": 1.0195833333333335
+  },
+  "mean_gain_by_turn_M": {
+   "1": 1.0340666666666667,
+   "2": 1.0113666666666667,
+   "3": 1.0037833333333332,
+   "4": 1.0012666666666667
+  },
+  "mean_drive_by_turn_S": {
+   "1": 13.309283333333335,
+   "2": 4.8290999999999995,
+   "3": 5.496300000000001,
+   "4": 4.714033333333333
+  },
+  "mean_drive_by_turn_M": {
+   "1": 8.093916666666667,
+   "2": 5.35595,
+   "3": 6.144916666666667,
+   "4": 4.91825
+  }
+ },
+ "seconds": 194.6
+}
