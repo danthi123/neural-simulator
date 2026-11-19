@@ -95,3 +95,7 @@ numbers decide whether the stage-1 build and pre-registration go ahead as writte
 - Do RAND or SHUF move AskItem at the chosen gain, as random directions moved mood?
 
 I edited nothing. Grounding: `/home/dant123/Projects/sim/_scratch/wt-mixday/brain/brain.py` (`hear` at line 386, `cue_response` at 145, `knows` at 458, `sleep_extra` at 300/572), `/home/dant123/Projects/sim/_scratch/wt-mixday/brain/PREREQUISITES.md` (Curiosity at line 101), `/home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-18-sall-open-conv-1.5b.md` (style model).
+## Stage 0 result (11-18, 1.5B, six seeds)
+Signal AUROC 1.00 (N vs C and N vs R, summed nats), habituation AUROC 1.00; behaviour shows no selectivity
+(asks what it is ~10/72 N vs ~8/72 C) and invents meanings for coined items. Stage 1 goes ahead; target measure =
+asks what the new thing is (blind reader) + invented meanings must not rise. `results/2026-11-18-novelty-stage0-1.5b.md`.
