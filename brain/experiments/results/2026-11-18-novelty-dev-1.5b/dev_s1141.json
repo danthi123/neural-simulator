@@ -1,0 +1,3784 @@
+{
+ "seed": 1141,
+ "model": "1.5b",
+ "bank": "dev",
+ "samples": 4,
+ "host": "dant123-wk",
+ "threads": 8,
+ "torch": "2.11.0+cu128",
+ "summary": {
+  "auroc_N_vs_C": 1.0,
+  "auroc_N_vs_R": 1.0,
+  "auroc_R_vs_C": 1.0,
+  "auroc_N_vs_C_firsttoken": 0.9861111111111112,
+  "auroc_N_vs_R_firsttoken": 0.6736111111111112,
+  "habituation_drop_mean": {
+   "C": 7.871177577724059,
+   "R": 12.34529547401083,
+   "N": 23.66850322826819
+  },
+  "auroc_N_first_vs_repeat": 1.0,
+  "mean_surprisal": {
+   "C": 4.88052283724149,
+   "R": 12.024343050337242,
+   "N": 25.683685431877773
+  },
+  "asks_item_rate": {
+   "C": 0.4583333333333333,
+   "R": 0.2708333333333333,
+   "N": 0.4166666666666667
+  },
+  "any_question_rate": {
+   "C": 0.9375,
+   "R": 0.7916666666666666,
+   "N": 0.7916666666666666
+  }
+ },
+ "rows": [
+  {
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 0,
+   "first": {
+    "sum": 6.952610969543457,
+    "first": 6.952610969543457,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.752363204956055,
+    "first": 4.752363204956055,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.486968040466309,
+    "first": 13.486968040466309,
+    "tokens": 1
+   },
+   "reply": "I'm not sure if that's a good idea.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 1,
+   "first": {
+    "sum": 6.952610969543457,
+    "first": 6.952610969543457,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.091581344604492,
+    "first": 4.091581344604492,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.486968040466309,
+    "first": 13.486968040466309,
+    "tokens": 1
+   },
+   "reply": "I see. That's interesting. What kind of chickens do they have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 2,
+   "first": {
+    "sum": 6.952610969543457,
+    "first": 6.952610969543457,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.6165013313293457,
+    "first": 3.6165013313293457,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.486968040466309,
+    "first": 13.486968040466309,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What kind of chickens do they have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "C",
+   "item": "chickens",
+   "stmt": "Our neighbour keeps chickens.",
+   "sample": 3,
+   "first": {
+    "sum": 6.952610969543457,
+    "first": 6.952610969543457,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.6165013313293457,
+    "first": 3.6165013313293457,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.486968040466309,
+    "first": 13.486968040466309,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What kind of chickens do they have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 0,
+   "first": {
+    "sum": 12.545498833060265,
+    "first": 10.411674499511719,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.824600283289328,
+    "first": 2.7871384620666504,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 12.354483008384705,
+    "first": 10.442570686340332,
+    "tokens": 3
+   },
+   "reply": "That's adorable! Alpacas are so cute and cuddly. Do you know how many alpacas your neighbour has?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 1,
+   "first": {
+    "sum": 12.545498833060265,
+    "first": 10.411674499511719,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.666257426375523,
+    "first": 3.5877187252044678,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 12.354483008384705,
+    "first": 10.442570686340332,
+    "tokens": 3
+   },
+   "reply": "Oh, really? That's interesting. What do you think about them?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 2,
+   "first": {
+    "sum": 12.545498833060265,
+    "first": 10.411674499511719,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.555592562071979,
+    "first": 2.5285396575927734,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 12.354483008384705,
+    "first": 10.442570686340332,
+    "tokens": 3
+   },
+   "reply": "Alpacas are cute and cuddly animals. They are often kept as pets or for their wool.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "R",
+   "item": "alpacas",
+   "stmt": "Our neighbour keeps alpacas.",
+   "sample": 3,
+   "first": {
+    "sum": 12.545498833060265,
+    "first": 10.411674499511719,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.023623231332749,
+    "first": 1.9924193620681763,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 12.354483008384705,
+    "first": 10.442570686340332,
+    "tokens": 3
+   },
+   "reply": "That's interesting! I've heard of alpacas before, but I'm not sure what they are. Can you tell me more about them?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 0,
+   "first": {
+    "sum": 30.44909429550171,
+    "first": 7.509912014007568,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 4.407897993922234,
+    "first": 3.8373513221740723,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 29.8794207572937,
+    "first": 11.1002779006958,
+    "tokens": 4
+   },
+   "reply": "I'm sorry to hear that. What can we do to help?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 1,
+   "first": {
+    "sum": 30.44909429550171,
+    "first": 7.509912014007568,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 4.790297709405422,
+    "first": 4.1941914558410645,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 29.8794207572937,
+    "first": 11.1002779006958,
+    "tokens": 4
+   },
+   "reply": "That's a bit of a problem.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 2,
+   "first": {
+    "sum": 30.44909429550171,
+    "first": 7.509912014007568,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 3.8572206422686577,
+    "first": 3.302128791809082,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 29.8794207572937,
+    "first": 11.1002779006958,
+    "tokens": 4
+   },
+   "reply": "That's not a word. But I can help you with that.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 8,
+   "cls": "N",
+   "item": "snorvels",
+   "stmt": "Our neighbour keeps snorvels.",
+   "sample": 3,
+   "first": {
+    "sum": 30.44909429550171,
+    "first": 7.509912014007568,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 7.184594742953777,
+    "first": 2.930488109588623,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 29.8794207572937,
+    "first": 11.1002779006958,
+    "tokens": 4
+   },
+   "reply": "<think>Okay, the user mentioned their neighbour keeps snoring. Let me start by understanding what they need. They probably want to address the issue politely but firmly. First, I should acknowledge their concern and maybe suggest a gentle approach. Since it's a neighbour, maintaining a good relationship is important.\nI need to consider different methods of communication. Maybe start with a direct but kind message. Then offer alternatives like using earplugs or white noise machines if they're open to that. Also, mention consulting a doctor if the snoring is persistent or disruptive. It's important to keep the",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 0,
+   "first": {
+    "sum": 1.9104984998703003,
+    "first": 1.9104984998703003,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.163033962249756,
+    "first": 4.163033962249756,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.79431438446045,
+    "first": 11.79431438446045,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of music does your friend play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 1,
+   "first": {
+    "sum": 1.9104984998703003,
+    "first": 1.9104984998703003,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.075846195220947,
+    "first": 4.075846195220947,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.79431438446045,
+    "first": 11.79431438446045,
+    "tokens": 1
+   },
+   "reply": "That's great! Do you know what key she plays in?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 2,
+   "first": {
+    "sum": 1.9104984998703003,
+    "first": 1.9104984998703003,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.163033962249756,
+    "first": 4.163033962249756,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.79431438446045,
+    "first": 11.79431438446045,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of music does your friend play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "C",
+   "item": "piano",
+   "stmt": "My friend plays the piano.",
+   "sample": 3,
+   "first": {
+    "sum": 1.9104984998703003,
+    "first": 1.9104984998703003,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.163033962249756,
+    "first": 4.163033962249756,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.79431438446045,
+    "first": 11.79431438446045,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of music does your friend play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 0,
+   "first": {
+    "sum": 13.19898850726895,
+    "first": 12.326264381408691,
+    "tokens": 6
+   },
+   "repeat": {
+    "sum": 5.957460902398452,
+    "first": 5.657576560974121,
+    "tokens": 6
+   },
+   "cold_follow": {
+    "sum": 17.029449736699462,
+    "first": 14.053130149841309,
+    "tokens": 6
+   },
+   "reply": "That's cool! What kind of music does he play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 1,
+   "first": {
+    "sum": 13.19898850726895,
+    "first": 12.326264381408691,
+    "tokens": 6
+   },
+   "repeat": {
+    "sum": 5.957460902398452,
+    "first": 5.657576560974121,
+    "tokens": 6
+   },
+   "cold_follow": {
+    "sum": 17.029449736699462,
+    "first": 14.053130149841309,
+    "tokens": 6
+   },
+   "reply": "That's cool! What kind of music does he play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 2,
+   "first": {
+    "sum": 13.19898850726895,
+    "first": 12.326264381408691,
+    "tokens": 6
+   },
+   "repeat": {
+    "sum": 5.957460902398452,
+    "first": 5.657576560974121,
+    "tokens": 6
+   },
+   "cold_follow": {
+    "sum": 17.029449736699462,
+    "first": 14.053130149841309,
+    "tokens": 6
+   },
+   "reply": "That's cool! What kind of music does he play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "R",
+   "item": "hurdy-gurdy",
+   "stmt": "My friend plays the hurdy-gurdy.",
+   "sample": 3,
+   "first": {
+    "sum": 13.19898850726895,
+    "first": 12.326264381408691,
+    "tokens": 6
+   },
+   "repeat": {
+    "sum": 5.957460902398452,
+    "first": 5.657576560974121,
+    "tokens": 6
+   },
+   "cold_follow": {
+    "sum": 17.029449736699462,
+    "first": 14.053130149841309,
+    "tokens": 6
+   },
+   "reply": "That's cool! What kind of music does he play?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 0,
+   "first": {
+    "sum": 25.515413284301758,
+    "first": 9.918476104736328,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.573384702205658,
+    "first": 4.241048336029053,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.968684196472168,
+    "first": 12.894432067871094,
+    "tokens": 3
+   },
+   "reply": "Oh, that's cool! What do you think about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 1,
+   "first": {
+    "sum": 25.515413284301758,
+    "first": 9.918476104736328,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.655667573213577,
+    "first": 4.3285698890686035,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.968684196472168,
+    "first": 12.894432067871094,
+    "tokens": 3
+   },
+   "reply": "Oh, that's cool! What do you think of it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 2,
+   "first": {
+    "sum": 25.515413284301758,
+    "first": 9.918476104736328,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 5.0160490572452545,
+    "first": 4.486307144165039,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.968684196472168,
+    "first": 12.894432067871094,
+    "tokens": 3
+   },
+   "reply": "That's a cool instrument! I've never heard of it before. What does it sound like?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 5,
+   "cls": "N",
+   "item": "skronet",
+   "stmt": "My friend plays the skronet.",
+   "sample": 3,
+   "first": {
+    "sum": 25.515413284301758,
+    "first": 9.918476104736328,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.538212433457375,
+    "first": 4.197307586669922,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 27.968684196472168,
+    "first": 12.894432067871094,
+    "tokens": 3
+   },
+   "reply": "That's cool! What do you think about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 0,
+   "first": {
+    "sum": 5.07905387878418,
+    "first": 5.07905387878418,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.202242851257324,
+    "first": 4.202242851257324,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.322381019592285,
+    "first": 11.322381019592285,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of history are you reading about?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 1,
+   "first": {
+    "sum": 5.07905387878418,
+    "first": 5.07905387878418,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.202242851257324,
+    "first": 4.202242851257324,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.322381019592285,
+    "first": 11.322381019592285,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of history are you reading about?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 2,
+   "first": {
+    "sum": 5.07905387878418,
+    "first": 5.07905387878418,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 5.5432515144348145,
+    "first": 5.5432515144348145,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.322381019592285,
+    "first": 11.322381019592285,
+    "tokens": 1
+   },
+   "reply": "That's great! What book are you reading?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "C",
+   "item": "history",
+   "stmt": "I'm reading a book about history.",
+   "sample": 3,
+   "first": {
+    "sum": 5.07905387878418,
+    "first": 5.07905387878418,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 5.5432515144348145,
+    "first": 5.5432515144348145,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.322381019592285,
+    "first": 11.322381019592285,
+    "tokens": 1
+   },
+   "reply": "That's great! What book are you reading?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 0,
+   "first": {
+    "sum": 12.112398512661457,
+    "first": 6.10017728805542,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.8891569674015045,
+    "first": 1.786987543106079,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.385102450847626,
+    "first": 1.5221713781356812,
+    "tokens": 3
+   },
+   "reply": "That's great! What kind of book is it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 1,
+   "first": {
+    "sum": 12.112398512661457,
+    "first": 6.10017728805542,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.915203623473644,
+    "first": 1.8813385963439941,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.385102450847626,
+    "first": 1.5221713781356812,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What kind of book is it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 2,
+   "first": {
+    "sum": 12.112398512661457,
+    "first": 6.10017728805542,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.5480687618255615,
+    "first": 1.6967991590499878,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.385102450847626,
+    "first": 1.5221713781356812,
+    "tokens": 3
+   },
+   "reply": "That's great! What are you learning about?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "R",
+   "item": "mycology",
+   "stmt": "I'm reading a book about mycology.",
+   "sample": 3,
+   "first": {
+    "sum": 12.112398512661457,
+    "first": 6.10017728805542,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.8891569674015045,
+    "first": 1.786987543106079,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.385102450847626,
+    "first": 1.5221713781356812,
+    "tokens": 3
+   },
+   "reply": "That's great! What kind of book is it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 0,
+   "first": {
+    "sum": 31.558740854263306,
+    "first": 12.679388046264648,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.6374742483021691,
+    "first": 1.626168966293335,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 34.88659048080444,
+    "first": 13.293539047241211,
+    "tokens": 4
+   },
+   "reply": "Trantavism is a new way of thinking about the world. It's based on the idea that everything is interconnected and that we are all part of a larger whole.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 1,
+   "first": {
+    "sum": 31.558740854263306,
+    "first": 12.679388046264648,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.6106104172067717,
+    "first": 1.6003553867340088,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 34.88659048080444,
+    "first": 13.293539047241211,
+    "tokens": 4
+   },
+   "reply": "Trantavism is a fascinating topic. Can you tell me more about it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 2,
+   "first": {
+    "sum": 31.558740854263306,
+    "first": 12.679388046264648,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.515744125295896,
+    "first": 1.501466155052185,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 34.88659048080444,
+    "first": 13.293539047241211,
+    "tokens": 4
+   },
+   "reply": "Trantavism is a theory that suggests that the brain is a computer.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 10,
+   "cls": "N",
+   "item": "trantavism",
+   "stmt": "I'm reading a book about trantavism.",
+   "sample": 3,
+   "first": {
+    "sum": 31.558740854263306,
+    "first": 12.679388046264648,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.4996788871940225,
+    "first": 1.484333872795105,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 34.88659048080444,
+    "first": 13.293539047241211,
+    "tokens": 4
+   },
+   "reply": "Trantavism is a theory that suggests that the universe is made up of tiny particles called \"tranta\" that are constantly moving and interacting with each other.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 0,
+   "first": {
+    "sum": 3.52984356880188,
+    "first": 3.52984356880188,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.457812309265137,
+    "first": 4.457812309265137,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.276945114135742,
+    "first": 11.276945114135742,
+    "tokens": 1
+   },
+   "reply": "Oh, that's interesting! What kind of Ford is it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 1,
+   "first": {
+    "sum": 3.52984356880188,
+    "first": 3.52984356880188,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.3876872062683105,
+    "first": 4.3876872062683105,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.276945114135742,
+    "first": 11.276945114135742,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What kind of Ford is it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 2,
+   "first": {
+    "sum": 3.52984356880188,
+    "first": 3.52984356880188,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.724093437194824,
+    "first": 4.724093437194824,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.276945114135742,
+    "first": 11.276945114135742,
+    "tokens": 1
+   },
+   "reply": "Oh, I see. That's interesting. Do you know what kind of Ford it is?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "C",
+   "item": "Ford",
+   "stmt": "My cousin drives a Ford.",
+   "sample": 3,
+   "first": {
+    "sum": 3.52984356880188,
+    "first": 3.52984356880188,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.3876872062683105,
+    "first": 4.3876872062683105,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.276945114135742,
+    "first": 11.276945114135742,
+    "tokens": 1
+   },
+   "reply": "That's interesting! What kind of Ford is it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 0,
+   "first": {
+    "sum": 11.582946612965316,
+    "first": 9.931598663330078,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.676242163404822,
+    "first": 4.817176342010498,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.800395980477333,
+    "first": 10.726556777954102,
+    "tokens": 3
+   },
+   "reply": "A Trabant? That's a cool car! I've heard of them, but I've never seen one in person.",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 1,
+   "first": {
+    "sum": 11.582946612965316,
+    "first": 9.931598663330078,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.811253720894456,
+    "first": 3.9395241737365723,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.800395980477333,
+    "first": 10.726556777954102,
+    "tokens": 3
+   },
+   "reply": "That's a unique car! Have you ever seen one before?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 2,
+   "first": {
+    "sum": 11.582946612965316,
+    "first": 9.931598663330078,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 5.285160698927939,
+    "first": 4.4831719398498535,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.800395980477333,
+    "first": 10.726556777954102,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What do you think about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "R",
+   "item": "Trabant",
+   "stmt": "My cousin drives a Trabant.",
+   "sample": 3,
+   "first": {
+    "sum": 11.582946612965316,
+    "first": 9.931598663330078,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.271653980948031,
+    "first": 3.5817458629608154,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.800395980477333,
+    "first": 10.726556777954102,
+    "tokens": 3
+   },
+   "reply": "Oh, that's interesting! I've heard of Trabants before. They were a popular car in East Germany during the Cold War, right?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 0,
+   "first": {
+    "sum": 24.099453449249268,
+    "first": 11.89572525024414,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.4579103272408247,
+    "first": 3.3783702850341797,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.01512861251831,
+    "first": 12.245636940002441,
+    "tokens": 3
+   },
+   "reply": "That's cool! What do you think of it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 1,
+   "first": {
+    "sum": 24.099453449249268,
+    "first": 11.89572525024414,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.8014040160924196,
+    "first": 3.7554516792297363,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.01512861251831,
+    "first": 12.245636940002441,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What do you think about the Kelvaro?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 2,
+   "first": {
+    "sum": 24.099453449249268,
+    "first": 11.89572525024414,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.6761752609163523,
+    "first": 3.5768849849700928,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.01512861251831,
+    "first": 12.245636940002441,
+    "tokens": 3
+   },
+   "reply": "Oh, that's cool! What's it like driving a Kelvaro?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 11,
+   "cls": "N",
+   "item": "Kelvaro",
+   "stmt": "My cousin drives a Kelvaro.",
+   "sample": 3,
+   "first": {
+    "sum": 24.099453449249268,
+    "first": 11.89572525024414,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.4076773640699685,
+    "first": 1.3966798782348633,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.01512861251831,
+    "first": 12.245636940002441,
+    "tokens": 3
+   },
+   "reply": "That's interesting! I've heard of Kelvaro, but I'm not sure what it is. Can you tell me more about it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 0,
+   "first": {
+    "sum": 2.7914557456970215,
+    "first": 2.7914557456970215,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 8.361940383911133,
+    "first": 8.361940383911133,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.82862377166748,
+    "first": 10.82862377166748,
+    "tokens": 1
+   },
+   "reply": "Congratulations! What's the model?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 1,
+   "first": {
+    "sum": 2.7914557456970215,
+    "first": 2.7914557456970215,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 8.38096809387207,
+    "first": 8.38096809387207,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.82862377166748,
+    "first": 10.82862377166748,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of phone did you get?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 2,
+   "first": {
+    "sum": 2.7914557456970215,
+    "first": 2.7914557456970215,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 8.361940383911133,
+    "first": 8.361940383911133,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.82862377166748,
+    "first": 10.82862377166748,
+    "tokens": 1
+   },
+   "reply": "Congratulations! What's the model?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "C",
+   "item": "phone",
+   "stmt": "I bought a new phone yesterday.",
+   "sample": 3,
+   "first": {
+    "sum": 2.7914557456970215,
+    "first": 2.7914557456970215,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 9.23480224609375,
+    "first": 9.23480224609375,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 10.82862377166748,
+    "first": 10.82862377166748,
+    "tokens": 1
+   },
+   "reply": "Congratulations! What's the name of your new phone?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 0,
+   "first": {
+    "sum": 16.129692341201007,
+    "first": 10.331984519958496,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 9.530614306218922,
+    "first": 7.605532646179199,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.173666417598724,
+    "first": 9.719429016113281,
+    "tokens": 3
+   },
+   "reply": "That's great! Sextants are really useful for navigation.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 1,
+   "first": {
+    "sum": 16.129692341201007,
+    "first": 10.331984519958496,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 9.530614306218922,
+    "first": 7.605532646179199,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.173666417598724,
+    "first": 9.719429016113281,
+    "tokens": 3
+   },
+   "reply": "That's great! Sextants are really useful for navigation.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 2,
+   "first": {
+    "sum": 16.129692341201007,
+    "first": 10.331984519958496,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.48999622836709,
+    "first": 4.884323596954346,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.173666417598724,
+    "first": 9.719429016113281,
+    "tokens": 3
+   },
+   "reply": "I see. What kind of sextant did you buy?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "R",
+   "item": "sextant",
+   "stmt": "I bought a new sextant yesterday.",
+   "sample": 3,
+   "first": {
+    "sum": 16.129692341201007,
+    "first": 10.331984519958496,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 9.120636988896877,
+    "first": 7.693160057067871,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 18.173666417598724,
+    "first": 9.719429016113281,
+    "tokens": 3
+   },
+   "reply": "I'm glad you're enjoying it! Sextants are great tools for navigation and astronomy.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 0,
+   "first": {
+    "sum": 20.151145339012146,
+    "first": 12.703864097595215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 7.989650117233396,
+    "first": 7.310435771942139,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 22.81608247756958,
+    "first": 13.565719604492188,
+    "tokens": 3
+   },
+   "reply": "That's great! What did you do with it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 1,
+   "first": {
+    "sum": 20.151145339012146,
+    "first": 12.703864097595215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.631803252734244,
+    "first": 5.49345588684082,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 22.81608247756958,
+    "first": 13.565719604492188,
+    "tokens": 3
+   },
+   "reply": "That's great! What kind of drubble did you get?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 2,
+   "first": {
+    "sum": 20.151145339012146,
+    "first": 12.703864097595215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 5.632869763299823,
+    "first": 4.664783000946045,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 22.81608247756958,
+    "first": 13.565719604492188,
+    "tokens": 3
+   },
+   "reply": "What is a drubble?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 4,
+   "cls": "N",
+   "item": "drubble",
+   "stmt": "I bought a new drubble yesterday.",
+   "sample": 3,
+   "first": {
+    "sum": 20.151145339012146,
+    "first": 12.703864097595215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 7.060481465421617,
+    "first": 6.117936611175537,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 22.81608247756958,
+    "first": 13.565719604492188,
+    "tokens": 3
+   },
+   "reply": "That's great! What did you buy it for?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 0,
+   "first": {
+    "sum": 5.486008644104004,
+    "first": 5.486008644104004,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 0.8956279158592224,
+    "first": 0.8956279158592224,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.323277473449707,
+    "first": 11.323277473449707,
+    "tokens": 1
+   },
+   "reply": "That's a cute name for your cat! What kind of cat is Bella?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 1,
+   "first": {
+    "sum": 5.486008644104004,
+    "first": 5.486008644104004,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 0.8258703351020813,
+    "first": 0.8258703351020813,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.323277473449707,
+    "first": 11.323277473449707,
+    "tokens": 1
+   },
+   "reply": "Bella is a beautiful cat. Do you have any other pets?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 2,
+   "first": {
+    "sum": 5.486008644104004,
+    "first": 5.486008644104004,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 0.8258703351020813,
+    "first": 0.8258703351020813,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.323277473449707,
+    "first": 11.323277473449707,
+    "tokens": 1
+   },
+   "reply": "Bella is a beautiful cat. Do you have any other pets?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "C",
+   "item": "Bella",
+   "stmt": "My cat is called Bella.",
+   "sample": 3,
+   "first": {
+    "sum": 5.486008644104004,
+    "first": 5.486008644104004,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 0.7155032157897949,
+    "first": 0.7155032157897949,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 11.323277473449707,
+    "first": 11.323277473449707,
+    "tokens": 1
+   },
+   "reply": "Bella is a very cute cat. What kind of cat is she?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 0,
+   "first": {
+    "sum": 11.01105846464634,
+    "first": 5.845239162445068,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.1027636867947876,
+    "first": 1.095607876777649,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 15.352262824773788,
+    "first": 10.575511932373047,
+    "tokens": 3
+   },
+   "reply": "Mephisto sounds like a cool name for a cat! What's your favorite thing about him?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 1,
+   "first": {
+    "sum": 11.01105846464634,
+    "first": 5.845239162445068,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.2994188719894737,
+    "first": 1.2920843362808228,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 15.352262824773788,
+    "first": 10.575511932373047,
+    "tokens": 3
+   },
+   "reply": "Mephisto sounds like a very interesting name! What kind of cat is he?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 2,
+   "first": {
+    "sum": 11.01105846464634,
+    "first": 5.845239162445068,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.1027636867947876,
+    "first": 1.095607876777649,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 15.352262824773788,
+    "first": 10.575511932373047,
+    "tokens": 3
+   },
+   "reply": "Mephisto sounds like a cool name for a cat! What's your favorite thing about him?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "R",
+   "item": "Mephisto",
+   "stmt": "My cat is called Mephisto.",
+   "sample": 3,
+   "first": {
+    "sum": 11.01105846464634,
+    "first": 5.845239162445068,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.1027636867947876,
+    "first": 1.095607876777649,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 15.352262824773788,
+    "first": 10.575511932373047,
+    "tokens": 3
+   },
+   "reply": "Mephisto sounds like a cool name for a cat! What's your favorite thing about him?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 0,
+   "first": {
+    "sum": 21.038399696350098,
+    "first": 7.773274898529053,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 0.7600967183243483,
+    "first": 0.7501417994499207,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 21.73254632949829,
+    "first": 10.099874496459961,
+    "tokens": 3
+   },
+   "reply": "Trondle is a very cute name for your cat!",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 1,
+   "first": {
+    "sum": 21.038399696350098,
+    "first": 7.773274898529053,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 0.8489327654242516,
+    "first": 0.8365219831466675,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 21.73254632949829,
+    "first": 10.099874496459961,
+    "tokens": 3
+   },
+   "reply": "Trondle is a cute name for your cat! Do you have any other pets?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 2,
+   "first": {
+    "sum": 21.038399696350098,
+    "first": 7.773274898529053,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 0.758960367180407,
+    "first": 0.7489659786224365,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 21.73254632949829,
+    "first": 10.099874496459961,
+    "tokens": 3
+   },
+   "reply": "Trondle, that's a very cute name! I'm sure he's a wonderful companion.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 0,
+   "cls": "N",
+   "item": "Trondle",
+   "stmt": "My cat is called Trondle.",
+   "sample": 3,
+   "first": {
+    "sum": 21.038399696350098,
+    "first": 7.773274898529053,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 0.6146710757166147,
+    "first": 0.6042377352714539,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 21.73254632949829,
+    "first": 10.099874496459961,
+    "tokens": 3
+   },
+   "reply": "That's a cute name! What's Trondle like?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 0,
+   "first": {
+    "sum": 3.608074188232422,
+    "first": 3.608074188232422,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.6417388916015625,
+    "first": 3.6417388916015625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.769715309143066,
+    "first": 13.769715309143066,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of tomatoes does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 1,
+   "first": {
+    "sum": 3.608074188232422,
+    "first": 3.608074188232422,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.6417388916015625,
+    "first": 3.6417388916015625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.769715309143066,
+    "first": 13.769715309143066,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of tomatoes does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 2,
+   "first": {
+    "sum": 3.608074188232422,
+    "first": 3.608074188232422,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.6417388916015625,
+    "first": 3.6417388916015625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.769715309143066,
+    "first": 13.769715309143066,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of tomatoes does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "C",
+   "item": "tomatoes",
+   "stmt": "My uncle grows tomatoes in his garden.",
+   "sample": 3,
+   "first": {
+    "sum": 3.608074188232422,
+    "first": 3.608074188232422,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.704007148742676,
+    "first": 3.704007148742676,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 13.769715309143066,
+    "first": 13.769715309143066,
+    "tokens": 1
+   },
+   "reply": "Oh, that's great! What kind of tomatoes does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 0,
+   "first": {
+    "sum": 8.819163424894214,
+    "first": 8.289579391479492,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 3.286559850384947,
+    "first": 3.2825019359588623,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 16.692800963297486,
+    "first": 11.735170364379883,
+    "tokens": 4
+   },
+   "reply": "That's great! I've heard that kohlrabi is a delicious vegetable.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 1,
+   "first": {
+    "sum": 8.819163424894214,
+    "first": 8.289579391479492,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.9151256424374878,
+    "first": 1.9097155332565308,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 16.692800963297486,
+    "first": 11.735170364379883,
+    "tokens": 4
+   },
+   "reply": "Oh, that's interesting! I've never heard of kohlrabi before. What is it?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 2,
+   "first": {
+    "sum": 8.819163424894214,
+    "first": 8.289579391479492,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 3.286559850384947,
+    "first": 3.2825019359588623,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 16.692800963297486,
+    "first": 11.735170364379883,
+    "tokens": 4
+   },
+   "reply": "That's great! I've heard that kohlrabi is a delicious vegetable.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "R",
+   "item": "kohlrabi",
+   "stmt": "My uncle grows kohlrabi in his garden.",
+   "sample": 3,
+   "first": {
+    "sum": 8.819163424894214,
+    "first": 8.289579391479492,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 1.814711084938608,
+    "first": 1.8067055940628052,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 16.692800963297486,
+    "first": 11.735170364379883,
+    "tokens": 4
+   },
+   "reply": "Oh, that's interesting! I've never heard of kohlrabi before. What does it look like?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 0,
+   "first": {
+    "sum": 24.593146800994873,
+    "first": 10.899840354919434,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.711760438978672,
+    "first": 3.6104941368103027,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.210609197616577,
+    "first": 11.585516929626465,
+    "tokens": 3
+   },
+   "reply": "Oh, that's interesting! What kind of glimbers does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 1,
+   "first": {
+    "sum": 24.593146800994873,
+    "first": 10.899840354919434,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.5761334113776684,
+    "first": 3.468590497970581,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.210609197616577,
+    "first": 11.585516929626465,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What kind of glimbers does he grow?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 2,
+   "first": {
+    "sum": 24.593146800994873,
+    "first": 10.899840354919434,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.0946392342448235,
+    "first": 2.0744190216064453,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.210609197616577,
+    "first": 11.585516929626465,
+    "tokens": 3
+   },
+   "reply": "That's interesting! I've never heard of glimbers before. Do you know what they are?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 3,
+   "cls": "N",
+   "item": "glimbers",
+   "stmt": "My uncle grows glimbers in his garden.",
+   "sample": 3,
+   "first": {
+    "sum": 24.593146800994873,
+    "first": 10.899840354919434,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.8785823192447424,
+    "first": 2.5174145698547363,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.210609197616577,
+    "first": 11.585516929626465,
+    "tokens": 3
+   },
+   "reply": "<think>Okay, the user mentioned their uncle grows glimbers in his garden. Let me start by recalling what glimbers are. From what I know, glimbers are a type of fungus that produce spores. They're often found in damp environments and can be used for various purposes, like medicine or food.\nFirst, I should confirm if the user is referring to Glioma, which is a type of brain tumor. But wait, the term \"glimmers\" isn't standard medical terminology. Maybe it's a typo or a regional term. Alternatively, could",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 0,
+   "first": {
+    "sum": 6.233695030212402,
+    "first": 6.233695030212402,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.26738977432251,
+    "first": 4.26738977432251,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.262673377990723,
+    "first": 12.262673377990723,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of plants does she grow?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 1,
+   "first": {
+    "sum": 6.233695030212402,
+    "first": 6.233695030212402,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.26738977432251,
+    "first": 4.26738977432251,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.262673377990723,
+    "first": 12.262673377990723,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of plants does she grow?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 2,
+   "first": {
+    "sum": 6.233695030212402,
+    "first": 6.233695030212402,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.26738977432251,
+    "first": 4.26738977432251,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.262673377990723,
+    "first": 12.262673377990723,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of plants does she grow?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "C",
+   "item": "gardening",
+   "stmt": "My mother loves gardening.",
+   "sample": 3,
+   "first": {
+    "sum": 6.233695030212402,
+    "first": 6.233695030212402,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.26738977432251,
+    "first": 4.26738977432251,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.262673377990723,
+    "first": 12.262673377990723,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of plants does she grow?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 0,
+   "first": {
+    "sum": 13.828758239746094,
+    "first": 9.631858825683594,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.5819263234734535,
+    "first": 3.4990968704223633,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.89419937133789,
+    "first": 11.096505165100098,
+    "tokens": 2
+   },
+   "reply": "That's awesome! What kind of books does she like to bind?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 1,
+   "first": {
+    "sum": 13.828758239746094,
+    "first": 9.631858825683594,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.524031061679125,
+    "first": 3.477572441101074,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.89419937133789,
+    "first": 11.096505165100098,
+    "tokens": 2
+   },
+   "reply": "Oh, that's interesting! I've never heard of someone who loves bookbinding. What kind of books does she like to bind?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 2,
+   "first": {
+    "sum": 13.828758239746094,
+    "first": 9.631858825683594,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.6845300272107124,
+    "first": 3.6029138565063477,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.89419937133789,
+    "first": 11.096505165100098,
+    "tokens": 2
+   },
+   "reply": "That's great! What kind of books does she like to bind?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "R",
+   "item": "bookbinding",
+   "stmt": "My mother loves bookbinding.",
+   "sample": 3,
+   "first": {
+    "sum": 13.828758239746094,
+    "first": 9.631858825683594,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.36833056807518,
+    "first": 3.2984061241149902,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 15.89419937133789,
+    "first": 11.096505165100098,
+    "tokens": 2
+   },
+   "reply": "That's great! Bookbinding is a fascinating craft. What kind of books does she bind?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 0,
+   "first": {
+    "sum": 24.56915283203125,
+    "first": 8.979498863220215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 3.060052802786231,
+    "first": 3.034903049468994,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.194225311279297,
+    "first": 11.443360328674316,
+    "tokens": 3
+   },
+   "reply": "I'm sorry to hear that. Is there anything I can do to help?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 1,
+   "first": {
+    "sum": 24.56915283203125,
+    "first": 8.979498863220215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.7488769418559968,
+    "first": 1.7373950481414795,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.194225311279297,
+    "first": 11.443360328674316,
+    "tokens": 3
+   },
+   "reply": "I see. What is quimbling?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 2,
+   "first": {
+    "sum": 24.56915283203125,
+    "first": 8.979498863220215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.940309623721987,
+    "first": 1.9271867275238037,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.194225311279297,
+    "first": 11.443360328674316,
+    "tokens": 3
+   },
+   "reply": "Oh, that's interesting! What does quimbling mean?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 9,
+   "cls": "N",
+   "item": "quimbling",
+   "stmt": "My mother loves quimbling.",
+   "sample": 3,
+   "first": {
+    "sum": 24.56915283203125,
+    "first": 8.979498863220215,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.5258470978587866,
+    "first": 1.5113438367843628,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 24.194225311279297,
+    "first": 11.443360328674316,
+    "tokens": 3
+   },
+   "reply": "What is quimbling?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 0,
+   "first": {
+    "sum": 6.8642730712890625,
+    "first": 6.8642730712890625,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.7471489906311035,
+    "first": 4.7471489906311035,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.076325416564941,
+    "first": 12.076325416564941,
+    "tokens": 1
+   },
+   "reply": "I'm sorry to hear that. What's he studying?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 1,
+   "first": {
+    "sum": 6.8642730712890625,
+    "first": 6.8642730712890625,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.628361701965332,
+    "first": 4.628361701965332,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.076325416564941,
+    "first": 12.076325416564941,
+    "tokens": 1
+   },
+   "reply": "That's great! What's he studying?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 2,
+   "first": {
+    "sum": 6.8642730712890625,
+    "first": 6.8642730712890625,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.8264923095703125,
+    "first": 4.8264923095703125,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.076325416564941,
+    "first": 12.076325416564941,
+    "tokens": 1
+   },
+   "reply": "What's he studying?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "C",
+   "item": "maths",
+   "stmt": "My nephew is studying maths.",
+   "sample": 3,
+   "first": {
+    "sum": 6.8642730712890625,
+    "first": 6.8642730712890625,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.8264923095703125,
+    "first": 4.8264923095703125,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.076325416564941,
+    "first": 12.076325416564941,
+    "tokens": 1
+   },
+   "reply": "What's he studying?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 0,
+   "first": {
+    "sum": 12.148514658212662,
+    "first": 11.818370819091797,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 5.79532939940691,
+    "first": 5.699447154998779,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.734970092773438,
+    "first": 15.200392723083496,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he like to do in his free time?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 1,
+   "first": {
+    "sum": 12.148514658212662,
+    "first": 11.818370819091797,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 5.229658387601376,
+    "first": 5.158024787902832,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.734970092773438,
+    "first": 15.200392723083496,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he study?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 2,
+   "first": {
+    "sum": 12.148514658212662,
+    "first": 11.818370819091797,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.489730406552553,
+    "first": 3.4415454864501953,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.734970092773438,
+    "first": 15.200392723083496,
+    "tokens": 2
+   },
+   "reply": "That's great! What are you studying?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "R",
+   "item": "glaciology",
+   "stmt": "My nephew is studying glaciology.",
+   "sample": 3,
+   "first": {
+    "sum": 12.148514658212662,
+    "first": 11.818370819091797,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 5.79532939940691,
+    "first": 5.699447154998779,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.734970092773438,
+    "first": 15.200392723083496,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he like to do in his free time?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 0,
+   "first": {
+    "sum": 22.32896900177002,
+    "first": 14.323934555053711,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 2.424615539610386,
+    "first": 2.356623888015747,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 24.040202140808105,
+    "first": 14.477660179138184,
+    "tokens": 2
+   },
+   "reply": "That's great! What is frenomics?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 1,
+   "first": {
+    "sum": 22.32896900177002,
+    "first": 14.323934555053711,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 4.216248668730259,
+    "first": 4.124168395996094,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 24.040202140808105,
+    "first": 14.477660179138184,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he like about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 2,
+   "first": {
+    "sum": 22.32896900177002,
+    "first": 14.323934555053711,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 4.216248668730259,
+    "first": 4.124168395996094,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 24.040202140808105,
+    "first": 14.477660179138184,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he like about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 7,
+   "cls": "N",
+   "item": "frenomics",
+   "stmt": "My nephew is studying frenomics.",
+   "sample": 3,
+   "first": {
+    "sum": 22.32896900177002,
+    "first": 14.323934555053711,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 4.216248668730259,
+    "first": 4.124168395996094,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 24.040202140808105,
+    "first": 14.477660179138184,
+    "tokens": 2
+   },
+   "reply": "That's great! What does he like about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 0,
+   "first": {
+    "sum": 3.2495315074920654,
+    "first": 3.2495315074920654,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 7.087554931640625,
+    "first": 7.087554931640625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.647170066833496,
+    "first": 14.647170066833496,
+    "tokens": 1
+   },
+   "reply": "That's great! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 1,
+   "first": {
+    "sum": 3.2495315074920654,
+    "first": 3.2495315074920654,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 7.199899673461914,
+    "first": 7.199899673461914,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.647170066833496,
+    "first": 14.647170066833496,
+    "tokens": 1
+   },
+   "reply": "That's great! What kind of work does she do?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 2,
+   "first": {
+    "sum": 3.2495315074920654,
+    "first": 3.2495315074920654,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 7.087554931640625,
+    "first": 7.087554931640625,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.647170066833496,
+    "first": 14.647170066833496,
+    "tokens": 1
+   },
+   "reply": "That's great! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "C",
+   "item": "nurse",
+   "stmt": "My sister works as a nurse.",
+   "sample": 3,
+   "first": {
+    "sum": 3.2495315074920654,
+    "first": 3.2495315074920654,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 7.195813179016113,
+    "first": 7.195813179016113,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 14.647170066833496,
+    "first": 14.647170066833496,
+    "tokens": 1
+   },
+   "reply": "That's great! What does she do?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 0,
+   "first": {
+    "sum": 11.875994697213173,
+    "first": 11.70456314086914,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 6.691726922988892,
+    "first": 6.1746907234191895,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 18.644113540649414,
+    "first": 13.193526268005371,
+    "tokens": 2
+   },
+   "reply": "That's interesting! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 1,
+   "first": {
+    "sum": 11.875994697213173,
+    "first": 11.70456314086914,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 6.691726922988892,
+    "first": 6.1746907234191895,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 18.644113540649414,
+    "first": 13.193526268005371,
+    "tokens": 2
+   },
+   "reply": "That's interesting! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 2,
+   "first": {
+    "sum": 11.875994697213173,
+    "first": 11.70456314086914,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 6.049468070268631,
+    "first": 5.6526994705200195,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 18.644113540649414,
+    "first": 13.193526268005371,
+    "tokens": 2
+   },
+   "reply": "That's cool! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "R",
+   "item": "farrier",
+   "stmt": "My sister works as a farrier.",
+   "sample": 3,
+   "first": {
+    "sum": 11.875994697213173,
+    "first": 11.70456314086914,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 6.691726922988892,
+    "first": 6.1746907234191895,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 18.644113540649414,
+    "first": 13.193526268005371,
+    "tokens": 2
+   },
+   "reply": "That's interesting! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 0,
+   "first": {
+    "sum": 27.155544757843018,
+    "first": 11.503549575805664,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.626930058002472,
+    "first": 4.782008647918701,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 29.4146728515625,
+    "first": 12.026735305786133,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What does she do?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 1,
+   "first": {
+    "sum": 27.155544757843018,
+    "first": 11.503549575805664,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.022279471158981,
+    "first": 4.609964847564697,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 29.4146728515625,
+    "first": 12.026735305786133,
+    "tokens": 3
+   },
+   "reply": "That's a very interesting job! Can you tell me more about it?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 2,
+   "first": {
+    "sum": 27.155544757843018,
+    "first": 11.503549575805664,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 6.569241523742676,
+    "first": 4.788464546203613,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 29.4146728515625,
+    "first": 12.026735305786133,
+    "tokens": 3
+   },
+   "reply": "That's interesting! What does she do exactly?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 1,
+   "cls": "N",
+   "item": "plinketer",
+   "stmt": "My sister works as a plinketer.",
+   "sample": 3,
+   "first": {
+    "sum": 27.155544757843018,
+    "first": 11.503549575805664,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 4.610270649194717,
+    "first": 3.159465789794922,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 29.4146728515625,
+    "first": 12.026735305786133,
+    "tokens": 3
+   },
+   "reply": "What's a plinketer?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 0,
+   "first": {
+    "sum": 7.9367289543151855,
+    "first": 7.9367289543151855,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 2.147042989730835,
+    "first": 2.147042989730835,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.333148002624512,
+    "first": 12.333148002624512,
+    "tokens": 1
+   },
+   "reply": "What did you do in Spain?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 1,
+   "first": {
+    "sum": 7.9367289543151855,
+    "first": 7.9367289543151855,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.062384605407715,
+    "first": 3.062384605407715,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.333148002624512,
+    "first": 12.333148002624512,
+    "tokens": 1
+   },
+   "reply": "That sounds like a great trip! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 2,
+   "first": {
+    "sum": 7.9367289543151855,
+    "first": 7.9367289543151855,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 2.508258819580078,
+    "first": 2.508258819580078,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.333148002624512,
+    "first": 12.333148002624512,
+    "tokens": 1
+   },
+   "reply": "Where did you go?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "C",
+   "item": "Spain",
+   "stmt": "We went to Spain on holiday.",
+   "sample": 3,
+   "first": {
+    "sum": 7.9367289543151855,
+    "first": 7.9367289543151855,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.062384605407715,
+    "first": 3.062384605407715,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.333148002624512,
+    "first": 12.333148002624512,
+    "tokens": 1
+   },
+   "reply": "That sounds like a great trip! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 0,
+   "first": {
+    "sum": 11.934910487383604,
+    "first": 8.374873161315918,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.902547140372917,
+    "first": 2.8975298404693604,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.180703461170197,
+    "first": 12.041096687316895,
+    "tokens": 3
+   },
+   "reply": "That sounds like a great trip! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 1,
+   "first": {
+    "sum": 11.934910487383604,
+    "first": 8.374873161315918,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.902547140372917,
+    "first": 2.8975298404693604,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.180703461170197,
+    "first": 12.041096687316895,
+    "tokens": 3
+   },
+   "reply": "That sounds like a great trip! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 2,
+   "first": {
+    "sum": 11.934910487383604,
+    "first": 8.374873161315918,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.3756186054088175,
+    "first": 2.365260601043701,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.180703461170197,
+    "first": 12.041096687316895,
+    "tokens": 3
+   },
+   "reply": "Where did you go?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "R",
+   "item": "Montenegro",
+   "stmt": "We went to Montenegro on holiday.",
+   "sample": 3,
+   "first": {
+    "sum": 11.934910487383604,
+    "first": 8.374873161315918,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.902547140372917,
+    "first": 2.8975298404693604,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 16.180703461170197,
+    "first": 12.041096687316895,
+    "tokens": 3
+   },
+   "reply": "That sounds like a great trip! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 0,
+   "first": {
+    "sum": 22.927114486694336,
+    "first": 10.372307777404785,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.072393381036818,
+    "first": 2.062375545501709,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.85851240158081,
+    "first": 12.59684944152832,
+    "tokens": 3
+   },
+   "reply": "I see. What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 1,
+   "first": {
+    "sum": 22.927114486694336,
+    "first": 10.372307777404785,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 2.0625860588625073,
+    "first": 2.0476622581481934,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.85851240158081,
+    "first": 12.59684944152832,
+    "tokens": 3
+   },
+   "reply": "What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 2,
+   "first": {
+    "sum": 22.927114486694336,
+    "first": 10.372307777404785,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.6083079003728926,
+    "first": 1.6019823551177979,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.85851240158081,
+    "first": 12.59684944152832,
+    "tokens": 3
+   },
+   "reply": "That sounds like a great place to visit! What did you do there?",
+   "asks_item": false,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 2,
+   "cls": "N",
+   "item": "Vaskaria",
+   "stmt": "We went to Vaskaria on holiday.",
+   "sample": 3,
+   "first": {
+    "sum": 22.927114486694336,
+    "first": 10.372307777404785,
+    "tokens": 3
+   },
+   "repeat": {
+    "sum": 1.470813537715003,
+    "first": 1.4655486345291138,
+    "tokens": 3
+   },
+   "cold_follow": {
+    "sum": 25.85851240158081,
+    "first": 12.59684944152832,
+    "tokens": 3
+   },
+   "reply": "Vaskaria is a beautiful place. What did you do there?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 0,
+   "first": {
+    "sum": 4.924499988555908,
+    "first": 4.924499988555908,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 4.2102508544921875,
+    "first": 4.2102508544921875,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.61133861541748,
+    "first": 12.61133861541748,
+    "tokens": 1
+   },
+   "reply": "I see. What kind of toast did you have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 1,
+   "first": {
+    "sum": 4.924499988555908,
+    "first": 4.924499988555908,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.9080357551574707,
+    "first": 3.9080357551574707,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.61133861541748,
+    "first": 12.61133861541748,
+    "tokens": 1
+   },
+   "reply": "I had toast for breakfast too.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 2,
+   "first": {
+    "sum": 4.924499988555908,
+    "first": 4.924499988555908,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.9080357551574707,
+    "first": 3.9080357551574707,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.61133861541748,
+    "first": 12.61133861541748,
+    "tokens": 1
+   },
+   "reply": "I had toast for breakfast too.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "C",
+   "item": "toast",
+   "stmt": "For breakfast I had toast.",
+   "sample": 3,
+   "first": {
+    "sum": 4.924499988555908,
+    "first": 4.924499988555908,
+    "tokens": 1
+   },
+   "repeat": {
+    "sum": 3.317817211151123,
+    "first": 3.317817211151123,
+    "tokens": 1
+   },
+   "cold_follow": {
+    "sum": 12.61133861541748,
+    "first": 12.61133861541748,
+    "tokens": 1
+   },
+   "reply": "Oh, toast! That's a classic breakfast food. What kind of toast did you have?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 0,
+   "first": {
+    "sum": 9.104191824793816,
+    "first": 8.96231746673584,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.603993240976706,
+    "first": 3.601046085357666,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.867841720581055,
+    "first": 14.812960624694824,
+    "tokens": 2
+   },
+   "reply": "Congee is a traditional Chinese porridge made from rice or other grains. It's often served with vegetables, meat, or seafood. Congee is a comforting and nourishing dish that can be enjoyed at any time of the day.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 1,
+   "first": {
+    "sum": 9.104191824793816,
+    "first": 8.96231746673584,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.605555218178779,
+    "first": 3.602600574493408,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.867841720581055,
+    "first": 14.812960624694824,
+    "tokens": 2
+   },
+   "reply": "Congee is a traditional Chinese porridge made from rice or other grains. It's often served with various toppings like vegetables, meat, or seafood. Congee is a comforting and nourishing dish that can be enjoyed at any time of the day.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 2,
+   "first": {
+    "sum": 9.104191824793816,
+    "first": 8.96231746673584,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.605555218178779,
+    "first": 3.602600574493408,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.867841720581055,
+    "first": 14.812960624694824,
+    "tokens": 2
+   },
+   "reply": "Congee is a traditional Chinese porridge made from rice or other grains. It's often served with various toppings like vegetables, meat, or seafood. Congee is a comforting and nourishing dish that can be enjoyed at any time of the day.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "R",
+   "item": "congee",
+   "stmt": "For breakfast I had congee.",
+   "sample": 3,
+   "first": {
+    "sum": 9.104191824793816,
+    "first": 8.96231746673584,
+    "tokens": 2
+   },
+   "repeat": {
+    "sum": 3.605555218178779,
+    "first": 3.602600574493408,
+    "tokens": 2
+   },
+   "cold_follow": {
+    "sum": 17.867841720581055,
+    "first": 14.812960624694824,
+    "tokens": 2
+   },
+   "reply": "Congee is a traditional Chinese porridge made from rice or other grains. It's often served with various toppings like vegetables, meat, or seafood. Congee is a comforting and nourishing dish that can be enjoyed at any time of the day.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 0,
+   "first": {
+    "sum": 33.818050384521484,
+    "first": 11.276152610778809,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 2.4748801421374083,
+    "first": 2.395634651184082,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 35.12779998779297,
+    "first": 11.132688522338867,
+    "tokens": 4
+   },
+   "reply": "Pimbletash? That sounds like a unique breakfast option. What is it made of?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 1,
+   "first": {
+    "sum": 33.818050384521484,
+    "first": 11.276152610778809,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 2.031197303440422,
+    "first": 1.998320460319519,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 35.12779998779297,
+    "first": 11.132688522338867,
+    "tokens": 4
+   },
+   "reply": "Pimbletash is a delicious breakfast dish made from the leaves of the pimbletash plant. It's a popular dish in many parts of the world, especially in Asia and Africa. The leaves are boiled or steamed and then served with a variety of toppings such as eggs, meat, or vegetables.",
+   "asks_item": false,
+   "any_q": false,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 2,
+   "first": {
+    "sum": 33.818050384521484,
+    "first": 11.276152610778809,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 2.7078302297741175,
+    "first": 2.595930337905884,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 35.12779998779297,
+    "first": 11.132688522338867,
+    "tokens": 4
+   },
+   "reply": "Pimbletash? That sounds like a unique dish. What's it made of?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  },
+  {
+   "frame": 6,
+   "cls": "N",
+   "item": "pimbletash",
+   "stmt": "For breakfast I had pimbletash.",
+   "sample": 3,
+   "first": {
+    "sum": 33.818050384521484,
+    "first": 11.276152610778809,
+    "tokens": 4
+   },
+   "repeat": {
+    "sum": 2.695985324680805,
+    "first": 2.595773220062256,
+    "tokens": 4
+   },
+   "cold_follow": {
+    "sum": 35.12779998779297,
+    "first": 11.132688522338867,
+    "tokens": 4
+   },
+   "reply": "What is pimbletash?",
+   "asks_item": true,
+   "any_q": true,
+   "recalled": false
+  }
+ ],
+ "seconds": 1073.7
+}
