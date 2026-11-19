@@ -10,7 +10,8 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** pool40/41/42 curiosity stage-1 dev (`jobs/2026-11-18-pool-inquiry-dev.sh`: off,ask2 / ask4,rand4 / ask8,rand8; seed 1143; out `~/brain-lane/inqdev/`). Build agent: mood iteration 5 code (section 17) in its own worktree. AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
+- **LIVE RUNS:** pool40/41/42 curiosity test-bank baseline (4 samples, seeds 42/43 | 44/100 | 101/102; out
+  `~/brain-lane/novbase/`). W CPU: inquiry gate dev at 1.5B (`inquiry_gate_dev`, seed 1144). Build agent: arousal gain (section 19).
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -28,9 +29,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** (1) Curiosity stage-1 dev lands (pool): blind-read asks/invents per arm; content leak seen at 0.1B.
-  (2) Mood: iterations 4 and 5 (Stage A gate FAIL: neutral events read as emotional, `results/2026-11-19-mood5-stageA-1.5b.md`)
-  block the additive family at 1.5B; 11-30 likely NOT MET. Next registered route: arousal as gain (source: cortex surprise).
+- **NEXT STEP:** (1) Curiosity: additive asking direction NO-GO (`results/2026-11-18-inquiry-dev-1.5b.md`); new
+  route = novelty-gated lived inquiry episode (`Brain(inquiry=12.4)`, `live_inquiry`); blind-read the gate dev, then prereg.
+  (2) Mood: additive family blocked (iter 4-5); iteration 6 arousal-as-gain prereg'd (design doc s19), build agent running.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
