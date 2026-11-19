@@ -1,0 +1,285 @@
+{
+ "method": "mood5",
+ "stage": "A",
+ "seed": 43,
+ "model": "1.5b",
+ "events": "dev",
+ "band_used": [
+  8,
+  16
+ ],
+ "layer_norm": {
+  "8": 148.94698842366537,
+  "9": 165.02953338623047,
+  "10": 164.77261861165366,
+  "11": 190.24217224121094,
+  "12": 231.3928654988607,
+  "13": 219.51922861735025,
+  "14": 355.042485555013,
+  "15": 235.3833236694336
+ },
+ "pairs": [
+  [
+   "walking barefoot on soft green grass",
+   "walking barefoot on sharp splintered glass"
+  ],
+  [
+   "sipping cool clear water by the river",
+   "swallowing muddy water by the river"
+  ],
+  [
+   "an old classmate calling me by name",
+   "an old classmate walking by with a blank stare"
+  ],
+  [
+   "fresh bread baking in the oven",
+   "burnt bread smoking in the oven"
+  ],
+  [
+   "a hot meal ready on the table",
+   "a bare plate ready on the table"
+  ],
+  [
+   "lying on a sandy shore in strong sun",
+   "lying on a rocky shore in freezing rain"
+  ],
+  [
+   "a clerk holding the door open for me",
+   "a clerk slamming the door in my face"
+  ],
+  [
+   "feet dry in sturdy boots on a wet trail",
+   "feet soaked in worn boots on a wet trail"
+  ],
+  [
+   "a sore tooth soothed by medicine",
+   "a sore tooth throbbing for lack of medicine"
+  ],
+  [
+   "the smell of cut grass after rain",
+   "the smell of smoke after a blaze"
+  ],
+  [
+   "a mug of hot tea held in cupped hands",
+   "a mug of hot tea tipped over onto my hands"
+  ],
+  [
+   "a cat purring against my chest",
+   "a cat hissing and scratching my chest"
+  ],
+  [
+   "a granny wrapping me in her scarf",
+   "a granny snatching her scarf off me"
+  ],
+  [
+   "a trainer clapping me on the shoulder",
+   "a trainer slapping the side of my head"
+  ],
+  [
+   "a firm friendly handshake from a colleague",
+   "a crushing hostile handshake from a colleague"
+  ],
+  [
+   "a gentle massage on my stiff shoulders",
+   "a hard pinch on my stiff shoulders"
+  ],
+  [
+   "my hands wrapped in thick wool gloves",
+   "my hands numb and cracked in the wind"
+  ],
+  [
+   "bare toes dipped in a warm shallow pool",
+   "bare toes dipped in a filthy shallow pool"
+  ],
+  [
+   "my spine resting against a sun-warmed fence",
+   "my spine pressed against a wet icy fence"
+  ],
+  [
+   "a sweet peach dripping with nectar",
+   "a rotten peach that tastes of mold"
+  ],
+  [
+   "a juicy orange peeled and shared",
+   "a bitter orange spat onto the pavement"
+  ],
+  [
+   "snow falling softly on my cheeks by the fire",
+   "sleet stinging my cheeks far from any fire"
+  ],
+  [
+   "a dry towel ready after a swim",
+   "no towel after a swim in icy water"
+  ],
+  [
+   "stretching tall after a deep restful sleep",
+   "stumbling about after hours with no sleep"
+  ],
+  [
+   "a slow deep breath of clean mountain air",
+   "a slow deep breath of thick burning smoke"
+  ],
+  [
+   "a cool shower after a hot dusty hike",
+   "a freezing shower with no hot water"
+  ],
+  [
+   "a dog wagging its tail at the kerb",
+   "a dog lunging and snapping at the kerb"
+  ],
+  [
+   "an open skylight with a sweet floral smell",
+   "an open skylight with a smell of rot"
+  ],
+  [
+   "my aunt sharing her sandwich with me",
+   "my aunt grabbing my sandwich from me"
+  ],
+  [
+   "a waiter pulling out a chair for me",
+   "a waiter pulling a chair out from behind me"
+  ],
+  [
+   "a teacher nodding at my answer",
+   "a teacher frowning at my answer"
+  ],
+  [
+   "a soft pillow beneath my head",
+   "a cold brick beneath my head"
+  ]
+ ],
+ "appraisal": {
+  "pair": {
+   "values": {
+    "pos": [
+     0.8116,
+     0.1387,
+     -0.8251,
+     0.2853,
+     0.7955,
+     0.4099,
+     0.6401,
+     -0.5093
+    ],
+    "neg": [
+     -0.7774,
+     -0.7649,
+     -0.6173,
+     -0.7759,
+     -0.8583,
+     -0.8753,
+     -0.8108,
+     -0.8572
+    ],
+    "neutral": [
+     0.367,
+     0.058,
+     0.2888,
+     0.1746,
+     0.6635,
+     0.1876,
+     0.1772,
+     0.5021
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.75,
+    "neg": 1.0
+   },
+   "neutral_abs": 0.30235
+  },
+  "topic": {
+   "values": {
+    "pos": [
+     0.9963,
+     0.673,
+     0.9996,
+     0.9993,
+     -0.9657,
+     -0.5359,
+     0.9882,
+     0.9963
+    ],
+    "neg": [
+     0.9643,
+     0.8576,
+     0.9886,
+     0.8803,
+     0.8931,
+     0.8378,
+     0.967,
+     0.9916
+    ],
+    "neutral": [
+     -0.9979,
+     -0.9929,
+     -0.975,
+     -0.9959,
+     -0.9989,
+     -0.9981,
+     -0.9999,
+     -0.9969
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.75,
+    "neg": 0.0
+   },
+   "neutral_abs": 0.9944375
+  },
+  "shuf": {
+   "values": {
+    "pos": [
+     1.0,
+     -1.0,
+     1.0,
+     -1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "neg": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "neutral": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.9874
+    ]
+   },
+   "sign_acc": {
+    "pos": 0.75,
+    "neg": 0.0
+   },
+   "neutral_abs": 0.998425
+  }
+ },
+ "gate": {
+  "pair_both_poles_ge_0.75": true,
+  "pair_beats_topic_by_0.25": true,
+  "neutral_abs_le_0.15": false,
+  "pass": false,
+  "margin_over_topic": 0.5
+ },
+ "provenance": {
+  "commit": "128ba8a8ddc058a3f6fe4d49dfec8e888fe22b3f",
+  "brain_dirty": true,
+  "torch": "2.11.0+cu128",
+  "threads": 8,
+  "host": "dant123-wk"
+ },
+ "seconds": 77.4
+}
