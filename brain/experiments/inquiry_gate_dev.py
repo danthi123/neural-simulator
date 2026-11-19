@@ -41,6 +41,7 @@ def main():
     ap.add_argument("--bar", type=float, default=12.4)
     ap.add_argument("--samples", type=int, default=2)
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--guided", default=GUIDED, help="the lesson's own reply (dev variants)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
@@ -60,7 +61,7 @@ def main():
                         spont = None
                         if arm != "off":
                             random.seed(sd + 7); np.random.seed((sd + 7) % 2 ** 32); torch.manual_seed(sd + 7)
-                            spont = b.live_inquiry(LESSON, GUIDED)
+                            spont = b.live_inquiry(LESSON, a.guided)
                             # the lesson was an earlier conversation: the episode stays in the hippocampus, the
                             # working state starts fresh (otherwise the brain repeats its own last turn)
                             b.state = [x.clone() for x in b.base]
@@ -70,10 +71,10 @@ def main():
                     rows.append({"arm": arm, "frame": fi, "cls": cls, "item": item, "stmt": stmt, "sample": k,
                                  "reply": reply, "fired": bool(info.get("inquiry")),
                                  "novelty": getattr(b, "_last_novelty", None), "lesson_spontaneous": spont,
-                                 "verbatim_guided": reply.strip() == GUIDED})
+                                 "verbatim_guided": reply.strip() == a.guided.strip()})
             print(f"[{arm}] frame {fi} {time.time() - t0:.0f}s", flush=True)
     out = {"seed": a.seed, "model": a.model, "bank": a.bank, "bar": a.bar, "arms": a.arms, "samples": a.samples,
-           "lesson": LESSON, "guided": GUIDED, "host": socket.gethostname(), "torch": torch.__version__,
+           "lesson": LESSON, "guided": a.guided, "host": socket.gethostname(), "torch": torch.__version__,
            "threads": a.threads, "rows": rows, "seconds": round(time.time() - t0, 1)}
     json.dump(out, open(a.out, "w"), indent=1)
     fired = {arm: {c: sum(r["fired"] for r in rows if r["arm"] == arm and r["cls"] == c) for c in CLASSES}
