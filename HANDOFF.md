@@ -10,7 +10,7 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** none. **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
+- **LIVE RUNS:** weekly 1.5B defaults on registered seeds: pool40 43/44, pool41 100/101, pool42 102 (`~/brain-lane/wk1119r/`). Stage-0 life harness being built (design `brain/research/2026-11-19-multiweek-life-design.md`; sysadmin-transfer definition §3.5 is Claude's, owner may amend). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
   after the night: every intact error is a wrong reinstated episode ("What's your name?" -> Marguerite telling 6/6);
   slept facts intrude in both arms (fox named "Pixel" 12/12). Curiosity false fires harmless; no collapse
   (`results/2026-11-19-weekly-defaults-300-305-1.5b.md`).
