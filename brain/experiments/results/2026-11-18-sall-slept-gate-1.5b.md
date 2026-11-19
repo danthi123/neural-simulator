@@ -40,8 +40,16 @@ Prereg: `brain/research/2026-11-18-sall-open-conv-1.5b.md` Amendment 2. Board #2
 - Skeptic coverage: the three skeptics on the 1132-1137 claim (PARTLY REFUTED, selection-only) apply unchanged. This
   run adds the registered seeds and the intrusion finding.
 
-**Weekly (report).** First attempt crashed on every run (`weekly.py` read `Brain.__init__.__kwdefaults__`, None):
-fixed with `inspect.signature` and a test. Rerunning on pool; the result is appended here when it lands.
+**Weekly (report, not gating).** First attempt crashed on every run (`weekly.py` read `Brain.__init__.__kwdefaults__`,
+None): fixed with `inspect.signature` and a test. Rerun on pool CPU (`weekly/wk{d,s}_s*.md`; scored by
+`sall_weekly_score.py` into `weekly_scores.txt`, d = S0, s = S_all + slept bar):
+- Engaged: the S_all header is on every s run and no d run.
+- W1 PASS: day-2 "What's your name?" fetches its own telling on 5/6 seeds with S_all, 0/6 with S0.
+- W2 FAIL: the reply names itself correctly 3/6 vs 2/6 (bar 5). On s42/s44/s102 the right memory is fetched (or
+  not, s42) and the reply still says "My name is Dan": the cortex answers with the user's name either way.
+- W3 holds: keyed answers 4.83 vs 5.00 mean, day-1 own name 6 vs 6, friend 6 vs 6. W4 holds: 0 abstentions in both.
+- Verdict NARROWED: the same shape as open conversation, right memory fetched, reply mostly unchanged. W3/W4 do
+  not block; the flip stays blocked by S3 and S4.
 
 **Next.** The reply-level defects bound everything at 1.5B:
 - collapse into a repeated told line, on 2-3 of 6 seeds per arm;

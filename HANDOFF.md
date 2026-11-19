@@ -12,9 +12,7 @@
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
 - **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
   control `results/2026-11-16-open-conv-day2-control-1.5b/`). Rehearse NO-GO, habituation fails R4 (board #290).
-- **LIVE RUNS (11-18 pm):** pool40/41/42 `jobs/2026-11-18-pool-sall-slept-gate-weekly.sh` (weekly d/s report, 42/43 |
-  44/100 | 101/102; out `~/brain-lane/sgate/wk{d,s}_s*.md`, `done.txt` DONE2). Open-conv half scored.
-  AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
+- **LIVE RUNS:** none. AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -30,8 +28,10 @@
   REFUTED (selection only). Unslept bar first failed (3 vs 3); slept fit (0.165, 0.02) in
   `KEY_BARS_SLEPT_BY_SIZE`. `results/2026-11-18-sall-{open-conv,slept-fit,slept-open-conv}-1.5b.md`.
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
-  (collapse-driven, equal collapse rates); no flip. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** pull weekly (DONE2), append W1-W4, land. Then: reply defects (collapse, invents) need a new method, or mood + curiosity.
+  (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
+  no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
+- **NEXT STEP:** 11-30 items left: mood/arousal shapes replies (lesion-proven), and asking about what is new. Pick one,
+  record brief first (before-build). Reply defects (collapse, invents) wait for a new method.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
