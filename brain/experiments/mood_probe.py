@@ -75,6 +75,60 @@ HELDOUT_NEG = ["The house burned down last night and the cat is missing.",
                "The flood destroyed the whole village."]
 HELDOUT_NEUTRAL = ["The shop closes at six on Sundays.", "A triangle has three sides.",
                    "The printer is in the hall.", "We moved the sofa to the other wall."]
+# Iteration 5 (design doc section 17): FRESH appraisal events, written and frozen before any iteration-5 read. 8/8/8
+# per split; the DEV split is used for selection (seeds 42/43/44), the TEST split only for C1. Never used for
+# induction. Disjoint from every other event, pair, primary and question set and from the lexical instrument
+# (tests/test_mood5.py).
+POS_EVENTS_V5_DEV = ["The bakery set aside a cinnamon roll just for you.",
+                     "Your neighbour carried over a basket of plums.",
+                     "The repairman fixed your radio and refused any payment.",
+                     "My cousin drove half a day only to share lunch with you.",
+                     "The librarian reserved you the armchair by the big window.",
+                     "Your essay was chosen to be read aloud at the assembly.",
+                     "The pupils planted a sunflower in your honour.",
+                     "A passerby returned your wallet with every coin still in it."]
+NEG_EVENTS_V5_DEV = ["The landlord says your flat gets demolished on Friday.",
+                     "Your scooter was stolen from the porch overnight.",
+                     "The clinic phoned to say the scan results looked serious.",
+                     "My brother stopped replying to your messages after the argument.",
+                     "A pipe burst and flooded the entire cellar.",
+                     "The committee rejected your proposal without reading it.",
+                     "Your grandfather's watch slipped through the grate.",
+                     "The coach cut you from the squad in front of the entire stadium."]
+NEU_EVENTS_V5_DEV = ["The pharmacy opens at half past seven.",
+                     "A standard envelope weighs about thirty grams.",
+                     "The ferry crosses the channel twice a day.",
+                     "Our scanner takes sheets in the lower tray.",
+                     "The museum has a cloakroom near the entrance.",
+                     "Tuesday's lecture covers glacial valleys.",
+                     "The elevator stops at floors two, four and six.",
+                     "There is a snack kiosk by the bank."]
+POS_EVENTS_V5_TEST = ["Your niece framed the sketch you posted to her years ago.",
+                      "The farmer dropped off a crate of eggs on your doorstep.",
+                      "The orchestra invited you to sit among the violins.",
+                      "A lifelong penpal flew across the ocean just to meet you.",
+                      "The mechanic promised your old car has another decade in it.",
+                      "Your teammates hoisted you up and cheered across the field.",
+                      "The elderly couple opposite baked you a cake.",
+                      "Somebody anonymously paid off the debt on your tuition."]
+NEG_EVENTS_V5_TEST = ["The sprinklers stayed dry and the workshop went up in flames.",
+                      "Your oldest ally told the club members the secret you trusted her with.",
+                      "A reckless driver crashed into your parked car and sped off.",
+                      "The vet confirmed your horse is permanently lame.",
+                      "Your manuscript vanished when the laptop crashed.",
+                      "They shifted your workstation into the corridor by the bins.",
+                      "The wedding was scrapped at the final hour.",
+                      "Your toddler wandered off at the festival and the volunteers searched in vain."]
+NEU_EVENTS_V5_TEST = ["The ironmonger sells nails by weight.",
+                      "A kilometre is a thousand metres.",
+                      "The seminar suite is on the second level.",
+                      "Our tram timetable changes in spring.",
+                      "The monthly statement arrives by post.",
+                      "The stairwell has a narrow gate at the bottom.",
+                      "Shelves in the garage hold paint tins and ladders.",
+                      "The ticket machine accepts coins only."]
+EVENTS_V5 = {"dev": (POS_EVENTS_V5_DEV, NEG_EVENTS_V5_DEV, NEU_EVENTS_V5_DEV),
+             "test": (POS_EVENTS_V5_TEST, NEG_EVENTS_V5_TEST, NEU_EVENTS_V5_TEST)}
 TEST_Q = ["How are you today?", "What did you do this morning?", "What do you think about the weekend?",
           "Tell me about the weather where you are.", "What's on your mind right now?",
           "What do you think will happen tomorrow?", "Describe the room you are in.",
@@ -219,6 +273,9 @@ def add_embedding(path):
     contrasts (for nodes without transformers). Records the host that added it."""
     import socket
     j = json.load(open(path))
+    if j.get("method") == "mood5":   # iteration 5 JSONs carry their own contrasts (brain/experiments/mood5.py)
+        from brain.experiments import mood5
+        return mood5.add_embedding(path)
     assert not any("emb" in r for arm in j["rows"].values() for r in arm), "already has embedding"
     j["summary"], j["contrasts"] = score_rows(j["rows"], rand_names_for(j["n_rand"]), j["seed"], embed=True)
     j["provenance"]["embedding_added_on"] = socket.gethostname()
