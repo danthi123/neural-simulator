@@ -10,8 +10,9 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** curiosity guided-wording variants, gate arm, dev seeds 1144/1146/1147: W "What's a zorbit? ..."
-  (`results/2026-11-18-inquiry-gate-dev-1.5b/igv_whatsa_*`), pool40-42 "A zorbit? What is that?" (`~/brain-lane/igdev/igv_*`).
+- **LIVE RUNS:** curiosity six-seed TEST (prereg `brain/research/2026-11-19-curiosity-test-prereg.md`), arms
+  lesson/gate/forced: W seeds 42/43 (`results/2026-11-19-inquiry-test-1.5b/`), pool40 44, pool41 100, pool42 101 then 102
+  (`~/brain-lane/igtest/igt_main_*`). Off arm done for all six (pulled, not yet read). Then blind-read all arms.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
@@ -29,9 +30,9 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** Curiosity (live 11-30 item). Gate DEV blind-read (3 seeds): coined asks 17->27/72, admits not knowing
-  4->23, invents 13->1, coherence and common words untouched (`results/2026-11-19-inquiry-gate-dev-1.5b.md`). Pick the
-  guided wording from the variants, then prereg the six-seed test vs the baseline (asks coined 35/288, invents 73/288).
+- **NEXT STEP:** Curiosity (live 11-30 item): score the six-seed test against the prereg (blind readers, all four
+  arms shuffled), land-result skeptic, flip if PASS. Dev: coined asks 17 -> 33/72 with the lesson reply "What's a
+  zorbit? I've never heard of that word." (`results/2026-11-19-inquiry-{gate-dev,guided-variants-dev}-1.5b.md`).
   Mood: TIMEBOX KILL 11-19 (iter 4-6 NO-GO on the action; `results/2026-11-19-arousal6-1.5b.md`), 11-30 NOT MET.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
