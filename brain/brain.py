@@ -434,7 +434,8 @@ class Brain:
             known, sig = self.knows(text)
             info.update(sig, known=known)
         if known:
-            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
+            ex = () if self.meta.get("inquiry_episode") is None else (self.meta["inquiry_episode"],)
+            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"), exclude=ex)
         else:  # nothing familiar enough: no pattern completion, no reinstatement
             ep, sim = None, (info["fok"] if info.get("fok_source") == "hippocampus" else info.get("fam", 0.0))
         info["similarity"] = round(sim, 3)
@@ -617,10 +618,13 @@ class Brain:
         assert _is_telling(telling), "the lesson is a telling with an unknown word"
         before = [x.clone() for x in self.state]
         inq, self.inquiry = self.inquiry, None          # the lesson itself is heard without the gate
+        n_before = len(self.hippocampus.episodes)
         try:
             spontaneous, _ = self.hear(telling)
         finally:
             self.inquiry = inq
+        # the lesson lives only as the inquiry episode below, not also as an ordinary telling about its made-up word
+        del self.hippocampus.episodes[n_before:]
         _, self.state = self.cortex.read(f"User: {telling}\n\nAssistant: {guided_reply}\n\n", before)
         ep = self.hippocampus.store(self.cortex, self.base, f"{telling}\n\nAssistant: {guided_reply}", speaker="User")
         ep.source = "self"

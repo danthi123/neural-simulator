@@ -47,3 +47,11 @@ def test_gate_fires_on_coined_not_common(cortex, tmp_path):
     _, info_c = b2.hear("My sister works as a nurse.")
     assert info_n.get("inquiry") is True
     assert not info_c.get("inquiry")
+
+
+def test_inquiry_episode_is_not_ordinary_recall(cortex, tmp_path):
+    b = Brain(str(tmp_path / "e"), cortex=cortex)          # gate OFF: the lesson lives in memory only
+    b.live_inquiry(LESSON, GUIDED)
+    b.state = [x.clone() for x in b.base]
+    _, info = b.hear("My friend keeps a zorbit in her garage.")   # the closest possible cue to the lesson
+    assert info["recalled"] is None or "zorbit in her kitchen" not in info["recalled"]
