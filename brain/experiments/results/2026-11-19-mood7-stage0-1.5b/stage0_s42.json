@@ -1,0 +1,2228 @@
+{
+ "seed": 42,
+ "model": "1.5b",
+ "dz": 0.7162,
+ "B": 0.1074,
+ "tau": 4.0,
+ "filler_v": [
+  -0.1822,
+  0.3117
+ ],
+ "probe_v": 0.6929,
+ "t1_fire": {
+  "NEG": 0.65,
+  "NEU": 0.0,
+  "SNEU": 0.0,
+  "HARD": 0.2,
+  "POS": 0.0
+ },
+ "turn_fire": {
+  "NEG": 0.45,
+  "NEU": 0.0,
+  "SNEU": 0.0,
+  "HARD": 0.15,
+  "POS": 0.0
+ },
+ "auroc_v_neg_sneu": 0.98,
+ "auroc_surprise_neg_sneu": 0.36,
+ "auroc_shuf_neg_sneu": 0.515,
+ "abs_v_mean": {
+  "DEV_FIT": {
+   "NEG": 0.744,
+   "NEU": 0.358,
+   "SNEU": 0.361,
+   "HARD": 0.414,
+   "POS": 0.287
+  },
+  "DEV_VAL": {
+   "NEG": 0.733,
+   "NEU": 0.383,
+   "SNEU": 0.194,
+   "HARD": 0.418,
+   "POS": 0.212
+  }
+ },
+ "sign_neg": {
+  "DEV_FIT": 1.0,
+  "DEV_VAL": 1.0
+ },
+ "criteria": {
+  "S0a NEG T1 fire >= 0.70": [
+   0.65,
+   false
+  ],
+  "S0b NEU+SNEU fire <= 5% of turns": [
+   0.0,
+   true
+  ],
+  "S0c HARD fire <= 15% of turns": [
+   0.15,
+   true
+  ],
+  "S0d AUROC v NEG vs SNEU >= 0.80, surprise <= 0.65": [
+   0.98,
+   0.64,
+   true
+  ],
+  "S0e blocked by recall/inquiry <= 20% of T2-T4": [
+   0.565,
+   false
+  ]
+ },
+ "PASS": false,
+ "rows": {
+  "DEV_FIT": {
+   "NEG": [
+    {
+     "text": "My father died last night after a long illness.",
+     "v": -0.6055,
+     "v_shuf": 0.865,
+     "surprise": 5.287
+    },
+    {
+     "text": "I lost my job when the company closed on Friday.",
+     "v": -0.772,
+     "v_shuf": 0.2682,
+     "surprise": 8.225
+    },
+    {
+     "text": "My dog was hit by a car and did not survive.",
+     "v": -0.8487,
+     "v_shuf": -0.259,
+     "surprise": 7.104
+    },
+    {
+     "text": "I missed my train and lost the job interview.",
+     "v": -0.8204,
+     "v_shuf": -0.6353,
+     "surprise": 9.109
+    },
+    {
+     "text": "The doctor told me the scan showed a tumour.",
+     "v": -0.6226,
+     "v_shuf": 0.6962,
+     "surprise": 7.461
+    },
+    {
+     "text": "My house flooded and most of our furniture was ruined.",
+     "v": -0.7817,
+     "v_shuf": -0.3803,
+     "surprise": 6.674
+    },
+    {
+     "text": "I failed my driving test for the third time.",
+     "v": -0.8723,
+     "v_shuf": -0.035,
+     "surprise": 9.584
+    },
+    {
+     "text": "My wife and I separated last month.",
+     "v": -0.5776,
+     "v_shuf": -0.5774,
+     "surprise": 9.355
+    },
+    {
+     "text": "I broke my wrist falling off a ladder yesterday.",
+     "v": -0.7068,
+     "v_shuf": 0.9832,
+     "surprise": 10.131
+    },
+    {
+     "text": "My landlord told us we must leave the flat by June.",
+     "v": -0.6227,
+     "v_shuf": -0.8136,
+     "surprise": 10.06
+    },
+    {
+     "text": "The bank refused my loan application this morning.",
+     "v": -0.8536,
+     "v_shuf": -0.5787,
+     "surprise": 9.365
+    },
+    {
+     "text": "My cat died in her sleep on Tuesday.",
+     "v": -0.544,
+     "v_shuf": -0.0989,
+     "surprise": 5.517
+    },
+    {
+     "text": "Someone broke into our car and stole my laptop.",
+     "v": -0.8697,
+     "v_shuf": -0.0645,
+     "surprise": 7.32
+    },
+    {
+     "text": "I was turned down for the course I wanted.",
+     "v": -0.8101,
+     "v_shuf": -0.9249,
+     "surprise": 9.71
+    },
+    {
+     "text": "My grandmother passed away early this morning.",
+     "v": -0.4846,
+     "v_shuf": 0.7603,
+     "surprise": 6.115
+    },
+    {
+     "text": "I dropped my phone in the river and it is gone.",
+     "v": -0.8299,
+     "v_shuf": -0.6014,
+     "surprise": 9.579
+    },
+    {
+     "text": "My manager told me my contract will not be renewed.",
+     "v": -0.8299,
+     "v_shuf": -0.9368,
+     "surprise": 7.423
+    },
+    {
+     "text": "My wife lost the baby last week.",
+     "v": -0.6726,
+     "v_shuf": -0.2259,
+     "surprise": 6.632
+    },
+    {
+     "text": "I failed my final exam and must repeat the year.",
+     "v": -0.6747,
+     "v_shuf": -0.8999,
+     "surprise": 9.584
+    },
+    {
+     "text": "A fire destroyed our garage and everything stored in it.",
+     "v": -0.7606,
+     "v_shuf": -0.5227,
+     "surprise": 8.858
+    },
+    {
+     "text": "My best friend told me she is moving away for good.",
+     "v": -0.5102,
+     "v_shuf": -0.6357,
+     "surprise": 6.081
+    },
+    {
+     "text": "I was in a car crash and my car is written off.",
+     "v": -0.7579,
+     "v_shuf": 0.0102,
+     "surprise": 5.537
+    },
+    {
+     "text": "The vet said my old horse has to be put down.",
+     "v": -0.7224,
+     "v_shuf": -0.1362,
+     "surprise": 11.303
+    },
+    {
+     "text": "I scratched the side of my new car in the car park.",
+     "v": -0.7777,
+     "v_shuf": 0.8889,
+     "surprise": 12.839
+    },
+    {
+     "text": "My brother was arrested last night and is in jail.",
+     "v": -0.6791,
+     "v_shuf": 0.496,
+     "surprise": 5.127
+    },
+    {
+     "text": "I was passed over for the promotion again this year.",
+     "v": -0.8197,
+     "v_shuf": -0.6433,
+     "surprise": 9.663
+    },
+    {
+     "text": "My boiler broke and the repair costs more than I have.",
+     "v": -0.8633,
+     "v_shuf": -0.9166,
+     "surprise": 11.107
+    },
+    {
+     "text": "I got a letter saying my visa application was refused.",
+     "v": -0.8486,
+     "v_shuf": 0.437,
+     "surprise": 5.659
+    },
+    {
+     "text": "My uncle had a stroke and cannot speak now.",
+     "v": -0.7011,
+     "v_shuf": -0.8529,
+     "surprise": 6.78
+    },
+    {
+     "text": "I spilled coffee on my laptop and it will not turn on.",
+     "v": -0.8183,
+     "v_shuf": -0.6013,
+     "surprise": 11.647
+    },
+    {
+     "text": "My business lost all its biggest customers this spring.",
+     "v": -0.8583,
+     "v_shuf": -0.0956,
+     "surprise": 10.047
+    },
+    {
+     "text": "I tore a ligament in my knee playing football.",
+     "v": -0.7695,
+     "v_shuf": 0.5643,
+     "surprise": 13.208
+    },
+    {
+     "text": "I missed the penalty that would have won us the match.",
+     "v": -0.745,
+     "v_shuf": -0.8726,
+     "surprise": 10.532
+    },
+    {
+     "text": "My partner left me a note and moved out today.",
+     "v": -0.5724,
+     "v_shuf": 0.4458,
+     "surprise": 7.106
+    },
+    {
+     "text": "Thieves took all my jewellery while we were on holiday.",
+     "v": -0.7828,
+     "v_shuf": -0.8579,
+     "surprise": 7.12
+    },
+    {
+     "text": "My mother was told her cancer has come back.",
+     "v": -0.789,
+     "v_shuf": 0.2295,
+     "surprise": 5.173
+    },
+    {
+     "text": "I got a parking fine and my bike was stolen on the same day.",
+     "v": -0.8022,
+     "v_shuf": -0.345,
+     "surprise": 9.137
+    },
+    {
+     "text": "My application for the flat was rejected again today.",
+     "v": -0.8337,
+     "v_shuf": -0.1197,
+     "surprise": 10.477
+    },
+    {
+     "text": "I was laid off along with half of my department.",
+     "v": -0.8261,
+     "v_shuf": -0.1915,
+     "surprise": 9.021
+    },
+    {
+     "text": "My tooth cracked and the dentist says it must come out.",
+     "v": -0.7355,
+     "v_shuf": -0.0026,
+     "surprise": 9.158
+    }
+   ],
+   "NEU": [
+    {
+     "text": "I moved the plants to the other window.",
+     "v": 0.3426,
+     "v_shuf": -0.9467,
+     "surprise": 9.266
+    },
+    {
+     "text": "I bought a new kettle this afternoon.",
+     "v": 0.3177,
+     "v_shuf": 0.2337,
+     "surprise": 8.382
+    },
+    {
+     "text": "The bus was on time this morning.",
+     "v": 0.2384,
+     "v_shuf": -0.8546,
+     "surprise": 9.167
+    },
+    {
+     "text": "I wiped down the kitchen counters after dinner.",
+     "v": 0.5261,
+     "v_shuf": 0.6611,
+     "surprise": 13.224
+    },
+    {
+     "text": "We had rice and vegetables for dinner tonight.",
+     "v": 0.582,
+     "v_shuf": -0.9481,
+     "surprise": 11.494
+    },
+    {
+     "text": "I changed the batteries in the hallway clock.",
+     "v": 0.1314,
+     "v_shuf": -0.5856,
+     "surprise": 9.97
+    },
+    {
+     "text": "My desk is by the window at the office.",
+     "v": 0.6203,
+     "v_shuf": -0.9769,
+     "surprise": 9.582
+    },
+    {
+     "text": "I walked to the post office and posted a parcel.",
+     "v": 0.2172,
+     "v_shuf": -0.0671,
+     "surprise": 9.337
+    },
+    {
+     "text": "I put the laundry on the line before lunch.",
+     "v": 0.45,
+     "v_shuf": -0.8488,
+     "surprise": 9.259
+    },
+    {
+     "text": "We repainted the shed door a plain grey colour.",
+     "v": -0.0454,
+     "v_shuf": -0.9022,
+     "surprise": 15.15
+    },
+    {
+     "text": "I read two chapters of my book before bed.",
+     "v": 0.5307,
+     "v_shuf": -0.921,
+     "surprise": 7.071
+    },
+    {
+     "text": "I swapped the lamp in the living room for another one.",
+     "v": 0.1387,
+     "v_shuf": -0.9537,
+     "surprise": 11.997
+    },
+    {
+     "text": "I took the recycling out on Wednesday evening.",
+     "v": 0.2207,
+     "v_shuf": 0.1037,
+     "surprise": 10.674
+    },
+    {
+     "text": "We have a meeting on Thursday at ten o'clock.",
+     "v": 0.3711,
+     "v_shuf": -0.7892,
+     "surprise": 6.931
+    },
+    {
+     "text": "I filled the car with petrol on the way home.",
+     "v": -0.0168,
+     "v_shuf": -0.8213,
+     "surprise": 11.875
+    },
+    {
+     "text": "I made a cup of tea and sat by the window.",
+     "v": 0.8655,
+     "v_shuf": -0.1417,
+     "surprise": 7.448
+    },
+    {
+     "text": "My sister dropped off a box of old books.",
+     "v": -0.2009,
+     "v_shuf": 0.8904,
+     "surprise": 7.961
+    },
+    {
+     "text": "I cleaned out the drawer where we keep the batteries.",
+     "v": -0.0318,
+     "v_shuf": 0.7932,
+     "surprise": 12.257
+    },
+    {
+     "text": "I ironed three shirts for the week ahead.",
+     "v": 0.1093,
+     "v_shuf": -0.6963,
+     "surprise": 15.795
+    },
+    {
+     "text": "We took the early train into the city this morning.",
+     "v": 0.3513,
+     "v_shuf": -0.076,
+     "surprise": 7.502
+    },
+    {
+     "text": "I tidied the bookshelf and sorted the books by size.",
+     "v": 0.417,
+     "v_shuf": -0.5591,
+     "surprise": 15.51
+    },
+    {
+     "text": "I walked the dog around the park after work.",
+     "v": 0.7613,
+     "v_shuf": 0.2394,
+     "surprise": 9.337
+    },
+    {
+     "text": "I rearranged the chairs around the dining table.",
+     "v": 0.3579,
+     "v_shuf": -0.5921,
+     "surprise": 12.728
+    },
+    {
+     "text": "I wrote a shopping list for the weekend.",
+     "v": 0.5662,
+     "v_shuf": -0.597,
+     "surprise": 10.314
+    },
+    {
+     "text": "My brother came round and we watched football on television.",
+     "v": 0.4352,
+     "v_shuf": -0.32,
+     "surprise": 8.829
+    },
+    {
+     "text": "I printed the forms and put them in a folder.",
+     "v": 0.4721,
+     "v_shuf": -0.0548,
+     "surprise": 10.906
+    },
+    {
+     "text": "I washed the car on Saturday afternoon.",
+     "v": 0.3239,
+     "v_shuf": -0.29,
+     "surprise": 12.844
+    },
+    {
+     "text": "I set my alarm for seven tomorrow morning.",
+     "v": 0.3353,
+     "v_shuf": -0.9485,
+     "surprise": 8.86
+    },
+    {
+     "text": "I walked up the stairs to the second floor office.",
+     "v": 0.4771,
+     "v_shuf": 0.5525,
+     "surprise": 9.337
+    },
+    {
+     "text": "We bought a loaf of bread and some cheese.",
+     "v": 0.2306,
+     "v_shuf": -0.4724,
+     "surprise": 9.284
+    },
+    {
+     "text": "I charged my phone and then packed my bag.",
+     "v": 0.4357,
+     "v_shuf": -0.3223,
+     "surprise": 12.983
+    },
+    {
+     "text": "I called the plumber to book a time next week.",
+     "v": 0.4704,
+     "v_shuf": -0.9321,
+     "surprise": 10.092
+    },
+    {
+     "text": "I replied to a few emails after lunch.",
+     "v": 0.457,
+     "v_shuf": -0.5902,
+     "surprise": 10.851
+    },
+    {
+     "text": "My neighbour borrowed our ladder for the afternoon.",
+     "v": -0.2507,
+     "v_shuf": 0.1973,
+     "surprise": 8.925
+    },
+    {
+     "text": "I turned on the heating when I got home.",
+     "v": 0.4075,
+     "v_shuf": -0.7738,
+     "surprise": 8.78
+    },
+    {
+     "text": "We watched the news and then went to bed.",
+     "v": 0.3654,
+     "v_shuf": -0.7022,
+     "surprise": 8.894
+    },
+    {
+     "text": "I filled in my timesheet at the end of the day.",
+     "v": 0.4074,
+     "v_shuf": -0.505,
+     "surprise": 11.875
+    },
+    {
+     "text": "I boiled some eggs and made a sandwich.",
+     "v": 0.4592,
+     "v_shuf": 0.2905,
+     "surprise": 13.424
+    },
+    {
+     "text": "I took a different route to the shops today.",
+     "v": 0.2646,
+     "v_shuf": 0.1845,
+     "surprise": 7.403
+    },
+    {
+     "text": "My kitchen window faces the garden and the road.",
+     "v": 0.1149,
+     "v_shuf": -0.8246,
+     "surprise": 9.075
+    }
+   ],
+   "SNEU": [
+    {
+     "text": "A fox walked across our garden in broad daylight.",
+     "v": -0.5098,
+     "v_shuf": 0.2323,
+     "surprise": 10.011
+    },
+    {
+     "text": "My local bakery now opens at four in the morning.",
+     "v": 0.0072,
+     "v_shuf": -0.9537,
+     "surprise": 7.736
+    },
+    {
+     "text": "My neighbour has started painting his fence bright orange.",
+     "v": -0.4464,
+     "v_shuf": 0.7809,
+     "surprise": 8.925
+    },
+    {
+     "text": "A flock of green parrots settled in the tree outside my window.",
+     "v": 0.362,
+     "v_shuf": 0.4343,
+     "surprise": 10.794
+    },
+    {
+     "text": "My cousin turned up at our door without calling first.",
+     "v": -0.5598,
+     "v_shuf": 0.2814,
+     "surprise": 7.489
+    },
+    {
+     "text": "The street outside my flat was closed for a film crew.",
+     "v": -0.5118,
+     "v_shuf": 0.9235,
+     "surprise": 9.476
+    },
+    {
+     "text": "I found an old coin under the sofa cushion.",
+     "v": -0.0144,
+     "v_shuf": 0.9328,
+     "surprise": 6.531
+    },
+    {
+     "text": "The clocks in my office all stopped at the same minute.",
+     "v": -0.6617,
+     "v_shuf": -0.1472,
+     "surprise": 12.136
+    },
+    {
+     "text": "My bus driver today was reading a book at the red lights.",
+     "v": -0.1937,
+     "v_shuf": 0.9358,
+     "surprise": 9.044
+    },
+    {
+     "text": "A stranger left a bicycle in our hallway this morning.",
+     "v": -0.5595,
+     "v_shuf": 0.7515,
+     "surprise": 8.753
+    },
+    {
+     "text": "My sister showed up with a pet tortoise yesterday.",
+     "v": 0.095,
+     "v_shuf": 0.4528,
+     "surprise": 7.614
+    },
+    {
+     "text": "There was snow in our town in the middle of October.",
+     "v": -0.499,
+     "v_shuf": 0.2612,
+     "surprise": 8.571
+    },
+    {
+     "text": "A man in a bear costume was waiting at my bus stop.",
+     "v": -0.2961,
+     "v_shuf": 0.9406,
+     "surprise": 7.374
+    },
+    {
+     "text": "My brother told me he has started learning the accordion.",
+     "v": 0.1203,
+     "v_shuf": -0.2492,
+     "surprise": 11.572
+    },
+    {
+     "text": "The river near my house froze solid overnight.",
+     "v": -0.6169,
+     "v_shuf": 0.8791,
+     "surprise": 9.321
+    },
+    {
+     "text": "We saw a hot air balloon land in the field behind us.",
+     "v": 0.0737,
+     "v_shuf": 0.8353,
+     "surprise": 8.666
+    },
+    {
+     "text": "My landlord repainted the whole stairwell purple while we were out.",
+     "v": -0.7038,
+     "v_shuf": 0.3774,
+     "surprise": 11.086
+    },
+    {
+     "text": "I got a postcard from a person I do not know.",
+     "v": -0.2563,
+     "v_shuf": -0.7029,
+     "surprise": 8.683
+    },
+    {
+     "text": "My colleague arrived at work wearing his shirt inside out.",
+     "v": -0.7148,
+     "v_shuf": -0.131,
+     "surprise": 7.609
+    },
+    {
+     "text": "Our street lights came on at noon today.",
+     "v": 0.0147,
+     "v_shuf": -0.6338,
+     "surprise": 10.045
+    }
+   ],
+   "HARD": [
+    {
+     "text": "I read a long book about the history of famines.",
+     "v": -0.461,
+     "v_shuf": 0.2291,
+     "surprise": 13.991
+    },
+    {
+     "text": "We watched a documentary about old shipwrecks last night.",
+     "v": -0.0229,
+     "v_shuf": 0.8892,
+     "surprise": 8.894
+    },
+    {
+     "text": "I visited a museum exhibit on wartime hospitals this afternoon.",
+     "v": 0.2297,
+     "v_shuf": 0.8136,
+     "surprise": 9.002
+    },
+    {
+     "text": "I am writing an essay about how funerals changed over the centuries.",
+     "v": -0.0052,
+     "v_shuf": -0.9504,
+     "surprise": 12.468
+    },
+    {
+     "text": "My class studied how the Titanic sank today.",
+     "v": -0.2803,
+     "v_shuf": 0.5413,
+     "surprise": 7.395
+    },
+    {
+     "text": "I listened to a podcast about unsolved crimes from the 1920s.",
+     "v": -0.3027,
+     "v_shuf": 0.2658,
+     "surprise": 12.287
+    },
+    {
+     "text": "I borrowed a library book on the history of graveyards.",
+     "v": 0.0355,
+     "v_shuf": -0.3604,
+     "surprise": 15.057
+    },
+    {
+     "text": "The exam was not bad at all.",
+     "v": -0.2144,
+     "v_shuf": -0.9348,
+     "surprise": 9.367
+    },
+    {
+     "text": "Nothing went wrong at the dentist today.",
+     "v": -0.1326,
+     "v_shuf": -0.8123,
+     "surprise": 7.607
+    },
+    {
+     "text": "I did not miss my train this morning.",
+     "v": -0.4812,
+     "v_shuf": -0.9349,
+     "surprise": 7.4
+    },
+    {
+     "text": "The test results showed nothing out of the ordinary.",
+     "v": -0.653,
+     "v_shuf": -0.5557,
+     "surprise": 7.846
+    },
+    {
+     "text": "My flight was not delayed and nothing got lost.",
+     "v": -0.3821,
+     "v_shuf": -0.9765,
+     "surprise": 9.292
+    },
+    {
+     "text": "I did not fail the exam after all.",
+     "v": -0.5222,
+     "v_shuf": -0.9042,
+     "surprise": 8.692
+    },
+    {
+     "text": "There was no problem with my car at the garage.",
+     "v": -0.3111,
+     "v_shuf": -0.872,
+     "surprise": 5.796
+    },
+    {
+     "text": "The coffee machine at work was slow again.",
+     "v": -0.7289,
+     "v_shuf": -0.4201,
+     "surprise": 9.509
+    },
+    {
+     "text": "The printer jammed twice before I got my pages.",
+     "v": -0.8659,
+     "v_shuf": -0.0646,
+     "surprise": 9.761
+    },
+    {
+     "text": "My neighbour's dog barked for a few minutes this morning.",
+     "v": -0.7356,
+     "v_shuf": 0.9159,
+     "surprise": 11.171
+    },
+    {
+     "text": "The wifi dropped out for a minute during my call.",
+     "v": -0.7886,
+     "v_shuf": -0.0875,
+     "surprise": 11.586
+    },
+    {
+     "text": "The queue at the post office was a bit long.",
+     "v": -0.6,
+     "v_shuf": 0.5671,
+     "surprise": 10.499
+    },
+    {
+     "text": "I had to wait ten minutes for the lift.",
+     "v": -0.5244,
+     "v_shuf": -0.1026,
+     "surprise": 7.478
+    }
+   ],
+   "POS": [
+    {
+     "text": "I got the job I applied for last week.",
+     "v": 0.3066,
+     "v_shuf": 0.4342,
+     "surprise": 5.659
+    },
+    {
+     "text": "My sister had a healthy baby girl this morning.",
+     "v": 0.4359,
+     "v_shuf": 0.2227,
+     "surprise": 6.903
+    },
+    {
+     "text": "I passed my driving test on the first try.",
+     "v": 0.1846,
+     "v_shuf": -0.4045,
+     "surprise": 9.419
+    },
+    {
+     "text": "My brother got engaged to his girlfriend last weekend.",
+     "v": 0.0462,
+     "v_shuf": 0.1151,
+     "surprise": 6.041
+    },
+    {
+     "text": "The doctor said my scan came back completely clear.",
+     "v": -0.2474,
+     "v_shuf": -0.2762,
+     "surprise": 7.461
+    },
+    {
+     "text": "I got a pay rise at work today.",
+     "v": 0.2876,
+     "v_shuf": 0.1958,
+     "surprise": 8.52
+    },
+    {
+     "text": "We bought our first house and get the keys on Monday.",
+     "v": 0.3299,
+     "v_shuf": -0.3641,
+     "surprise": 8.026
+    },
+    {
+     "text": "My team won the final on Saturday afternoon.",
+     "v": 0.2281,
+     "v_shuf": -0.3801,
+     "surprise": 6.371
+    },
+    {
+     "text": "I was accepted onto the course I wanted.",
+     "v": 0.424,
+     "v_shuf": -0.9214,
+     "surprise": 9.495
+    },
+    {
+     "text": "My wife gave birth to our son last night.",
+     "v": 0.0873,
+     "v_shuf": 0.2863,
+     "surprise": 5.488
+    },
+    {
+     "text": "I found the wallet I lost, with everything still inside.",
+     "v": 0.138,
+     "v_shuf": -0.8456,
+     "surprise": 10.242
+    },
+    {
+     "text": "My loan application was approved by the bank this morning.",
+     "v": 0.3033,
+     "v_shuf": -0.1955,
+     "surprise": 10.958
+    },
+    {
+     "text": "I finished my first marathon in under four hours.",
+     "v": 0.0776,
+     "v_shuf": -0.6461,
+     "surprise": 8.009
+    },
+    {
+     "text": "My mother's operation went well and she is home now.",
+     "v": 0.4878,
+     "v_shuf": -0.5922,
+     "surprise": 9.508
+    },
+    {
+     "text": "I won a holiday for two in a local raffle.",
+     "v": 0.3028,
+     "v_shuf": -0.811,
+     "surprise": 8.635
+    },
+    {
+     "text": "My visa was approved and I can start work in March.",
+     "v": 0.3282,
+     "v_shuf": -0.8785,
+     "surprise": 10.015
+    },
+    {
+     "text": "We adopted a puppy from the shelter yesterday.",
+     "v": 0.4055,
+     "v_shuf": 0.0306,
+     "surprise": 9.173
+    },
+    {
+     "text": "My landlord lowered the rent by fifty pounds a month.",
+     "v": -0.4544,
+     "v_shuf": -0.9593,
+     "surprise": 10.239
+    },
+    {
+     "text": "I got a promotion and a bigger office today.",
+     "v": 0.3669,
+     "v_shuf": 0.7449,
+     "surprise": 6.989
+    },
+    {
+     "text": "My novel was accepted by a publisher this week.",
+     "v": 0.2956,
+     "v_shuf": -0.228,
+     "surprise": 9.84
+    }
+   ]
+  },
+  "DEV_VAL": {
+   "NEG": [
+    {
+     "text": "My grandfather died in hospital on Sunday night.",
+     "v": -0.5919,
+     "v_shuf": 0.5977,
+     "surprise": 6.691
+    },
+    {
+     "text": "I was sacked from the warehouse this afternoon.",
+     "v": -0.8039,
+     "v_shuf": 0.8426,
+     "surprise": 14.11
+    },
+    {
+     "text": "My rabbit got out and was killed by a fox.",
+     "v": -0.9128,
+     "v_shuf": 0.9105,
+     "surprise": 9.795
+    },
+    {
+     "text": "I missed my bus and arrived too late for the exam.",
+     "v": -0.7484,
+     "v_shuf": -0.5496,
+     "surprise": 9.109
+    },
+    {
+     "text": "The doctor says I will need surgery on my back.",
+     "v": -0.4976,
+     "v_shuf": 0.5372,
+     "surprise": 7.461
+    },
+    {
+     "text": "A pipe burst and the ceiling in our bedroom collapsed.",
+     "v": -0.8272,
+     "v_shuf": 0.9194,
+     "surprise": 10.771
+    },
+    {
+     "text": "I failed the entrance test for the nursing course.",
+     "v": -0.7566,
+     "v_shuf": -0.7461,
+     "surprise": 9.584
+    },
+    {
+     "text": "My boyfriend ended our relationship by text this morning.",
+     "v": -0.7033,
+     "v_shuf": -0.2808,
+     "surprise": 7.603
+    },
+    {
+     "text": "I broke two ribs when I slipped on the ice.",
+     "v": -0.8093,
+     "v_shuf": 0.9816,
+     "surprise": 10.131
+    },
+    {
+     "text": "My car was stolen from outside our house overnight.",
+     "v": -0.7287,
+     "v_shuf": -0.0068,
+     "surprise": 6.296
+    },
+    {
+     "text": "My application for a bigger flat was turned down.",
+     "v": -0.828,
+     "v_shuf": -0.62,
+     "surprise": 9.079
+    },
+    {
+     "text": "My dad was taken to hospital with a heart attack.",
+     "v": -0.7066,
+     "v_shuf": 0.8115,
+     "surprise": 6.06
+    },
+    {
+     "text": "I lost my wedding ring down the drain today.",
+     "v": -0.8157,
+     "v_shuf": 0.4772,
+     "surprise": 8.548
+    },
+    {
+     "text": "My boss told me the project I led has been cancelled.",
+     "v": -0.796,
+     "v_shuf": 0.0066,
+     "surprise": 6.579
+    },
+    {
+     "text": "My neighbour's tree fell on our roof in the storm.",
+     "v": -0.769,
+     "v_shuf": 0.9451,
+     "surprise": 11.171
+    },
+    {
+     "text": "I burned the cake I made for my mother's birthday.",
+     "v": -0.6643,
+     "v_shuf": 0.1091,
+     "surprise": 12.59
+    },
+    {
+     "text": "My landlord is selling the building and we have to move out.",
+     "v": -0.4602,
+     "v_shuf": -0.4221,
+     "surprise": 10.06
+    },
+    {
+     "text": "My sister was in a bad accident and is in intensive care.",
+     "v": -0.4748,
+     "v_shuf": 0.4562,
+     "surprise": 5.142
+    },
+    {
+     "text": "I was fined four hundred pounds for something I did not do.",
+     "v": -0.8934,
+     "v_shuf": -0.6007,
+     "surprise": 11.777
+    },
+    {
+     "text": "My goldfish all died after the tank heater broke.",
+     "v": -0.8669,
+     "v_shuf": -0.2213,
+     "surprise": 11.763
+    }
+   ],
+   "NEU": [
+    {
+     "text": "I put a new bulb in the bathroom light.",
+     "v": 0.2262,
+     "v_shuf": -0.8197,
+     "surprise": 8.842
+    },
+    {
+     "text": "We ate lunch at the table by the window.",
+     "v": 0.8371,
+     "v_shuf": -0.872,
+     "surprise": 9.832
+    },
+    {
+     "text": "I carried the boxes up to the attic this morning.",
+     "v": 0.2701,
+     "v_shuf": 0.8117,
+     "surprise": 12.903
+    },
+    {
+     "text": "I bought a pack of envelopes and some stamps.",
+     "v": 0.0764,
+     "v_shuf": -0.135,
+     "surprise": 7.372
+    },
+    {
+     "text": "My train leaves at ten past nine each day.",
+     "v": 0.0522,
+     "v_shuf": -0.9652,
+     "surprise": 8.57
+    },
+    {
+     "text": "I swept the front step before I went out.",
+     "v": 0.3473,
+     "v_shuf": 0.1568,
+     "surprise": 15.422
+    },
+    {
+     "text": "I made pasta with tomato sauce for supper.",
+     "v": 0.4912,
+     "v_shuf": -0.8591,
+     "surprise": 8.961
+    },
+    {
+     "text": "I hung a new calendar on the kitchen wall.",
+     "v": 0.6628,
+     "v_shuf": -0.4442,
+     "surprise": 11.591
+    },
+    {
+     "text": "My brother and I drove to the garden centre.",
+     "v": 0.3909,
+     "v_shuf": -0.2088,
+     "surprise": 8.033
+    },
+    {
+     "text": "I wrote my name on the box of leftovers.",
+     "v": -0.0224,
+     "v_shuf": -0.3608,
+     "surprise": 10.311
+    },
+    {
+     "text": "I opened the window to let some air in.",
+     "v": 0.7419,
+     "v_shuf": -0.7281,
+     "surprise": 9.676
+    },
+    {
+     "text": "We moved the sofa closer to the bookcase.",
+     "v": 0.4112,
+     "v_shuf": -0.9207,
+     "surprise": 8.935
+    },
+    {
+     "text": "I picked up my coat from the hook by the door.",
+     "v": 0.5064,
+     "v_shuf": 0.2699,
+     "surprise": 9.458
+    },
+    {
+     "text": "I put the milk back in the fridge.",
+     "v": 0.4783,
+     "v_shuf": -0.9714,
+     "surprise": 8.842
+    },
+    {
+     "text": "I filled the water jug and put it on the table.",
+     "v": 0.6257,
+     "v_shuf": -0.8833,
+     "surprise": 11.875
+    },
+    {
+     "text": "My phone needs an update, so I will do it tonight.",
+     "v": 0.3528,
+     "v_shuf": -0.8869,
+     "surprise": 5.595
+    },
+    {
+     "text": "I took the stairs instead of the lift today.",
+     "v": -0.0393,
+     "v_shuf": -0.5757,
+     "surprise": 7.403
+    },
+    {
+     "text": "I sorted my socks into pairs this afternoon.",
+     "v": 0.3751,
+     "v_shuf": -0.3183,
+     "surprise": 12.572
+    },
+    {
+     "text": "We keep a spare key under the flowerpot.",
+     "v": 0.4348,
+     "v_shuf": -0.9289,
+     "surprise": 7.286
+    },
+    {
+     "text": "I watched the rain from my kitchen for a while.",
+     "v": 0.3125,
+     "v_shuf": 0.0661,
+     "surprise": 8.508
+    }
+   ],
+   "SNEU": [
+    {
+     "text": "A swan walked down the middle of our road this morning.",
+     "v": -0.3238,
+     "v_shuf": 0.8925,
+     "surprise": 12.234
+    },
+    {
+     "text": "My uncle has started wearing a top hat every day.",
+     "v": -0.002,
+     "v_shuf": -0.6393,
+     "surprise": 8.07
+    },
+    {
+     "text": "The old cinema near my house is now a bakery.",
+     "v": 0.051,
+     "v_shuf": -0.8843,
+     "surprise": 9.553
+    },
+    {
+     "text": "A helicopter landed in the field next to our house.",
+     "v": -0.0588,
+     "v_shuf": 0.8344,
+     "surprise": 11.269
+    },
+    {
+     "text": "My dentist told me he used to be a sailor.",
+     "v": -0.1878,
+     "v_shuf": 0.7613,
+     "surprise": 9.476
+    },
+    {
+     "text": "I saw two rainbows over our street this afternoon.",
+     "v": 0.0953,
+     "v_shuf": 0.7301,
+     "surprise": 9.516
+    },
+    {
+     "text": "My parcel arrived inside a box with a fish painted on it.",
+     "v": -0.1568,
+     "v_shuf": 0.2446,
+     "surprise": 11.887
+    },
+    {
+     "text": "My friend's twin brother turned up at my door by mistake.",
+     "v": -0.6558,
+     "v_shuf": 0.2595,
+     "surprise": 8.064
+    },
+    {
+     "text": "A balloon shaped like a whale floated over our town this morning.",
+     "v": -0.0142,
+     "v_shuf": 0.5887,
+     "surprise": 12.333
+    },
+    {
+     "text": "My neighbour put a full-size statue of a horse on his lawn.",
+     "v": -0.3957,
+     "v_shuf": 0.1785,
+     "surprise": 10.288
+    }
+   ],
+   "HARD": [
+    {
+     "text": "I read a short history of the lighthouses and the shipwrecks near them.",
+     "v": -0.3304,
+     "v_shuf": 0.4818,
+     "surprise": 12.767
+    },
+    {
+     "text": "We went to a talk about how the black death spread.",
+     "v": -0.3532,
+     "v_shuf": 0.8578,
+     "surprise": 7.849
+    },
+    {
+     "text": "I am reading a book about the history of cemeteries in Europe.",
+     "v": 0.221,
+     "v_shuf": -0.3354,
+     "surprise": 10.396
+    },
+    {
+     "text": "I did not hurt myself at all in the fall.",
+     "v": -0.5197,
+     "v_shuf": -0.4354,
+     "surprise": 10.024
+    },
+    {
+     "text": "The dentist did not find a single problem with my teeth.",
+     "v": -0.5238,
+     "v_shuf": -0.955,
+     "surprise": 10.888
+    },
+    {
+     "text": "My car passed the inspection with no faults at all.",
+     "v": -0.1932,
+     "v_shuf": -0.9307,
+     "surprise": 8.765
+    },
+    {
+     "text": "I was not late for work today.",
+     "v": -0.0551,
+     "v_shuf": -0.9473,
+     "surprise": 9.005
+    },
+    {
+     "text": "My shoes were a little wet after the walk to work.",
+     "v": -0.4012,
+     "v_shuf": 0.5503,
+     "surprise": 9.891
+    },
+    {
+     "text": "The lift in my building was out of order for an hour.",
+     "v": -0.7893,
+     "v_shuf": -0.3154,
+     "surprise": 11.396
+    },
+    {
+     "text": "The toast burned slightly on one side this morning.",
+     "v": -0.7927,
+     "v_shuf": 0.8425,
+     "surprise": 11.849
+    }
+   ],
+   "POS": [
+    {
+     "text": "My daughter walked for the first time today.",
+     "v": 0.264,
+     "v_shuf": 0.234,
+     "surprise": 8.028
+    },
+    {
+     "text": "I was offered the flat I viewed on Tuesday.",
+     "v": 0.2633,
+     "v_shuf": -0.3865,
+     "surprise": 9.969
+    },
+    {
+     "text": "My brother got a place on the national swimming team.",
+     "v": 0.1526,
+     "v_shuf": -0.3696,
+     "surprise": 8.738
+    },
+    {
+     "text": "My test results came back and everything is perfectly healthy.",
+     "v": 0.0757,
+     "v_shuf": -0.7248,
+     "surprise": 8.764
+    },
+    {
+     "text": "We got a letter saying our mortgage was approved.",
+     "v": 0.1597,
+     "v_shuf": 0.1436,
+     "surprise": 5.988
+    },
+    {
+     "text": "I passed my nursing exam with a high score.",
+     "v": 0.1484,
+     "v_shuf": -0.1341,
+     "surprise": 9.419
+    },
+    {
+     "text": "My dog was found safe two days after she ran off.",
+     "v": -0.2474,
+     "v_shuf": -0.6778,
+     "surprise": 6.929
+    },
+    {
+     "text": "I got a bonus from work at the end of the year.",
+     "v": 0.3061,
+     "v_shuf": 0.2526,
+     "surprise": 8.282
+    },
+    {
+     "text": "My parents celebrated forty years of marriage with the whole family.",
+     "v": 0.4719,
+     "v_shuf": -0.8158,
+     "surprise": 10.318
+    },
+    {
+     "text": "My cousin's treatment worked and the doctors say she is cured.",
+     "v": 0.0358,
+     "v_shuf": -0.5214,
+     "surprise": 11.956
+    }
+   ]
+  }
+ },
+ "s0e_detail": [
+  {
+   "cls": "NEG",
+   "t1": "Our house caught fire last night and the kitchen burned out.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "Our house caught fire last night and the kitchen burned out.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "Our house caught fire last night and the kitchen burned out.",
+   "turn": "How's your day going?",
+   "recalled": "User: Our house caught fire last night and the kitchen burned out.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "The doctor told me this afternoon that I have diabetes.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "The doctor told me this afternoon that I have diabetes.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "The doctor told me this afternoon that I have diabetes.",
+   "turn": "How's your day going?",
+   "recalled": "User: The doctor told me this afternoon that I have diabetes.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I was fired from my job at lunchtime today.",
+   "turn": "It has been a busy week.",
+   "recalled": "User: I was fired from my job at lunchtime today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I was fired from my job at lunchtime today.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I was fired from my job at lunchtime today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I was fired from my job at lunchtime today.",
+   "turn": "How's your day going?",
+   "recalled": "User: I was fired from my job at lunchtime today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My dog was run over outside our gate this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": "User: My dog was run over outside our gate this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My dog was run over outside our gate this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My dog was run over outside our gate this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My dog was run over outside our gate this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: My dog was run over outside our gate this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost my passport and missed my flight to Spain.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost my passport and missed my flight to Spain.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost my passport and missed my flight to Spain.",
+   "turn": "How's your day going?",
+   "recalled": "User: I lost my passport and missed my flight to Spain.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I failed my maths exam and have to retake the year.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "I failed my maths exam and have to retake the year.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I failed my maths exam and have to retake the year.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I failed my maths exam and have to retake the year.",
+   "turn": "How's your day going?",
+   "recalled": "User: I failed my maths exam and have to retake the year.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My mother died in her sleep early this morning.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My mother died in her sleep early this morning.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My mother died in her sleep early this morning.",
+   "turn": "How's your day going?",
+   "recalled": "User: My mother died in her sleep early this morning.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost most of my savings when the company collapsed.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost most of my savings when the company collapsed.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I lost most of my savings when the company collapsed.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "I lost most of my savings when the company collapsed.",
+   "turn": "How's your day going?",
+   "recalled": "User: I lost most of my savings when the company collapsed.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My car broke down on the motorway and cannot be fixed.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My car broke down on the motorway and cannot be fixed.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My car broke down on the motorway and cannot be fixed.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My car broke down on the motorway and cannot be fixed.",
+   "turn": "How's your day going?",
+   "recalled": "User: My car broke down on the motorway and cannot be fixed.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My neighbours reported me to the council and I got fined.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My neighbours reported me to the council and I got fined.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My neighbours reported me to the council and I got fined.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My neighbours reported me to the council and I got fined.",
+   "turn": "How's your day going?",
+   "recalled": "User: My neighbours reported me to the council and I got fined.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "A storm tore the roof off our shed and flattened the garden.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "A storm tore the roof off our shed and flattened the garden.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "A storm tore the roof off our shed and flattened the garden.",
+   "turn": "How's your day going?",
+   "recalled": "User: A storm tore the roof off our shed and flattened the garden.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEG",
+   "t1": "My oldest friend stopped speaking to me after our argument.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My oldest friend stopped speaking to me after our argument.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEG",
+   "t1": "My oldest friend stopped speaking to me after our argument.",
+   "turn": "How's your day going?",
+   "recalled": "User: My oldest friend stopped speaking to me after our argument.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I swapped the curtains in our bedroom this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I swapped the curtains in our bedroom this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I swapped the curtains in our bedroom this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I swapped the curtains in our bedroom this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: I swapped the curtains in our bedroom this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I went to the doctor for a routine check this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I went to the doctor for a routine check this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I went to the doctor for a routine check this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I went to the doctor for a routine check this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: I went to the doctor for a routine check this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I updated the spreadsheet at work before lunch today.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I updated the spreadsheet at work before lunch today.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I updated the spreadsheet at work before lunch today.",
+   "turn": "How's your day going?",
+   "recalled": "User: I updated the spreadsheet at work before lunch today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I took my dog for a walk along the canal this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I took my dog for a walk along the canal this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I took my dog for a walk along the canal this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I took my dog for a walk along the canal this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: I took my dog for a walk along the canal this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I booked a flight to Spain for next spring.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I booked a flight to Spain for next spring.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I booked a flight to Spain for next spring.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I booked a flight to Spain for next spring.",
+   "turn": "How's your day going?",
+   "recalled": "User: I booked a flight to Spain for next spring.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I handed in my maths homework on Monday morning.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I handed in my maths homework on Monday morning.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I handed in my maths homework on Monday morning.",
+   "turn": "How's your day going?",
+   "recalled": "User: I handed in my maths homework on Monday morning.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "My mother came round for tea this morning.",
+   "turn": "It has been a busy week.",
+   "recalled": "User: My mother came round for tea this morning.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "My mother came round for tea this morning.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My mother came round for tea this morning.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "My mother came round for tea this morning.",
+   "turn": "How's your day going?",
+   "recalled": "User: My mother came round for tea this morning.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I checked my bank balance and paid the water bill.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I checked my bank balance and paid the water bill.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I checked my bank balance and paid the water bill.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I checked my bank balance and paid the water bill.",
+   "turn": "How's your day going?",
+   "recalled": "User: I checked my bank balance and paid the water bill.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I put air in the tyres of my car this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I put air in the tyres of my car this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I put air in the tyres of my car this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I put air in the tyres of my car this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: I put air in the tyres of my car this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "My neighbours put their bins out on the pavement this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "My neighbours put their bins out on the pavement this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My neighbours put their bins out on the pavement this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "My neighbours put their bins out on the pavement this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: My neighbours put their bins out on the pavement this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I mowed the lawn and trimmed the hedge this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I mowed the lawn and trimmed the hedge this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I mowed the lawn and trimmed the hedge this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: I mowed the lawn and trimmed the hedge this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I met my oldest friend for a coffee in town.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "NEU",
+   "t1": "I met my oldest friend for a coffee in town.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I met my oldest friend for a coffee in town.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "NEU",
+   "t1": "I met my oldest friend for a coffee in town.",
+   "turn": "How's your day going?",
+   "recalled": "User: I met my oldest friend for a coffee in town.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A duck wandered into our kitchen this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": "User: A duck wandered into our kitchen this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A duck wandered into our kitchen this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: A duck wandered into our kitchen this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A duck wandered into our kitchen this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: A duck wandered into our kitchen this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My doctor came to the appointment on a skateboard this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My doctor came to the appointment on a skateboard this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My doctor came to the appointment on a skateboard this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: My doctor came to the appointment on a skateboard this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My boss came to the meeting dressed as a pirate today.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My boss came to the meeting dressed as a pirate today.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My boss came to the meeting dressed as a pirate today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My boss came to the meeting dressed as a pirate today.",
+   "turn": "How's your day going?",
+   "recalled": "User: My boss came to the meeting dressed as a pirate today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My dog brought home a single red shoe this evening.",
+   "turn": "It has been a busy week.",
+   "recalled": "User: My dog brought home a single red shoe this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My dog brought home a single red shoe this evening.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: My dog brought home a single red shoe this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My dog brought home a single red shoe this evening.",
+   "turn": "How's your day going?",
+   "recalled": "User: My dog brought home a single red shoe this evening.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "I sat next to a man carrying a live chicken on the plane.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "I sat next to a man carrying a live chicken on the plane.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: I sat next to a man carrying a live chicken on the plane.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "I sat next to a man carrying a live chicken on the plane.",
+   "turn": "How's your day going?",
+   "recalled": "User: I sat next to a man carrying a live chicken on the plane.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My teacher gave the whole lesson standing on a chair today.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My teacher gave the whole lesson standing on a chair today.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My teacher gave the whole lesson standing on a chair today.",
+   "turn": "How's your day going?",
+   "recalled": "User: My teacher gave the whole lesson standing on a chair today.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My mother arrived this morning with a parrot on her shoulder.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My mother arrived this morning with a parrot on her shoulder.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My mother arrived this morning with a parrot on her shoulder.",
+   "turn": "How's your day going?",
+   "recalled": "User: My mother arrived this morning with a parrot on her shoulder.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My bank sent me a letter printed entirely in purple ink.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My bank sent me a letter printed entirely in purple ink.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My bank sent me a letter printed entirely in purple ink.",
+   "turn": "How's your day going?",
+   "recalled": "User: My bank sent me a letter printed entirely in purple ink.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A vintage fire engine was parked in our street this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A vintage fire engine was parked in our street this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "A vintage fire engine was parked in our street this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: A vintage fire engine was parked in our street this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My neighbours have painted their front door to look like a ladybird.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My neighbours have painted their front door to look like a ladybird.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My neighbours have painted their front door to look like a ladybird.",
+   "turn": "How's your day going?",
+   "recalled": "User: My neighbours have painted their front door to look like a ladybird.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "It snowed in our garden for ten minutes this afternoon.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "It snowed in our garden for ten minutes this afternoon.",
+   "turn": "I need to go to the shop later.",
+   "recalled": "User: It snowed in our garden for ten minutes this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "It snowed in our garden for ten minutes this afternoon.",
+   "turn": "How's your day going?",
+   "recalled": "User: It snowed in our garden for ten minutes this afternoon.",
+   "inquiry": false,
+   "recalled_t1": true
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My oldest friend turned up at my door with a trumpet.",
+   "turn": "It has been a busy week.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My oldest friend turned up at my door with a trumpet.",
+   "turn": "I need to go to the shop later.",
+   "recalled": null,
+   "inquiry": false,
+   "recalled_t1": false
+  },
+  {
+   "cls": "SNEU",
+   "t1": "My oldest friend turned up at my door with a trumpet.",
+   "turn": "How's your day going?",
+   "recalled": "User: My oldest friend turned up at my door with a trumpet.",
+   "inquiry": false,
+   "recalled_t1": true
+  }
+ ],
+ "host": "node-mxl1462drl",
+ "torch": "2.11.0+cpu",
+ "seconds": 422.7
+}
