@@ -1,5 +1,5 @@
 # Capability: Curiosity
-# Record: brain/research/2026-11-18-novelty-inquiry-record.md; results/2026-11-18-novelty-stage0-1.5b.md
+# Record: brain/research/2026-11-18-novelty-inquiry-record.md (stage 0: results/2026-11-18-novelty-stage0-1.5b.md)
 """The cortex's own surprise at what it hears: a novelty signal for the brain (no words, no host lexicon).
 
 word_surprisal: per-word prediction error (nats, summed over each word's tokens) of `prefix + text` read from a cortex
