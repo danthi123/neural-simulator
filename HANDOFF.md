@@ -10,7 +10,7 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** W CPU: curiosity stage-1 dev harvest (`novelty_stage0 --bank dev --samples 4`, seeds 1140-1142, out `results/2026-11-18-novelty-dev-1.5b/`). AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
+- **LIVE RUNS:** pool40/41/42 curiosity stage-1 dev (`jobs/2026-11-18-pool-inquiry-dev.sh`: off,ask2 / ask4,rand4 / ask8,rand8; seed 1143; out `~/brain-lane/inqdev/`). Build agent: mood iteration 5 code (section 17) in its own worktree. AWS i-008ed35fe857dce55 stopped holding nmtc_s102 (pull: capacity errors); old i-0129d9e410417218b stopped.
 - **TIMEBOX (11-17), in-context collapse: KILL further levers at 1.5B for now.** Six methods, none a lead (habituation,
   reply monitor, own-reply gain flat + copies-only, carry penalty, fake-think prefix: 53/72, worse) and 2.9B loops more
   (`results/2026-11-16-onset-*.md`). Banked: the own-reply write is the amplifier. On the GPU decision host the
