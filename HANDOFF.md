@@ -33,10 +33,11 @@
 - **GATE (11-18):** registered seeds: reworded right memory 14/18 vs 1/18 (6/6) replicates; S3 intrusions 21 vs 17 FAIL
   (collapse-driven, equal collapse rates); no flip. Weekly: own name fetched 5/6 vs 0/6, named right 3 vs 2 (W2 FAIL),
   no cost. `results/2026-11-18-sall-slept-gate-1.5b.md`.
-- **NEXT STEP:** mood for 11-30 with a reinstatement-type method (a lived episode reinstated by the arousal/valence
-  read-out, the route that worked for curiosity); record + prereg first. Curiosity follow-ups: learned bar, asking
-  learned across nights, real-name false fires.
-  Mood: TIMEBOX KILL 11-19 (iter 4-6 NO-GO on the action; `results/2026-11-19-arousal6-1.5b.md`), 11-30 NOT MET.
+- **NEXT STEP:** 11-30 status: (a) selection MET as read-out, (c) curiosity MET at scaffold level (ON), (b) mood NOT MET:
+  iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
+  surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
+  mood method (after 11-30) must act alongside recall. Now: the weekly transcript with curiosity ON, then the 12-14
+  milestone (multi-week life) per ARCHITECTURE section 4.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
