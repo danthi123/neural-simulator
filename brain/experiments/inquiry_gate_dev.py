@@ -56,7 +56,7 @@ def main():
                 for k in range(a.samples):
                     sd = a.seed * 100000 + fi * 100 + ci * 10 + k
                     with tempfile.TemporaryDirectory(dir=os.path.dirname(os.path.abspath(a.out))) as home:
-                        kw = {} if arm in ("off", "lesson") else {"inquiry": a.bar if arm == "gate" else -1e9}
+                        kw = {"inquiry": None} if arm in ("off", "lesson") else {"inquiry": a.bar if arm == "gate" else -1e9}
                         b = Brain(home, cortex=cortex, **kw)
                         spont = None
                         if arm != "off":

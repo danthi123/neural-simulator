@@ -61,7 +61,8 @@ class StubCortex(Cortex):
 
 
 # the stub has no model name, so sleep settings are explicit (SLEEP_DEFAULTS has no silent fallback)
-KW = dict(sleep_on_restart=False, sleep_steps=4, sleep_lr=1e-3, sleep_kl_weight=1.0, adapter_rank=2)
+KW = dict(sleep_on_restart=False, sleep_steps=4, sleep_lr=1e-3, sleep_kl_weight=1.0, adapter_rank=2,
+          inquiry=None)   # stub cortices cannot read surprisal: the novelty gate (default "auto") is off here
 
 TALK = ["My cat is called Pixel.", "I drive a red Volvo.", "What is my cat called?", "What car do I drive?",
         "My sister's name is Marguerite.", "Who is my sister?"]
@@ -104,7 +105,7 @@ def test_default_matches_the_old_brain(tmp_path):
     (memory.pt) migration and its episodes are compared tensor for tensor with the new home's."""
     old = _old_brain_module()
     c = StubCortex()
-    b_old = old.Brain(str(tmp_path / "old"), cortex=c, **KW)
+    b_old = old.Brain(str(tmp_path / "old"), cortex=c, **{k: v for k, v in KW.items() if k != "inquiry"})   # predates it
     b_new = Brain(str(tmp_path / "new"), cortex=c, **KW, self_completion=False)   # the old self episodes (default ON since 11-15)
     assert type(b_new.hippocampus) is Hippocampus and b_new.key == "S0"
     r_old, r_new = _talk(b_old), _talk(b_new)
