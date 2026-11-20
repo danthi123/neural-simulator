@@ -12,10 +12,14 @@
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
 - **LIVE RUNS (11-20 ~04:00):** dev lives round 2, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` ->
   `outLIFE/life_s<S>_<A>.*`: pool40 s316 S, pool41 s317 B, pool42 s317 S (prereg
-  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). Round 1 pulled to `_scratch/rankres/` (s315 B/S, s316 B).
-  **DEV LIVES so far:** s315 S vs B nights 4-7 H 4/5/4/6 vs 4/3/3/2, norm 179 vs 359; B speaks first-person ("My cat is
-  called Pixel", "red red red"), S answers "Your cat is called Pixel"; S still invents 3/3 never-told, hub persists,
-  hippocampus-off H = intact (gain is the slept cortex). s316 B H 1/4/2/1. **R-raw KILLED** (K1 6 < 16, K2 s312 0.75)
+  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). Round 1 pulled to `_scratch/rankres/` (s315 B/S, s316 B). AWS g5 (launched
+  11-20, dead-man 600 min, pull from the worktree): s318 SAB/B/S, the M-scale-3 variant (√g on A and B), triggered
+  because s315 S fails norm <= 2.2x night-1 (179 > 140) and ‖A‖ <= 1.5x (1.64x).
+  **M-SCALE DEV READ (11-20, s315-317):** S (B factors) does NOT pass prereg 7: H int 51 vs 30/72, H off 53 vs 27
+  (3/3 seeds), but norm > 2.2x night-1 and ‖A‖ 1.59-1.64x on 3/3; transcript: night 7 clearly better (no "My cat is
+  called Pixel", keeps "Nova"), S-only defects on 2/3 (s316 one ✿text2✿ marker leak + flat day-7 replies, s317 stuck
+  appended phrases) -> M-scale-3: SAB on s318 (AWS) + extra dev SAB s315/316/317 on pool40/41/42
+  (`results/2026-11-20-life-mscale-dev-1.5b.md`). **R-raw KILLED** (K1 6 < 16, K2 s312 0.75)
   but bar-limited (R fired 20/100) and K2 low-n; S0 raw ranking (arm D) dissolves the hub (top-1 <= 0.22 on 4/4) and
   right fetches 8 -> 14, fails K1 by 2 and K3 (`results/2026-11-20-rank-raw-screen-1.5b.md`). Hub levers = 2 ->
   research before a third. **SCREENS (s310-312):** M-use KILLED; M-scale open speech recovers 3/3 seeds
@@ -51,12 +55,13 @@
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
-  Baseline done (Stage 0, 5 seeds). Read the 6 dev lives (B vs S, nights 4-7 pooled, >= 2/3 seeds + whole
-  transcript); S passes -> six-seed registered life (Stage 1). Hub defect: R-raw KILLED; fetch rarely moves the reply at
+  Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects). NOW: read SAB (s318 AWS + s315-317
+  pools) against the same bars + the S-only defects; SAB passes -> Stage 1 on the TEST split (frozen by 11-27). Hub defect: R-raw KILLED; fetch rarely moves the reply at
   night 7, so it ranks below M-scale; research round (before-build 7) on D + open-turn fire gate vs decay-clock rule.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** retry s102 AWS pull, then terminate; RAG refresh fails its quality check (index stale).
+- **OPEN:** s102 g6 instance i-008ed35fe857dce55 STOPPED (no capacity to restart; state file set aside as
+  `research/queue/.aws_brain.s102-stopped-20261117` in the worktree), retry its pull later, then terminate; RAG refresh fails its quality check (index stale).
