@@ -56,7 +56,9 @@
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
   Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects). NOW: read SAB (s318 AWS + s315-317
-  pools) against the same bars + the S-only defects; SAB passes -> Stage 1 on the TEST split (frozen by 11-27). Hub defect: R-raw KILLED; fetch rarely moves the reply at
+  pools) against the same bars + the S-only defects; SAB passes -> Stage 1 on the TEST split. TEST split WRITTEN + hashed (222 items, blind sonnet,
+  `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Stage-1
+  TODO before 12-01: transfer forced-choice scoring, savings P0, cue ladder, 15-night calendar run check. Hub defect: R-raw KILLED; fetch rarely moves the reply at
   night 7, so it ranks below M-scale; research round (before-build 7) on D + open-turn fire gate vs decay-clock rule.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
