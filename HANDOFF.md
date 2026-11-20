@@ -44,9 +44,10 @@
 - **NEXT STEP:** 11-30 status: (a) selection MET as read-out, (c) curiosity MET at scaffold level (ON), (b) mood NOT MET:
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
-  mood method (after 11-30) must act alongside recall. NOW (fresh session): 12-14 milestone (multi-week life) record
-  check + design (before-build); first run = a per-night baseline at current defaults measuring the two weekly
-  defects (post-sleep reinstatement cost, slept-fact intrusion), which should compound over nights.
+  mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
+  Baseline done (Stage 0, 5 seeds). Read the 6 dev lives (B vs S, nights 4-7 pooled, >= 2/3 seeds + whole
+  transcript); S passes -> six-seed registered life (Stage 1). Hub defect, next method (before-build first): scale the
+  use boost by content match (raw sim above familiarity) instead of a flat 0.5, so a weak match earns little.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
