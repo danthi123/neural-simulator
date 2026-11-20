@@ -545,6 +545,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--use-gate", action="store_true", help="M-use: Brain(use_gate='raw_win')")
     ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
+    ap.add_argument("--downscale-factors", default=None, choices=("B", "AB"), help="M-scale-3 variant: AB = sqrt(g) on A and B")
     ap.add_argument("--frozen-probe", action="store_true", help="add an intact-frozen arm (FREEZE_USE) to every morning battery")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
@@ -559,6 +560,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["sleep_downscale"] = a.sleep_downscale
     if a.rank:
         kw["rank"] = a.rank
+    if a.downscale_factors:
+        kw["downscale_factors"] = a.downscale_factors
     if a.inquiry is not None:
         kw["inquiry"] = None if a.inquiry.lower() == "none" else "auto" if a.inquiry.lower() == "auto" else float(a.inquiry)
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)

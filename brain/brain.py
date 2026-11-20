@@ -191,7 +191,8 @@ class Brain:
                  carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
-                 sleep_downscale: float | None = None, rank: str | None = None):
+                 sleep_downscale: float | None = None, rank: str | None = None,
+                 downscale_factors: str = "B"):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -220,6 +221,8 @@ class Brain:
         sleep_downscale: (switch, default OFF = None) M-scale, the night budget homeostat: K (1.0 pre-registered). The
         first slept night sets budget = K * adapter norm (meta adapter_budget); each later night, before replay, B is
         scaled by budget / norm if the norm exceeds it (meta norm_pre_night, downscale_g). Not saved: pass it each time.
+        downscale_factors: "B" (the pre-registered M-scale) or "AB" (the M-scale-3 variant: A and B each scaled by
+        sqrt(g); same norm cut). Only read when sleep_downscale is set. Not saved: pass it each time.
         rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
         similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
         Not saved: pass it each time.
@@ -297,6 +300,9 @@ class Brain:
             raise ValueError(f"rank must be None or 'raw', not {rank!r}")
         self.rank = rank
         self.sleep_downscale = None if sleep_downscale is None else float(sleep_downscale)
+        if downscale_factors not in ("B", "AB"):
+            raise ValueError(f"downscale_factors must be 'B' or 'AB', not {downscale_factors!r}")
+        self.downscale_factors = downscale_factors
         self.key_bar = key_bar
         self.gain_mode = gain
         if episode not in ("tell", "lived", "lived_key"):
@@ -804,7 +810,7 @@ class Brain:
                 self.sleep_log(f"M-scale: home has adapters but no budget; budget = current norm {n:.4f}, no downscale tonight")
         elif b is not None and n > b:
             g = b / n
-            plastic.downscale(g)
+            plastic.downscale(g, self.downscale_factors)
         self.meta["norm_pre_night"] = n
         self.meta["downscale_g"] = g
         if self.sleep_log:
