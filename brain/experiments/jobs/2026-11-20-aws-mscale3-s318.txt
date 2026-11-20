@@ -1,0 +1,8 @@
+# 2026-11-20 M-scale-3 variant (prereg brain/research/2026-11-19-life-muse-mscale-prereg.md section 8, rule M-scale-3):
+# s315 S showed ||A|| x1.64 over nights 2-7 (> 1.5) and norm 179 > 2.2 x night-1 (140). One variant run, sqrt(g) on
+# A and B, on s318, against B and plain S on the same seed and the same GPU (device differs from the pool lives, so
+# compare within this batch only).
+#   AWS_BRAIN_MAX_MIN=600 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-20-aws-mscale3-s318.txt g5.xlarge
+life_s318_SAB brain.eval.life --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 318 --days 7 --split dev --full-probe-nights 1,4,7 --frozen-probe --sleep-downscale 1.0 --downscale-factors AB --homes ../work/life_s318_SAB
+life_s318_B brain.eval.life --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 318 --days 7 --split dev --full-probe-nights 1,4,7 --frozen-probe --nosleep-arm --homes ../work/life_s318_B
+life_s318_S brain.eval.life --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 318 --days 7 --split dev --full-probe-nights 1,4,7 --frozen-probe --sleep-downscale 1.0 --homes ../work/life_s318_S

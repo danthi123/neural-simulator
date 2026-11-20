@@ -106,13 +106,21 @@ class PlasticCortex(torch.nn.Module):
             return float(sum((self.A_k[s] @ self.B_k[s]).norm() + (self.A_v[s] @ self.B_v[s]).norm()
                              for s in self.A_k))
 
-    def downscale(self, g: float):
+    def downscale(self, g: float, factors: str = "B"):
         """M-scale: multiply every B_k and B_v by g (A untouched). adapter_norm is exactly linear in B, so the norm
-        becomes g times what it was (brain/research/2026-11-19-life-muse-mscale-prereg.md)."""
+        becomes g times what it was (brain/research/2026-11-19-life-muse-mscale-prereg.md). factors="AB" is the
+        pre-registered M-scale-3 variant: A and B are each multiplied by sqrt(g), so the norm still becomes g times
+        what it was and ||A|| cannot compound."""
+        if factors not in ("B", "AB"):
+            raise ValueError(f"factors must be 'B' or 'AB', not {factors!r}")
+        r = g ** 0.5 if factors == "AB" else g
         with torch.no_grad():
             for s in self.A_k:
-                self.B_k[s].mul_(g)
-                self.B_v[s].mul_(g)
+                self.B_k[s].mul_(r)
+                self.B_v[s].mul_(r)
+                if factors == "AB":
+                    self.A_k[s].mul_(r)
+                    self.A_v[s].mul_(r)
 
     def factor_norms(self):
         """(||A||, ||B||): the Frobenius norms over every A_k, A_v and every B_k, B_v. Logging only."""

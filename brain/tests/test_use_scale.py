@@ -373,3 +373,44 @@ def test_budget_survives_reopen_and_a_budgetless_home_is_not_cut(tmp_path, night
     assert d.meta["adapter_budget"] == pytest.approx(n) and d.meta["downscale_g"] == 1.0
     assert night[-1]["norm"] == pytest.approx(n)                       # untouched before the replay
     assert any("no budget" in x for x in log)
+
+
+def test_downscale_ab_variant_cuts_the_norm_and_both_factors():
+    """M-scale-3 variant (prereg section 8): sqrt(g) on A and on B; the norm still becomes g times; 'B' is unchanged."""
+    p = _fake_plastic(None)
+    with torch.no_grad():
+        for d in (p.B_k, p.B_v):
+            for b in d.values():
+                b.copy_(torch.randn_like(b))
+    n0, (a0, b0) = p.adapter_norm(), p.factor_norms()
+    p.downscale(0.25, "AB")
+    assert p.adapter_norm() == pytest.approx(0.25 * n0, rel=1e-5)
+    a1, b1 = p.factor_norms()
+    assert a1 == pytest.approx(0.5 * a0, rel=1e-5) and b1 == pytest.approx(0.5 * b0, rel=1e-5)
+    with pytest.raises(ValueError):
+        p.downscale(0.5, "A")
+
+
+def test_downscale_factors_switch_reaches_the_night(tmp_path, night):
+    home = str(tmp_path / "h")
+    ticks = iter(range(10 ** 6))
+    clock.set(lambda: T0 + next(ticks))
+    with pytest.raises(ValueError):
+        Brain(str(tmp_path / "bad"), cortex=StubCortex(), **KW, sleep_downscale=1.0, downscale_factors="x")
+    b = Brain(home, cortex=StubCortex(), **KW, sleep_downscale=1.0, downscale_factors="AB")
+    b.hear("My cat is called Pixel.")
+    b.cortex.consolidated_on = False
+    b.sleep()
+    p = b.cortex.plastic
+    a_before = p.factor_norms()[0]
+    with torch.no_grad():
+        for d in (p.B_k, p.B_v):
+            for x in d.values():
+                x.mul_(3.0)
+    b.hear("I drive a red Volvo.")
+    b.sleep()
+    g = b.meta["downscale_g"]
+    assert g < 1.0
+    assert night[-1]["norm"] == pytest.approx(b.meta["adapter_budget"], rel=1e-5)
+    assert p.factor_norms()[0] == pytest.approx(g ** 0.5 * a_before, rel=1e-5)   # the fake replay leaves A alone
+    assert "downscale_factors" not in b.meta
