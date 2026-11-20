@@ -10,11 +10,14 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS (11-20 ~04:00):** dev lives round 2, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` ->
-  `outLIFE/life_s<S>_<A>.*`: pool40 s316 S, pool41 s317 B, pool42 s317 S (prereg
-  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). Round 1 pulled to `_scratch/rankres/` (s315 B/S, s316 B). AWS g5 (launched
-  11-20, dead-man 600 min, pull from the worktree): s318 SAB/B/S, the M-scale-3 variant (√g on A and B), triggered
-  because s315 S fails norm <= 2.2x night-1 (179 > 140) and ‖A‖ <= 1.5x (1.64x).
+- **LIVE RUNS (11-20 ~12:10 EST):** M-scale-E dev lives (prereg section 10), 7 nights, arm SABE =
+  `--sleep-downscale 1.0 --downscale-factors AB --downscale-when end`: pool40 s315, pool41 s316, pool42 s317
+  (`~/brain-lane/life_arm.sh <seed> SABE` -> `outLIFE/life_s<S>_SABE.*`, about 4 h); AWS g5 s318 (jobs
+  `_scratch/sabread/jobs_s318_sabe.txt`, dead-man 240 min, pull from the worktree). Read: `_scratch/sabread/pool.py` + transcript workflow vs banked B.
+  **M-SCALE-3 READ (11-20, SAB s315-318): M-scale KILLED as registered.** Recall holds (H int 65 vs B 42/96, day-1-2 off
+  74 vs 40/113, ‖A‖ fixed 0.72-0.91x) but norm escapes 2.2x night-1 on 3/4 seeds (cut before replay: waking cortex =
+  budget + one night) and transcript fails 4/4 (s315 identity loss "My name is Dan baker."; stuck phrases, stutter loops;
+  3 readers refuted) (`results/2026-11-20-life-mscale-sab-1.5b.md`). Next = M-scale-E (cut after replay, SHY; 3beb11654).
   **M-SCALE DEV READ (11-20, s315-317):** S (B factors) does NOT pass prereg 7: H int 51 vs 30/72, H off 53 vs 27
   (3/3 seeds), but norm > 2.2x night-1 and ‖A‖ 1.59-1.64x on 3/3; transcript: night 7 clearly better (no "My cat is
   called Pixel", keeps "Nova"), S-only defects on 2/3 (s316 one ✿text2✿ marker leak + flat day-7 replies, s317 stuck
@@ -55,16 +58,17 @@
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
-  Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects). NOW: read SAB (s318 AWS + s315-317
-  pools) against the same bars + the S-only defects; SAB passes -> Stage 1 on the TEST split. TEST split WRITTEN + hashed (222 items, blind sonnet,
+  Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). NOW: read M-scale-E
+  (4 lives running) against prereg 10; pass -> Stage 1 on the TEST split, fail -> Stage 1 with the defaults. TEST split WRITTEN + hashed (222 items, blind sonnet,
   `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Transfer
   read-out built (`--transfer`, dT = T - pretrained T0 per life: raw T has a domain-fluency offset, 0.58 at 0.1B; the
-  design bar "both-off T about 0" must read dT; dab53c019). Stage-1 TODO before 12-01: savings P0, cue ladder, 15-night run check. Hub defect: R-raw KILLED; fetch rarely moves the reply at
+  design bar "both-off T about 0" must read dT; dab53c019). Span read built (`--span`: span-NLL + log-odds vs 3 foils
+  on told items, for P0 forgetting / savings; 58ae5968a). Stage-1 TODO before 12-01: savings P0, cue ladder, 15-night run check. Hub defect: R-raw KILLED; fetch rarely moves the reply at
   night 7, so it ranks below M-scale; research round (before-build 7) on D + open-turn fire gate vs decay-clock rule.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** s102 g6 instance i-008ed35fe857dce55 STOPPED (no capacity to restart; state file set aside as
+- **OPEN:** s318 batch 20261120-0412 pulled + terminated. s102 g6 instance i-008ed35fe857dce55 STOPPED (no capacity to restart; state file set aside as
   `research/queue/.aws_brain.s102-stopped-20261117` in the worktree), retry its pull later, then terminate; RAG refresh fails its quality check (index stale).
