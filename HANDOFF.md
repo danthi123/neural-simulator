@@ -10,15 +10,18 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS (11-19 23:59):** dev lives, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` -> `outLIFE/life_s<S>_<A>.*`:
-  pool40 s315 B, pool41 s315 S, pool42 s316 B; each node then runs the R-raw rank screen on its banked night-7 homes
-  (`rank_then_next.sh`: pool40 s310, pool41 s311+s314, pool42 s312+s313 -> `outLIFE/screen_rank_s*.json`), then s316 S,
-  s317 B, s317 S (prereg
-  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). **SCREENS (s310-312):** M-use KILLED (right fetches denied
-  3/4, rule >40%); M-scale open speech recovers 3/3 seeds (intrusions -> 0), H mixed 2->4, 2->2, 4->2
-  (`results/2026-11-19-life-screens-1.5b.md`). Stage-0: H falls to 0-2/6 by night 7 on all 5 seeds; hub + norm growth
-  (`results/2026-11-19-life-stage0-1.5b.md`). Hub lever 2 = R-raw (`brain/research/2026-11-20-hub-rank-raw-prereg.md`: S_all key, raw sim picks the winner,
-  strength only gates firing; kill rules K1-K4 pooled s310-314). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
+- **LIVE RUNS (11-20 ~04:00):** dev lives round 2, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` ->
+  `outLIFE/life_s<S>_<A>.*`: pool40 s316 S, pool41 s317 B, pool42 s317 S (prereg
+  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). Round 1 pulled to `_scratch/rankres/` (s315 B/S, s316 B).
+  **DEV LIVES so far:** s315 S vs B nights 4-7 H 4/5/4/6 vs 4/3/3/2, norm 179 vs 359; B speaks first-person ("My cat is
+  called Pixel", "red red red"), S answers "Your cat is called Pixel"; S still invents 3/3 never-told, hub persists,
+  hippocampus-off H = intact (gain is the slept cortex). s316 B H 1/4/2/1. **R-raw KILLED** (K1 6 < 16, K2 s312 0.75)
+  but bar-limited (R fired 20/100) and K2 low-n; S0 raw ranking (arm D) dissolves the hub (top-1 <= 0.22 on 4/4) and
+  right fetches 8 -> 14, fails K1 by 2 and K3 (`results/2026-11-20-rank-raw-screen-1.5b.md`). Hub levers = 2 ->
+  research before a third. **SCREENS (s310-312):** M-use KILLED; M-scale open speech recovers 3/3 seeds
+  (`results/2026-11-19-life-screens-1.5b.md`). Stage-0: H falls to 0-2/6 by night 7 on all 5 seeds
+  (`results/2026-11-19-life-stage0-1.5b.md`).
+- **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
   after the night: every intact error is a wrong reinstated episode ("What's your name?" -> Marguerite telling 6/6);
   slept facts intrude in both arms (fox named "Pixel" 12/12). Curiosity false fires harmless; no collapse
   (`results/2026-11-19-weekly-defaults-300-305-1.5b.md`).
@@ -49,8 +52,8 @@
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
   Baseline done (Stage 0, 5 seeds). Read the 6 dev lives (B vs S, nights 4-7 pooled, >= 2/3 seeds + whole
-  transcript); S passes -> six-seed registered life (Stage 1). Hub defect: read the R-raw screens (K1-K4); match-scaled
-  boost dropped before building (raw sims 0.25-0.56 for right and wrong alike); fallback M-eff salvaged or decay-clock rule.
+  transcript); S passes -> six-seed registered life (Stage 1). Hub defect: R-raw KILLED; fetch rarely moves the reply at
+  night 7, so it ranks below M-scale; research round (before-build 7) on D + open-turn fire gate vs decay-clock rule.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
