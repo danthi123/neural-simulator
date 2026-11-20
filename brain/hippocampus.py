@@ -42,6 +42,11 @@ class Hippocampus:
     USE_GATE = None
     MARGIN_USE = 0.02              # host constant (SCAFFOLDS.md), the same value as MARGIN, applied to the raw sims
     FREEZE_USE = False             # instrument: no fetch updates any episode (probe copies only); last_fetch is logged
+    # R-raw (switch, default OFF = False: the competition below is verbatim). True: the winner is the episode with the
+    # highest RAW similarity (strength never makes a winner); strength still sets whether it fires (sims * tanh(eff) must
+    # clear the bar) and the margin is taken on the raw sims. Use boost, decay and replay are unchanged.
+    # brain/research/2026-11-20-hub-rank-raw-prereg.md.
+    RANK_ON_RAW = False
 
     def __init__(self):
         self.episodes: list[Episode] = []
@@ -120,7 +125,7 @@ class Hippocampus:
         if not self.enabled or not self.episodes:
             return None, 0.0
         now = clock.now()
-        if self.USE_GATE is None and not self.FREEZE_USE:
+        if self.USE_GATE is None and not self.FREEZE_USE and not self.RANK_ON_RAW:
             return self._recall_plain(cortex, base, cue_text, speaker, question, exclude, now)
         sims = self.similarities(cortex, base, cue_text, speaker)
         w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
@@ -174,6 +179,13 @@ class Hippocampus:
         runner = float(score[order[1]]) if len(order) > 1 else -1.0
         bar = self.FAMILIARITY if question else self.FAMILIARITY_SPONTANEOUS
         fetch = not (float(score[best]) < bar or float(score[best]) - runner < self.MARGIN)
+        weighted_best = best
+        if sims is not None and self.RANK_ON_RAW:
+            r_order = torch.argsort(sims, descending=True)
+            best = int(r_order[0])
+            r_runner = float(sims[r_order[1]]) if len(r_order) > 1 else -1.0
+            weighted_fetch = fetch
+            fetch = not (float(score[best]) < bar or float(sims[best]) - r_runner < self.MARGIN)
         if sims is None:
             if not fetch:
                 return None, float(score[best])
@@ -189,6 +201,9 @@ class Hippocampus:
         self.last_fetch = {"idx": best if fetch else None, "sim_raw": float(sims[best]), "margin_raw": margin_raw,
                            "margin_w": float(score[best]) - runner, "raw_winner": raw_best,
                            "weighted_only_winner": raw_best != best, "confirmed": confirmed}
+        if self.RANK_ON_RAW:
+            self.last_fetch.update(weighted_winner=weighted_best, weighted_would_fire=weighted_fetch,
+                                   weighted_only_winner=raw_best != weighted_best)
         if not fetch:
             return None, float(score[best])
         ep = self.episodes[best]
