@@ -35,10 +35,18 @@ class Hippocampus:
     FAMILIARITY_SPONTANEOUS = 0.45  # a plain statement must be much more familiar to pull a memory back unasked
     MARGIN = 0.02                  # winner must beat the runner-up by this much
     GAIN = 4.0  # reinstatement gain (grid 11-02: 4.5 recalls 8/8 on fresh facts; identity Q/A traces loop above ~4.5)
+    # M-use (switch, default OFF = None: recall and the use update are the code below, verbatim). "raw_win": a fetch
+    # raises the episode's strength only if the RAW similarity (no strength weight) names the same winner and beats the
+    # raw runner-up by MARGIN_USE; otherwise it is a weak retrieval (reinstated, not rewarded, decay clock not reset).
+    # brain/research/2026-11-19-life-muse-mscale-prereg.md section 1.
+    USE_GATE = None
+    MARGIN_USE = 0.02              # host constant (SCAFFOLDS.md), the same value as MARGIN, applied to the raw sims
+    FREEZE_USE = False             # instrument: no fetch updates any episode (probe copies only); last_fetch is logged
 
     def __init__(self):
         self.episodes: list[Episode] = []
         self.enabled = True
+        self.last_fetch = None         # gated / frozen recall only: the last competition's record (dict), else None
 
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
               key_text: str | None = None, contrast: float = 0.0, contrast_speaker: str = "Assistant",
@@ -112,6 +120,22 @@ class Hippocampus:
         if not self.enabled or not self.episodes:
             return None, 0.0
         now = clock.now()
+        if self.USE_GATE is None and not self.FREEZE_USE:
+            return self._recall_plain(cortex, base, cue_text, speaker, question, exclude, now)
+        sims = self.similarities(cortex, base, cue_text, speaker)
+        w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
+        score = sims * w
+        if exclude:
+            sims, score = sims.clone(), score.clone()
+            for i in exclude:
+                if 0 <= i < len(score):
+                    sims[i] = score[i] = -1e9
+            if all(0 <= i < len(score) for i in exclude) and len(exclude) >= len(score):
+                self.last_fetch = None
+                return None, 0.0
+        return self._compete(score, question, now, sims=sims)
+
+    def _recall_plain(self, cortex, base, cue_text, speaker, question, exclude, now):
         score = self.scores(cortex, base, cue_text, speaker, now)
         if exclude:
             score = score.clone()
@@ -142,17 +166,36 @@ class Hippocampus:
         w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
         return sims * w
 
-    def _compete(self, score, question: bool, now: float):
+    def _compete(self, score, question: bool, now: float, sims=None):
+        """sims (default None = the plain path): the raw similarities, so the gated path can log last_fetch and apply
+        the M-use / FREEZE_USE rules. With sims None this is the original competition, unchanged."""
         order = torch.argsort(score, descending=True)
         best = int(order[0])
         runner = float(score[order[1]]) if len(order) > 1 else -1.0
         bar = self.FAMILIARITY if question else self.FAMILIARITY_SPONTANEOUS
-        if float(score[best]) < bar or float(score[best]) - runner < self.MARGIN:
+        fetch = not (float(score[best]) < bar or float(score[best]) - runner < self.MARGIN)
+        if sims is None:
+            if not fetch:
+                return None, float(score[best])
+            ep = self.episodes[best]
+            ep.uses += 1
+            ep.strength += self.USE_BOOST
+            ep.last_used = now
+            return ep, float(score[best])
+        raw_best = int(torch.argmax(sims))
+        others = [float(sims[j]) for j in range(len(sims)) if j != best and float(sims[j]) > -1e8]
+        margin_raw = float(sims[best]) - (max(others) if others else -1.0)   # the fetched episode's raw margin
+        confirmed = fetch and raw_best == best and margin_raw >= self.MARGIN_USE
+        self.last_fetch = {"idx": best if fetch else None, "sim_raw": float(sims[best]), "margin_raw": margin_raw,
+                           "margin_w": float(score[best]) - runner, "raw_winner": raw_best,
+                           "weighted_only_winner": raw_best != best, "confirmed": confirmed}
+        if not fetch:
             return None, float(score[best])
         ep = self.episodes[best]
-        ep.uses += 1
-        ep.strength += self.USE_BOOST
-        ep.last_used = now
+        if (self.USE_GATE is None or confirmed) and not self.FREEZE_USE:
+            ep.uses += 1
+            ep.strength += self.USE_BOOST
+            ep.last_used = now
         return ep, float(score[best])
 
     def reinstate(self, cortex, state, ep: Episode):

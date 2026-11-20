@@ -10,12 +10,12 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** Stage-0 life (7 nights, DEV, current defaults; `~/brain-lane/outLIFE/`): pool40 s310, pool42
-  s313, pool41 s314 running; s311/s312 done. **STAGE-0 INTERIM (11-19):** night 25-27 min on pool CPU (Stage 1 stays on
-  pools). Two compounding defects: use-strengthening on wrong fetches makes a hub episode (s311 Bramble uses 10,
-  fetched 86x; never-slept H 0/6 at store 51), adapter norm +50/night (7x by night 7) with looping first-person speech
-  (`results/2026-11-19-life-stage0-1.5b.md`). Next methods: M-use (strengthen only selective fetches), M-scale (nightly
-  adapter downscaling). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
+- **LIVE RUNS (11-19 23:59):** dev lives, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` -> `outLIFE/life_s<S>_<A>.*`:
+  pool40 s315 B, pool41 s315 S, pool42 s316 B; queue s316 S, s317 B, s317 S (prereg
+  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). **SCREENS (s310-312):** M-use KILLED (right fetches denied
+  3/4, rule >40%); M-scale open speech recovers 3/3 seeds (intrusions -> 0), H mixed 2->4, 2->2, 4->2
+  (`results/2026-11-19-life-screens-1.5b.md`). Stage-0: H falls to 0-2/6 by night 7 on all 5 seeds; hub + norm growth
+  (`results/2026-11-19-life-stage0-1.5b.md`). Hub defect needs a new method (not a raw-margin gate). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
   after the night: every intact error is a wrong reinstated episode ("What's your name?" -> Marguerite telling 6/6);
   slept facts intrude in both arms (fox named "Pixel" 12/12). Curiosity false fires harmless; no collapse
   (`results/2026-11-19-weekly-defaults-300-305-1.5b.md`).
@@ -44,9 +44,10 @@
 - **NEXT STEP:** 11-30 status: (a) selection MET as read-out, (c) curiosity MET at scaffold level (ON), (b) mood NOT MET:
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
-  mood method (after 11-30) must act alongside recall. NOW (fresh session): 12-14 milestone (multi-week life) record
-  check + design (before-build); first run = a per-night baseline at current defaults measuring the two weekly
-  defects (post-sleep reinstatement cost, slept-fact intrusion), which should compound over nights.
+  mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
+  Baseline done (Stage 0, 5 seeds). Read the 6 dev lives (B vs S, nights 4-7 pooled, >= 2/3 seeds + whole
+  transcript); S passes -> six-seed registered life (Stage 1). Hub defect, next method (before-build first): scale the
+  use boost by content match (raw sim above familiarity) instead of a flat 0.5, so a weak match earns little.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

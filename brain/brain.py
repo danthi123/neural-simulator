@@ -190,7 +190,8 @@ class Brain:
                  own_gain: float | None = None, own_gain_copies: bool = False,
                  carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
-                 arousal_calibration: tuple | None = None):
+                 arousal_calibration: tuple | None = None, use_gate: str | None = None,
+                 sleep_downscale: float | None = None):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -212,6 +213,13 @@ class Brain:
         arousal_calibration: (MU, SD) of the drive; None = affect.AROUSAL_CALIBRATION for this cortex size (an error if
         it has no row). The harness may set `arousal_gains` (a list consumed one per heard turn) to replay another
         conversation's g (SHUFFLED) or a constant (CONSTANT), and `arousal.TAU_AROUSAL = 1.0` for the CURRENT arm.
+        use_gate: (switch, default OFF = None: the hippocampus is byte-identical to before) M-use, content-confirmed use
+        (brain/research/2026-11-19-life-muse-mscale-prereg.md): "raw_win" = a fetch raises its episode's strength only if
+        the raw similarity names the same winner by Hippocampus.MARGIN_USE. None = what the home stored. A non-default
+        choice is saved in meta.json (like key).
+        sleep_downscale: (switch, default OFF = None) M-scale, the night budget homeostat: K (1.0 pre-registered). The
+        first slept night sets budget = K * adapter norm (meta adapter_budget); each later night, before replay, B is
+        scaled by budget / norm if the norm exceeds it (meta norm_pre_night, downscale_g). Not saved: pass it each time.
         cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -279,6 +287,10 @@ class Brain:
         Not saved."""
         self.home = home
         self._key_arg = key
+        if use_gate not in (None, "raw_win"):
+            raise ValueError(f"use_gate must be None or 'raw_win', not {use_gate!r}")
+        self._use_gate = self._use_gate_arg = use_gate
+        self.sleep_downscale = None if sleep_downscale is None else float(sleep_downscale)
         self.key_bar = key_bar
         self.gain_mode = gain
         if episode not in ("tell", "lived", "lived_key"):
@@ -408,6 +420,8 @@ class Brain:
                 h.GAIN = self.GAIN_BY_SIZE[size]
             elif self.gain_mode == "size":
                 raise ValueError(f"no size-fitted reinstatement gain at cortex size {size!r}")
+        if self._use_gate is not None:
+            h.USE_GATE = self._use_gate
         return h
 
     def _hippocampus_for(self, key: str) -> Hippocampus:
@@ -450,11 +464,16 @@ class Brain:
         if self.abstain and not _is_telling(text):
             known, sig = self.knows(text)
             info.update(sig, known=known)
+        gated = self.hippocampus.USE_GATE is not None or self.hippocampus.FREEZE_USE
+        if gated:
+            self.hippocampus.last_fetch = None
         if known:
             ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
         else:  # nothing familiar enough: no pattern completion, no reinstatement
             ep, sim = None, (info["fok"] if info.get("fok_source") == "hippocampus" else info.get("fam", 0.0))
         info["similarity"] = round(sim, 3)
+        if gated:
+            info["fetch"] = self.hippocampus.last_fetch
         # Recall is a transient reactivation for THIS reply; it does not accumulate in the ongoing state.
         active = self.state
         if ep is not None:
@@ -736,6 +755,8 @@ class Brain:
         if not self.hippocampus.episodes:
             return []
         plastic = self._plastic()
+        if self.sleep_downscale is not None:   # M-scale: the budget cut, before the replay loop (no RNG)
+            self._night_budget(plastic)
         now = clock.now()
         # replay what the hippocampus encoded (speaker line as read at storage time)
         eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self._night_episodes()]
@@ -754,11 +775,32 @@ class Brain:
                                         log=self.sleep_log, guard=guard)
         for prm in plastic.parameters():
             prm.grad = None
+        if self.sleep_downscale is not None and self.meta.get("adapter_budget") is None:
+            self.meta["adapter_budget"] = self.sleep_downscale * plastic.adapter_norm()   # first slept night sets it
         self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1
         self.meta["last_sleep"] = clock.now()
         self._adapters_dirty = True
         self.cortex.refresh()
         return losses
+
+    def _night_budget(self, plastic):
+        """M-scale at the start of a night: n = adapter norm; with a budget b and n > b, B *= b / n. Records
+        norm_pre_night and downscale_g in meta. A home that has adapters but no budget takes the current norm as its
+        budget and is not scaled that night (logged)."""
+        n = plastic.adapter_norm()
+        b = self.meta.get("adapter_budget")
+        g = 1.0
+        if b is None and n > 0.0:
+            b = self.meta["adapter_budget"] = n
+            if self.sleep_log:
+                self.sleep_log(f"M-scale: home has adapters but no budget; budget = current norm {n:.4f}, no downscale tonight")
+        elif b is not None and n > b:
+            g = b / n
+            plastic.downscale(g)
+        self.meta["norm_pre_night"] = n
+        self.meta["downscale_g"] = g
+        if self.sleep_log:
+            self.sleep_log(f"M-scale: norm {n:.4f} budget {b} g {g:.4f}")
 
     def _night_episodes(self) -> list:
         """What a night replays: the stored episodes. The inquiry lesson is never among them (it lives outside the
@@ -906,6 +948,10 @@ class Brain:
             meta["key"] = self.key
         else:
             meta.pop("key", None)
+        if self._use_gate is not None:
+            meta["use_gate"] = self._use_gate
+        else:
+            meta.pop("use_gate", None)
         self._write_json("meta.json", meta)
         p = self.cortex.plastic
         if p is not None and (self._adapters_dirty or not os.path.exists(os.path.join(self.home, ADAPTERS))):
@@ -970,11 +1016,18 @@ class Brain:
             meta = json.load(fh)
         key = self._key_arg or meta.pop("key", None) or self._legacy_key or "S0"
         meta.pop("key", None)
+        ug = self._use_gate_arg or meta.pop("use_gate", None)
+        meta.pop("use_gate", None)
+        if ug not in (None, "raw_win"):
+            raise ValueError(f"use_gate in {self.home}/meta.json must be 'raw_win', not {ug!r}")
+        self._use_gate = ug
         if key != self.key:
             enabled = self.hippocampus.enabled
             self.hippocampus = self._make_hippocampus(key)
             self.hippocampus.enabled = enabled
         self.hippocampus.episodes = eps
+        if ug is not None:
+            self.hippocampus.USE_GATE = ug
         q = os.path.join(self.home, INQUIRY_FILE)
         if os.path.exists(q):
             blob = torch.load(q, weights_only=False)

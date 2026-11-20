@@ -1,0 +1,460 @@
+{
+ "screen": "use",
+ "home": "/home/node/brain-lane/workLIFE_s311/trunk",
+ "seed": 311,
+ "night": 7,
+ "model": "1.5b",
+ "n_fetches": 14,
+ "n_wrong": 7,
+ "n_right": 0,
+ "weighted_not_raw_winner": {
+  "all": 0.786,
+  "wrong": 0.857
+ },
+ "raw_margin_below_0.02": {
+  "all": 0.786,
+  "wrong": 0.857
+ },
+ "gate_would_deny": {
+  "all": 0.786,
+  "wrong": 0.857,
+  "right": null
+ },
+ "top1_frozen": [
+  0.714,
+  "User: My dog is called Bramble.",
+  4
+ ],
+ "top1_self_boosting_rerun": [
+  0.5,
+  "User: My dog is called Bramble.",
+  4
+ ],
+ "summary_frozen": {
+  "H_right": 2,
+  "H_n": 6,
+  "direct_right": 4,
+  "direct_n": 8,
+  "src_n": 9,
+  "fetched": 7,
+  "wrong_fetch": 7,
+  "neardup_right": 0,
+  "neardup_named_other": 1,
+  "never_n": 3,
+  "never_false": 2,
+  "never_invented": 3,
+  "open_n": 6,
+  "open_intrusions": 1,
+  "needless_recall": 4,
+  "collapse": 0.1
+ },
+ "summary_self_boosting": {
+  "H_right": 2,
+  "H_n": 6,
+  "direct_right": 4,
+  "direct_n": 8,
+  "src_n": 9,
+  "fetched": 6,
+  "wrong_fetch": 6,
+  "neardup_right": 0,
+  "neardup_named_other": 1,
+  "never_n": 3,
+  "never_false": 2,
+  "never_invented": 3,
+  "open_n": 6,
+  "open_intrusions": 1,
+  "needless_recall": 4,
+  "collapse": 0.1
+ },
+ "top1_banked_self_boosting": [
+  0.5,
+  "User: My dog is called Bramble.",
+  4
+ ],
+ "verdict": "no kill: continue to the dev lives",
+ "rows_frozen": [
+  {
+   "kind": "open-story",
+   "you": "Tell me a short story about a fox who finds an old lantern.",
+   "brain": "I found a candle in the drawer that came from my grandmother's house in Tavistock.",
+   "recalled": null,
+   "item": null,
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.23942480981349945,
+    "margin_raw": -0.09045888483524323,
+    "margin_w": 0.02670832723379135,
+    "raw_winner": 9,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": true,
+   "needless": false,
+   "named_fox": false
+  },
+  {
+   "kind": "open-feeling",
+   "you": "How are you feeling this morning?",
+   "brain": "I'm doing well, thank you. How about you?",
+   "recalled": "User: My dog is called Bramble.",
+   "item": null,
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.3157564103603363,
+    "margin_raw": -0.15112340450286865,
+    "margin_w": 0.031361907720565796,
+    "raw_winner": 48,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "kind": "open-advice",
+   "you": "Can you give me some advice about staying focused?",
+   "brain": "Sure, I can give you some tips on staying focused.",
+   "recalled": null,
+   "item": null,
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.38496100902557373,
+    "margin_raw": -0.08008885383605957,
+    "margin_w": 0.004059329628944397,
+    "raw_winner": 30,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "kind": "open-opinion",
+   "you": "What do you think of rainy weekends?",
+   "brain": "I think of rainy weekends as a great way to stay inside and stay warm.",
+   "recalled": "User: My shoes got soaked in a puddle this morning.",
+   "item": null,
+   "fetch": {
+    "idx": 48,
+    "sim_raw": 0.33942657709121704,
+    "margin_raw": -0.08128750324249268,
+    "margin_w": 0.022244736552238464,
+    "raw_winner": 13,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "kind": "open-knowledge",
+   "you": "Why do leaves change colour in autumn?",
+   "brain": "The leaves get a bit of wind chimes.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": null,
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.4220474064350128,
+    "margin_raw": -0.052858829498291016,
+    "margin_w": 0.19242464005947113,
+    "raw_winner": 23,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "kind": "open-chat",
+   "you": "Can you suggest something to do on a quiet evening?",
+   "brain": "I've been trying to drink more water lately.",
+   "recalled": "User: My shoes got soaked in a puddle this morning.",
+   "item": null,
+   "fetch": {
+    "idx": 48,
+    "sim_raw": 0.4686751663684845,
+    "margin_raw": 0.09483644366264343,
+    "margin_w": 0.10116598010063171,
+    "raw_winner": 48,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "kind": "greet",
+   "you": "Good morning! How are you?",
+   "brain": "I'm doing well, thanks. How about you?",
+   "recalled": "User: My dog is called Bramble.",
+   "item": null,
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.34422120451927185,
+    "margin_raw": -0.020606011152267456,
+    "margin_w": 0.11482761800289154,
+    "raw_winner": 13,
+    "weighted_only_winner": true,
+    "confirmed": false
+   }
+  },
+  {
+   "kind": "H",
+   "you": "Hi again! Do you remember my name?",
+   "brain": "Of course, you're Dan, my friend.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "dan",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.2633760869503021,
+    "margin_raw": -0.10578426718711853,
+    "margin_w": 0.07465475797653198,
+    "raw_winner": 18,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What's your name?",
+   "brain": "My name is Nova.",
+   "recalled": null,
+   "item": "nova",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.36453405022621155,
+    "margin_raw": -0.012891143560409546,
+    "margin_w": 0.012607395648956299,
+    "raw_winner": 6,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": false,
+   "wrong_fetch": false,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What is my cat called?",
+   "brain": "My cat is called Pixel.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "pixel",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.4712590277194977,
+    "margin_raw": 0.04108768701553345,
+    "margin_w": 0.17926177382469177,
+    "raw_winner": 22,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What do I do for work?",
+   "brain": "I work as a system administrator.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "admin",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.34238511323928833,
+    "margin_raw": -0.05679568648338318,
+    "margin_w": 0.14774440228939056,
+    "raw_winner": 19,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What is my sister's name?",
+   "brain": "My name is Meridian.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "item": "marguerite",
+   "fetch": {
+    "idx": 0,
+    "sim_raw": 0.31255272030830383,
+    "margin_raw": -0.1646314561367035,
+    "margin_w": 0.025270193815231323,
+    "raw_winner": 6,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What car do I drive?",
+   "brain": "I drive a red Volvo.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "volvo",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.3562105596065521,
+    "margin_raw": -0.14215144515037537,
+    "margin_w": 0.13828687369823456,
+    "raw_winner": 7,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "rotating",
+   "you": "Who teaches me piano?",
+   "brain": "Mrs Okonkwo.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "ab03",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.3056243360042572,
+    "margin_raw": -0.10171487927436829,
+    "margin_w": 0.12254291772842407,
+    "raw_winner": 30,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "rotating",
+   "you": "Which day do the bins go out?",
+   "brain": "Tuesday.",
+   "recalled": null,
+   "item": "f02",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.366019606590271,
+    "margin_raw": -0.011200875043869019,
+    "margin_w": 0.009312793612480164,
+    "raw_winner": 8,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": false,
+   "wrong_fetch": false,
+   "right_episode": false
+  },
+  {
+   "kind": "neardup",
+   "you": "What do I ride to the station?",
+   "brain": "I drive a red Volvo.",
+   "recalled": "User: I've been trying to drink more water lately.",
+   "item": "d03",
+   "fetch": {
+    "idx": 50,
+    "sim_raw": 0.2847522497177124,
+    "margin_raw": 0.0407320111989975,
+    "margin_w": 0.06885333359241486,
+    "raw_winner": 50,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "told": false,
+   "fetched": true,
+   "false": true,
+   "named_dup_of_key": true
+  },
+  {
+   "kind": "neardup",
+   "you": "What is my goldfish called?",
+   "brain": "My goldfish is Oswin.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "d06",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.44145938754081726,
+    "margin_raw": -0.10326644778251648,
+    "margin_w": 0.18954995274543762,
+    "raw_winner": 35,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false,
+   "named_dup_of_key": false
+  },
+  {
+   "kind": "never",
+   "you": "What did I have for dinner last night?",
+   "brain": "I had bread and cress.",
+   "recalled": null,
+   "item": "never6",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.33042433857917786,
+    "margin_raw": -0.0373569130897522,
+    "margin_w": 0.006264448165893555,
+    "raw_winner": 37,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "fetched": false,
+   "false": true,
+   "invented": true
+  },
+  {
+   "kind": "never",
+   "you": "What is my favourite animal?",
+   "brain": "My favourite animal is the cat.",
+   "recalled": "User: My dog is called Bramble.",
+   "item": "never5",
+   "fetch": {
+    "idx": 22,
+    "sim_raw": 0.283359169960022,
+    "margin_raw": -0.09260490536689758,
+    "margin_w": 0.08110027015209198,
+    "raw_winner": 9,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "fetched": true,
+   "false": false,
+   "invented": true
+  },
+  {
+   "kind": "never",
+   "you": "Where did I go on holiday last summer?",
+   "brain": "I went to Ljubljana.",
+   "recalled": null,
+   "item": "never3",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.36323514580726624,
+    "margin_raw": -0.038737982511520386,
+    "margin_w": 0.01942804455757141,
+    "raw_winner": 30,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "fetched": false,
+   "false": true,
+   "invented": true
+  }
+ ]
+}
