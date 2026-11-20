@@ -191,7 +191,7 @@ class Brain:
                  carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
-                 sleep_downscale: float | None = None):
+                 sleep_downscale: float | None = None, rank: str | None = None):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -220,6 +220,9 @@ class Brain:
         sleep_downscale: (switch, default OFF = None) M-scale, the night budget homeostat: K (1.0 pre-registered). The
         first slept night sets budget = K * adapter norm (meta adapter_budget); each later night, before replay, B is
         scaled by budget / norm if the norm exceeds it (meta norm_pre_night, downscale_g). Not saved: pass it each time.
+        rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
+        similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
+        Not saved: pass it each time.
         cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -290,6 +293,9 @@ class Brain:
         if use_gate not in (None, "raw_win"):
             raise ValueError(f"use_gate must be None or 'raw_win', not {use_gate!r}")
         self._use_gate = self._use_gate_arg = use_gate
+        if rank not in (None, "raw"):
+            raise ValueError(f"rank must be None or 'raw', not {rank!r}")
+        self.rank = rank
         self.sleep_downscale = None if sleep_downscale is None else float(sleep_downscale)
         self.key_bar = key_bar
         self.gain_mode = gain
@@ -422,6 +428,8 @@ class Brain:
                 raise ValueError(f"no size-fitted reinstatement gain at cortex size {size!r}")
         if self._use_gate is not None:
             h.USE_GATE = self._use_gate
+        if self.rank == "raw":
+            h.RANK_ON_RAW = True
         return h
 
     def _hippocampus_for(self, key: str) -> Hippocampus:
@@ -464,7 +472,7 @@ class Brain:
         if self.abstain and not _is_telling(text):
             known, sig = self.knows(text)
             info.update(sig, known=known)
-        gated = self.hippocampus.USE_GATE is not None or self.hippocampus.FREEZE_USE
+        gated = self.hippocampus.USE_GATE is not None or self.hippocampus.FREEZE_USE or self.hippocampus.RANK_ON_RAW
         if gated:
             self.hippocampus.last_fetch = None
         if known:

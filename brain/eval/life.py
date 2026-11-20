@@ -431,7 +431,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         frozen_probe: bool = False) -> dict:
     homes, out = os.path.expanduser(homes), os.path.expanduser(out)
     brain_kw = {"sleep_seed": seed, **(brain_kw or {})}
-    extras = frozen_probe or brain_kw.get("use_gate") is not None or brain_kw.get("sleep_downscale") is not None
+    extras = frozen_probe or brain_kw.get("use_gate") is not None or brain_kw.get("sleep_downscale") is not None \
+        or brain_kw.get("rank") is not None
     state_path = os.path.join(homes, "life_state.json")
     sched, ledger = build_life(seed, days, split)
     if resume and os.path.exists(state_path) and os.path.exists(out + ".json"):
@@ -543,6 +544,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--key-bar", default=None)
     ap.add_argument("--use-gate", action="store_true", help="M-use: Brain(use_gate='raw_win')")
     ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
+    ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
     ap.add_argument("--frozen-probe", action="store_true", help="add an intact-frozen arm (FREEZE_USE) to every morning battery")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
@@ -555,6 +557,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["use_gate"] = "raw_win"
     if a.sleep_downscale is not None:
         kw["sleep_downscale"] = a.sleep_downscale
+    if a.rank:
+        kw["rank"] = a.rank
     if a.inquiry is not None:
         kw["inquiry"] = None if a.inquiry.lower() == "none" else "auto" if a.inquiry.lower() == "auto" else float(a.inquiry)
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)

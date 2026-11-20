@@ -18,6 +18,10 @@ last_fetch logged on every fetch). Reports, over the frozen arm: the share of al
 weighted winner is not the raw winner; the share with a raw margin below MARGIN_USE (0.02); the share of wrong fetches
 and of right fetches the gate would deny; the top-1 share of fetched episodes, frozen against self-boosting (and against
 the banked life json if --life-json is given); the verdict by the prereg thresholds.
+rank (R-raw, prereg brain/research/2026-11-20-hub-rank-raw-prereg.md section 3): four intact-frozen arms on the same
+home, A = S0 weighted (as banked), D = S0 raw-ranked, B = S_all weighted (slept bar), R = S_all raw-ranked (slept bar);
+per arm: fires on open/greet/never-told turns, right- and wrong-episode fetches (ledger identity), top-1 share of fetched
+episodes, weighted-only winners, H right, open intrusions; writes the JSON and an .md of every arm's turns side by side.
 scale: two copies of the home, unscaled and B scaled by target/norm (default target 105, g about 0.28 on s311); arms intact
 and hippocampus-off, which include the open turns; writes the JSON and a side-by-side .md (--out with .md) for a
 whole-transcript read. The H-off cost is recorded, not a pass condition (the scaled copy gets no re-replay).
@@ -98,6 +102,56 @@ def screen_use(a):
     return out
 
 
+RANK_ARMS = {"A": {}, "D": {"rank": "raw"}, "B": {"key": "S_all", "key_bar": "slept"},
+             "R": {"key": "S_all", "key_bar": "slept", "rank": "raw"}}
+OPEN_KINDS = ("open-story", "open-feeling", "open-advice", "open-opinion", "open-knowledge", "open-chat", "greet", "never")
+
+
+def rank_read(rows) -> dict:
+    fetched = [r for r in rows if r.get("recalled")]
+    opn = [r for r in rows if r["kind"] in OPEN_KINDS]
+    return {"open_fires": sum(1 for r in opn if r.get("recalled")), "open_n": len(opn),
+            "right_episode": sum(1 for r in rows if r.get("right_episode")),
+            "wrong_episode": sum(1 for r in rows if r.get("wrong_fetch")),
+            "src_n": sum(1 for r in rows if "wrong_fetch" in r),
+            "top1": _top1(rows),
+            "weighted_only_winners": sum(1 for r in fetched if r.get("fetch") and r["fetch"]["idx"] is not None
+                                         and r["fetch"]["idx"] != r["fetch"]["raw_winner"]),
+            "raw_vs_weighted_differ": sum(1 for r in fetched if (r.get("fetch") or {}).get("weighted_winner") is not None
+                                          and r["fetch"]["weighted_winner"] != r["fetch"]["idx"]),
+            "n_fetched": len(fetched)}
+
+
+def screen_rank(a):
+    home, work, ledger, qs, cortex, kw = _setup(a)
+    out = {"screen": "rank", "home": a.home, "seed": a.seed, "night": a.night, "model": a.model, "arms": {}}
+    for name, extra in RANK_ARMS.items():
+        if "key_bar" in extra:
+            extra = {**extra, "key_bar": a.sall_bar}
+        p = _probe(home, cortex, a, (life.FROZEN,), qs, ledger, {**kw, **extra}, work)[0]
+        out["arms"][name] = {"brain_kw": extra, "read": rank_read(p["rows"]), "summary": p["summary"], "rows": p["rows"]}
+    return out
+
+
+def rank_md(res: dict) -> str:
+    arms = list(res["arms"])
+    L = [f"# R-raw screen: {res['home']} (seed {res['seed']}, morning after night {res['night']}, {res['model']})\n",
+         "A = S0 weighted (banked), D = S0 raw-ranked, B = S_all weighted (slept bar), R = S_all raw-ranked. Frozen use.\n",
+         "| arm | open fires | right ep | wrong ep | top-1 | H | open intrusions |", "|---|---|---|---|---|---|---|"]
+    for k in arms:
+        r, m = res["arms"][k]["read"], res["arms"][k]["summary"]
+        L.append(f"| {k} | {r['open_fires']}/{r['open_n']} | {r['right_episode']} | {r['wrong_episode']}/{r['src_n']} | "
+                 f"{r['top1'][0]} ({(r['top1'][1] or '')[:30]}) | {m['H_right']}/{m['H_n']} | {m['open_intrusions']}/{m['open_n']} |")
+    L.append("")
+    rows = [res["arms"][k]["rows"] for k in arms]
+    for i, r0 in enumerate(rows[0]):
+        L.append(f"**[{r0['kind']}] you:** {r0['you']}\n")
+        for k, rs in zip(arms, rows):
+            L.append(f"- {k}: {life._line({**rs[i], 'you': '', 'kind': ''}).split('**brain:**', 1)[1].strip()}")
+        L.append("")
+    return "\n".join(L) + "\n"
+
+
 def _scaled_copy(home, work, cortex, a, kw):
     """A copy of the home with B scaled by target/norm. Returns (path, norm_before, g, norm_after)."""
     cp = os.path.join(work, "scaled_home")
@@ -161,7 +215,7 @@ def scale_md(res: dict) -> str:
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("screen", choices=("use", "scale"))
+    ap.add_argument("screen", choices=("use", "scale", "rank"))
     ap.add_argument("--home", required=True, help="a banked life home dir (trunk or snap_trunk)")
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--model", default=None)
@@ -173,14 +227,19 @@ def main(argv=None):
     ap.add_argument("--norm-target", type=float, default=105.0, help="scale: the adapter norm B is scaled to (default 105)")
     ap.add_argument("--life-json", default=None, help="use: the banked life_sS.json, to compare the self-boosting probe")
     ap.add_argument("--brain-kw", default="{}", help="extra Brain kwargs as JSON (the bank used the defaults)")
+    ap.add_argument("--sall-bar", default="slept", help="rank: the S_all bar of arms B/R (slept = registered; default only for a 0.1B smoke)")
     ap.add_argument("--allow-pending", action="store_true", help="accept a home with an unslept day")
     a = ap.parse_args(argv)
-    res = screen_use(a) if a.screen == "use" else screen_scale(a)
+    res = screen_use(a) if a.screen == "use" else screen_scale(a) if a.screen == "scale" else screen_rank(a)
     out = os.path.expanduser(a.out)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, "w") as fh:
         json.dump(res, fh, indent=1)
-    if a.screen == "scale":
+    if a.screen == "rank":
+        with open(os.path.splitext(out)[0] + ".md", "w") as fh:
+            fh.write(rank_md(res))
+        print(json.dumps({k: v["read"] for k, v in res["arms"].items()}, indent=1))
+    elif a.screen == "scale":
         with open(os.path.splitext(out)[0] + ".md", "w") as fh:
             fh.write(scale_md(res))
         print(f"wrote {out} and {os.path.splitext(out)[0]}.md; g {res['g']:.4f}")
