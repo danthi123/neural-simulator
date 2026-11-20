@@ -192,7 +192,7 @@ class Brain:
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
                  sleep_downscale: float | None = None, rank: str | None = None,
-                 downscale_factors: str = "B"):
+                 downscale_factors: str = "B", downscale_when: str = "before"):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -223,6 +223,9 @@ class Brain:
         scaled by budget / norm if the norm exceeds it (meta norm_pre_night, downscale_g). Not saved: pass it each time.
         downscale_factors: "B" (the pre-registered M-scale) or "AB" (the M-scale-3 variant: A and B each scaled by
         sqrt(g); same norm cut). Only read when sleep_downscale is set. Not saved: pass it each time.
+        downscale_when: "before" (the pre-registered cut, at the start of the night, before replay) or "end" (M-scale-E:
+        the same cut after replay, so the waking cortex runs at the budget; SHY renormalization by morning). Only
+        read when sleep_downscale is set. Not saved: pass it each time.
         rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
         similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
         Not saved: pass it each time.
@@ -303,6 +306,9 @@ class Brain:
         if downscale_factors not in ("B", "AB"):
             raise ValueError(f"downscale_factors must be 'B' or 'AB', not {downscale_factors!r}")
         self.downscale_factors = downscale_factors
+        if downscale_when not in ("before", "end"):
+            raise ValueError(f"downscale_when must be 'before' or 'end', not {downscale_when!r}")
+        self.downscale_when = downscale_when
         self.key_bar = key_bar
         self.gain_mode = gain
         if episode not in ("tell", "lived", "lived_key"):
@@ -769,7 +775,7 @@ class Brain:
         if not self.hippocampus.episodes:
             return []
         plastic = self._plastic()
-        if self.sleep_downscale is not None:   # M-scale: the budget cut, before the replay loop (no RNG)
+        if self.sleep_downscale is not None and self.downscale_when == "before":   # M-scale: the cut before replay (no RNG)
             self._night_budget(plastic)
         now = clock.now()
         # replay what the hippocampus encoded (speaker line as read at storage time)
@@ -791,6 +797,8 @@ class Brain:
             prm.grad = None
         if self.sleep_downscale is not None and self.meta.get("adapter_budget") is None:
             self.meta["adapter_budget"] = self.sleep_downscale * plastic.adapter_norm()   # first slept night sets it
+        if self.sleep_downscale is not None and self.downscale_when == "end":   # M-scale-E: the cut after replay (no RNG)
+            self._night_budget(plastic)
         self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1
         self.meta["last_sleep"] = clock.now()
         self._adapters_dirty = True

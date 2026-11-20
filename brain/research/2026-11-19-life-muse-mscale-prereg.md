@@ -230,3 +230,34 @@ A method that passes section 7 on dev, with constants frozen (MARGIN_USE = 0.02,
 - **Then land-result:** fresh-context skeptic, a lesion that changes the reply, HANDOFF and board update.
 
 No dev number is reported as a result. After any TEST read, a method change rotates the split.
+## 10. Addendum (11-20, written before any M-scale-E life): M-scale is killed as registered; M-scale-E is a new method
+
+**The M-scale-3 read** (`brain/experiments/results/2026-11-20-life-mscale-sab-1.5b.md`) is read as written. SAB fixes ‖A‖
+on 4/4 seeds, but the norm escapes 2.2 × night-1 on s318 (nights 4, 5, 7), s316 (night 4) and s317 (night 6). Rule
+M-scale-3 says: if the variant still fails, kill. **M-scale (the cut before replay, factors B or AB) is killed.**
+
+**Why it failed (mechanism, read from the data).** The cut runs before replay, so the waking cortex carries the budget
+plus one full night of new learning. The bar is read in the intact probe the next morning, so it catches exactly that
+excess. SAB's norm does not compound (nights 4-7 within 87-149 on every seed, against B 211-376). The research round
+(the 3rd lever on the norm defect; record + external) points the same way. Synaptic homeostasis renormalizes net
+strength by the end of sleep, not before it (Tononi & Cirelli 2014, Neuron; de Vivo et al. 2017, Science: about -18%
+after sleep, proportional to size; Klinzing et al. 2019, Nat Neurosci: consolidation embedded in global downscaling).
+
+**M-scale-E** (`Brain(sleep_downscale=1.0, downscale_factors="AB", downscale_when="end")`): the same sqrt(g) cut on A
+and B with the same budget (K = 1.0, set after night 1). It runs after replay instead of before, so the waking cortex
+always runs at the budget. Default stays "before"; the switch is off unless passed. Not a retune: K, the factors and
+the bars are unchanged.
+
+**Dev lives:** s315/316/317 on pool40/41/42 and s318 on AWS g5, 7 nights, DEV split, the arms and probes of section 6,
+paired with the banked B lives of the same seeds (`_scratch/rankres/life_s31[5-8]_B.*`).
+
+**Bars:** section 7 M-scale rows, pooled over 4 seeds (nights 4-7), direction on at least 3 of 4.
+- The norm row passes by construction (morning norm = budget), so it is checked and **not credited**.
+- What decides is the recall guards against B: H int, H off (not lower by more than 0.5/6), and H off on day-1-2 facts
+  (not lower by more than 1/6). Also col int/off not worse, and ‖A‖ growth ≤ 1.5x.
+- The whole-transcript read against B must also pass. It looks specifically for the S/SAB defects: marker leaks,
+  stuck appended phrases, flat day-7 replies.
+
+**Kill:** any guard or transcript fail kills M-scale-E. That ends the M-scale family for this milestone, and Stage 1
+runs with the defaults. No further variants; the next norm methods would be selective (spare strong components).
+**Pass:** promote per section 9 (Stage 1, TEST split).

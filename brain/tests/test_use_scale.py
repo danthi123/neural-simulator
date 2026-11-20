@@ -414,3 +414,30 @@ def test_downscale_factors_switch_reaches_the_night(tmp_path, night):
     assert night[-1]["norm"] == pytest.approx(b.meta["adapter_budget"], rel=1e-5)
     assert p.factor_norms()[0] == pytest.approx(g ** 0.5 * a_before, rel=1e-5)   # the fake replay leaves A alone
     assert "downscale_factors" not in b.meta
+
+
+def test_downscale_when_end_cuts_after_replay(tmp_path, night):
+    # M-scale-E: no cut before replay; after replay the norm is cut to the budget, so the waking cortex runs at it
+    home = str(tmp_path / "h")
+    ticks = iter(range(10 ** 6))
+    clock.set(lambda: T0 + next(ticks))
+    with pytest.raises(ValueError):
+        Brain(str(tmp_path / "bad"), cortex=StubCortex(), **KW, sleep_downscale=1.0, downscale_when="x")
+    b = Brain(home, cortex=StubCortex(), **KW, sleep_downscale=1.0, downscale_factors="AB", downscale_when="end")
+    b.hear("My cat is called Pixel.")
+    b.cortex.consolidated_on = False
+    b.sleep()
+    budget = b.meta["adapter_budget"]
+    assert b.meta["downscale_g"] == 1.0
+    p = b.cortex.plastic
+    with torch.no_grad():
+        for d in (p.B_k, p.B_v):
+            for x in d.values():
+                x.mul_(3.0)
+    b.hear("I drive a red Volvo.")
+    b.sleep()
+    assert night[-1]["norm"] == pytest.approx(3.0 * budget, rel=1e-5)   # replay saw the uncut adapters
+    assert b.meta["downscale_g"] < 1 / 3                                 # the night's own learning is cut too
+    assert b.meta["norm_pre_night"] > 3.0 * budget
+    assert p.adapter_norm() == pytest.approx(budget, rel=1e-5)           # morning norm = budget
+    assert "downscale_when" not in b.meta
