@@ -10,10 +10,15 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS (11-20 ~12:10 EST):** M-scale-E dev lives (prereg section 10), 7 nights, arm SABE =
-  `--sleep-downscale 1.0 --downscale-factors AB --downscale-when end`: pool40 s315, pool41 s316, pool42 s317
-  (`~/brain-lane/life_arm.sh <seed> SABE` -> `outLIFE/life_s<S>_SABE.*`, about 4 h); AWS g5 s318 (jobs
-  `_scratch/sabread/jobs_s318_sabe.txt`, dead-man 240 min, pull from the worktree). Read: `_scratch/sabread/pool.py` + transcript workflow vs banked B.
+- **LIVE RUNS (11-20 ~16:40 EST):** Stage-1 15-night run check on DEV, defaults (`--days 15 --weekend
+  --full-probe-nights 1,5,10,15 --frozen-probe --span --transfer`): pool40 s315, pool41 s316, pool42 s317
+  (`~/brain-lane/life_arm_s1dev.sh <seed>` -> `outLIFE/lifeS1D_s<S>.*`, about 9-10 h). Checks night time, the 15-night
+  harness and the instrument before the registered Stage 1 (six seeds, TEST). Three TEST 7-night B lives (s42-44)
+  started by mistake were stopped within 10 min, before any probe read (homes moved to `*.stopped`); TEST not read.
+  **M-SCALE-E READ (11-20, s315-318): KILLED, the M-scale family ends.** Recall guards pass (H int 53 vs 42/96, H off
+  55 vs 37, day-1-2 off 64 vs 40/113, intrusions 10 vs 37, ‖A‖ 0.73-0.78x), but transcript FAILS 4/4 (4 refuters):
+  identity loss ("My name is Dan.", "Qwen", "Bramble"), a ✿ marker leak (s316), told names overwritten ("Luna"),
+  job fact lost (`results/2026-11-20-life-mscale-e-dev-1.5b.md`). Stage 1 runs with the defaults.
   **M-SCALE-3 READ (11-20, SAB s315-318): M-scale KILLED as registered.** Recall holds (H int 65 vs B 42/96, day-1-2 off
   74 vs 40/113, ‖A‖ fixed 0.72-0.91x) but norm escapes 2.2x night-1 on 3/4 seeds (cut before replay: waking cortex =
   budget + one night) and transcript fails 4/4 (s315 identity loss "My name is Dan baker."; stuck phrases, stutter loops;
@@ -58,8 +63,9 @@
   iteration 7 Stage 0 FAIL, STOP per prereg (`results/2026-11-19-mood7-stage0-1.5b.md`: appraisal sign 100%, NEG vs
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
-  Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). NOW: read M-scale-E
-  (4 lives running) against prereg 10; pass -> Stage 1 on the TEST split, fail -> Stage 1 with the defaults. TEST split WRITTEN + hashed (222 items, blind sonnet,
+  Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). M-scale-E KILLED
+  (transcript 4/4). NOW: Stage 1 with the defaults; 15-night DEV run check running; build the missing Stage-1 pieces
+  (L-prunedA savings, cue ladder, interviews) before the registered launch (by 12-01). TEST split WRITTEN + hashed (222 items, blind sonnet,
   `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Transfer
   read-out built (`--transfer`, dT = T - pretrained T0 per life: raw T has a domain-fluency offset, 0.58 at 0.1B; the
   design bar "both-off T about 0" must read dT; dab53c019). Span read built (`--span`: span-NLL + log-odds vs 3 foils
