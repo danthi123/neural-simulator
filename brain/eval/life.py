@@ -51,7 +51,7 @@ ARMS = {"intact": (False, False), "hippocampus-off": (True, False),
         "consolidated-off": (False, True), "both-off": (True, True)}
 LIGHT_ARMS = ("intact", "hippocampus-off")
 FROZEN = "intact-frozen"   # --frozen-probe: an intact copy with Hippocampus.FREEZE_USE, so the battery cannot boost itself
-TODO = ["transfer forced-choice lp read-out (incident turns are lived, not scored)", "span-NLL / log-odds",
+TODO = ["span-NLL / log-odds",
         "pruned-store copy on full nights", "evening same-day recall in the hippocampus-off arm", "gist slots (E gist_q)"]
 
 TEST_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_bank_test.sha256")
@@ -280,6 +280,79 @@ def run_battery(b: Brain, qs: list, ledger: dict, night: int) -> list:
     return rows
 
 
+def _full_logits(cx, ids, state):
+    """Per-token logits of `ids` read from `state`, through the consolidated synapses when they are active (the same
+    path as LiveCortex.forward, full output). Never mutates `state`."""
+    st = [x.clone() for x in state]
+    with torch.no_grad():
+        if getattr(cx, "active", False):
+            p = cx.plastic
+            dt = p.z["emb.weight"].dtype
+            was = p.enabled
+            p.enabled = True
+            out = p(ids, [x.to(dt) for x in st])[0]
+            p.enabled = was
+            return out
+        raw = getattr(cx, "raw", cx)
+        return raw.model.forward(ids, st, full_output=True)[0]
+
+
+def option_lp(b: Brain, question: str, option: str) -> float:
+    """Mean-token log-prob of `option` as the brain's reply to `question` (design 3.5 read-out 1), from a fresh
+    conversation, with the hippocampal fetch and reinstatement exactly as in Brain.hear (the copy's arm lesions apply).
+    Read-only on the reply path; the fetch may change episode use counters, so it runs on a probe copy after the
+    battery. Host read-out (eval), no text reaches the brain."""
+    b.state = [x.clone() for x in b.base]
+    ep, _ = b.hippocampus.recall(b.cortex, b.base, question, question=True)
+    active = b.hippocampus.reinstate(b.cortex, b.state, ep) if ep is not None else b.state
+    logits, st = b.cortex.read(f"User: {question}\n\n{b._asst}", active)
+    ids = b.cortex.pipe.encode(" " + option.strip())
+    first = torch.log_softmax(logits.float(), -1)[ids[0]]
+    lps = [float(first)]
+    if len(ids) > 1:
+        full = torch.log_softmax(_full_logits(b.cortex, ids[:-1], st).float(), -1)
+        lps += [float(full[t, ids[t + 1]]) for t in range(len(ids) - 1)]
+    return sum(lps) / len(lps)
+
+
+def _domain_diffs(b: Brain) -> dict:
+    out = {}
+    for dom, incs in LB.INCIDENTS.items():
+        out[dom] = [round(option_lp(b, i["new"], i["opt"]["X"]) - option_lp(b, i["new"], i["opt"]["Y"]), 4)
+                    for i in incs if "opt" in i]
+    return out
+
+
+def _T(per: dict, sgn: int):
+    d = {dom: (sum(v) / len(v) if v else None) for dom, v in per.items()}
+    T = None if None in (d.get("sysadmin"), d.get("home repair")) else round(sgn * (d["sysadmin"] - d["home repair"]), 4)
+    return T, {k: (None if v is None else round(v, 4)) for k, v in d.items()}
+
+
+def transfer_read(b: Brain, ledger: dict, night: int) -> dict:
+    """T_life (design 3.5): per domain, the mean over its never-told incident questions of lp(X option) - lp(Y option);
+    T = s * (d_sysadmin - d_home), s = +1 when sysadmin lives in variant X. k = incidents of the domain told by `night`.
+    T0 is the same read on the same copy with both lesions on (the pretrained cortex, no fetch): the options' own
+    fluency differs by domain, so within one life T carries an offset that cancels only across seed parity (0.1B smoke
+    11-20: T0 = 0.58 before any incident). dT = T - T0 is the per-life read-out."""
+    var, k = {}, {}
+    for iid, e in ledger.items():
+        if e["cls"] == "T":
+            dom = iid.split(":")[1]
+            var[dom] = e["variant"]
+            k[dom] = k.get(dom, 0) + sum(1 for t in e["told_days"] if t <= night)
+    sgn = 1 if var.get("sysadmin") == "X" else -1
+    per = _domain_diffs(b)
+    h_on, c_on = b.hippocampus.enabled, b.cortex.consolidated_on
+    b.set_lesions(hippocampus_off=True, consolidated_off=True)
+    per0 = _domain_diffs(b)
+    b.hippocampus.enabled, b.cortex.consolidated_on = h_on, c_on
+    T, d = _T(per, sgn)
+    T0, d0 = _T(per0, sgn)
+    return {"T": T, "T0": T0, "dT": None if None in (T, T0) else round(T - T0, 4), "d": d, "d0": d0, "per": per,
+            "k": k, "variant": var}
+
+
 def collapse(rows: list) -> float:
     """Share of the most repeated reply among the replies of a battery (0.4+ = collapse, design 5)."""
     rep = [re.sub(r"\s+", " ", r["brain"].strip().lower()) for r in rows]
@@ -377,7 +450,7 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False) ->
 
 
 def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimClock, seed: int, brain_kw: dict,
-          work: str, check_pending: bool = True, weekend: bool = False, extras: bool = False) -> list:
+          work: str, check_pending: bool = True, weekend: bool = False, extras: bool = False, transfer: bool = False) -> list:
     """The morning battery on a disk copy of the trunk home, one arm at a time. The copy is opened with
     sleep_on_restart=False; the trunk is never opened here."""
     out = []
@@ -401,6 +474,7 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
                 strengths = [e.strength for e in b.hippocampus.episodes if not e.permanent]
                 max_strength = round(max(strengths), 3) if strengths else 0.0
             rows = run_battery(b, qs, ledger, night)
+            tr = transfer_read(b, ledger, night) if transfer else None   # after the battery: its fetches cannot touch it
             p = b.cortex.plastic
             rec = {"night": night, "arm": arm, "rows": rows, "summary": summarize(rows), "seconds": round(time.time() - t0, 1),
                    "store": len(b.hippocampus.episodes), "adapter_norm": round(p.adapter_norm(), 4) if p is not None else 0.0,
@@ -408,6 +482,8 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
             if extras:
                 rec["max_strength_open"] = max_strength
                 rec["factor_norms"] = [round(x, 4) for x in p.factor_norms()] if p is not None else [0.0, 0.0]
+            if tr is not None:
+                rec["transfer"] = tr
         finally:
             b.release()
             shutil.rmtree(cp, ignore_errors=True)
@@ -453,7 +529,7 @@ def write_outputs(res: dict, out: str):
 
 def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nights=(), nosleep_arm: bool = False,
         resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
-        frozen_probe: bool = False) -> dict:
+        frozen_probe: bool = False, transfer: bool = False) -> dict:
     homes, out = os.path.expanduser(homes), os.path.expanduser(out)
     brain_kw = {"sleep_seed": seed, **(brain_kw or {})}
     extras = frozen_probe or brain_kw.get("use_gate") is not None or brain_kw.get("sleep_downscale") is not None \
@@ -475,6 +551,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                "ledger": ledger, "schedule": sched, "lived": [], "nights": [], "probes": [], "todo": TODO}
         if frozen_probe:
             res["frozen_probe"] = True
+        if transfer:
+            res["transfer"] = True
     sim = SimClock()
     clock.set(sim.now)
     try:
@@ -537,7 +615,7 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                 if arms:
                     qs = battery(seed, d, ledger)
                     for p in probe(trunk, cortex, d, arms, qs, ledger, sim, seed, kw, work, check_pending=sleeps, weekend=weekend,
-                                   extras=extras):
+                                   extras=extras, transfer=transfer):
                         p["line"] = line
                         res["probes"].append(p)
                     ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d and p["arm"] == "intact")
@@ -572,6 +650,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
     ap.add_argument("--downscale-factors", default=None, choices=("B", "AB"), help="M-scale-3 variant: AB = sqrt(g) on A and B")
     ap.add_argument("--frozen-probe", action="store_true", help="add an intact-frozen arm (FREEZE_USE) to every morning battery")
+    ap.add_argument("--transfer", action="store_true", help="T_life forced-choice read-out (design 3.5) on every probe copy")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
     kw = dict(brain_kw or {})
@@ -591,7 +670,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["inquiry"] = None if a.inquiry.lower() == "none" else "auto" if a.inquiry.lower() == "auto" else float(a.inquiry)
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     full = {int(x) for x in a.full_probe_nights.split(",") if x.strip()}
-    res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe)
+    res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe,
+              transfer=a.transfer)
     print(f"wrote {a.out}.json and {a.out}.md; nights {[n['seconds'] for n in res['nights'] if n['line'] == 'trunk']}")
     return res
 
