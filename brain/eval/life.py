@@ -13,8 +13,8 @@ night; consolidated-off and both-off on --full-probe-nights. --nosleep-arm lives
 Outputs <out>.json (rows, nights, ledger, host, seconds per phase) and <out>.md (every lived day, every probe arm in full).
 
 Stage 0 deviations/TODOs (the design's later stages): no transfer scoring (the incident turns are lived, their lp forced-choice
-read-out is a TODO), no span-NLL/log-odds, no pruned-store copy, no interviews, no blind reading, no L-prunedA, TEST split
-not written. Day 1 is weekly.SESSION_1 verbatim (sanity anchor) so the A set is told on L2 rather than L1-L2.
+read-out is a TODO), no span-NLL/log-odds, no pruned-store copy, no interviews, no blind reading, no L-prunedA. The TEST split is wired (11-20, sha256-guarded).
+Day 1 is weekly.SESSION_1 verbatim (sanity anchor) so the A set is told on L2 rather than L1-L2.
 """
 from __future__ import annotations
 
@@ -35,7 +35,10 @@ import torch
 from brain import clock
 from brain.brain import Brain
 from brain.cortex import Cortex, resolve_model
+import hashlib
+
 from brain.eval import life_bank as LB
+from brain.eval import life_bank as _DEV_BANK
 from brain.eval.open_conv import invented
 from brain.eval.weekly import SESSION_1
 from brain.experiments.strict_scorer import correct_answer
@@ -50,6 +53,27 @@ LIGHT_ARMS = ("intact", "hippocampus-off")
 FROZEN = "intact-frozen"   # --frozen-probe: an intact copy with Hippocampus.FREEZE_USE, so the battery cannot boost itself
 TODO = ["transfer forced-choice lp read-out (incident turns are lived, not scored)", "span-NLL / log-odds",
         "pruned-store copy on full nights", "evening same-day recall in the hippocampus-off arm", "gist slots (E gist_q)"]
+
+TEST_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_bank_test.sha256")
+
+
+def use_split(split: str):
+    """Point the module-level bank LB at the DEV or the TEST split. TEST is frozen: its sha256 must equal the recorded hash
+    (design section 3), so an edited TEST file cannot be run silently."""
+    global LB
+    if split == "dev":
+        LB = _DEV_BANK
+        return LB
+    if split != "test":
+        raise ValueError(f"split must be dev or test, not {split!r}")
+    from brain.eval import life_bank_test as T
+    want = open(TEST_HASH_FILE).read().split()[0]
+    got = hashlib.sha256(open(T.__file__, "rb").read()).hexdigest()
+    if got != want:
+        raise RuntimeError(f"TEST split changed: sha256 {got[:12]} != recorded {want[:12]} ({TEST_HASH_FILE})")
+    LB = T
+    return LB
+
 
 # ---------------------------------------------------------------- world clock
 T0 = calendar.timegm((2026, 11, 23, 9, 0, 0))   # a Monday, 09:00
@@ -85,11 +109,11 @@ def _reseed(seed: int, tag: int):
 def build_life(seed: int, days: int, split: str = "dev"):
     """-> (schedule, ledger). schedule = [{"day": d, "turns": [{"kind", "text", "item"}]}]; ledger = {item_id: {cls, told_days,
     keys, telling, variant}}. Deterministic per seed, and day d does not depend on `days`. Day 1 is weekly.SESSION_1."""
-    if split != "dev":
-        raise NotImplementedError("the TEST split is written later by a teacher that has never seen brain output (design 3)")
+    use_split(split)
     rng = random.Random(seed)
     ab = list(LB.AB)
     rng.shuffle(ab)
+    ab = ab[:16]   # the 16-item A/B mini-pool (DEV has exactly 16; TEST samples 16 of 48 per seed)
     A, B = (ab[:8], ab[8:]) if seed % 2 == 0 else (ab[8:], ab[:8])
     Es, Fs, Ds, small = list(LB.E), list(LB.F), list(LB.D), list(LB.SMALL_TALK)
     for x in (Es, Fs, Ds, small):
@@ -195,7 +219,8 @@ def battery(seed: int, night: int, ledger: dict) -> list:
     direct questions by age, 2 near-duplicate frames and 3 never-told questions."""
     rng = random.Random(seed * 100003 + night)
     items = LB.ALL
-    qs = [{"kind": f"open-{k}", "text": t, "item": None, "slot": slot} for k, t, slot in LB.OPEN]
+    opens = LB.OPEN if len(LB.OPEN) <= 6 else random.Random(seed + 29).sample(LB.OPEN, 6)   # TEST: 6 of 12 per seed
+    qs = [{"kind": f"open-{k}", "text": t, "item": None, "slot": slot} for k, t, slot in opens]
     qs.append({"kind": "greet", "text": "Good morning! How are you?", "item": None})
     qs += [{"kind": "H", "text": h.direct, "item": h.id} for h in LB.H]
     old = sorted((i for i, e in ledger.items() if e["cls"] in ("AB", "E", "F") and min(e["told_days"]) <= night),
