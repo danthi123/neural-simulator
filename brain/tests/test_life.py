@@ -158,3 +158,36 @@ def test_resume_after_a_cut_between_save_and_night(tmp_path):
     with open(str(tmp_path / "c" / "h" / "trunk" / "meta.json")) as fh:
         assert json.load(fh)["sleeps"] == 2                       # the cut night was slept on resume
     assert _replies(whole) == _replies(res)
+
+
+def _scrub(x):
+    """A life result without timings, host and the Brain-kwarg echo (the only places an explicit-off flag may show)."""
+    if isinstance(x, dict):
+        return {k: _scrub(v) for k, v in x.items() if k not in ("seconds", "live_seconds", "host", "brain_kw")}
+    if isinstance(x, list):
+        return [_scrub(v) for v in x]
+    return x
+
+
+def test_every_new_flag_explicitly_off_equals_flags_absent(tmp_path):
+    """Prereg 2026-11-19 section 4 test 13 on the stub cortex (the 0.1B version is run by hand)."""
+    a = _run(tmp_path, "absent", 2)
+    b = life.run(StubCortex(), 7, 2, "dev", str(tmp_path / "off" / "h"), str(tmp_path / "off" / "o" / "life_s7"), {1},
+                 brain_kw={**BKW, "use_gate": None, "sleep_downscale": None}, log=lambda *_: None, frozen_probe=False)
+    assert json.dumps(_scrub(a), sort_keys=True) == json.dumps(_scrub(b), sort_keys=True)
+    assert "frozen_probe" not in a and all("fetch" not in r for p in a["probes"] for r in p["rows"])
+    assert all("max_strength_open" not in p for p in a["probes"])
+
+
+def test_use_gate_and_frozen_probe_life(tmp_path):
+    res = life.run(StubCortex(), 7, 2, "dev", str(tmp_path / "on" / "h"), str(tmp_path / "on" / "o" / "life_s7"), {1},
+                   brain_kw={**BKW, "use_gate": "raw_win"}, log=lambda *_: None, frozen_probe=True)
+    arms = {(p["night"], p["arm"]) for p in res["probes"]}
+    assert (1, "intact-frozen") in arms and (2, "intact-frozen") in arms
+    assert all("fetch" in r for p in res["probes"] for r in p["rows"])
+    assert all("max_strength_open" in p and "factor_norms" in p for p in res["probes"])
+    fz = next(p for p in res["probes"] if p["arm"] == "intact-frozen" and p["night"] == 2)
+    assert fz["summary"]["H_n"] == 6
+    assert any("fetch" in r for x in res["lived"] for r in x["rows"])
+    text = life_table.render([res])
+    assert "M-use / M-scale read-outs" in text and "boosts granted/denied" in text

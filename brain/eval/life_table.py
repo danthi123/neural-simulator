@@ -53,6 +53,52 @@ def _f(x):
     return "-" if x is None else str(x)
 
 
+def _top1(texts: list):
+    """(share of the most fetched episode, distinct episodes) over a list of fetched episode texts; (None, 0) if none."""
+    if not texts:
+        return None, 0
+    from collections import Counter
+    c = Counter(texts)
+    return round(c.most_common(1)[0][1] / len(texts), 2), len(c)
+
+
+def extra_rows(res: dict, line: str = "trunk") -> list:
+    """M-use / M-scale read-outs per night (prereg 2026-11-19-life-muse-mscale-prereg.md section 3). Gate counts and
+    adapter fields exist only for runs with the new flags (else None); hub shares read the fetched episode text, so
+    they exist for every run. Direct questions (H + rotating) are split by the first day their fact was told."""
+    rows = []
+    nights = {n["night"]: n for n in res["nights"] if n["line"] == line}
+    ledger = res.get("ledger", {})
+    for night, arms in sorted(_by(res, line).items()):
+        i, o, fz = arms.get("intact"), arms.get("hippocampus-off"), arms.get("intact-frozen")
+        lived = [r for x in res["lived"] if x["line"] == line and x["day"] == night for r in x["rows"]]
+        live_f = [r["recalled"] for r in lived if r.get("recalled")]
+        gate = [r["fetch"] for r in lived if r.get("fetch") and r["fetch"].get("idx") is not None]
+        top, distinct = _top1(live_f)
+        ftop, _ = _top1([r["recalled"] for r in fz["rows"] if r.get("recalled")] if fz else [])
+        n = nights.get(night, {})
+        irows = i["rows"]
+        r = {"seed": res["seed"], "night": night, "fetched": i["summary"]["fetched"],
+             "right": sum(1 for x in irows if x.get("right_episode")), "wrong": i["summary"]["wrong_fetch"],
+             "granted": sum(1 for g in gate if g["confirmed"]) if gate or any(x.get("fetch") for x in lived) else None,
+             "denied": sum(1 for g in gate if not g["confirmed"]) if gate or any(x.get("fetch") for x in lived) else None,
+             "max_strength": i.get("max_strength_open"), "live_top1": top, "frozen_top1": ftop, "live_distinct": distinct,
+             "norm_pre": n.get("norm_pre_night"), "g": n.get("downscale_g"), "norm_post": i["adapter_norm"],
+             "A": (i.get("factor_norms") or [None, None])[0], "B": (i.get("factor_norms") or [None, None])[1]}
+
+        def split(p):
+            out = {}
+            for k, lo in (("d12", True), ("d3p", False)):
+                sel = [x for x in p["rows"] if x["kind"] in ("H", "rotating") and x.get("item") in ledger
+                       and (min(ledger[x["item"]]["told_days"]) <= 2) == lo]
+                out[k] = (sum(1 for x in sel if x.get("ok")), len(sel))
+            return out
+        si, so = split(i), split(o) if o else {"d12": (0, 0), "d3p": (0, 0)}
+        r["d12"], r["d3p"] = (si["d12"], so["d12"]), (si["d3p"], so["d3p"])
+        rows.append(r)
+    return rows
+
+
 def render(results: list) -> str:
     L = ["# Life table (per night: D1 wrong fetch, D2 intrusion, guard)\n",
          "D1 wf = wrong fetches / questions with a ledger source (fetched = an episode came back). D1 cost = off right - intact right "
@@ -69,6 +115,25 @@ def render(results: list) -> str:
             L.append(f"| {r['seed']} | {r['night']} | {_f(r['seconds'])} | {r['store']} | {r['norm']} | {r['H_int']}/{r['H_off']} of {r['H_n']} "
                      f"| {r['wf']}/{r['src']} | {r['fetched']} | {r['d1_cost']:+d} of {r['direct_n']} | {r['intr_int']}/{r['intr_off']}/{_f(r['intr_both'])} of {r['open_n']} "
                      f"| {_f(r['d2_excess'])} | {r['never_false_int']}/{r['never_false_off']} of {r['never_n']} | {r['col_int']}/{r['col_off']} |")
+        L.append("\n### M-use / M-scale read-outs (new columns)\n")
+        L.append("fetched/right/wrong = intact-probe fetches of the direct questions with a source (counts). boosts = live-day "
+                 "fetches whose use update was granted/denied (M-use runs only). max strength = largest non-permanent episode "
+                 "strength when the probe copy opened. hub top-1 = share of the most fetched episode among live trunk fetches "
+                 "(live) and among intact-frozen probe fetches (frozen); distinct = distinct episodes fetched live. "
+                 "norm pre/g/post = adapter norm before the night's cut, the cut factor, the norm in the intact probe; "
+                 "A, B = factor norms (M-scale runs). direct d1-2 / d3+ = right/n int and off on H + rotating questions whose fact was "
+                 "first told on day 1-2 / day 3+ (every H fact is told on day 1).\n")
+        L.append("| seed | night | fetched | right | wrong | boosts granted/denied | max strength | hub top-1 live | frozen | distinct | norm pre | g | norm post | A | B | direct d1-2 int/off | direct d3+ int/off |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+        for res in results:
+            for r in extra_rows(res, line):
+                (a1, n1), (a2, _) = r["d12"]
+                (b1, n2), (b2, _) = r["d3p"]
+                L.append(f"| {r['seed']} | {r['night']} | {r['fetched']} | {r['right']} | {r['wrong']} | {_f(r['granted'])}/{_f(r['denied'])} "
+                         f"| {_f(r['max_strength'])} | {_f(r['live_top1'])} | {_f(r['frozen_top1'])} | {r['live_distinct']} "
+                         f"| {_f(r['norm_pre'] if r['norm_pre'] is None else round(r['norm_pre'], 4))} | {_f(r['g'] if r['g'] is None else round(r['g'], 4))} "
+                         f"| {r['norm_post']} | {_f(r['A'])} | {_f(r['B'])} "
+                         f"| {a1}/{a2} of {n1} | {b1}/{b2} of {n2} |")
         L.append("\n### sums over seeds, per night\n")
         L.append("| night | seeds | H int | H off | wrong fetch | D1 cost | intrusions int | off | D2 excess (both-off nights) | max col | mean s |")
         L.append("|---|---|---|---|---|---|---|---|---|---|---|")

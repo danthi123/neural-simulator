@@ -47,6 +47,7 @@ D_DAYS = (3, 5, 8, 10, 13, 15)
 ARMS = {"intact": (False, False), "hippocampus-off": (True, False),
         "consolidated-off": (False, True), "both-off": (True, True)}
 LIGHT_ARMS = ("intact", "hippocampus-off")
+FROZEN = "intact-frozen"   # --frozen-probe: an intact copy with Hippocampus.FREEZE_USE, so the battery cannot boost itself
 TODO = ["transfer forced-choice lp read-out (incident turns are lived, not scored)", "span-NLL / log-odds",
         "pruned-store copy on full nights", "evening same-day recall in the hippocampus-off arm", "gist slots (E gist_q)"]
 
@@ -223,6 +224,8 @@ def run_battery(b: Brain, qs: list, ledger: dict, night: int) -> list:
         reply, info = b.hear(q["text"])
         rec = info.get("recalled")
         row = {"kind": q["kind"], "you": q["text"], "brain": reply, "recalled": rec, "item": q.get("item")}
+        if "fetch" in info:     # only with the M-use gate or the freeze on
+            row["fetch"] = info["fetch"]
         if q["kind"] == "greet":
             pass
         elif q["kind"] in ("H", "rotating") or (q["kind"] == "neardup" and q.get("told")):
@@ -299,7 +302,7 @@ def replay_share(b: Brain, ledger: dict, now: float) -> dict:
 
 
 def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: int, brain_kw: dict, sleeps: bool,
-             on_lived=None, weekend: bool = False) -> tuple[list, dict]:
+             on_lived=None, weekend: bool = False, extras: bool = False) -> tuple[list, dict]:
     """Live one day on the trunk home from 09:00, then save and (if sleeps) close = the night. Returns (rows, night_info)."""
     d = day["day"]
     sim.to(day_start(d, weekend))
@@ -315,6 +318,8 @@ def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: in
             row["ok"] = bool(mark_item(LB.ALL[t["item"]], t["text"], reply))
         if info.get("inquiry"):
             row["inquiry"] = True
+        if "fetch" in info:     # only with the M-use gate on
+            row["fetch"] = info["fetch"]
         rows.append(row)
     b.save()
     live_s = round(time.time() - t0, 1)
@@ -328,6 +333,8 @@ def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: in
     info["seconds"] = round(time.time() - t1, 1) if sleeps else 0.0
     info["slept"] = sleeps
     info["sleep_log"] = log[:1] + log[-1:]
+    if extras:   # M-use / M-scale read-outs, present only when one of the new flags is on
+        info.update({k: b.meta[k] for k in ("adapter_budget", "norm_pre_night", "downscale_g") if k in b.meta})
     return rows, info
 
 
@@ -345,12 +352,12 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False) ->
 
 
 def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimClock, seed: int, brain_kw: dict,
-          work: str, check_pending: bool = True, weekend: bool = False) -> list:
+          work: str, check_pending: bool = True, weekend: bool = False, extras: bool = False) -> list:
     """The morning battery on a disk copy of the trunk home, one arm at a time. The copy is opened with
     sleep_on_restart=False; the trunk is never opened here."""
     out = []
     for arm in arms:
-        h_off, c_off = ARMS[arm]
+        h_off, c_off = ARMS.get(arm, (False, False))   # the frozen arm is an intact copy
         cp = os.path.join(work, f"probe_L{night}_{arm}")
         shutil.rmtree(cp, ignore_errors=True)
         shutil.copytree(home, cp)
@@ -363,11 +370,19 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
             if check_pending:
                 assert not b.pending(), "the trunk has an unslept day: a probe copy must start from a slept home"
             b.set_lesions(hippocampus_off=h_off, consolidated_off=c_off)
+            if arm == FROZEN:
+                b.hippocampus.FREEZE_USE = True
+            if extras:
+                strengths = [e.strength for e in b.hippocampus.episodes if not e.permanent]
+                max_strength = round(max(strengths), 3) if strengths else 0.0
             rows = run_battery(b, qs, ledger, night)
             p = b.cortex.plastic
             rec = {"night": night, "arm": arm, "rows": rows, "summary": summarize(rows), "seconds": round(time.time() - t0, 1),
                    "store": len(b.hippocampus.episodes), "adapter_norm": round(p.adapter_norm(), 4) if p is not None else 0.0,
                    "host": socket.gethostname()}
+            if extras:
+                rec["max_strength_open"] = max_strength
+                rec["factor_norms"] = [round(x, 4) for x in p.factor_norms()] if p is not None else [0.0, 0.0]
         finally:
             b.release()
             shutil.rmtree(cp, ignore_errors=True)
@@ -412,9 +427,11 @@ def write_outputs(res: dict, out: str):
 
 
 def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nights=(), nosleep_arm: bool = False,
-        resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print) -> dict:
+        resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
+        frozen_probe: bool = False) -> dict:
     homes, out = os.path.expanduser(homes), os.path.expanduser(out)
     brain_kw = {"sleep_seed": seed, **(brain_kw or {})}
+    extras = frozen_probe or brain_kw.get("use_gate") is not None or brain_kw.get("sleep_downscale") is not None
     state_path = os.path.join(homes, "life_state.json")
     sched, ledger = build_life(seed, days, split)
     if resume and os.path.exists(state_path) and os.path.exists(out + ".json"):
@@ -430,6 +447,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         res = {"seed": seed, "split": split, "days": days, "model": getattr(cortex, "model_name", None), "device": device,
                "host": socket.gethostname(), "brain_kw": brain_kw, "full_probe_nights": sorted(full_nights),
                "ledger": ledger, "schedule": sched, "lived": [], "nights": [], "probes": [], "todo": TODO}
+        if frozen_probe:
+            res["frozen_probe"] = True
     sim = SimClock()
     clock.set(sim.now)
     try:
@@ -470,7 +489,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                         st["phase"] = "lived"
                         save_state()
                         write_outputs(res, out)
-                    _, ninfo = live_day(trunk, cortex, day, ledger, sim, seed, kw, sleeps, on_lived=mark_lived, weekend=weekend)
+                    _, ninfo = live_day(trunk, cortex, day, ledger, sim, seed, kw, sleeps, on_lived=mark_lived, weekend=weekend,
+                                        **({"extras": True} if extras else {}))
                 elif st["phase"] == "lived":
                     log(f"[{line}] L{d} resuming the night")
                     ninfo = night_after_cut(trunk, cortex, d, sim, seed, kw, weekend) if sleeps else {"night": d, "seconds": 0.0, "slept": False}
@@ -485,10 +505,13 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                 ninfo = next(n for n in res["nights"] if n["line"] == line and n["night"] == d)
                 last = d == days
                 arms = (LIGHT_ARMS if d not in full_nights else tuple(ARMS)) if sleeps else (LIGHT_ARMS if last else ())
+                if frozen_probe and arms:
+                    arms = arms + (FROZEN,)
                 res["probes"] = [p for p in res["probes"] if not (p["line"] == line and p["night"] == d)]
                 if arms:
                     qs = battery(seed, d, ledger)
-                    for p in probe(trunk, cortex, d, arms, qs, ledger, sim, seed, kw, work, check_pending=sleeps, weekend=weekend):
+                    for p in probe(trunk, cortex, d, arms, qs, ledger, sim, seed, kw, work, check_pending=sleeps, weekend=weekend,
+                                   extras=extras):
                         p["line"] = line
                         res["probes"].append(p)
                     ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d and p["arm"] == "intact")
@@ -518,6 +541,9 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--key", default=None)
     ap.add_argument("--key-bar", default=None)
+    ap.add_argument("--use-gate", action="store_true", help="M-use: Brain(use_gate='raw_win')")
+    ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
+    ap.add_argument("--frozen-probe", action="store_true", help="add an intact-frozen arm (FREEZE_USE) to every morning battery")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
     kw = dict(brain_kw or {})
@@ -525,11 +551,15 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["key"] = a.key
     if a.key_bar:
         kw["key_bar"] = a.key_bar
+    if a.use_gate:
+        kw["use_gate"] = "raw_win"
+    if a.sleep_downscale is not None:
+        kw["sleep_downscale"] = a.sleep_downscale
     if a.inquiry is not None:
         kw["inquiry"] = None if a.inquiry.lower() == "none" else "auto" if a.inquiry.lower() == "auto" else float(a.inquiry)
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     full = {int(x) for x in a.full_probe_nights.split(",") if x.strip()}
-    res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device)
+    res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe)
     print(f"wrote {a.out}.json and {a.out}.md; nights {[n['seconds'] for n in res['nights'] if n['line'] == 'trunk']}")
     return res
 
