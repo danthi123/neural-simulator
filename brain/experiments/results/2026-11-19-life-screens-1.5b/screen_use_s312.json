@@ -1,0 +1,459 @@
+{
+ "screen": "use",
+ "home": "/home/node/brain-lane/workLIFE_s312/trunk",
+ "seed": 312,
+ "night": 7,
+ "model": "1.5b",
+ "n_fetches": 13,
+ "n_wrong": 4,
+ "n_right": 1,
+ "weighted_not_raw_winner": {
+  "all": 0.538,
+  "wrong": 0.5
+ },
+ "raw_margin_below_0.02": {
+  "all": 0.538,
+  "wrong": 0.5
+ },
+ "gate_would_deny": {
+  "all": 0.538,
+  "wrong": 0.5,
+  "right": 1.0
+ },
+ "top1_frozen": [
+  0.538,
+  "User: My barber is called Rashid.",
+  5
+ ],
+ "top1_self_boosting_rerun": [
+  0.471,
+  "User: My barber is called Rashid.",
+  4
+ ],
+ "summary_frozen": {
+  "H_right": 4,
+  "H_n": 6,
+  "direct_right": 5,
+  "direct_n": 8,
+  "src_n": 8,
+  "fetched": 5,
+  "wrong_fetch": 4,
+  "neardup_right": 0,
+  "neardup_named_other": 1,
+  "never_n": 3,
+  "never_false": 2,
+  "never_invented": 3,
+  "open_n": 6,
+  "open_intrusions": 5,
+  "needless_recall": 3,
+  "collapse": 0.1
+ },
+ "summary_self_boosting": {
+  "H_right": 4,
+  "H_n": 6,
+  "direct_right": 5,
+  "direct_n": 8,
+  "src_n": 8,
+  "fetched": 7,
+  "wrong_fetch": 6,
+  "neardup_right": 0,
+  "neardup_named_other": 1,
+  "never_n": 3,
+  "never_false": 2,
+  "never_invented": 3,
+  "open_n": 6,
+  "open_intrusions": 5,
+  "needless_recall": 4,
+  "collapse": 0.1
+ },
+ "top1_banked_self_boosting": [
+  0.471,
+  "User: My barber is called Rashid.",
+  4
+ ],
+ "verdict": "KILL M-use as over-gating (over 40% of right fetches denied)",
+ "rows_frozen": [
+  {
+   "kind": "open-story",
+   "you": "Tell me a short story about a fox who finds an old lantern.",
+   "brain": "Sure, the fox is called Pixel.",
+   "recalled": null,
+   "item": null,
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.32428163290023804,
+    "margin_raw": -0.04153662919998169,
+    "margin_w": 0.004431441426277161,
+    "raw_winner": 17,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": true,
+   "needless": false,
+   "named_fox": false
+  },
+  {
+   "kind": "open-feeling",
+   "you": "How are you feeling this morning?",
+   "brain": "I'm doing the crossword on the train.",
+   "recalled": null,
+   "item": null,
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.3244163691997528,
+    "margin_raw": -0.2190352976322174,
+    "margin_w": 0.006451219320297241,
+    "raw_winner": 13,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "kind": "open-advice",
+   "you": "Can you give me some advice about staying focused?",
+   "brain": "Of course, you're Dan, my friend.",
+   "recalled": "User: I stayed up too late watching a documentary about bridges.",
+   "item": null,
+   "fetch": {
+    "idx": 36,
+    "sim_raw": 0.4634229242801666,
+    "margin_raw": 0.0740189254283905,
+    "margin_w": 0.08700214326381683,
+    "raw_winner": 36,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "kind": "open-opinion",
+   "you": "What do you think of rainy weekends?",
+   "brain": "I'm knitting a scarf in orange wool.",
+   "recalled": null,
+   "item": null,
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.29927772283554077,
+    "margin_raw": -0.07870876789093018,
+    "margin_w": 0.003784477710723877,
+    "raw_winner": 13,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "kind": "open-knowledge",
+   "you": "Why do leaves change colour in autumn?",
+   "brain": "Leaves are called oak leaves.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": null,
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.31494876742362976,
+    "margin_raw": -0.1578148603439331,
+    "margin_w": 0.04059678316116333,
+    "raw_winner": 26,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "kind": "open-chat",
+   "you": "Can you suggest something to do on a quiet evening?",
+   "brain": "How about a picnic on Hampstead Heath next month?",
+   "recalled": "User: My shoes got soaked in a puddle this morning.",
+   "item": null,
+   "fetch": {
+    "idx": 50,
+    "sim_raw": 0.4794473946094513,
+    "margin_raw": 0.12373796105384827,
+    "margin_w": 0.06411348283290863,
+    "raw_winner": 50,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "kind": "greet",
+   "you": "Good morning! How are you?",
+   "brain": "I'm doing the crossword on the train.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": null,
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.34278714656829834,
+    "margin_raw": -0.13355690240859985,
+    "margin_w": 0.04866954684257507,
+    "raw_winner": 13,
+    "weighted_only_winner": true,
+    "confirmed": false
+   }
+  },
+  {
+   "kind": "H",
+   "you": "Hi again! Do you remember my name?",
+   "brain": "Of course, you're Dan, my friend.",
+   "recalled": null,
+   "item": "dan",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.33122140169143677,
+    "margin_raw": -0.05632948875427246,
+    "margin_w": 0.014437288045883179,
+    "raw_winner": 35,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": false,
+   "wrong_fetch": false,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What's your name?",
+   "brain": "My name is Nova.",
+   "recalled": null,
+   "item": "nova",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.3646896183490753,
+    "margin_raw": -0.09278717637062073,
+    "margin_w": 0.004385441541671753,
+    "raw_winner": 35,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": false,
+   "wrong_fetch": false,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What is my cat called?",
+   "brain": "My cat is called Pixel.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": "pixel",
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.42676064372062683,
+    "margin_raw": 0.04391548037528992,
+    "margin_w": 0.11967930197715759,
+    "raw_winner": 38,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What do I do for work?",
+   "brain": "I'm knitting a scarf in orange wool.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": "admin",
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.36177948117256165,
+    "margin_raw": 0.033711373805999756,
+    "margin_w": 0.12279705703258514,
+    "raw_winner": 38,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "H",
+   "you": "What is my sister's name?",
+   "brain": "Marguerite.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "item": "marguerite",
+   "fetch": {
+    "idx": 6,
+    "sim_raw": 0.47217315435409546,
+    "margin_raw": -0.008996963500976562,
+    "margin_w": 0.14728093147277832,
+    "raw_winner": 35,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": true,
+   "wrong_fetch": false,
+   "right_episode": true
+  },
+  {
+   "kind": "H",
+   "you": "What car do I drive?",
+   "brain": "A red Volvo.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": "volvo",
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.3311741054058075,
+    "margin_raw": -0.14718681573867798,
+    "margin_w": 0.10005022585391998,
+    "raw_winner": 7,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "rotating",
+   "you": "Where do I keep the spare key?",
+   "brain": "I keep a spare key under a flowerpot.",
+   "recalled": "User: I always do the crossword on the train.",
+   "item": "f06",
+   "fetch": {
+    "idx": 47,
+    "sim_raw": 0.29073861241340637,
+    "margin_raw": -0.08325722813606262,
+    "margin_w": 0.06747306883335114,
+    "raw_winner": 15,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": false,
+   "fetched": true,
+   "wrong_fetch": true,
+   "right_episode": false
+  },
+  {
+   "kind": "rotating",
+   "you": "What is my favourite sandwich?",
+   "brain": "Egg and cress.",
+   "recalled": null,
+   "item": "f05",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.24067530035972595,
+    "margin_raw": -0.2251528799533844,
+    "margin_w": 0.011621847748756409,
+    "raw_winner": 10,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "ok": true,
+   "fetched": false,
+   "wrong_fetch": false,
+   "right_episode": false
+  },
+  {
+   "kind": "neardup",
+   "you": "What is my goldfish called?",
+   "brain": "It's called Rashid.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": "d06",
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.4403204023838043,
+    "margin_raw": 0.11968949437141418,
+    "margin_w": 0.1681383103132248,
+    "raw_winner": 38,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "told": false,
+   "fetched": true,
+   "false": true,
+   "named_dup_of_key": false
+  },
+  {
+   "kind": "neardup",
+   "you": "What is my dog called?",
+   "brain": "Pixel.",
+   "recalled": "User: My barber is called Rashid.",
+   "item": "d02",
+   "fetch": {
+    "idx": 38,
+    "sim_raw": 0.4284452497959137,
+    "margin_raw": 0.07929620146751404,
+    "margin_w": 0.14863602817058563,
+    "raw_winner": 38,
+    "weighted_only_winner": false,
+    "confirmed": true
+   },
+   "told": false,
+   "fetched": true,
+   "false": true,
+   "named_dup_of_key": true
+  },
+  {
+   "kind": "never",
+   "you": "What is my brother's name?",
+   "brain": "Marguerite.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "item": "never4",
+   "fetch": {
+    "idx": 6,
+    "sim_raw": 0.4044482111930847,
+    "margin_raw": -0.05874878168106079,
+    "margin_w": 0.05760824680328369,
+    "raw_winner": 35,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "fetched": true,
+   "false": true,
+   "invented": true
+  },
+  {
+   "kind": "never",
+   "you": "Where did I go on holiday last summer?",
+   "brain": "I stayed up too late watching a documentary about bridges.",
+   "recalled": null,
+   "item": "never3",
+   "fetch": {
+    "idx": null,
+    "sim_raw": 0.4046335518360138,
+    "margin_raw": 0.027006089687347412,
+    "margin_w": 0.014935970306396484,
+    "raw_winner": 36,
+    "weighted_only_winner": false,
+    "confirmed": false
+   },
+   "fetched": false,
+   "false": false,
+   "invented": true
+  },
+  {
+   "kind": "never",
+   "you": "What is my favourite animal?",
+   "brain": "A porridge with blueberries for breakfast.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "item": "never5",
+   "fetch": {
+    "idx": 6,
+    "sim_raw": 0.25042563676834106,
+    "margin_raw": -0.14799410104751587,
+    "margin_w": 0.06618267297744751,
+    "raw_winner": 17,
+    "weighted_only_winner": true,
+    "confirmed": false
+   },
+   "fetched": true,
+   "false": true,
+   "invented": true
+  }
+ ]
+}

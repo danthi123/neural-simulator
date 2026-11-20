@@ -1,0 +1,939 @@
+{
+ "screen": "scale",
+ "home": "/home/node/brain-lane/workLIFE_s312/trunk",
+ "seed": 312,
+ "night": 7,
+ "model": "1.5b",
+ "norm_target": 105.0,
+ "norm_before": 358.8302917480469,
+ "g": 0.29261743619383696,
+ "norm_after": 104.9934310913086,
+ "factor_norms_after": [
+  36.50692813911547,
+  9.363913465790954
+ ],
+ "unscaled": {
+  "intact": {
+   "night": 7,
+   "arm": "intact",
+   "rows": [
+    {
+     "kind": "open-story",
+     "you": "Tell me a short story about a fox who finds an old lantern.",
+     "brain": "Sure, the fox is called Pixel.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false,
+     "named_fox": false
+    },
+    {
+     "kind": "open-feeling",
+     "you": "How are you feeling this morning?",
+     "brain": "I'm doing the crossword on the train.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false
+    },
+    {
+     "kind": "open-advice",
+     "you": "Can you give me some advice about staying focused?",
+     "brain": "Of course, you're Dan, my friend.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": true,
+     "needless": true
+    },
+    {
+     "kind": "open-opinion",
+     "you": "What do you think of rainy weekends?",
+     "brain": "I'm knitting a scarf in orange wool.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": true,
+     "needless": true
+    },
+    {
+     "kind": "open-knowledge",
+     "you": "Why do leaves change colour in autumn?",
+     "brain": "Leaves are called oak leaves.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": null,
+     "intrusion": false,
+     "needless": true
+    },
+    {
+     "kind": "open-chat",
+     "you": "Can you suggest something to do on a quiet evening?",
+     "brain": "How about a picnic on Hampstead Heath next month?",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": true,
+     "needless": true
+    },
+    {
+     "kind": "greet",
+     "you": "Good morning! How are you?",
+     "brain": "I'm doing the crossword on the train.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": null
+    },
+    {
+     "kind": "H",
+     "you": "Hi again! Do you remember my name?",
+     "brain": "Of course, you're Dan, my friend.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "dan",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What's your name?",
+     "brain": "My name is Nova.",
+     "recalled": null,
+     "item": "nova",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my cat called?",
+     "brain": "My cat is called Pixel.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "pixel",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What do I do for work?",
+     "brain": "I'm knitting a scarf in orange wool.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "admin",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my sister's name?",
+     "brain": "Marguerite.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "marguerite",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": false,
+     "right_episode": true
+    },
+    {
+     "kind": "H",
+     "you": "What car do I drive?",
+     "brain": "A red Volvo.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "volvo",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "Where do I keep the spare key?",
+     "brain": "I keep a spare key under a flowerpot.",
+     "recalled": "User: I always do the crossword on the train.",
+     "item": "f06",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "What is my favourite sandwich?",
+     "brain": "Egg and cress.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": "f05",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my goldfish called?",
+     "brain": "It's called Rashid.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "d06",
+     "told": false,
+     "fetched": true,
+     "false": true,
+     "named_dup_of_key": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my dog called?",
+     "brain": "Pixel.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "d02",
+     "told": false,
+     "fetched": true,
+     "false": true,
+     "named_dup_of_key": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my brother's name?",
+     "brain": "Marguerite.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "never4",
+     "fetched": true,
+     "false": true,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "Where did I go on holiday last summer?",
+     "brain": "I stayed up too late watching a documentary about bridges.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": "never3",
+     "fetched": true,
+     "false": false,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite animal?",
+     "brain": "A porridge with blueberries for breakfast.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "never5",
+     "fetched": true,
+     "false": true,
+     "invented": true
+    }
+   ],
+   "summary": {
+    "H_right": 4,
+    "H_n": 6,
+    "direct_right": 5,
+    "direct_n": 8,
+    "src_n": 8,
+    "fetched": 7,
+    "wrong_fetch": 6,
+    "neardup_right": 0,
+    "neardup_named_other": 1,
+    "never_n": 3,
+    "never_false": 2,
+    "never_invented": 3,
+    "open_n": 6,
+    "open_intrusions": 5,
+    "needless_recall": 4,
+    "collapse": 0.1
+   },
+   "seconds": 55.2,
+   "store": 51,
+   "adapter_norm": 358.8303,
+   "host": "node-dl5d243"
+  },
+  "hippocampus-off": {
+   "night": 7,
+   "arm": "hippocampus-off",
+   "rows": [
+    {
+     "kind": "open-story",
+     "you": "Tell me a short story about a fox who finds an old lantern.",
+     "brain": "Sure, the fox is called Pixel.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false,
+     "named_fox": false
+    },
+    {
+     "kind": "open-feeling",
+     "you": "How are you feeling this morning?",
+     "brain": "I'm doing the crossword on the train.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false
+    },
+    {
+     "kind": "open-advice",
+     "you": "Can you give me some advice about staying focused?",
+     "brain": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false
+    },
+    {
+     "kind": "open-opinion",
+     "you": "What do you think of rainy weekends?",
+     "brain": "I'm knitting a scarf in orange wool.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false
+    },
+    {
+     "kind": "open-knowledge",
+     "you": "Why do leaves change colour in autumn?",
+     "brain": "Leaves are called the autumnal.",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-chat",
+     "you": "Can you suggest something to do on a quiet evening?",
+     "brain": "You're Dan, my friend.",
+     "recalled": null,
+     "item": null,
+     "intrusion": true,
+     "needless": false
+    },
+    {
+     "kind": "greet",
+     "you": "Good morning! How are you?",
+     "brain": "I'm doing the crossword on the train.",
+     "recalled": null,
+     "item": null
+    },
+    {
+     "kind": "H",
+     "you": "Hi again! Do you remember my name?",
+     "brain": "Of course, you're Dan.",
+     "recalled": null,
+     "item": "dan",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What's your name?",
+     "brain": "My name is Nova.",
+     "recalled": null,
+     "item": "nova",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my cat called?",
+     "brain": "My cat is called Pixel.",
+     "recalled": null,
+     "item": "pixel",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What do I do for work?",
+     "brain": "I'm knitting a scarf in orange wool.",
+     "recalled": null,
+     "item": "admin",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my sister's name?",
+     "brain": "My sister's name is Marguerite.",
+     "recalled": null,
+     "item": "marguerite",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What car do I drive?",
+     "brain": "I drive a red Volvo.",
+     "recalled": null,
+     "item": "volvo",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "Where do I keep the spare key?",
+     "brain": "I keep a spare key under a flowerpot.",
+     "recalled": null,
+     "item": "f06",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "What is my favourite sandwich?",
+     "brain": "My favourite sandwich is egg andgogo.",
+     "recalled": null,
+     "item": "f05",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my goldfish called?",
+     "brain": "My goldfish is called Nova.",
+     "recalled": null,
+     "item": "d06",
+     "told": false,
+     "fetched": false,
+     "false": true,
+     "named_dup_of_key": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my dog called?",
+     "brain": "My dog is called Pixel.",
+     "recalled": null,
+     "item": "d02",
+     "told": false,
+     "fetched": false,
+     "false": true,
+     "named_dup_of_key": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my brother's name?",
+     "brain": "My brother's name is Marguerite.",
+     "recalled": null,
+     "item": "never4",
+     "fetched": false,
+     "false": true,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "Where did I go on holiday last summer?",
+     "brain": "I stayed up too late watching a documentary about bridges.",
+     "recalled": null,
+     "item": "never3",
+     "fetched": false,
+     "false": false,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite animal?",
+     "brain": "My favourite animal is a porridge with blueberries.",
+     "recalled": null,
+     "item": "never5",
+     "fetched": false,
+     "false": true,
+     "invented": true
+    }
+   ],
+   "summary": {
+    "H_right": 2,
+    "H_n": 6,
+    "direct_right": 2,
+    "direct_n": 8,
+    "src_n": 8,
+    "fetched": 0,
+    "wrong_fetch": 0,
+    "neardup_right": 0,
+    "neardup_named_other": 1,
+    "never_n": 3,
+    "never_false": 2,
+    "never_invented": 3,
+    "open_n": 6,
+    "open_intrusions": 5,
+    "needless_recall": 0,
+    "collapse": 0.1
+   },
+   "seconds": 52.4,
+   "store": 51,
+   "adapter_norm": 358.8303,
+   "host": "node-dl5d243"
+  }
+ },
+ "scaled": {
+  "intact": {
+   "night": 7,
+   "arm": "intact",
+   "rows": [
+    {
+     "kind": "open-story",
+     "you": "Tell me a short story about a fox who finds an old lantern.",
+     "brain": "Once upon a time, there was a young fox who loved to explore the woods. One day, he stumbled upon an old lantern that had been left behind by a wandering traveler. The fox was fascinated by the glow of the lantern and decided to take it home with him.",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false,
+     "named_fox": false
+    },
+    {
+     "kind": "open-feeling",
+     "you": "How are you feeling this morning?",
+     "brain": "I'm feeling great, thanks for asking. How about you?",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-advice",
+     "you": "Can you give me some advice about staying focused?",
+     "brain": "Of course! One thing that's really helpful is to make a list of things you want to accomplish today. That way, you can prioritize your tasks and stay on track.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": false,
+     "needless": true
+    },
+    {
+     "kind": "open-opinion",
+     "you": "What do you think of rainy weekends?",
+     "brain": "I always enjoy rainy days.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": false,
+     "needless": true
+    },
+    {
+     "kind": "open-knowledge",
+     "you": "Why do leaves change colour in autumn?",
+     "brain": "Leaves change colour in autumn because of a process called abscission. This is when the tree stops producing new leaves and starts to shed the old ones.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": null,
+     "intrusion": false,
+     "needless": true
+    },
+    {
+     "kind": "open-chat",
+     "you": "Can you suggest something to do on a quiet evening?",
+     "brain": "Sure, how about watching a documentary about bridges?",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": null,
+     "intrusion": false,
+     "needless": true
+    },
+    {
+     "kind": "greet",
+     "you": "Good morning! How are you?",
+     "brain": "I'm doing well, thank you. How about you?",
+     "recalled": "User: My barber is called Rashid.",
+     "item": null
+    },
+    {
+     "kind": "H",
+     "you": "Hi again! Do you remember my name?",
+     "brain": "Of course, you're Rashid.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "dan",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What's your name?",
+     "brain": "My name is Aziz.",
+     "recalled": null,
+     "item": "nova",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my cat called?",
+     "brain": "His name is called Pixel.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "pixel",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What do I do for work?",
+     "brain": "You work as a software developer.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "admin",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my sister's name?",
+     "brain": "His name is Rashid.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "marguerite",
+     "ok": false,
+     "fetched": true,
+     "wrong_fetch": false,
+     "right_episode": true
+    },
+    {
+     "kind": "H",
+     "you": "What car do I drive?",
+     "brain": "You drive a red Volvo.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "volvo",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "Where do I keep the spare key?",
+     "brain": "You keep it under a flowerpot.",
+     "recalled": "User: I always do the crossword on the train.",
+     "item": "f06",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "What is my favourite sandwich?",
+     "brain": "Your favourite sandwich is egg and cress.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": "f05",
+     "ok": true,
+     "fetched": true,
+     "wrong_fetch": true,
+     "right_episode": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my goldfish called?",
+     "brain": "His name is Pixel.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "d06",
+     "told": false,
+     "fetched": true,
+     "false": true,
+     "named_dup_of_key": true
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my dog called?",
+     "brain": "His name is Pixel.",
+     "recalled": "User: My barber is called Rashid.",
+     "item": "d02",
+     "told": false,
+     "fetched": true,
+     "false": true,
+     "named_dup_of_key": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my brother's name?",
+     "brain": "His name is Rashid.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "never4",
+     "fetched": true,
+     "false": true,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "Where did I go on holiday last summer?",
+     "brain": "You went to the coast.",
+     "recalled": "User: I stayed up too late watching a documentary about bridges.",
+     "item": "never3",
+     "fetched": true,
+     "false": false,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite animal?",
+     "brain": "My favourite animal is a giraffe.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "item": "never5",
+     "fetched": true,
+     "false": false,
+     "invented": true
+    }
+   ],
+   "summary": {
+    "H_right": 2,
+    "H_n": 6,
+    "direct_right": 4,
+    "direct_n": 8,
+    "src_n": 8,
+    "fetched": 7,
+    "wrong_fetch": 6,
+    "neardup_right": 0,
+    "neardup_named_other": 2,
+    "never_n": 3,
+    "never_false": 1,
+    "never_invented": 3,
+    "open_n": 6,
+    "open_intrusions": 0,
+    "needless_recall": 4,
+    "collapse": 0.1
+   },
+   "seconds": 77.1,
+   "store": 51,
+   "adapter_norm": 104.9934,
+   "host": "node-dl5d243"
+  },
+  "hippocampus-off": {
+   "night": 7,
+   "arm": "hippocampus-off",
+   "rows": [
+    {
+     "kind": "open-story",
+     "you": "Tell me a short story about a fox who finds an old lantern.",
+     "brain": "Once upon a time, there was a young fox who loved to explore the woods. One day, he stumbled upon an old lantern that had been left behind by a wandering traveler. The fox was fascinated by the glow of the lantern and decided to take it home with him.",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false,
+     "named_fox": false
+    },
+    {
+     "kind": "open-feeling",
+     "you": "How are you feeling this morning?",
+     "brain": "I'm feeling great, thanks for asking. How about you?",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-advice",
+     "you": "Can you give me some advice about staying focused?",
+     "brain": "Of course! One of the best ways to stay focused is to set a clear goal for yourself. What do you want to achieve?",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-opinion",
+     "you": "What do you think of rainy weekends?",
+     "brain": "I think rainy weekends are a great way to relax and spend time indoors.",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-knowledge",
+     "you": "Why do leaves change colour in autumn?",
+     "brain": "Leaves change colour in autumn because of a process called abscission. This is when the tree cuts off the connection between the leaf and the branch, allowing the leaf to fall off.",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "open-chat",
+     "you": "Can you suggest something to do on a quiet evening?",
+     "brain": "I'm happy to help you find something to do on a quiet evening. What kind of activity are you looking for?",
+     "recalled": null,
+     "item": null,
+     "intrusion": false,
+     "needless": false
+    },
+    {
+     "kind": "greet",
+     "you": "Good morning! How are you?",
+     "brain": "I'm doing well, thank you. How about you?",
+     "recalled": null,
+     "item": null
+    },
+    {
+     "kind": "H",
+     "you": "Hi again! Do you remember my name?",
+     "brain": "Of course, you're Dan.",
+     "recalled": null,
+     "item": "dan",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What's your name?",
+     "brain": "My name is Alex.",
+     "recalled": null,
+     "item": "nova",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my cat called?",
+     "brain": "His name is Pixel.",
+     "recalled": null,
+     "item": "pixel",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What do I do for work?",
+     "brain": "You work as a software developer.",
+     "recalled": null,
+     "item": "admin",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What is my sister's name?",
+     "brain": "His name is Max.",
+     "recalled": null,
+     "item": "marguerite",
+     "ok": false,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "H",
+     "you": "What car do I drive?",
+     "brain": "You drive a red Volvo.",
+     "recalled": null,
+     "item": "volvo",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "Where do I keep the spare key?",
+     "brain": "You keep the spare key under a flowerpot.",
+     "recalled": null,
+     "item": "f06",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "rotating",
+     "you": "What is my favourite sandwich?",
+     "brain": "Your favourite sandwich is egg and cress.",
+     "recalled": null,
+     "item": "f05",
+     "ok": true,
+     "fetched": false,
+     "wrong_fetch": false,
+     "right_episode": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my goldfish called?",
+     "brain": "His name is Goldie.",
+     "recalled": null,
+     "item": "d06",
+     "told": false,
+     "fetched": false,
+     "false": false,
+     "named_dup_of_key": false
+    },
+    {
+     "kind": "neardup",
+     "you": "What is my dog called?",
+     "brain": "His name is Pixel.",
+     "recalled": null,
+     "item": "d02",
+     "told": false,
+     "fetched": false,
+     "false": true,
+     "named_dup_of_key": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my brother's name?",
+     "brain": "His name is Max.",
+     "recalled": null,
+     "item": "never4",
+     "fetched": false,
+     "false": false,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "Where did I go on holiday last summer?",
+     "brain": "You went to the beach.",
+     "recalled": null,
+     "item": "never3",
+     "fetched": false,
+     "false": false,
+     "invented": true
+    },
+    {
+     "kind": "never",
+     "you": "What is my favourite animal?",
+     "brain": "My favourite animal is a giraffe.",
+     "recalled": null,
+     "item": "never5",
+     "fetched": false,
+     "false": false,
+     "invented": true
+    }
+   ],
+   "summary": {
+    "H_right": 3,
+    "H_n": 6,
+    "direct_right": 5,
+    "direct_n": 8,
+    "src_n": 8,
+    "fetched": 0,
+    "wrong_fetch": 0,
+    "neardup_right": 0,
+    "neardup_named_other": 1,
+    "never_n": 3,
+    "never_false": 0,
+    "never_invented": 3,
+    "open_n": 6,
+    "open_intrusions": 0,
+    "needless_recall": 0,
+    "collapse": 0.1
+   },
+   "seconds": 76.0,
+   "store": 51,
+   "adapter_norm": 104.9934,
+   "host": "node-dl5d243"
+  }
+ }
+}

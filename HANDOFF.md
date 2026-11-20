@@ -10,12 +10,12 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS:** Stage-0 life (7 nights, DEV, current defaults; `~/brain-lane/outLIFE/`): pool40 s310, pool42
-  s313, pool41 s314 running; s311/s312 done. **STAGE-0 INTERIM (11-19):** night 25-27 min on pool CPU (Stage 1 stays on
-  pools). Two compounding defects: use-strengthening on wrong fetches makes a hub episode (s311 Bramble uses 10,
-  fetched 86x; never-slept H 0/6 at store 51), adapter norm +50/night (7x by night 7) with looping first-person speech
-  (`results/2026-11-19-life-stage0-1.5b.md`). Next methods: M-use (strengthen only selective fetches), M-scale (nightly
-  adapter downscaling). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
+- **LIVE RUNS (11-19 23:59):** dev lives, 7 nights, `~/brain-lane/life_arm.sh <seed> <arm>` -> `outLIFE/life_s<S>_<A>.*`:
+  pool40 s315 B, pool41 s315 S, pool42 s316 B; queue s316 S, s317 B, s317 S (prereg
+  `brain/research/2026-11-19-life-muse-mscale-prereg.md`). **SCREENS (s310-312):** M-use KILLED (right fetches denied
+  3/4, rule >40%); M-scale open speech recovers 3/3 seeds (intrusions -> 0), H mixed 2->4, 2->2, 4->2
+  (`results/2026-11-19-life-screens-1.5b.md`). Stage-0: H falls to 0-2/6 by night 7 on all 5 seeds; hub + norm growth
+  (`results/2026-11-19-life-stage0-1.5b.md`). Hub defect needs a new method (not a raw-margin gate). **WEEKLY READ (11-19, seeds 300-305, curiosity ON):** intact 31/36 vs hippocampus-off 35/36
   after the night: every intact error is a wrong reinstated episode ("What's your name?" -> Marguerite telling 6/6);
   slept facts intrude in both arms (fox named "Pixel" 12/12). Curiosity false fires harmless; no collapse
   (`results/2026-11-19-weekly-defaults-300-305-1.5b.md`).
