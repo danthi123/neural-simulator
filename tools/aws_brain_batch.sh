@@ -21,7 +21,7 @@
 set -uo pipefail
 REGION="${AWS_REGION:-us-east-1}"
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT" || exit 1
-STATE="$ROOT/research/queue/.aws_brain"
+STATE="${AWS_BRAIN_STATE:-$ROOT/research/queue/.aws_brain}"   # override to run several batches at once (one state file each)
 KEYNAME=claude-gpu-1785524741
 KEYFILE=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem
 SUBNET="${AWS_BRAIN_SUBNET:-subnet-0928cbecfe33fcbc1}"   # us-east-1d; on InsufficientInstanceCapacity pass another AZ default subnet (aws ec2 describe-subnets --filters Name=default-for-az,Values=true)
