@@ -43,9 +43,16 @@ def seed_rows(res: dict, line: str = "trunk") -> list:
              "intr_both": b["summary"]["open_intrusions"] if b else None,
              "col_int": si["collapse"], "col_off": so["collapse"],
              "never_false_int": si["never_false"], "never_false_off": so["never_false"], "never_n": si["never_n"]}
+        lg = nights.get(night, {}).get("lang_guard")     # --lang-guard lives only
+        if lg:
+            r["kl"], r["nll_on"], r["nll_off"] = lg["kl"], lg["nll_on"], lg["nll_off"]
         r["d1_cost"] = r["right_off"] - r["right_int"]
         r["d2_excess"] = None if b is None else r["intr_int"] - r["intr_both"]
         rows.append(r)
+    kl1 = next((r["kl"] for r in rows if r.get("kl") is not None), None)   # the first measured night = night 1
+    for r in rows:
+        if r.get("kl") is not None:
+            r["kl_ratio"] = round(r["kl"] / kl1, 3) if kl1 else None
     return rows
 
 
@@ -109,12 +116,15 @@ def render(results: list) -> str:
         if not rows:
             continue
         L.append(f"\n## {line}\n")
-        L.append("| seed | night | s | store | norm | H int/off | wf | fetched | D1 cost | D2 int/off/both | D2 excess | never false int/off | col int/off |")
-        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+        lgc = any(r.get("kl") is not None for r in rows)     # --lang-guard columns only when the field exists
+        L.append("| seed | night | s | store | norm | H int/off | wf | fetched | D1 cost | D2 int/off/both | D2 excess | never false int/off | col int/off |"
+                 + (" KL | KL / night-1 |" if lgc else ""))
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|" + ("---|---|" if lgc else ""))
         for r in rows:
             L.append(f"| {r['seed']} | {r['night']} | {_f(r['seconds'])} | {r['store']} | {r['norm']} | {r['H_int']}/{r['H_off']} of {r['H_n']} "
                      f"| {r['wf']}/{r['src']} | {r['fetched']} | {r['d1_cost']:+d} of {r['direct_n']} | {r['intr_int']}/{r['intr_off']}/{_f(r['intr_both'])} of {r['open_n']} "
-                     f"| {_f(r['d2_excess'])} | {r['never_false_int']}/{r['never_false_off']} of {r['never_n']} | {r['col_int']}/{r['col_off']} |")
+                     f"| {_f(r['d2_excess'])} | {r['never_false_int']}/{r['never_false_off']} of {r['never_n']} | {r['col_int']}/{r['col_off']} |"
+                     + (f" {_f(r.get('kl'))} | {_f(r.get('kl_ratio'))} |" if lgc else ""))
         L.append("\n### M-use / M-scale read-outs (new columns)\n")
         L.append("fetched/right/wrong = intact-probe fetches of the direct questions with a source (counts). boosts = live-day "
                  "fetches whose use update was granted/denied (M-use runs only). max strength = largest non-permanent episode "

@@ -315,3 +315,15 @@ def test_flags_off_equal_head_code(tmp_path, monkeypatch):
         assert "pruned_a" not in json.loads(outs["new"][0]) and "prunedA" not in outs["new"][1]
     finally:
         sys.modules.pop("life_head", None)
+
+
+def test_g_minus_null_subtracts_item_difficulty_per_item():
+    # the null brain already rates A above B by 3 (item difficulty); a copy with the same per-item gap has no savings
+    null = {"logodds": {"A": {"a1": 5.0, "a2": 3.0}, "B": {"b1": 1.0, "b2": 1.0}}}
+    same = {"logodds": {"A": {"a1": 6.0, "a2": 4.0}, "B": {"b1": 2.0, "b2": 2.0}}}
+    assert life.g_minus_null(same, null) == 0.0
+    sav = {"logodds": {"A": {"a1": 8.0, "a2": 6.0}, "B": {"b1": 2.0, "b2": 2.0}}}
+    assert life.g_minus_null(sav, null) == 2.0
+    assert life.g_minus_null(sav, null, exclude={"a1"}) == 2.0
+    assert life.g_minus_null(sav, {}) is None
+    assert life.g_minus_null({"logodds": {"A": {"zz": 1.0}, "B": {"b1": 0.0}}}, null) is None   # no shared A item
