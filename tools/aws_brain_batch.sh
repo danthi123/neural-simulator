@@ -13,7 +13,7 @@
 # Safety lives on the AWS side, so nothing here has to stay up:
 #   - launched with --instance-initiated-shutdown-behavior stop;
 #   - a dead-man `shutdown -h +AWS_BRAIN_MAX_MIN` (default 240) is armed before any job starts;
-#   - the runner ends with `shutdown -h now`, whether the jobs passed or failed.
+#   - the runner ends with `shutdown -h +AWS_BRAIN_GRACE_MIN` (default 0 = now), whether the jobs passed or failed.
 # A stopped instance bills only its disk (cents a day) until `pull` copies the results and terminates it. The daily
 # spend cap gates the launch (tools/aws_budget.sh check), and the workstation's aws-guard timer (budget enforce + idle
 # stop, which now also counts brain jobs as work) runs whenever the workstation is up. The AWS keys stay on the
@@ -27,6 +27,7 @@ KEYFILE=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem
 SUBNET="${AWS_BRAIN_SUBNET:-subnet-0928cbecfe33fcbc1}"   # us-east-1d; on InsufficientInstanceCapacity pass another AZ default subnet (aws ec2 describe-subnets --filters Name=default-for-az,Values=true)
 MODELS=/home/dant123/models/rwkv7
 MAX_MIN="${AWS_BRAIN_MAX_MIN:-240}"
+GRACE="${AWS_BRAIN_GRACE_MIN:-0}"   # minutes the instance stays up after the jobs end, so a pull loop can copy results without a restart (a stopped g5/g6 often cannot restart: InsufficientInstanceCapacity 2026-11-16, 11-21)
 SSH=(ssh -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ConnectTimeout=15)
 get() { awk -F= -v k="$1" '$1==k{print $2}' "$STATE" 2>/dev/null; }
 ip_of() { aws ec2 describe-instances --region "$REGION" --instance-ids "$1" --query 'Reservations[].Instances[].PublicIpAddress' --output text; }
@@ -71,7 +72,7 @@ launch)
     "$JOBS" "${R[0]}:brainv2/jobs.txt"
   scp -q -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR \
     "$ROOT/tools/brain_batch_run.sh" "${R[0]}:brainv2/run.sh"
-  "${SSH[@]}" "${R[@]}" "chmod +x ~/brainv2/run.sh && nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h now' >/dev/null 2>&1 &"
+  "${SSH[@]}" "${R[@]}" "chmod +x ~/brainv2/run.sh && nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h +$GRACE' >/dev/null 2>&1 &"
   echo "[aws-brain] running $(grep -vc '^\(#\|$\)' "$JOBS") job(s) on $IID; it stops itself when done (dead-man ${MAX_MIN} min)."
   echo "[aws-brain] later: bash tools/aws_brain_batch.sh pull"
   ;;
@@ -115,7 +116,7 @@ resume)
   aws ec2 wait instance-status-ok --region "$REGION" --instance-ids "$IID"
   R=(ubuntu@"$(ip_of "$IID")")
   "${SSH[@]}" "${R[@]}" "sudo shutdown -h +$MAX_MIN" || { echo "⛔ could not arm the dead-man; stopping"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
-  "${SSH[@]}" "${R[@]}" "nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h now' >/dev/null 2>&1 &"
+  "${SSH[@]}" "${R[@]}" "nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h +$GRACE' >/dev/null 2>&1 &"
   echo "[aws-brain] resumed $IID (dead-man ${MAX_MIN} min); later: bash tools/aws_brain_batch.sh pull"
   ;;
 terminate)
