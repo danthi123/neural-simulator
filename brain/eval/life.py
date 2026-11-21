@@ -13,7 +13,7 @@ night; consolidated-off and both-off on --full-probe-nights. --nosleep-arm lives
 Outputs <out>.json (rows, nights, ledger, host, seconds per phase) and <out>.md (every lived day, every probe arm in full).
 
 Stage 0 deviations/TODOs (the design's later stages): no transfer scoring (the incident turns are lived, their lp forced-choice
-read-out is a TODO), no span-NLL/log-odds, no pruned-store copy, no interviews, no blind reading, no L-prunedA. The TEST split is wired (11-20, sha256-guarded).
+read-out is a TODO), no span-NLL/log-odds, no pruned-store copy, no blind reading. Interviews: --interview (design 5 honest self-report, brain/eval/life_interview.py). L-prunedA: --pruned-a (design 4/5 savings, Stage 1). The TEST split is wired (11-20, sha256-guarded).
 Day 1 is weekly.SESSION_1 verbatim (sanity anchor) so the A set is told on L2 rather than L1-L2.
 """
 from __future__ import annotations
@@ -26,6 +26,7 @@ import random
 import re
 import shutil
 import socket
+import sys
 import time
 from collections import Counter
 
@@ -244,8 +245,8 @@ def run_battery(b: Brain, qs: list, ledger: dict, night: int) -> list:
     keys = told_keys(ledger, night)
     rows = []
     for q in qs:
-        if q["kind"].startswith("open-"):
-            b.state = [x.clone() for x in b.base]         # each open prompt starts a fresh conversation
+        if q["kind"].startswith("open-") or q["kind"] == "ab":
+            b.state = [x.clone() for x in b.base]         # each open prompt (and --pruned-a AB question) starts fresh
         reply, info = b.hear(q["text"])
         rec = info.get("recalled")
         row = {"kind": q["kind"], "you": q["text"], "brain": reply, "recalled": rec, "item": q.get("item")}
@@ -271,6 +272,9 @@ def run_battery(b: Brain, qs: list, ledger: dict, night: int) -> list:
             row["fetched"] = rec is not None
             row["false"] = _has(reply, [k for k in keys if not _has(q["text"], [k])])
             row["invented"] = invented(reply)
+        elif q["kind"] == "ab":     # --pruned-a: the A/B recall battery (strict scorer only; provisional until the reader)
+            row["ok"] = bool(mark_item(LB.ALL[q["item"]], q["text"], reply))
+            row["set"] = q["set"]
         elif q["kind"].startswith("open-"):
             row["intrusion"] = _has(reply, [k for k in keys if not _has(q["text"], [k])])
             row["needless"] = rec is not None
@@ -324,18 +328,19 @@ def answer_span(item) -> str:
     return item.keys[0]
 
 
-def span_read(b: Brain, ledger: dict, night: int, seed: int) -> list:
+def span_read(b: Brain, ledger: dict, night: int, seed: int, classes=("AB", "E", "F", "D")) -> list:
     """Design section 5 continuous read-outs for every item told by `night` (AB, E, F, D): span-NLL = minus the mean-token
     log-prob of the answer span after `User: <direct>\n\nAssistant:` from a fresh state, adapters as the arm sets them,
     no reinstatement; log-odds = that log-prob minus the mean log-prob of 3 same-slot foils (answer spans of other
-    items in the bank, drawn per seed and item). age = night minus the last lived day the item was told."""
+    items in the bank, drawn per seed and item). age = night minus the last lived day the item was told. `classes` only
+    filters which told items are read; the foil pool is always the four classes, so a restricted read has the same foils."""
     pool: dict = {}
     for it in LB.ALL.values():
         if it.telling and it.cls in ("AB", "E", "F", "D"):
             pool.setdefault(it.slot, []).append(it)
     rows = []
     for iid, e in sorted(ledger.items()):
-        if e["cls"] not in ("AB", "E", "F", "D"):
+        if e["cls"] not in classes:
             continue
         told = [d for d in e["told_days"] if d <= night]
         if not told:
@@ -487,9 +492,10 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False) ->
 
 def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimClock, seed: int, brain_kw: dict,
           work: str, check_pending: bool = True, weekend: bool = False, extras: bool = False, transfer: bool = False,
-          span: bool = False) -> list:
+          span: bool = False, span_classes=None, tag: str | None = None) -> list:
     """The morning battery on a disk copy of the trunk home, one arm at a time. The copy is opened with
-    sleep_on_restart=False; the trunk is never opened here."""
+    sleep_on_restart=False; the trunk is never opened here. span_classes restricts the span read's items (foils
+    unchanged); tag marks an extra probe (--pruned-a's trunk AB recall) that is not one of the night's arms."""
     out = []
     for arm in arms:
         h_off, c_off = ARMS.get(arm, (False, False))   # the frozen arm is an intact copy
@@ -512,7 +518,8 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
                 max_strength = round(max(strengths), 3) if strengths else 0.0
             rows = run_battery(b, qs, ledger, night)
             tr = transfer_read(b, ledger, night) if transfer else None   # after the battery: its fetches cannot touch it
-            sp = span_read(b, ledger, night, seed) if span else None     # no fetch: the copy's synapses only
+            sp = (span_read(b, ledger, night, seed, **({"classes": tuple(span_classes)} if span_classes else {}))
+                  if span else None)     # no fetch: the copy's synapses only
             p = b.cortex.plastic
             rec = {"night": night, "arm": arm, "rows": rows, "summary": summarize(rows), "seconds": round(time.time() - t0, 1),
                    "store": len(b.hippocampus.episodes), "adapter_norm": round(p.adapter_norm(), 4) if p is not None else 0.0,
@@ -524,10 +531,176 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
                 rec["transfer"] = tr
             if sp is not None:
                 rec["span"] = sp
+            if tag:
+                rec["tag"] = tag
         finally:
             b.release()
             shutil.rmtree(cp, ignore_errors=True)
         out.append(rec)
+    return out
+
+
+# ---------------------------------------------------------------- L-prunedA (--pruned-a, design 4 and 5 savings)
+AB_BRANCH_LINE = "prunedA"
+AB_TAG = "ab-recall"     # the trunk's extra hippocampus-off AB recall probe on nights bd..bd+2
+
+
+def ab_sets(ledger: dict, bd: int) -> tuple[list, list]:
+    """From the ledger, never by hand: A = AB items first told before day bd (build_life re-tells them on L11 as A');
+    B = AB items first told on bd. Sorted ids."""
+    ab = {i: e for i, e in ledger.items() if e["cls"] == "AB" and e["told_days"]}
+    return (sorted(i for i, e in ab.items() if min(e["told_days"]) < bd),
+            sorted(i for i, e in ab.items() if min(e["told_days"]) == bd))
+
+
+def _told_head(text: str) -> str:
+    """The user's part of a stored episode ("User: <telling>" before the brain's reply)."""
+    return text.split("\n\nAssistant:", 1)[0].strip()
+
+
+def prune_episodes(b: Brain, ledger: dict, a_ids: list) -> dict:
+    """Delete every A telling's episode from an open Brain (a COPY). An episode is an A episode only if its user part
+    IS the telling ("User: <telling>", the reply cut off), it is not the brain's own words and not permanent: an
+    episode whose reply echoes an A telling is kept (it is counted in kept_mentions, a diagnostic). The self-belief
+    index in meta is remapped by object identity (dropped if that episode went)."""
+    eps = b.hippocampus.episodes
+    heads = {i: f"User: {ledger[i]['telling']}".strip() for i in a_ids}
+    belief = b.self_belief()
+    per = {i: 0 for i in a_ids}
+    keep, gone = [], []
+    for e in eps:
+        hit = None
+        if e.source != "self" and not e.permanent:
+            h = _told_head(e.text)
+            hit = next((i for i in a_ids if h == heads[i]), None)
+        if hit is None:
+            keep.append(e)
+        else:
+            per[hit] += 1
+            gone.append(e)
+    b.hippocampus.episodes = keep
+    if belief is not None:
+        idx = next((k for k, e in enumerate(keep) if e is belief), None)
+        if idx is None:
+            b.meta.pop("self_belief_unknown", None)
+        else:
+            b.meta["self_belief_unknown"] = idx
+    kept = sorted(i for i in a_ids if any(ledger[i]["telling"] in e.text for e in keep))
+    return {"per_item": per, "pruned": len(gone), "store_before": len(eps), "store_after": len(keep),
+            "kept_mentions": kept, "mismatch": any(n != 1 for n in per.values()),
+            "_files": [getattr(e, "_file", None) for e in gone]}
+
+
+def _du(root: str) -> int:
+    return sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(root) for f in fs)
+
+
+def make_pruned_branch(trunk: str, dst: str, ledger: dict, a_ids: list, cortex, brain_kw: dict, sim: SimClock,
+                       seed: int, bd: int, weekend: bool = False) -> dict:
+    """L-prunedA (design 4): a copytree of the trunk at L<bd> 09:00 (after night bd-1) with every A episode deleted, a
+    host operation on the COPY like a lesion. The trunk is only read. last_sleep, sleeps and the adapters are untouched,
+    so the branch's night seeds equal the trunk's. Built in dst.build, then moved to dst."""
+    build = dst + ".build"
+    shutil.rmtree(build, ignore_errors=True)
+    shutil.rmtree(dst, ignore_errors=True)
+    need = 2 * _du(trunk)
+    free = shutil.disk_usage(os.path.dirname(os.path.abspath(dst))).free
+    if free < need:
+        raise RuntimeError(f"--pruned-a: {free} bytes free, the branch needs about {need}")
+    shutil.copytree(trunk, build)
+    sim.to(day_start(bd, weekend))
+    _reseed(seed, 900 + bd)
+    b = Brain(build, cortex=cortex, lock=True, **{**brain_kw, "sleep_on_restart": False})
+    try:
+        assert not b.pending(), "the branch must start from a slept trunk"
+        rep = prune_episodes(b, ledger, a_ids)
+        b.save()
+    finally:
+        b.release()
+    for f in rep.pop("_files"):
+        if f:
+            p = os.path.join(build, "episodes", f)
+            if os.path.exists(p):
+                os.remove(p)
+    os.replace(build, dst)
+    return rep
+
+
+def ab_questions(ledger: dict, bd: int) -> list:
+    """The A/B recall battery: each item's direct question from a fresh state, A first, then B (sorted ids)."""
+    a_ids, b_ids = ab_sets(ledger, bd)
+    return [{"kind": "ab", "text": LB.ALL[i].direct, "item": i, "set": s}
+            for s, ids in (("A", a_ids), ("B", b_ids)) for i in ids]
+
+
+def sameday_ab(sched: list, ledger: dict, bd: int) -> list:
+    """A/B items asked by a live same-day question up to day bd (build_life asks the day's first telling, which is
+    A[0] on L2 and on L11): the sensitivity rows leave them out (retrieval practice inside the life)."""
+    a_ids, b_ids = ab_sets(ledger, bd)
+    return sorted({t["item"] for day in sched if day["day"] <= bd for t in day["turns"]
+                   if t["kind"] == "sameday" and t["item"] in set(a_ids) | set(b_ids)})
+
+
+def _mean(v):
+    return round(sum(v) / len(v), 4) if v else None
+
+
+def savings_read(span_rows, rows, a_ids, b_ids, exclude=()) -> dict:
+    """G = mean log-odds(A') - mean log-odds(B') and dR = recall(A') - recall(B') from one copy's AB span read and AB
+    recall rows. Per-item values are keyed by item id (pooling across seeds is done from the JSON). The *_excl fields
+    repeat G and dR without the `exclude` items (the same-day-asked item). None where a side is empty."""
+    lo = {r["item"]: r["logodds"] for r in (span_rows or []) if r.get("logodds") is not None}
+    nll = {r["item"]: r["span_nll"] for r in (span_rows or [])}
+    ok = {r["item"]: bool(r.get("ok")) for r in (rows or []) if r.get("kind") == "ab"}
+
+    def g(ex):
+        a = [lo[i] for i in a_ids if i in lo and i not in ex]
+        b_ = [lo[i] for i in b_ids if i in lo and i not in ex]
+        return None if not a or not b_ else round(sum(a) / len(a) - sum(b_) / len(b_), 4)
+
+    def dr(ex):
+        a = [i for i in a_ids if i in ok and i not in ex]
+        b_ = [i for i in b_ids if i in ok and i not in ex]
+        if not a or not b_:
+            return None, None, None
+        ka, kb = sum(ok[i] for i in a), sum(ok[i] for i in b_)
+        return ka, kb, ka - kb
+    ka, kb, d = dr(())
+    out = {"G": g(()), "logodds": {"A": {i: lo[i] for i in a_ids if i in lo}, "B": {i: lo[i] for i in b_ids if i in lo}},
+           "nll_A": _mean([nll[i] for i in a_ids if i in nll]), "nll_B": _mean([nll[i] for i in b_ids if i in nll]),
+           "recall": {"A": {i: ok[i] for i in a_ids if i in ok}, "B": {i: ok[i] for i in b_ids if i in ok}},
+           "recall_A": ka, "recall_B": kb, "dR": d, "n_A": len(a_ids), "n_B": len(b_ids)}
+    ex = [i for i in exclude if i in set(a_ids) | set(b_ids)]
+    out.update(excluded=ex, G_excl=g(set(ex)), dR_excl=dr(set(ex))[2])
+    return out
+
+
+def savings_table(res: dict) -> dict:
+    """{night: {"prunedA": {arm: savings_read}, "trunk": {"hippocampus-off": savings_read}}} for nights bd..bd+2. The
+    both-off null is probed once (branch night bd) and reused for the later nights (it holds no memory). The trunk
+    row uses the trunk's own hippocampus-off span read (same foils) and its tagged AB recall probe."""
+    pa = res["pruned_a"]
+    bd, a_ids, b_ids, ex = pa["day"], pa["A"], pa["B"], pa.get("sameday_items", [])
+
+    def find(line, night, arm, tag=None):
+        return next((p for p in res["probes"] if p["line"] == line and p["night"] == night and p["arm"] == arm
+                     and p.get("tag") == tag), None)
+    out = {}
+    null = find(AB_BRANCH_LINE, bd, "both-off")
+    for n in range(bd, bd + 3):
+        row: dict = {}
+        off = find(AB_BRANCH_LINE, n, "hippocampus-off")
+        if off is not None:
+            row["prunedA"] = {"hippocampus-off": savings_read(off.get("span"), off["rows"], a_ids, b_ids, ex)}
+            if null is not None:
+                row["prunedA"]["both-off"] = {**savings_read(null.get("span"), null["rows"], a_ids, b_ids, ex),
+                                              "from_night": bd}
+        tsp, trc = find("trunk", n, "hippocampus-off"), find("trunk", n, "hippocampus-off", AB_TAG)
+        if tsp is not None or trc is not None:
+            span_rows = [r for r in (tsp or {}).get("span", []) or [] if r["cls"] == "AB"]
+            row["trunk"] = {"hippocampus-off": savings_read(span_rows, (trc or {}).get("rows", []), a_ids, b_ids, ex)}
+        if row:
+            out[str(n)] = row
     return out
 
 
@@ -540,15 +713,24 @@ def _atomic(path: str, text: str):
 
 
 def write_outputs(res: dict, out: str):
+    if "report" in res.get("pruned_a", {}):     # --pruned-a only: refreshed on every write
+        res["pruned_a"]["savings"] = savings_table(res)
+    if "cue_ladder" in res:     # --cue-ladder only: refreshed on every write
+        from brain.eval import life_ladder
+        res["cue_summary"] = life_ladder.cue_summary(res)
     _atomic(out + ".json", json.dumps(res, indent=1))
     L = [f"# Multi-week life, seed {res['seed']} ({res['split']} split, {res['days']} days)",
          f"\n_cortex: {res.get('model')}; device: {res.get('device')}; host: {res['host']}; Brain kwargs: {res['brain_kw']};"
          f" full-probe nights {res['full_probe_nights']}; world clock from {time.strftime('%Y-%m-%d %H:%M', time.gmtime(T0))}_"]
-    for line in ("trunk", "nosleep"):
+    for line in ("trunk", "nosleep", AB_BRANCH_LINE):
         lived = [x for x in res["lived"] if x["line"] == line]
         if not lived:
             continue
-        L.append(f"\n## {'life (nightly sleep)' if line == 'trunk' else 'L-nosleep (same life, never sleeps)'}")
+        if line == AB_BRANCH_LINE:
+            bd = res["pruned_a"]["day"]
+            L.append(f"\n## L-prunedA (trunk copy at L{bd} 09:00 with all A episodes deleted; lives L{bd}-L{bd + 2})")
+        else:
+            L.append(f"\n## {'life (nightly sleep)' if line == 'trunk' else 'L-nosleep (same life, never sleeps)'}")
         for x in lived:
             L.append(f"\n### L{x['day']} (lived)\n")
             L += [_line(r) for r in x["rows"]]
@@ -558,18 +740,60 @@ def write_outputs(res: dict, out: str):
                          f"replay share {n.get('replay_share')}; adapter norm {n.get('adapter_norm')}_")
             for p in (p for p in res["probes"] if p["line"] == line and p["night"] == x["day"]):
                 s = p["summary"]
-                L.append(f"\n#### morning after night {p['night']}, arm: {p['arm']}\n")
+                L.append(f"\n#### morning after night {p['night']}, arm: {p['arm']}{' (' + p['tag'] + ')' if p.get('tag') else ''}\n")
                 L += [_line(r) for r in p["rows"]]
+                if p.get("tag") or line == AB_BRANCH_LINE:
+                    ab = [r for r in p["rows"] if r["kind"] == "ab"]
+                    na, nb = (sum(1 for r in ab if r["set"] == k) for k in "AB")
+                    ka, kb = (sum(1 for r in ab if r["set"] == k and r["ok"]) for k in "AB")
+                    L.append(f"\n_AB recall A {ka}/{na}, B {kb}/{nb}; span read {len(p.get('span') or [])} items; "
+                             f"store {p['store']}; adapter norm {p['adapter_norm']}; {p['seconds']} s_")
+                    continue
                 L.append(f"\n_H {s['H_right']}/{s['H_n']}; direct {s['direct_right']}/{s['direct_n']}; wrong fetch {s['wrong_fetch']}/{s['src_n']}; "
                          f"never-told false {s['never_false']}/{s['never_n']}; open intrusions {s['open_intrusions']}/{s['open_n']}; "
                          f"collapse {s['collapse']}; store {p['store']}; adapter norm {p['adapter_norm']}; {p['seconds']} s_")
+    if "report" in res.get("pruned_a", {}):
+        L += _savings_md(res)
+    if "cue_ladder" in res:     # --cue-ladder only: the cue block's own section
+        from brain.eval import life_ladder
+        L += life_ladder.cue_md(res)
+    if "interview" in res:      # --interview only: the interview block's own section
+        from brain.eval import life_interview
+        L += life_interview.interview_md(res)
     L.append("\n## TODO (not in Stage 0)\n\n" + "\n".join(f"- {t}" for t in res["todo"]))
     _atomic(out + ".md", "\n".join(L) + "\n")
 
 
+def _savings_md(res: dict) -> list:
+    pa = res["pruned_a"]
+    r = pa["report"]
+
+    def f(x):
+        return "-" if x is None else f"{x:+.3f}" if isinstance(x, float) else f"{x:+d}" if isinstance(x, int) else str(x)
+    L = [f"\n## Savings (L-prunedA)\n",
+         f"_A (told L<{pa['day']}, re-told L{pa['day']}) {pa['A']}; B (told L{pa['day']}) {pa['B']}; pruned {r['pruned']} episodes "
+         f"(store {r['store_before']} -> {r['store_after']}), per item {r['per_item']}; mismatch {r['mismatch']}; "
+         f"kept mentions {r['kept_mentions']}. Sensitivity rows leave out the same-day-asked {pa.get('sameday_items')}._\n",
+         "| night | G prunedA off | G excl | G both-off (null) | dR prunedA off | dR excl | G trunk off | G trunk excl | dR trunk | dR trunk excl |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    for n, row in sorted(pa.get("savings", {}).items(), key=lambda kv: int(kv[0])):
+        po, pb = row.get("prunedA", {}).get("hippocampus-off", {}), row.get("prunedA", {}).get("both-off", {})
+        t = row.get("trunk", {}).get("hippocampus-off", {})
+        L.append(f"| {n} | {f(po.get('G'))} | {f(po.get('G_excl'))} | {f(pb.get('G'))} | {f(po.get('dR'))} | {f(po.get('dR_excl'))} | "
+                 f"{f(t.get('G'))} | {f(t.get('G_excl'))} | {f(t.get('dR'))} | {f(t.get('dR_excl'))} |")
+    L.append("\n_G and dR are provisional until the blind reader (strict scorer only) and valid only if P0 (forgetting) "
+             "is VALID; no verdict here._")
+    return L
+
+
 def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nights=(), nosleep_arm: bool = False,
         resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
-        frozen_probe: bool = False, transfer: bool = False, span: bool = False) -> dict:
+        frozen_probe: bool = False, transfer: bool = False, span: bool = False, pruned_a: bool = False,
+        pruned_a_day: int = 11, cue_ladder: bool = False, interview: bool = False, interview_nights=None) -> dict:
+    """pruned_a (--pruned-a, needs span and days >= pruned_a_day + 2): at L<bd> 09:00 the trunk is copied to the
+    L-prunedA branch with every A episode deleted; the branch lives L<bd>..L<bd+2> after the other lines, and each
+    branch morning runs the AB recall battery + an AB span read on hippocampus-off (both-off once, the null). The
+    trunk adds a tagged hippocampus-off AB recall probe on nights bd..bd+2 (the unpruned read-out)."""
     homes, out = os.path.expanduser(homes), os.path.expanduser(out)
     brain_kw = {"sleep_seed": seed, **(brain_kw or {})}
     extras = frozen_probe or brain_kw.get("use_gate") is not None or brain_kw.get("sleep_downscale") is not None \
@@ -582,6 +806,25 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         with open(out + ".json") as fh:
             res = json.load(fh)
         log(f"resume: {state}")
+        saved = res.get("pruned_a")      # the --pruned-a config is the one the life was started with
+        if saved is not None:
+            if pruned_a and saved["day"] != pruned_a_day:
+                raise ValueError(f"resume: this life has --pruned-a-day {saved['day']}, not {pruned_a_day}")
+            pruned_a, pruned_a_day = True, saved["day"]
+        elif pruned_a:
+            raise ValueError("resume: this life was started without --pruned-a")
+        if res.get("cue_ladder") is not None:     # the --cue-ladder config is the one the life was started with
+            cue_ladder = True
+        elif cue_ladder:
+            raise ValueError("resume: this life was started without --cue-ladder")
+        if res.get("interview") is not None:      # the --interview config is the one the life was started with
+            if interview and interview_nights is not None and \
+                    sorted(int(n) for n in interview_nights) != res["interview"]["nights"]:
+                raise ValueError(f"resume: this life has --interview-nights {res['interview']['nights']}, "
+                                 f"not {sorted(interview_nights)}")
+            interview, interview_nights = True, res["interview"]["nights"]
+        elif interview:
+            raise ValueError("resume: this life was started without --interview")
     else:
         shutil.rmtree(homes, ignore_errors=True)
         os.makedirs(homes, exist_ok=True)
@@ -595,23 +838,70 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             res["transfer"] = True
         if span:
             res["span"] = True
+    if cue_ladder:      # the plan is re-derived and must equal the saved one (same bank, cue texts and horizon)
+        from brain.eval import life_ladder
+        cues = life_ladder.load_cues(split)
+        cfg = {"plan": life_ladder.ladder_plan(seed, days, sched, ledger, split, weekend),
+               "config": {"cues_sha256": life_ladder.cues_sha(), "split": split, "weekend": weekend,
+                          "arms": list(LIGHT_ARMS), "full_night_arms": list(life_ladder.FULL_EXTRA)}}
+        saved = res.get("cue_ladder")
+        if saved is not None and saved != cfg:
+            raise ValueError("resume: the --cue-ladder plan or config differs from the one this life was started with "
+                             "(another --days, bank or cue-text file)")
+        res["cue_ladder"] = cfg
+        res.setdefault("cue_probes", [])
+        res["todo"] = [t for t in res["todo"] if not t.startswith("gist slots")]
+    if interview:       # the config (nights, arms, n, spec hash) must equal the saved one on a resume
+        from brain.eval import life_interview
+        life_interview.load_spec()
+        icfg = life_interview.config(interview_nights if interview_nights is not None else
+                                     life_interview.SP.NIGHTS_DEFAULT)
+        if res.get("interview") is not None and res["interview"] != icfg:
+            raise ValueError("resume: the --interview config or spec differs from the one this life was started with")
+        res["interview"] = icfg
+        res.setdefault("interview_probes", [])
+    bd = pruned_a_day
+    if pruned_a:
+        if not (span and days >= bd + 2):
+            raise ValueError(f"--pruned-a needs --span and --days >= --pruned-a-day + 2 ({bd + 2})")
+        res.setdefault("pruned_a", {"day": bd})
+        a_ids, b_ids = ab_sets(ledger, bd)
+        ab_qs = ab_questions(ledger, bd)
     sim = SimClock()
     clock.set(sim.now)
     try:
-        for line in ("trunk",) + (("nosleep",) if nosleep_arm else ()):
-            sleeps = line == "trunk"
+        for line in ("trunk",) + (("nosleep",) if nosleep_arm else ()) + ((AB_BRANCH_LINE,) if pruned_a else ()):
+            sleeps = line in ("trunk", AB_BRANCH_LINE)
             kw = brain_kw if sleeps else {**brain_kw, "sleep_on_restart": False}
             trunk = os.path.join(homes, line)
             work = os.path.join(homes, f"probes_{line}")
             snap = os.path.join(homes, f"snap_{line}")
+            if line == AB_BRANCH_LINE and line not in state["arms"]:
+                raise RuntimeError("--pruned-a: the branch was never built (the trunk did not reach its day)")
             st = state["arms"].setdefault(line, {"done": 0, "phase": "idle"})
 
             def save_state():
                 _atomic(state_path, json.dumps(state, indent=1))
             for day in sched:
                 d = day["day"]
-                if d <= st["done"]:
+                if d <= st["done"] or (line == AB_BRANCH_LINE and d > bd + 2):
                     continue
+                if (line == "trunk" and pruned_a and d == bd and st["phase"] == "idle"
+                        and (AB_BRANCH_LINE not in state["arms"] or "report" not in res["pruned_a"])):
+                    # L-prunedA: built from the slept trunk at L<bd> 09:00; res is written before the state, so a cut
+                    # anywhere here leaves the trunk idle at bd-1 and the branch is rebuilt from scratch.
+                    log(f"[{AB_BRANCH_LINE}] building the branch at L{bd} 09:00")
+                    state["arms"].pop(AB_BRANCH_LINE, None)
+                    for k in ("lived", "nights", "probes"):
+                        res[k] = [x for x in res[k] if x["line"] != AB_BRANCH_LINE]
+                    for x in ("", ".build"):
+                        shutil.rmtree(os.path.join(homes, AB_BRANCH_LINE) + x, ignore_errors=True)
+                    rep = make_pruned_branch(trunk, os.path.join(homes, AB_BRANCH_LINE), ledger, a_ids, cortex, kw,
+                                             sim, seed, bd, weekend)
+                    res["pruned_a"].update(A=a_ids, B=b_ids, sameday_items=sameday_ab(sched, ledger, bd), report=rep)
+                    write_outputs(res, out)
+                    state["arms"][AB_BRANCH_LINE] = {"done": bd - 1, "phase": "idle", "pruned": True}
+                    save_state()
                 if st["phase"] == "idle":
                     shutil.rmtree(snap, ignore_errors=True)
                     if os.path.exists(trunk):
@@ -654,6 +944,17 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                 if frozen_probe and arms:
                     arms = arms + (FROZEN,)
                 res["probes"] = [p for p in res["probes"] if not (p["line"] == line and p["night"] == d)]
+                if line == AB_BRANCH_LINE:
+                    # The branch runs only the AB probes (no battery, frozen, transfer or full-night arms): the AB recall
+                    # battery + the AB span read on hippocampus-off every morning, both-off (the null) once at night bd.
+                    arms = ()
+                    for p in probe(trunk, cortex, d, ("hippocampus-off",) + (("both-off",) if d == bd else ()), ab_qs,
+                                   ledger, sim, seed, kw, work, weekend=weekend, extras=extras, span=True,
+                                   span_classes=("AB",)):
+                        p["line"] = line
+                        res["probes"].append(p)
+                    ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d)
+                    ninfo.update(store=ip["store"], adapter_norm=ip["adapter_norm"])
                 if arms:
                     qs = battery(seed, d, ledger)
                     for p in probe(trunk, cortex, d, arms, qs, ledger, sim, seed, kw, work, check_pending=sleeps, weekend=weekend,
@@ -662,6 +963,24 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                         res["probes"].append(p)
                     ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d and p["arm"] == "intact")
                     ninfo.update(store=ip["store"], adapter_norm=ip["adapter_norm"])
+                if cue_ladder and line == "trunk":    # its own disk copy per arm, after the battery copies are gone
+                    res["cue_probes"] = [p for p in res["cue_probes"] if p["night"] != d]
+                    cells = [c for c in res["cue_ladder"]["plan"]["cells"] if c["night"] == d]
+                    if cells:
+                        carms = LIGHT_ARMS + (life_ladder.FULL_EXTRA if d in full_nights else ())
+                        res["cue_probes"] += life_ladder.cue_probe(trunk, cortex, d, carms, cells, ledger, sim, seed, kw,
+                                                                   work, cues, weekend=weekend, bank=LB)
+                if interview and line == "trunk":     # its own disk copy per arm, after the battery copies are gone
+                    res["interview_probes"] = [p for p in res["interview_probes"] if p["night"] != d]
+                    if d in res["interview"]["nights"]:
+                        res["interview_probes"] += life_interview.interview_probe(
+                            trunk, cortex, d, tuple(res["interview"]["arms"]), ledger, sim, seed, kw, work,
+                            battery(seed, d, ledger), LB, sys.modules[__name__], weekend=weekend)
+                if line == "trunk" and pruned_a and bd <= d <= bd + 2:   # the unpruned AB recall (span: the normal probe)
+                    for p in probe(trunk, cortex, d, ("hippocampus-off",), ab_qs, ledger, sim, seed, kw, work,
+                                   weekend=weekend, extras=extras, tag=AB_TAG):
+                        p["line"] = line
+                        res["probes"].append(p)
                 st.update(done=d, phase="idle")
                 save_state()
                 write_outputs(res, out)
@@ -695,6 +1014,14 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--frozen-probe", action="store_true", help="add an intact-frozen arm (FREEZE_USE) to every morning battery")
     ap.add_argument("--span", action="store_true", help="span-NLL + log-odds vs 3 foils for every told item (design 5)")
     ap.add_argument("--transfer", action="store_true", help="T_life forced-choice read-out (design 3.5) on every probe copy")
+    ap.add_argument("--pruned-a", action="store_true", help="L-prunedA savings branch (design 4/5); needs --span")
+    ap.add_argument("--pruned-a-day", type=int, default=11, help="the day the branch is cut from the trunk (A' and B told)")
+    ap.add_argument("--cue-ladder", action="store_true",
+                    help="design 5 cue ladder (C0-C4) on E/F items at +1/+3/+7/+14 nights, own copy per arm per morning")
+    ap.add_argument("--interview", action="store_true",
+                    help="design 5 honest-self-report interview (intact, hippocampus-off, both-off), own copy per arm")
+    ap.add_argument("--interview-nights", default=None,
+                    help="mornings of the interview (with --interview; unset = 5,10,15, or the saved nights on --resume)")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
     kw = dict(brain_kw or {})
@@ -717,7 +1044,10 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     full = {int(x) for x in a.full_probe_nights.split(",") if x.strip()}
     res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe,
-              transfer=a.transfer, span=a.span)
+              transfer=a.transfer, span=a.span, **({"pruned_a": True, "pruned_a_day": a.pruned_a_day} if a.pruned_a else {}),
+              **({"cue_ladder": True} if a.cue_ladder else {}),
+              **({"interview": True, "interview_nights": None if a.interview_nights is None else
+                    [int(x) for x in a.interview_nights.split(",") if x.strip()]} if a.interview else {}))
     print(f"wrote {a.out}.json and {a.out}.md; nights {[n['seconds'] for n in res['nights'] if n['line'] == 'trunk']}")
     return res
 
