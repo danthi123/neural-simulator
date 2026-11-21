@@ -89,3 +89,43 @@ Engagement log: each night records the bank size, the subset hash, and the keep-
 - **KILLED.** 3 fails (recall or H drops, or a new defect class appears), or 1 fails twice after one fix of the bank (the sampled texts look like episodes). Then the next method is the CLS two-rate merge-and-reset.
 
 Timebox: 2 days from launch. The grid is B vs K-P on three seeds. No second bank size, temperature or keep weight is tried before this read.
+
+## 5. Amendment A1 (2026-11-21, after gate run 1, before any bank fix or K-P life)
+
+**Gate run 1 (recorded as run; files `_scratch/langdrift/gate/`, W CPU, seed 316, from `home_s316_n15`).**
+- Verdict on the §2 bars: **FAIL.** The held-out increment KL(snapshot || after) is 0.76x B's (bar: at most 0.5x).
+  Replayed-episode NLL is 0.506 for K-P against 0.770 for B. That misses "within 0.2", but on the writing side:
+  K-P writes more, not less.
+- Bank engagement (§3.1): **FAIL.** 450 of 512 texts are distinct (87.9%; bar 90%). Mean length is 27.6 tokens
+  (bar 40). 0 of 512 contain a told key of s316 (pass).
+- Cause of the bank failure (read from code, `brain/cortex.py` `speak`): `speak` stops at the first blank line or
+  "\nUser:". Each text is therefore one short User opener with no Assistant turn. It also runs at speak's defaults,
+  top_p 0.3 with presence and frequency penalties 0.4, which narrows it to a few stock openers ("Hi, I'm having
+  trouble with my computer"). This bank is not the §1 intent of a temperature-1 sample of the prior over 64 tokens.
+- Instrument note (recorded, not used to overturn run 1). The increment counts any change, including a move back
+  toward the pretrained cortex. On held-out chat after the night, KL to the pretrained cortex fell from 2.40 to 1.59
+  under K-P and rose to 2.80 under B. Held-out NLL fell from 4.18 to 3.43 under K-P and rose to 4.59 under B. From a
+  drifted home, the increment bar cannot tell damage from repair.
+
+**Fix of the bank (the one fix §4 allows).**
+- The bank is sampled by a plain continuation loop, not by `speak`.
+- Settings: `cortex.forward` plus `pipe.sample_logits` at temperature 1.0 and top_p 1.0, with no presence or
+  frequency penalty. The loop does not stop at a turn boundary. It stops only at 64 tokens or at end of text.
+- Each text therefore runs the full 64 tokens of the prior after "User:", crossing into Assistant and later turns.
+- The four host numbers are unchanged (512 / 64 / 1.0 / "User:"). The nightly subset of 64 is unchanged.
+- Sampled text is stored as decoded and stripped. Nothing is split at turn boundaries.
+
+**Gate run 2 (rules fixed now, before it runs).**
+- Same source home, seed and commands as run 1, with the fixed bank. B is not re-run: run 1's B is byte-for-byte
+  the same arm.
+- **Launch requires all of the following:**
+  1. The fixed bank passes every §3.1 engagement bar (90% distinct, mean at least 40 tokens, under 10% told keys).
+  2. The night still writes: K-P replayed-episode NLL is at most B's + 0.2. This is the "the night still writes"
+     intent of the §2 parenthetical, stated before the run. Under run 1's literal two-sided reading, a stronger
+     write would fail.
+  3. Either the original increment bar holds (at most 0.5x B), or held-out KL to the pretrained cortex after the
+     night is below both the snapshot value (2.40) and B's after-night value (2.80). The second branch is a
+     pre-declared override, because of the instrument note above.
+- Every launch through the override branch is labelled "gate-overridden" in the screen's record.
+- The screen's own §3 bars are the decision and are unchanged.
+- If condition 1 fails, that is the second bank failure (§4 KILLED; next method CLS merge-and-reset).
