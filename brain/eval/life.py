@@ -675,6 +675,21 @@ def savings_read(span_rows, rows, a_ids, b_ids, exclude=()) -> dict:
     return out
 
 
+def g_minus_null(off: dict, null: dict, exclude=()) -> float | None:
+    """Null-subtracted savings: mean over A of (log-odds off - log-odds both-off) minus the same over B, per item. The
+    pretrained cortex already rates the A and B items unequally (s318 DEV rehearsal: both-off G +3.4), so raw G mixes
+    item difficulty with savings; the per-item subtraction removes it. Items missing on either copy are left out."""
+    if not off or not null:
+        return None
+    lo, ln = off.get("logodds") or {}, null.get("logodds") or {}
+
+    def side(k):
+        a, b = lo.get(k) or {}, ln.get(k) or {}
+        return [a[i] - b[i] for i in a if i in b and i not in exclude]
+    da, db = side("A"), side("B")
+    return None if not da or not db else round(sum(da) / len(da) - sum(db) / len(db), 4)
+
+
 def savings_table(res: dict) -> dict:
     """{night: {"prunedA": {arm: savings_read}, "trunk": {"hippocampus-off": savings_read}}} for nights bd..bd+2. The
     both-off null is probed once (branch night bd) and reused for the later nights (it holds no memory). The trunk
@@ -699,6 +714,14 @@ def savings_table(res: dict) -> dict:
         if tsp is not None or trc is not None:
             span_rows = [r for r in (tsp or {}).get("span", []) or [] if r["cls"] == "AB"]
             row["trunk"] = {"hippocampus-off": savings_read(span_rows, (trc or {}).get("rows", []), a_ids, b_ids, ex)}
+        if null is not None:    # null-subtracted G (primary, design 13): the same both-off null for every line
+            nr = savings_read(null.get("span"), null["rows"], a_ids, b_ids, ex)
+            for part in ("prunedA", "trunk"):
+                o = row.get(part, {}).get("hippocampus-off")
+                if o is not None:
+                    o["G_null_sub"] = g_minus_null(o, nr)
+                    o["G_null_sub_excl"] = g_minus_null(o, nr, set(o.get("excluded") or ()))
+                    o["dR_null_sub"] = None if o.get("dR") is None or nr.get("dR") is None else o["dR"] - nr["dR"]
         if row:
             out[str(n)] = row
     return out
@@ -710,6 +733,13 @@ def _atomic(path: str, text: str):
     with open(path + ".tmp", "w") as fh:
         fh.write(text)
     os.replace(path + ".tmp", path)
+
+
+def _lg_md(n: dict) -> str:
+    g = n.get("lang_guard")      # --lang-guard only
+    if not g:
+        return ""
+    return f"; KL {g['kl']}; NLL on/off {g['nll_on']}/{g['nll_off']}"
 
 
 def write_outputs(res: dict, out: str):
@@ -737,7 +767,7 @@ def write_outputs(res: dict, out: str):
             n = next((n for n in res["nights"] if n["line"] == line and n["night"] == x["day"]), None)
             if n:
                 L.append(f"\n_night {n['night']}: {'slept' if n['slept'] else 'no sleep'}, {n['seconds']} s; store {n.get('store')}; "
-                         f"replay share {n.get('replay_share')}; adapter norm {n.get('adapter_norm')}_")
+                         f"replay share {n.get('replay_share')}; adapter norm {n.get('adapter_norm')}{_lg_md(n)}_")
             for p in (p for p in res["probes"] if p["line"] == line and p["night"] == x["day"]):
                 s = p["summary"]
                 L.append(f"\n#### morning after night {p['night']}, arm: {p['arm']}{' (' + p['tag'] + ')' if p.get('tag') else ''}\n")
@@ -774,12 +804,13 @@ def _savings_md(res: dict) -> list:
          f"_A (told L<{pa['day']}, re-told L{pa['day']}) {pa['A']}; B (told L{pa['day']}) {pa['B']}; pruned {r['pruned']} episodes "
          f"(store {r['store_before']} -> {r['store_after']}), per item {r['per_item']}; mismatch {r['mismatch']}; "
          f"kept mentions {r['kept_mentions']}. Sensitivity rows leave out the same-day-asked {pa.get('sameday_items')}._\n",
-         "| night | G prunedA off | G excl | G both-off (null) | dR prunedA off | dR excl | G trunk off | G trunk excl | dR trunk | dR trunk excl |",
-         "|---|---|---|---|---|---|---|---|---|---|"]
+         "| night | G-null prunedA (primary) | G-null excl | G prunedA off | G excl | G both-off (null) | dR prunedA off | dR excl | G-null trunk | G trunk off | G trunk excl | dR trunk | dR trunk excl |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for n, row in sorted(pa.get("savings", {}).items(), key=lambda kv: int(kv[0])):
         po, pb = row.get("prunedA", {}).get("hippocampus-off", {}), row.get("prunedA", {}).get("both-off", {})
         t = row.get("trunk", {}).get("hippocampus-off", {})
-        L.append(f"| {n} | {f(po.get('G'))} | {f(po.get('G_excl'))} | {f(pb.get('G'))} | {f(po.get('dR'))} | {f(po.get('dR_excl'))} | "
+        L.append(f"| {n} | {f(po.get('G_null_sub'))} | {f(po.get('G_null_sub_excl'))} | {f(po.get('G'))} | {f(po.get('G_excl'))} | "
+                 f"{f(pb.get('G'))} | {f(po.get('dR'))} | {f(po.get('dR_excl'))} | {f(t.get('G_null_sub'))} | "
                  f"{f(t.get('G'))} | {f(t.get('G_excl'))} | {f(t.get('dR'))} | {f(t.get('dR_excl'))} |")
     L.append("\n_G and dR are provisional until the blind reader (strict scorer only) and valid only if P0 (forgetting) "
              "is VALID; no verdict here._")
@@ -789,7 +820,8 @@ def _savings_md(res: dict) -> list:
 def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nights=(), nosleep_arm: bool = False,
         resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
         frozen_probe: bool = False, transfer: bool = False, span: bool = False, pruned_a: bool = False,
-        pruned_a_day: int = 11, cue_ladder: bool = False, interview: bool = False, interview_nights=None) -> dict:
+        pruned_a_day: int = 11, cue_ladder: bool = False, interview: bool = False, interview_nights=None,
+        lang_guard: bool = False) -> dict:
     """pruned_a (--pruned-a, needs span and days >= pruned_a_day + 2): at L<bd> 09:00 the trunk is copied to the
     L-prunedA branch with every A episode deleted; the branch lives L<bd>..L<bd+2> after the other lines, and each
     branch morning runs the AB recall battery + an AB span read on hippocampus-off (both-off once, the null). The
@@ -825,6 +857,10 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             interview, interview_nights = True, res["interview"]["nights"]
         elif interview:
             raise ValueError("resume: this life was started without --interview")
+        if res.get("lang_guard") is not None:     # the --lang-guard flag is the one the life was started with
+            lang_guard = True
+        elif lang_guard:
+            raise ValueError("resume: this life was started without --lang-guard")
     else:
         shutil.rmtree(homes, ignore_errors=True)
         os.makedirs(homes, exist_ok=True)
@@ -860,6 +896,12 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             raise ValueError("resume: the --interview config or spec differs from the one this life was started with")
         res["interview"] = icfg
         res.setdefault("interview_probes", [])
+    if lang_guard:      # the held-out set is frozen (hash-checked) and must be the one the life was started with
+        from brain.eval import life_heldout, life_langguard
+        lcfg = {"heldout_sha256": life_heldout.verify(), "n_texts": len(life_heldout.HELDOUT)}
+        if res.get("lang_guard") is not None and res["lang_guard"] != lcfg:
+            raise ValueError("resume: the --lang-guard held-out set differs from the one this life was started with")
+        res["lang_guard"] = lcfg
     bd = pruned_a_day
     if pruned_a:
         if not (span and days >= bd + 2):
@@ -976,6 +1018,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                         res["interview_probes"] += life_interview.interview_probe(
                             trunk, cortex, d, tuple(res["interview"]["arms"]), ledger, sim, seed, kw, work,
                             battery(seed, d, ledger), LB, sys.modules[__name__], weekend=weekend)
+                if lang_guard and line == "trunk" and "lang_guard" not in ninfo:   # every trunk night, once
+                    ninfo["lang_guard"] = life_langguard.night_read(trunk, cortex, d, sim, kw, work, weekend=weekend)
                 if line == "trunk" and pruned_a and bd <= d <= bd + 2:   # the unpruned AB recall (span: the normal probe)
                     for p in probe(trunk, cortex, d, ("hippocampus-off",), ab_qs, ledger, sim, seed, kw, work,
                                    weekend=weekend, extras=extras, tag=AB_TAG):
@@ -1022,6 +1066,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
                     help="design 5 honest-self-report interview (intact, hippocampus-off, both-off), own copy per arm")
     ap.add_argument("--interview-nights", default=None,
                     help="mornings of the interview (with --interview; unset = 5,10,15, or the saved nights on --resume)")
+    ap.add_argument("--lang-guard", action="store_true",
+                    help="design 5 language guard: KL and NLL of the adapters-on cortex vs pretrained on a frozen held-out set, every trunk night")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
     kw = dict(brain_kw or {})
@@ -1045,7 +1091,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     full = {int(x) for x in a.full_probe_nights.split(",") if x.strip()}
     res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe,
               transfer=a.transfer, span=a.span, **({"pruned_a": True, "pruned_a_day": a.pruned_a_day} if a.pruned_a else {}),
-              **({"cue_ladder": True} if a.cue_ladder else {}),
+              **({"cue_ladder": True} if a.cue_ladder else {}), **({"lang_guard": True} if a.lang_guard else {}),
               **({"interview": True, "interview_nights": None if a.interview_nights is None else
                     [int(x) for x in a.interview_nights.split(",") if x.strip()]} if a.interview else {}))
     print(f"wrote {a.out}.json and {a.out}.md; nights {[n['seconds'] for n in res['nights'] if n['line'] == 'trunk']}")

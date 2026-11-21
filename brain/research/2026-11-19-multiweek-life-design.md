@@ -291,11 +291,12 @@ If this fails, the instrument is fixed on DEV before Stage 1. For the owner: a d
 output byte-identical to 28a3c4c3b, tested). Hashes, checked at run time:
 - TEST bank `brain/eval/life_bank_test.py` 83bce1785646cdbc959e3d984ed41fcbedd8cc74a195372f102e9e649e68ea9e;
 - blind cues `brain/eval/life_cues.py` 2055dc92678c7481cac99d067a24f079126b80feb5d7a799e467cf3a23b3247e;
-- interview spec `brain/eval/life_interview_spec.py` 4b70347f5d56d9f89a0de38e2467a5395d1c30044a3a789fa1d54f27cc2e5a72.
+- interview spec `brain/eval/life_interview_spec.py` 4b70347f5d56d9f89a0de38e2467a5395d1c30044a3a789fa1d54f27cc2e5a72;
+- language-guard held-out set `brain/eval/life_heldout.py` adc7d90240c0fca3b3ccb8925484891500ab22d8f79b7d2c98becdc4789077d7 (added 11-21 with `--lang-guard`; no 4-gram shared with either bank, ORDINARY or GENERIC, tested).
 
 **Command, per registered seed (42/43/44/100/101/102), defaults (B), no other switch:**
 `python -m brain.eval.life --model 1.5b --seed S --days 15 --weekend --split test --full-probe-nights 1,5,10,15
---frozen-probe --span --transfer --pruned-a --cue-ladder --interview` (`--pruned-a-day 11`, interviews 5,10,15 are the
+--frozen-probe --span --transfer --pruned-a --cue-ladder --interview --lang-guard` (`--pruned-a-day 11`, interviews 5,10,15 are the
 defaults). Read-outs: `life_table.py`, the savings, cue and interview sections of each result, and
 `life_interview_read.py` for the interview bars.
 
@@ -310,9 +311,29 @@ defaults). Read-outs: `life_table.py`, the savings, cue and interview sections o
   hippocampus off (the §5 definition, made exact); the drop over all items is reported.
 - Savings: G and dR are also reported without the A item asked on the same day (sensitivity row); the both-off null is
   probed once on branch night 1.
+- Savings, primary read-out NULL-SUBTRACTED (decided 11-21 on the s318 DEV rehearsal, before any TEST read): the
+  pretrained both-off cortex already rates the A items above the B items (raw both-off G +3.4 on s318, prunedA G +5.7),
+  so raw G mixes item difficulty with savings and the §5 "both-off G about 0" bar cannot hold by construction. The
+  registered G is `G_null_sub` = mean over A of (log-odds hippocampus-off - log-odds both-off) minus the same over B,
+  per item; dR likewise as `dR_null_sub` = dR - both-off dR. The G > 0 (5/6 + pooled p < 0.05) and dR >= +1.5 of 8 bars
+  apply to these. Raw G and the both-off G are reported beside them. s318 DEV (one seed, strict scorer, P0 unread):
+  G_null_sub +2.28 / +2.39 / +1.92 on branch nights 1-3; not evidence, an instrument check.
+- Per-seed kill (§10), the adapter-norm clause DROPPED (decided 11-21 on the s318 DEV rehearsal): under the defaults
+  the adapter norm grows every night (59 on night 1 to 672 on night 15, above 3x night 1 from night 4), as the
+  M-scale reads already showed (B 211-376 at nights 4-7), while recall and transcripts held. Read literally, the clause
+  would end every life near night 4 and turn Stage 1 into no measurement. The norm is reported per night; the kill is
+  collapse on 2 consecutive probe nights only. The KL clause is also dropped as a kill: it has no 1.5B measurement
+  yet, and the 0.1B smoke already reached 1.81x night 1 by night 2, so it risks the same trap. KL stays a registered
+  bar (night-15 KL at most 2x night 1, reported every night) and never ends a life. The norm-growth defect itself
+  stays open (the next norm method is selective, after the milestone).
+- Language guard (§5): it was not in the harness; built as `--lang-guard` (a frozen, hashed held-out ordinary-text
+  set, `brain/eval/life_heldout.py`), measured on every trunk night, and added to the registered command.
 - Transfer (§3.5): the sysadmin definition is mine (priorities are delegated); the owner may override before the
   launch, and no change is made after it.
 
-**Gate before the launch.** A DEV dress rehearsal with every flag at 1.5B (s318, AWS g5, launched 11-20) must finish
+**Gate before the launch.** PASSED 11-21: the s318 DEV rehearsal (every flag, AWS g5) ran 15 nights plus the 3 branch
+nights with rc 0 in 4.0 h (about 650 s per night; savings, cue and interview sections all written); its three instrument
+defects (savings null, missing language guard, unusable norm kill) are fixed above. `--lang-guard` itself was not in the
+rehearsal: it is covered by tests and a 0.1B smoke only, and a crash there is recoverable with `--resume`. Original gate: a DEV dress rehearsal with every flag at 1.5B (s318, AWS g5, launched 11-20) must finish
 15 nights plus the branch without an error, and its night time sets where the six seeds run. A harness defect found
 there is fixed and re-tested on DEV, never on TEST. Launch by 12-01 (§10).

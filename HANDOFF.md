@@ -79,5 +79,6 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** s318 batch 20261120-0412 pulled + terminated. s102 g6 instance i-008ed35fe857dce55 STOPPED (no capacity to restart; state file set aside as
+- **OPEN:** W GPU fell off the bus 11-20 eve (owner reboots Mon 11-23): CPU, pools and AWS only until then; AWS is
+  shared with the MTALLM session (owner pre-approved its AWS GPU use), keep cap headroom. s318 batch 20261120-0412 pulled + terminated. s102 g6 instance i-008ed35fe857dce55 STOPPED (no capacity to restart; state file set aside as
   `research/queue/.aws_brain.s102-stopped-20261117` in the worktree), retry its pull later, then terminate; RAG refresh fails its quality check (index stale).
