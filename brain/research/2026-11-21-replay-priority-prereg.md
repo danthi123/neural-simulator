@@ -51,6 +51,10 @@ At the start of each night, before replay, compute L_e for each stored episode e
 permanent ones included). L_e is the mean per-token NLL of the episode's replay text (`f"{e.text}\n\n"`) under the
 current adapters, with no gradient and no state change.
 
+(Implementation note, 11-21, before any D2-PR life: the loss pass runs inside `Brain.sleep` just before replay, after
+the M-scale "before" cut if that switch is on, so L_e is read on the adapters replay starts from; M-scale is off in
+this screen, so this is the start of the night.)
+
 Arms, both behind `Brain(replay_priority=...)` (default None = today's weighting, byte-identical):
 - **PR-x** (`"strength_x_loss"`): w_e = effective_strength(e) x L_e.
 - **PR-l** (`"loss"`): w_e = L_e (pure prioritised replay with alpha = 1; strength no longer weights replay, but it
@@ -84,7 +88,9 @@ Offline prediction on the s316 night-15 home (engagement, not evidence):
 2. **Primary, the stock self-reply leak.** The share of probe and interview replies, intact and hippocampus-off,
    whose text contains a permanent episode's Assistant reply ("you're Dan", "My name is Nova", "I'm Nova") on a
    question that is not about names or identity. It is reported on nights 10 and 15. Bar: below B on 3/3 seeds, and
-   pooled at least 30% lower. Post-hoc read from the results JSON; the extractor is written before any D2-PR result.
+   pooled at least 30% lower. Post-hoc read from the results JSON by `brain/eval/life_leak.py` (written before any D2-PR result). Identity
+   questions are the ledger items without a telling (the user's and the brain's names). DEV baseline, s318 (B):
+   39/152 = 0.26 on nights 10 and 15, almost all on the interview's KNOW replies.
 3. **Guards (any fail = KILL).**
    - H hippocampus-off on nights 5-15 is not lower than B by more than 0.5/6 pooled per seed.
    - Direct hippocampus-off recall on day-1-2 facts is not lower by more than 1/6.

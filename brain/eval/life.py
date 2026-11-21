@@ -440,6 +440,31 @@ def replay_share(b: Brain, ledger: dict, now: float) -> dict:
     return {c: round(steps * v / tot, 2) for c, v in sorted(w.items())}
 
 
+def replay_priority_record(b: Brain, ledger: dict) -> dict | None:
+    """D2-PR night read-out from the weights the night actually used (Brain.last_replay_weights); None when the switch
+    is off or nothing was replayed, so a flags-off night record is unchanged."""
+    rows = getattr(b, "last_replay_weights", None)
+    if not rows:
+        return None
+    cls_of = {e["telling"]: e["cls"] for e in ledger.values() if e["telling"]}
+    by = {}
+    for r in rows:
+        c = "permanent" if r["permanent"] else cls_of.get(r["text"].removeprefix("User: ").strip(), "other")
+        by[c] = by.get(c, 0.0) + r["share"]
+    sh = sorted((r["share"] for r in rows), reverse=True)
+    # the same night under today's weighting (effective strength alone): a within-night reference for the engagement
+    # read-out (prereg 3.1 compares against arm B, whose JSON keeps no per-episode weights)
+    st = [max(r["strength"], 1e-3) for r in rows]
+    tot = sum(st) or 1.0
+    ssh = sorted((x / tot for x in st), reverse=True)
+    return {"shares_by_class": {c: round(v, 4) for c, v in sorted(by.items())},
+            "permanent_share": round(sum(r["share"] for r in rows if r["permanent"]), 4),
+            "top6_share": round(sum(sh[:6]), 4), "max_share": round(sh[0], 4),
+            "strength_permanent_share": round(sum(x / tot for x, r in zip(st, rows) if r["permanent"]), 4),
+            "strength_top6_share": round(sum(ssh[:6]), 4), "strength_max_share": round(ssh[0], 4),
+            "mean_loss": round(sum(r["loss"] for r in rows) / len(rows), 4), "n": len(rows)}
+
+
 def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: int, brain_kw: dict, sleeps: bool,
              on_lived=None, weekend: bool = False, extras: bool = False) -> tuple[list, dict]:
     """Live one day on the trunk home from 09:00, then save and (if sleeps) close = the night. Returns (rows, night_info)."""
@@ -472,12 +497,15 @@ def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: in
     info["seconds"] = round(time.time() - t1, 1) if sleeps else 0.0
     info["slept"] = sleeps
     info["sleep_log"] = log[:1] + log[-1:]
+    rp = replay_priority_record(b, ledger) if brain_kw.get("replay_priority") is not None else None
+    if rp is not None:
+        info["replay_priority"] = rp
     if extras:   # M-use / M-scale read-outs, present only when one of the new flags is on
         info.update({k: b.meta[k] for k in ("adapter_budget", "norm_pre_night", "downscale_g") if k in b.meta})
     return rows, info
 
 
-def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False) -> dict:
+def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False, ledger=None) -> dict:
     """Resume of a day cut between save and the night: Brain.__init__ re-sleeps what is pending (same sleep seed)."""
     sim.to(day_start(day_no, weekend) + STEP_HOURS * 3600)
     t1 = time.time()
@@ -486,8 +514,12 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False) ->
     n = len(b.pending())
     b.save()
     b.release()
-    return {"night": day_no, "seconds": round(time.time() - t1, 1), "resumed_night": True, "pending_after_open": n,
-            "slept": True, "sleep_log": log[:1] + log[-1:]}
+    out = {"night": day_no, "seconds": round(time.time() - t1, 1), "resumed_night": True, "pending_after_open": n,
+           "slept": True, "sleep_log": log[:1] + log[-1:]}
+    rp = replay_priority_record(b, ledger) if brain_kw.get("replay_priority") is not None and ledger is not None else None
+    if rp is not None:
+        out["replay_priority"] = rp
+    return out
 
 
 def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimClock, seed: int, brain_kw: dict,
@@ -857,6 +889,11 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             interview, interview_nights = True, res["interview"]["nights"]
         elif interview:
             raise ValueError("resume: this life was started without --interview")
+        saved_rp = (res.get("brain_kw") or {}).get("replay_priority")    # the --replay-priority is the one the life was started with
+        if brain_kw.get("replay_priority") not in (None, saved_rp):
+            raise ValueError(f"resume: this life has replay_priority {saved_rp!r}, not {brain_kw['replay_priority']!r}")
+        if saved_rp is not None:
+            brain_kw["replay_priority"] = saved_rp
         if res.get("lang_guard") is not None:     # the --lang-guard flag is the one the life was started with
             lang_guard = True
         elif lang_guard:
@@ -971,7 +1008,7 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                                         **({"extras": True} if extras else {}))
                 elif st["phase"] == "lived":
                     log(f"[{line}] L{d} resuming the night")
-                    ninfo = night_after_cut(trunk, cortex, d, sim, seed, kw, weekend) if sleeps else {"night": d, "seconds": 0.0, "slept": False}
+                    ninfo = night_after_cut(trunk, cortex, d, sim, seed, kw, weekend, ledger) if sleeps else {"night": d, "seconds": 0.0, "slept": False}
                 else:   # "slept": the night is done, redo the probes
                     ninfo = None
                 if ninfo is not None:
@@ -1052,6 +1089,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--key-bar", default=None)
     ap.add_argument("--use-gate", action="store_true", help="M-use: Brain(use_gate='raw_win')")
     ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
+    ap.add_argument("--replay-priority", default=None, choices=("strength_x_loss", "loss"),
+                    help="D2-PR: Brain(replay_priority=...), loss-prioritised replay (brain/research/2026-11-21-replay-priority-prereg.md)")
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
     ap.add_argument("--downscale-factors", default=None, choices=("B", "AB"), help="M-scale-3 variant: AB = sqrt(g) on A and B")
     ap.add_argument("--downscale-when", default=None, choices=("before", "end"), help="M-scale-E: end = the cut after replay")
@@ -1079,6 +1118,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["use_gate"] = "raw_win"
     if a.sleep_downscale is not None:
         kw["sleep_downscale"] = a.sleep_downscale
+    if a.replay_priority:
+        kw["replay_priority"] = a.replay_priority
     if a.rank:
         kw["rank"] = a.rank
     if a.downscale_factors:
