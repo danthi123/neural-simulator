@@ -20,10 +20,10 @@ import os
 
 
 def _by(res: dict, line: str) -> dict:
-    """{night: {arm: summary}} for one life line."""
+    """{night: {arm: summary}} for one life line. Tagged extra probes (--pruned-a's trunk AB recall) are not arms."""
     out: dict = {}
     for p in res["probes"]:
-        if p["line"] == line:
+        if p["line"] == line and not p.get("tag"):
             out.setdefault(p["night"], {})[p["arm"]] = p
     return out
 
@@ -146,6 +146,9 @@ def render(results: list) -> str:
                      f"| {sum(r['intr_int'] for r in g)}/{sum(r['open_n'] for r in g)} | {sum(r['intr_off'] for r in g)} "
                      f"| {sum(ex) if ex else '-'} ({len(ex)} seeds) | {max(max(r['col_int'], r['col_off']) for r in g)} "
                      f"| {round(sum(secs) / len(secs), 1) if secs else '-'} |")
+    if any("cue_ladder" in res for res in results):     # --cue-ladder lives only
+        from brain.eval import life_ladder
+        L += life_ladder.pooled_md(results)
     return "\n".join(L) + "\n"
 
 

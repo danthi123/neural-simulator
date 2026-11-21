@@ -173,7 +173,8 @@ def test_every_new_flag_explicitly_off_equals_flags_absent(tmp_path):
     """Prereg 2026-11-19 section 4 test 13 on the stub cortex (the 0.1B version is run by hand)."""
     a = _run(tmp_path, "absent", 2)
     b = life.run(StubCortex(), 7, 2, "dev", str(tmp_path / "off" / "h"), str(tmp_path / "off" / "o" / "life_s7"), {1},
-                 brain_kw={**BKW, "use_gate": None, "sleep_downscale": None}, log=lambda *_: None, frozen_probe=False)
+                 brain_kw={**BKW, "use_gate": None, "sleep_downscale": None}, log=lambda *_: None, frozen_probe=False,
+                 pruned_a=False, cue_ladder=False, interview=False)
     assert json.dumps(_scrub(a), sort_keys=True) == json.dumps(_scrub(b), sort_keys=True)
     assert "frozen_probe" not in a and all("fetch" not in r for p in a["probes"] for r in p["rows"])
     assert all("max_strength_open" not in p for p in a["probes"])
