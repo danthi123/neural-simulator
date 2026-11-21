@@ -328,6 +328,10 @@ defaults). Read-outs: `life_table.py`, the savings, cue and interview sections o
   stays open (the next norm method is selective, after the milestone).
 - Language guard (§5): it was not in the harness; built as `--lang-guard` (a frozen, hashed held-out ordinary-text
   set, `brain/eval/life_heldout.py`), measured on every trunk night, and added to the registered command.
+- §7 reader: `brain/eval/life_read.py` + spec `life_read_spec.py` (sha256 6cf3690a68e13f05fadcf42df76141b5e2f1d598985ec6065f8a71cdf30ae05a),
+  validated on DEV 11-21 before any TEST read (`results/2026-11-21-blind-reader-validation-dev-1.5b.md`): canaries 6/6
+  per reader, decoys flagged, pairs judged in BOTH A/B orders (a winner only when both agree; position bias found and
+  fixed on DEV), `--lived-context all`; off-topic and repetition per-type counts are report-only (kappa near 0).
 - Transfer (§3.5): the sysadmin definition is mine (priorities are delegated); the owner may override before the
   launch, and no change is made after it.
 
