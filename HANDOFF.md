@@ -10,13 +10,16 @@
 - **STATE (11-15):** lesion item MET; `self_completion` ON by default (seeds 300-305 GO); after the night "What's your
   name?" still recalls the wrong telling (S0 loses 6/6; S_all clears its bar 2/6); self-key and teacher-night NOT A
   LEAD; gain 0.5 on for 1.5B; key default KEEP S0. Details: `brain/experiments/results/2026-11-1[45]-*.md`.
-- **LIVE RUNS (11-20 ~16:40 EST):** Stage-1 15-night run check on DEV, defaults (`--days 15 --weekend
-  --full-probe-nights 1,5,10,15 --frozen-probe --span --transfer`): pool40 s315, pool41 s316, pool42 s317
-  (`~/brain-lane/life_arm_s1dev.sh <seed>` -> `outLIFE/lifeS1D_s<S>.*`, about 9-10 h). Checks night time, the 15-night
-  harness and the instrument before the registered Stage 1 (six seeds, TEST). Three TEST 7-night B lives (s42-44)
-  started by mistake were stopped within 10 min, before any probe read (homes moved to `*.stopped`); TEST not read.
-  **Stage-1 DRESS REHEARSAL (11-20 eve):** s318 DEV, every flag (`--pruned-a --cue-ladder --interview` + the above),
-  AWS g5 (`_scratch/stage1/jobs_s318_full.txt`, MAX_MIN 720); pull with `tools/aws_brain_batch.sh sync|pull`.
+- **LIVE RUNS (11-21 ~02:00 EST):** **Stage 1 REGISTERED, launched 11-21** (design §13 command, TEST split, defaults,
+  every flag incl. `--lang-guard`; code 6d5726850): AWS g5 x3, 2 seeds each, about 8.5 h: reg1 s42+s43, reg2 s44+s100,
+  reg3 s101+s102 (state `research/queue/.aws_brain.reg<i>`, jobs `_scratch/stage1/jobs_reg_<i>.txt`, grace 15 min;
+  pull loop `_scratch/stage1/pull_reg.sh` copies + terminates). DO NOT read TEST results until the §7 reader is
+  validated on DEV. DEV all-flags lives on pools (CPU, about 9-10 h): pool41 s319, pool42 s320, pool40 s321 after
+  s315 (`~/brain-lane/life_arm_s1full.sh` -> `outLIFE/lifeS1F_s<S>.*`); first 1.5B runs of `--lang-guard`. DEV
+  15-night run checks s315-317 (defaults, no new flags) done or finishing (`outLIFE/lifeS1D_s<S>.*`).
+  **REHEARSAL READ (11-21, s318 DEV, every flag, rc 0 in 4.0 h):** 3 instrument fixes before the TEST launch: savings
+  null-subtracted (both-off G +3.4 = item difficulty), language guard built, norm/KL kill clauses dropped (norm 11x by
+  night 15 under defaults) (`results/2026-11-21-stage1-rehearsal-s318-dev-1.5b.md`).
   **M-SCALE-E READ (11-20, s315-318): KILLED, the M-scale family ends.** Recall guards pass (H int 53 vs 42/96, H off
   55 vs 37, day-1-2 off 64 vs 40/113, intrusions 10 vs 37, ‖A‖ 0.73-0.78x), but transcript FAILS 4/4 (4 refuters):
   identity loss ("My name is Dan.", "Qwen", "Bramble"), a ✿ marker leak (s316), told names overwritten ("Luna"),
@@ -66,9 +69,9 @@
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
   Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). M-scale-E KILLED
-  (transcript 4/4). NOW: Stage 1 with the defaults. Stage-1 pieces BUILT (b83a6c036: `--pruned-a`, `--cue-ladder`,
-  `--interview`, 223 tests) and REGISTERED (design §13: hashes, command, DEV-decided changes). Gate: the s318 all-flags
-  dress rehearsal finishes; then launch six seeds on TEST by 12-01. TEST split WRITTEN + hashed (222 items, blind sonnet,
+  (transcript 4/4). NOW: Stage 1 RUNNING (six seeds, TEST, launched 11-21, ahead of the 12-01 date). NEXT: build + validate the §7
+  blind reader (canaries, decoys, duplicate pairs, 2 readers + kappa, per-answer verdict) on DEV transcripts
+  (s315-321), then read Stage 1; then Stage-2 methods (by 12-08). TEST split WRITTEN + hashed (222 items, blind sonnet,
   `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Transfer
   read-out built (`--transfer`, dT = T - pretrained T0 per life: raw T has a domain-fluency offset, 0.58 at 0.1B; the
   design bar "both-off T about 0" must read dT; dab53c019). Span read built (`--span`: span-NLL + log-odds vs 3 foils

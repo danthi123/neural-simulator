@@ -182,5 +182,28 @@ def main(argv=None):
     return text
 
 
+def replay_class_shares(res: dict, line: str = "trunk") -> dict:
+    """Post-hoc, from the banked night records of ANY life (arm B included; nothing is written into the JSON): the
+    night's replay share by class, normalised from `replay_share` (expected steps per class under the effective-strength
+    weights). What the JSON cannot give: the permanent episodes and the top-6 / max share, because replay_share lumps
+    the permanent self exchanges (their text is not a ledger telling) into class "other" and keeps no per-episode
+    weights. Those come from a trunk home (_scratch/stage2/replay_shares_home.py). For a life run with
+    --replay-priority the night record carries the exact values in n["replay_priority"], returned alongside.
+    {night: {"shares": {cls: share}, "permanent_share": None | float, "top6_share": None | float, ...}}"""
+    out = {}
+    for n in res["nights"]:
+        if n.get("line") != line or not n.get("replay_share"):
+            continue
+        tot = sum(n["replay_share"].values()) or 1.0
+        row = {"shares": {c: round(v / tot, 4) for c, v in n["replay_share"].items()},
+               "permanent_share": None, "top6_share": None, "max_share": None}
+        rp = n.get("replay_priority")
+        if rp:
+            row.update({k: rp[k] for k in ("permanent_share", "top6_share", "max_share")})
+        out[n["night"]] = row
+    return out
+
+
 if __name__ == "__main__":
     main()
+

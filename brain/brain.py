@@ -192,7 +192,8 @@ class Brain:
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
                  sleep_downscale: float | None = None, rank: str | None = None,
-                 downscale_factors: str = "B", downscale_when: str = "before"):
+                 downscale_factors: str = "B", downscale_when: str = "before",
+                 replay_priority: str | None = None):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -226,6 +227,11 @@ class Brain:
         downscale_when: "before" (the pre-registered cut, at the start of the night, before replay) or "end" (M-scale-E:
         the same cut after replay, so the waking cortex runs at the budget; SHY renormalization by morning). Only
         read when sleep_downscale is set. Not saved: pass it each time.
+        replay_priority: (switch, default OFF = None: Brain.sleep byte-identical) D2-PR, loss-prioritised replay
+        (brain/research/2026-11-21-replay-priority-prereg.md): at the start of a night, before replay, each replayed
+        episode gets L_e = the cortex's mean per-token NLL of its replay text under the current adapters (no gradient,
+        no RNG). "strength_x_loss" = replay weight effective_strength * L_e; "loss" = L_e. The night's weights are in
+        last_replay_weights. A non-default choice is saved in meta.json (like use_gate).
         rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
         similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
         Not saved: pass it each time.
@@ -302,6 +308,10 @@ class Brain:
         if rank not in (None, "raw"):
             raise ValueError(f"rank must be None or 'raw', not {rank!r}")
         self.rank = rank
+        if replay_priority not in (None, "strength_x_loss", "loss"):
+            raise ValueError(f"replay_priority must be None, 'strength_x_loss' or 'loss', not {replay_priority!r}")
+        self._replay_priority = self._replay_priority_arg = replay_priority
+        self.last_replay_weights = None   # the last night's per-episode weights (only with replay_priority on)
         self.sleep_downscale = None if sleep_downscale is None else float(sleep_downscale)
         if downscale_factors not in ("B", "AB"):
             raise ValueError(f"downscale_factors must be 'B' or 'AB', not {downscale_factors!r}")
@@ -779,7 +789,11 @@ class Brain:
             self._night_budget(plastic)
         now = clock.now()
         # replay what the hippocampus encoded (speaker line as read at storage time)
-        eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self._night_episodes()]
+        night_eps = self._night_episodes()
+        if self._replay_priority is None:
+            eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in night_eps]
+        else:
+            eps = self._prioritised_replay(plastic, night_eps, now)
         eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
         base =[s.float() for s in self.base]
         guard = self._near_miss_guard() if self.near_miss else []
@@ -804,6 +818,34 @@ class Brain:
         self._adapters_dirty = True
         self.cortex.refresh()
         return losses
+
+    def _prioritised_replay(self, plastic, night_eps, now) -> list:
+        """D2-PR: [(replay text, weight)] with weight = effective_strength * L_e or L_e, L_e the mean per-token NLL of the
+        replay text under the current adapters (no gradient, base state, no RNG draw: the torch RNG is forked and the
+        replay order seed is untouched). Records self.last_replay_weights."""
+        base = [s.float() for s in self.base]
+        was = plastic.enabled
+        rows = []
+        try:
+            plastic.enabled = True
+            with torch.random.fork_rng(devices=[]), torch.no_grad():
+                for e in night_eps:
+                    text = f"{e.text}\n\n"
+                    ids = self.cortex.pipe.encode(text)
+                    tgt = torch.tensor(ids[1:])
+                    lp = torch.log_softmax(plastic(ids, base)[0].float(), -1)
+                    tgt = tgt.to(lp.device)
+                    loss = float(torch.nn.functional.nll_loss(lp[:-1], tgt))
+                    st = float(self.hippocampus.effective_strength(e, now))
+                    w = loss if self._replay_priority == "loss" else st * loss
+                    rows.append({"text": e.text, "permanent": bool(e.permanent), "strength": st, "loss": loss, "weight": w})
+        finally:
+            plastic.enabled = was
+        tot = sum(max(r["weight"], 1e-3) for r in rows) or 1.0
+        for r in rows:
+            r["share"] = max(r["weight"], 1e-3) / tot
+        self.last_replay_weights = rows
+        return [(f"{e.text}\n\n", r["weight"]) for e, r in zip(night_eps, rows)]
 
     def _night_budget(self, plastic):
         """M-scale at the start of a night: n = adapter norm; with a budget b and n > b, B *= b / n. Records
@@ -974,6 +1016,10 @@ class Brain:
             meta["use_gate"] = self._use_gate
         else:
             meta.pop("use_gate", None)
+        if self._replay_priority is not None:
+            meta["replay_priority"] = self._replay_priority
+        else:
+            meta.pop("replay_priority", None)
         self._write_json("meta.json", meta)
         p = self.cortex.plastic
         if p is not None and (self._adapters_dirty or not os.path.exists(os.path.join(self.home, ADAPTERS))):
@@ -1043,6 +1089,11 @@ class Brain:
         if ug not in (None, "raw_win"):
             raise ValueError(f"use_gate in {self.home}/meta.json must be 'raw_win', not {ug!r}")
         self._use_gate = ug
+        rp = self._replay_priority_arg or meta.pop("replay_priority", None)
+        meta.pop("replay_priority", None)
+        if rp not in (None, "strength_x_loss", "loss"):
+            raise ValueError(f"replay_priority in {self.home}/meta.json must be 'strength_x_loss' or 'loss', not {rp!r}")
+        self._replay_priority = rp
         if key != self.key:
             enabled = self.hippocampus.enabled
             self.hippocampus = self._make_hippocampus(key)
