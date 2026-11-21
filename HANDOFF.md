@@ -17,6 +17,16 @@
   validated on DEV. DEV all-flags lives on pools (CPU, about 9-10 h): pool41 s319, pool42 s320, pool40 s321 after
   s315 (`~/brain-lane/life_arm_s1full.sh` -> `outLIFE/lifeS1F_s<S>.*`); first 1.5B runs of `--lang-guard`. DEV
   15-night run checks s315-317 (defaults, no new flags) done or finishing (`outLIFE/lifeS1D_s<S>.*`).
+  **STAGE-2 D2-PR SCREEN (prereg `brain/research/2026-11-21-replay-priority-prereg.md`, code 58f323b51), DEV
+  s319-321 vs the all-flags B lives above:** PR-l (`--replay-priority loss`) starts on each pool when its B life ends
+  (watchers `_scratch/stage2/pool_pr_watch.sh` -> `outLIFE/lifePRl_s<S>.*`); PR-x (`strength_x_loss`) on AWS g5 x3 after
+  00:00 UTC 11-22 (budget reset; `_scratch/stage2/launch_prx.sh`, state `.aws_brain.prx<S>`). Both ship the worktree's
+  brain/ at launch: keep brain/ committed until they start. Leak read `python -m brain.eval.life_leak <json>`; B
+  engagement shares from homes `_scratch/stage2/replay_shares_home.py`. **§7 READER VALIDATED on DEV** (canaries 6/6,
+  decoys, both-order pairs 9/9; DEV readers prefer the null brain to intact in week 3, 3/3;
+  `results/2026-11-21-blind-reader-validation-dev-1.5b.md`). **HUB RESEARCH ROUND** done
+  (`brain/research/2026-11-21-hub-research-round.md`): the stock "you're Dan" reply is slept-cortex (hippocampus-off
+  10/10 from night 10); 6/98 episodes take 39% of replay.
   **REHEARSAL READ (11-21, s318 DEV, every flag, rc 0 in 4.0 h):** 3 instrument fixes before the TEST launch: savings
   null-subtracted (both-off G +3.4 = item difficulty), language guard built, norm/KL kill clauses dropped (norm 11x by
   night 15 under defaults) (`results/2026-11-21-stage1-rehearsal-s318-dev-1.5b.md`).
@@ -69,9 +79,9 @@
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
   Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). M-scale-E KILLED
-  (transcript 4/4). NOW: Stage 1 RUNNING (six seeds, TEST, launched 11-21, ahead of the 12-01 date). NEXT: build + validate the §7
-  blind reader (canaries, decoys, duplicate pairs, 2 readers + kappa, per-answer verdict) on DEV transcripts
-  (s315-321), then read Stage 1; then Stage-2 methods (by 12-08). TEST split WRITTEN + hashed (222 items, blind sonnet,
+  (transcript 4/4). NOW: Stage 1 RUNNING (six seeds, TEST, launched 11-21, ahead of the 12-01 date). §7 reader validated on DEV. NEXT: read Stage 1
+  when the 6 TEST lives are pulled (life_table, savings, cue, interview read, life_read §7, leak); D2-PR screen read
+  (timebox 11-23); hippocampal next step = R-raw D + fire-gate screen (research round). TEST split WRITTEN + hashed (222 items, blind sonnet,
   `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Transfer
   read-out built (`--transfer`, dT = T - pretrained T0 per life: raw T has a domain-fluency offset, 0.58 at 0.1B; the
   design bar "both-off T about 0" must read dT; dab53c019). Span read built (`--span`: span-NLL + log-odds vs 3 foils
