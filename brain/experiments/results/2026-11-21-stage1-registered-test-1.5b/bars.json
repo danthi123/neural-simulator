@@ -1,0 +1,2323 @@
+{
+ "n_seeds": 6,
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_perm": 10000,
+ "rng_seed": 20261121,
+ "bars": [
+  {
+   "id": "P0",
+   "group": "P0",
+   "name": "Forgetting precondition (hippocampus-off, LOW items)",
+   "definition": "per seed: LOW recall(age>=10 nights) <= recall(age 1) - 0.15 AND mean log-odds(age>=10) < log-odds(age 1) AND recall(age>=10) >= never-told false rate + 0.10; VALID if >=5/6 seeds",
+   "registered_bar": "VALID if >=5/6 seeds pass; else savings UNDEFINED",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": [
+    {
+     "seed": 42,
+     "recall_age1": 0.4,
+     "n_age1": 15,
+     "recall_age10p": 0.6667,
+     "n_age10p": 3,
+     "logodds_age1": 3.1121,
+     "n_lo_age1": 48,
+     "logodds_age10p": 2.7588,
+     "n_lo_age10p": 46,
+     "drop": -0.2667,
+     "floor_margin": -0.0889,
+     "never_false": 0.7556,
+     "never_n": 45,
+     "H_off": 0.3556,
+     "clauses": {
+      "drop>=0.15": false,
+      "logodds_lower": true,
+      "above_false+0.10": false
+     },
+     "pass": false
+    },
+    {
+     "seed": 43,
+     "recall_age1": 0.3333,
+     "n_age1": 15,
+     "recall_age10p": 0.25,
+     "n_age10p": 4,
+     "logodds_age1": 2.1152,
+     "n_lo_age1": 48,
+     "logodds_age10p": 3.3308,
+     "n_lo_age10p": 46,
+     "drop": 0.0833,
+     "floor_margin": -0.15,
+     "never_false": 0.4,
+     "never_n": 45,
+     "H_off": 0.5667,
+     "clauses": {
+      "drop>=0.15": false,
+      "logodds_lower": false,
+      "above_false+0.10": false
+     },
+     "pass": false
+    },
+    {
+     "seed": 44,
+     "recall_age1": 0.2,
+     "n_age1": 15,
+     "recall_age10p": 0.0,
+     "n_age10p": 2,
+     "logodds_age1": 3.092,
+     "n_lo_age1": 48,
+     "logodds_age10p": 2.6382,
+     "n_lo_age10p": 46,
+     "drop": 0.2,
+     "floor_margin": -0.6444,
+     "never_false": 0.6444,
+     "never_n": 45,
+     "H_off": 0.3778,
+     "clauses": {
+      "drop>=0.15": true,
+      "logodds_lower": true,
+      "above_false+0.10": false
+     },
+     "pass": false
+    },
+    {
+     "seed": 100,
+     "recall_age1": 0.375,
+     "n_age1": 16,
+     "recall_age10p": 0.0,
+     "n_age10p": 3,
+     "logodds_age1": 3.4468,
+     "n_lo_age1": 48,
+     "logodds_age10p": 3.1723,
+     "n_lo_age10p": 46,
+     "drop": 0.375,
+     "floor_margin": -0.7333,
+     "never_false": 0.7333,
+     "never_n": 45,
+     "H_off": 0.5222,
+     "clauses": {
+      "drop>=0.15": true,
+      "logodds_lower": true,
+      "above_false+0.10": false
+     },
+     "pass": false
+    },
+    {
+     "seed": 101,
+     "recall_age1": 0.0714,
+     "n_age1": 14,
+     "recall_age10p": 0.0,
+     "n_age10p": 4,
+     "logodds_age1": 2.5702,
+     "n_lo_age1": 48,
+     "logodds_age10p": 3.4529,
+     "n_lo_age10p": 46,
+     "drop": 0.0714,
+     "floor_margin": -0.5556,
+     "never_false": 0.5556,
+     "never_n": 45,
+     "H_off": 0.3333,
+     "clauses": {
+      "drop>=0.15": false,
+      "logodds_lower": false,
+      "above_false+0.10": false
+     },
+     "pass": false
+    },
+    {
+     "seed": 102,
+     "recall_age1": 0.3333,
+     "n_age1": 15,
+     "recall_age10p": 0.0,
+     "n_age10p": 4,
+     "logodds_age1": 2.0576,
+     "n_lo_age1": 48,
+     "logodds_age10p": 2.8292,
+     "n_lo_age10p": 46,
+     "drop": 0.3333,
+     "floor_margin": -0.4222,
+     "never_false": 0.4222,
+     "never_n": 45,
+     "H_off": 0.3889,
+     "clauses": {
+      "drop>=0.15": true,
+      "logodds_lower": false,
+      "above_false+0.10": false
+     },
+     "pass": false
+    }
+   ],
+   "pooled": {
+    "seeds_passing": 0,
+    "defined_seeds": 6,
+    "need": 5,
+    "sensitivity_age_offset0_passing": 0
+   },
+   "p": null,
+   "null": null,
+   "note": "a seed with an empty age bin is UNDEFINED and counts as not passing"
+  },
+  {
+   "id": "SAV-G",
+   "group": "Savings",
+   "name": "G_null_sub, branch night 1 (all 8 A vs 8 B, hippocampus-off minus both-off)",
+   "definition": "G_null_sub = mean_A(lo_off - lo_bothoff) - mean_B(same); G>0 on >=5/6 seeds AND pooled item-level permutation (A/B labels permuted within seed, 10000 perms, one-sided) p<0.05",
+   "registered_bar": "G>0 on >=5/6 seeds and pooled p<0.05 (design 5 as amended by 13); valid only if P0 VALID",
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": 0.8403,
+    "43": 0.4809,
+    "44": 0.8877,
+    "100": 1.9437,
+    "101": -0.0717,
+    "102": -0.0643
+   },
+   "pooled": {
+    "mean_G_null_sub": 0.6694,
+    "perm_stat": 0.6694,
+    "seeds_positive": 4,
+    "need": 5
+   },
+   "p": 0.05319468053194681,
+   "null": {
+    "G_both_off_raw_mean": 0.1497,
+    "note": "both-off raw G is not a bar after 13 (item difficulty); reported beside"
+   },
+   "threshold_verdict": "FAIL",
+   "note": "UNDEFINED because P0 is not VALID (P0: FAIL); numbers shown are what the threshold would give: raw G mean 0.8191, excl mean 0.7663"
+  },
+  {
+   "id": "SAV-dR",
+   "group": "Savings",
+   "name": "dR_null_sub at branch night 1 (recall A minus B, minus both-off dR), of 8",
+   "definition": "mean over seeds of per-seed dR_null_sub >= +1.5 (of 8)",
+   "registered_bar": "recall difference at night 1 >= +1.5 of 8 pooled",
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": 2,
+    "43": -2,
+    "44": 2,
+    "100": 1,
+    "101": -1,
+    "102": -1
+   },
+   "pooled": {
+    "mean_dR_null_sub": 0.1667,
+    "seeds_ge_1.5": 2
+   },
+   "p": null,
+   "null": null,
+   "threshold_verdict": "FAIL",
+   "note": "UNDEFINED because P0 is not VALID (P0: FAIL); numbers shown are what the threshold would give:"
+  },
+  {
+   "id": "CUE-R",
+   "group": "Cued recall",
+   "name": "R_cue at +1 (intact) and +3 (hippocampus-off), E+F pooled",
+   "definition": "R_cue = P(C2) - max(P(C3), P(C4)); pooled item-level permutation p<0.05 and R_cue>0 at each of +1 and +3 (per-seed direction count beside it; pooled permutation is primary per 13)",
+   "registered_bar": "R_cue>0 at +1 and +3 (pooled p<0.05 primary, 13); per-seed 5/6 reported",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "intact +1": {
+     "42": 0.0909,
+     "43": 0.1818,
+     "44": -0.0909,
+     "100": 0.0,
+     "101": 0.0909,
+     "102": 0.0
+    },
+    "hippocampus-off +3": {
+     "42": 0.0,
+     "43": 0.0,
+     "44": 0.1,
+     "100": 0.0909,
+     "101": -0.1,
+     "102": 0.0909
+    }
+   },
+   "pooled": {
+    "intact +1": {
+     "R_cue": 0.0462,
+     "n_items": 65,
+     "seeds_positive": 3
+    },
+    "hippocampus-off +3": {
+     "R_cue": 0.0312,
+     "n_items": 64,
+     "seeds_positive": 3
+    }
+   },
+   "p": {
+    "intact +1": 0.0570942905709429,
+    "hippocampus-off +3": 0.1136886311368863
+   },
+   "null": {
+    "both-off +1": {
+     "R_cue": 0.0,
+     "n_items": 16
+    },
+    "both-off +3": {
+     "R_cue": 0.0,
+     "n_items": 16
+    }
+   },
+   "note": ""
+  },
+  {
+   "id": "CUE-D",
+   "group": "Cued recall",
+   "name": "direct (C0) minus uncued (C4), pooled, age <= 3 nights, headline arms",
+   "definition": "mean C0 right - mean C4 right over items in (intact +1) and (hippocampus-off +3) >= 0.4",
+   "registered_bar": "pooled >= 0.4",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": 0.2273,
+    "43": 0.3182,
+    "44": 0.2857,
+    "100": 0.1905,
+    "101": 0.1905,
+    "102": 0.1818
+   },
+   "pooled": {
+    "diff": 0.2326,
+    "n_items": 129,
+    "C0": 0.2326,
+    "C4": 0.0
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "CUE-H",
+   "group": "Cued recall",
+   "name": "H has 0 wrong answers on every probe, every seed",
+   "definition": "wrong = battery row kind 'H' not RIGHT (strict scorer ok False; reader wins when run), intact arm, every non-tagged probe of every line; per-arm not-right and wrong_fetch (retrieval, not an answer) reported",
+   "registered_bar": "0 wrong on every probe on 6/6 seeds (any wrong H answer = fail)",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": {
+     "wrong_fetch": 137,
+     "n_H_rows": 318,
+     "not_right": 218,
+     "not_right_names_other_key": 164,
+     "wrong_fetch_by_arm": {
+      "intact": 65,
+      "hippocampus-off": 0,
+      "consolidated-off": 17,
+      "both-off": 0,
+      "intact-frozen": 55
+     },
+     "not_right_by_arm": {
+      "intact": 58,
+      "hippocampus-off": 58,
+      "consolidated-off": 23,
+      "both-off": 24,
+      "intact-frozen": 55
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    },
+    "43": {
+     "wrong_fetch": 141,
+     "n_H_rows": 318,
+     "not_right": 165,
+     "not_right_names_other_key": 115,
+     "wrong_fetch_by_arm": {
+      "intact": 65,
+      "hippocampus-off": 0,
+      "consolidated-off": 19,
+      "both-off": 0,
+      "intact-frozen": 57
+     },
+     "not_right_by_arm": {
+      "intact": 41,
+      "hippocampus-off": 39,
+      "consolidated-off": 21,
+      "both-off": 24,
+      "intact-frozen": 40
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    },
+    "44": {
+     "wrong_fetch": 131,
+     "n_H_rows": 318,
+     "not_right": 221,
+     "not_right_names_other_key": 161,
+     "wrong_fetch_by_arm": {
+      "intact": 61,
+      "hippocampus-off": 0,
+      "consolidated-off": 16,
+      "both-off": 0,
+      "intact-frozen": 54
+     },
+     "not_right_by_arm": {
+      "intact": 59,
+      "hippocampus-off": 56,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 58
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    },
+    "100": {
+     "wrong_fetch": 140,
+     "n_H_rows": 318,
+     "not_right": 178,
+     "not_right_names_other_key": 118,
+     "wrong_fetch_by_arm": {
+      "intact": 65,
+      "hippocampus-off": 0,
+      "consolidated-off": 17,
+      "both-off": 0,
+      "intact-frozen": 58
+     },
+     "not_right_by_arm": {
+      "intact": 44,
+      "hippocampus-off": 43,
+      "consolidated-off": 22,
+      "both-off": 24,
+      "intact-frozen": 45
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    },
+    "101": {
+     "wrong_fetch": 123,
+     "n_H_rows": 318,
+     "not_right": 218,
+     "not_right_names_other_key": 145,
+     "wrong_fetch_by_arm": {
+      "intact": 55,
+      "hippocampus-off": 0,
+      "consolidated-off": 15,
+      "both-off": 0,
+      "intact-frozen": 53
+     },
+     "not_right_by_arm": {
+      "intact": 55,
+      "hippocampus-off": 60,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 55
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    },
+    "102": {
+     "wrong_fetch": 150,
+     "n_H_rows": 318,
+     "not_right": 207,
+     "not_right_names_other_key": 157,
+     "wrong_fetch_by_arm": {
+      "intact": 70,
+      "hippocampus-off": 0,
+      "consolidated-off": 20,
+      "both-off": 0,
+      "intact-frozen": 60
+     },
+     "not_right_by_arm": {
+      "intact": 54,
+      "hippocampus-off": 55,
+      "consolidated-off": 23,
+      "both-off": 24,
+      "intact-frozen": 51
+     },
+     "H_n_by_arm": {
+      "intact": 90,
+      "hippocampus-off": 90,
+      "consolidated-off": 24,
+      "both-off": 24,
+      "intact-frozen": 90
+     }
+    }
+   },
+   "pooled": {
+    "seeds_clean": 0,
+    "intact_not_right": 311,
+    "total_wrong_fetch": 822,
+    "total_H_rows": 1908
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "CUE-HL",
+   "group": "Cued recall",
+   "name": "HIGH-use >= LOW-use recall at matched age (hippocampus-off)",
+   "definition": "per seed: LOW-weighted mean over exactly matched ages of recall(H) - recall(LOW) >= 0; H age counted from its last told-or-re-mentioned day (schedule 'remention' turns), LOW = battery rotating/told-neardup + cue C0 rows",
+   "registered_bar": "HIGH>=LOW at matched age on >=5/6 seeds",
+   "verdict_core": "PASS",
+   "verdict": "PASS",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": {
+     "diff": 0.0205,
+     "matched_ages": 9,
+     "n_LOW": 55
+    },
+    "43": {
+     "diff": 0.2034,
+     "matched_ages": 8,
+     "n_LOW": 56
+    },
+    "44": {
+     "diff": 0.1751,
+     "matched_ages": 9,
+     "n_LOW": 59
+    },
+    "100": {
+     "diff": 0.2133,
+     "matched_ages": 9,
+     "n_LOW": 55
+    },
+    "101": {
+     "diff": 0.2055,
+     "matched_ages": 8,
+     "n_LOW": 55
+    },
+    "102": {
+     "diff": 0.0972,
+     "matched_ages": 8,
+     "n_LOW": 55
+    }
+   },
+   "pooled": {
+    "seeds_ok": 6,
+    "defined": 6,
+    "intact_arm": {
+     "seeds_ok": 6,
+     "defined": 6
+    }
+   },
+   "p": null,
+   "null": null,
+   "note": "an undefined seed counts as not passing"
+  },
+  {
+   "id": "TRF-T4",
+   "group": "Transfer",
+   "name": "T_life > 0 at k=4 (intact copy)",
+   "definition": "T = s*(mean_sys - mean_home of lp(X)-lp(Y) over the never-told incident questions) read the morning both domains have 4 incidents told; >0 on >=5/6 seeds AND pooled permutation (domain labels permuted within seed, 10000 perms) p<0.05. RAW T (the registered quantity); dT = T - T0 is shown in the table",
+   "registered_bar": "T>0 at k=4 on >=5/6 seeds (+ common-rule pooled p<0.05, 13)",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": 0.2505,
+    "43": 1.1194,
+    "44": 0.0502,
+    "100": -0.0664,
+    "101": 0.5802,
+    "102": -0.4824
+   },
+   "pooled": {
+    "mean_T": 0.2419,
+    "perm_stat": 0.2419,
+    "seeds_positive": 4,
+    "need": 5,
+    "mean_dT": 0.5905
+   },
+   "p": 0.044495550444955505,
+   "null": {
+    "both_off_T_k4": {
+     "42": -1.0458,
+     "43": 1.0458,
+     "44": -1.0458,
+     "100": -1.0458,
+     "101": 1.0458,
+     "102": -1.0458
+    }
+   }
+  },
+  {
+   "id": "TRF-K",
+   "group": "Transfer",
+   "name": "T increases with k (k=4 above k=1, pooled, intact)",
+   "definition": "mean over seeds of T(k=4) > mean of T(k=1)",
+   "registered_bar": "k=4 above k=1 pooled",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "k1": {
+     "42": -0.7225,
+     "43": 1.2402,
+     "44": -0.4262,
+     "100": -0.1959,
+     "101": 1.1001,
+     "102": 0.4579
+    },
+    "k2": {
+     "42": -0.1827,
+     "43": 2.0034,
+     "44": 0.2653,
+     "100": 1.0154,
+     "101": 0.676,
+     "102": -0.0229
+    },
+    "k4": {
+     "42": 0.2505,
+     "43": 1.1194,
+     "44": 0.0502,
+     "100": -0.0664,
+     "101": 0.5802,
+     "102": -0.4824
+    }
+   },
+   "pooled": {
+    "mean_T_k1": 0.2423,
+    "mean_T_k2": 0.6258,
+    "mean_T_k4": 0.2419
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "TRF-B0",
+   "group": "Transfer",
+   "name": "both-off T about 0 at k=4",
+   "definition": "|mean T| <= 2 SE across seeds (n>=3); no numeric threshold is registered for 'about 0', this rule is mine",
+   "registered_bar": "both-off T about 0",
+   "verdict_core": "PASS",
+   "verdict": "PASS",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": -1.0458,
+    "43": 1.0458,
+    "44": -1.0458,
+    "100": -1.0458,
+    "101": 1.0458,
+    "102": -1.0458
+   },
+   "pooled": {
+    "mean_T": -0.3486,
+    "se": 0.4409
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "TRF-N0",
+   "group": "Transfer",
+   "name": "L-nosleep T about 0 at k=4",
+   "definition": "needs a nosleep line with transfer records",
+   "registered_bar": "L-nosleep T about 0",
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "n_seeds": 6,
+   "per_seed": {},
+   "pooled": null,
+   "p": null,
+   "null": null,
+   "note": "no L-nosleep transfer records in these lives"
+  },
+  {
+   "id": "TRF-C",
+   "group": "Transfer",
+   "name": "consolidated-off reduces T at k=4",
+   "definition": "T_intact - T_consolidated-off at the consolidated-off k=4 night (same night) > 0 on >=5/6 seeds and mean > 0 (no permutation test is registered for this clause)",
+   "registered_bar": "consolidated-off must reduce T",
+   "verdict_core": "PASS",
+   "verdict": "PASS",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": 1.0889,
+    "43": 0.5449,
+    "44": 0.7587,
+    "100": 0.3539,
+    "101": 0.6228,
+    "102": 0.1556
+   },
+   "pooled": {
+    "mean_reduction": 0.5875,
+    "seeds_reduced": 6,
+    "defined": 6,
+    "mean_T_consolidated_off": -0.3341
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "LG-KL",
+   "group": "Language guard",
+   "name": "night-15 KL <= 2x night-1 KL (per seed)",
+   "definition": "KL of adapters-on vs pretrained on the frozen held-out set (nights[].lang_guard.kl); every seed must satisfy it; UNDEFINED if any seed lacks the lang_guard record at night 1 or 15",
+   "registered_bar": "night-15 KL <= 2x night 1 (never a kill)",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": {
+     "kl_n1": 0.163527,
+     "kl_n15": 2.095262,
+     "ratio": 12.8129,
+     "nll_on_n1": 2.009779,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 3.811146,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.163527,
+      "2": 0.401362,
+      "3": 0.563033,
+      "4": 0.670371,
+      "5": 0.781319,
+      "6": 0.920802,
+      "7": 1.019731,
+      "8": 1.350357,
+      "9": 1.410172,
+      "10": 1.561586,
+      "11": 1.784213,
+      "12": 1.946395,
+      "13": 2.018382,
+      "14": 2.392753,
+      "15": 2.095262
+     }
+    },
+    "43": {
+     "kl_n1": 0.140599,
+     "kl_n15": 2.260495,
+     "ratio": 16.0776,
+     "nll_on_n1": 1.999556,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 4.065936,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.140599,
+      "2": 0.351765,
+      "3": 0.470247,
+      "4": 0.686105,
+      "5": 0.798356,
+      "6": 1.042107,
+      "7": 1.163181,
+      "8": 1.479546,
+      "9": 1.647586,
+      "10": 1.72518,
+      "11": 1.754534,
+      "12": 2.111086,
+      "13": 2.094016,
+      "14": 2.470235,
+      "15": 2.260495
+     }
+    },
+    "44": {
+     "kl_n1": 0.134772,
+     "kl_n15": 2.312505,
+     "ratio": 17.1586,
+     "nll_on_n1": 2.001943,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 3.983002,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.134772,
+      "2": 0.330072,
+      "3": 0.525816,
+      "4": 0.613811,
+      "5": 0.921886,
+      "6": 1.028668,
+      "7": 1.367181,
+      "8": 1.232702,
+      "9": 1.626508,
+      "10": 1.565667,
+      "11": 1.672608,
+      "12": 1.595268,
+      "13": 1.864846,
+      "14": 1.957709,
+      "15": 2.312505
+     }
+    },
+    "100": {
+     "kl_n1": 0.172442,
+     "kl_n15": 2.413676,
+     "ratio": 13.997,
+     "nll_on_n1": 2.017738,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 4.194723,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.172442,
+      "2": 0.352412,
+      "3": 0.704193,
+      "4": 0.755717,
+      "5": 1.187078,
+      "6": 1.174952,
+      "7": 1.256107,
+      "8": 1.451906,
+      "9": 1.640575,
+      "10": 1.644212,
+      "11": 1.916261,
+      "12": 1.921267,
+      "13": 2.078549,
+      "14": 2.21037,
+      "15": 2.413676
+     }
+    },
+    "101": {
+     "kl_n1": 0.140648,
+     "kl_n15": 2.32438,
+     "ratio": 16.5262,
+     "nll_on_n1": 1.989458,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 3.997256,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.140648,
+      "2": 0.330081,
+      "3": 0.511111,
+      "4": 0.862162,
+      "5": 1.071018,
+      "6": 1.250889,
+      "7": 1.526752,
+      "8": 1.498043,
+      "9": 1.863665,
+      "10": 1.789187,
+      "11": 2.28773,
+      "12": 1.846487,
+      "13": 2.014764,
+      "14": 2.351934,
+      "15": 2.32438
+     }
+    },
+    "102": {
+     "kl_n1": 0.170102,
+     "kl_n15": 2.412286,
+     "ratio": 14.1814,
+     "nll_on_n1": 2.023904,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": 4.250703,
+     "nll_off_n15": 1.930912,
+     "kl_by_night": {
+      "1": 0.170102,
+      "2": 0.43945,
+      "3": 0.404874,
+      "4": 0.678523,
+      "5": 0.922445,
+      "6": 1.021505,
+      "7": 1.190336,
+      "8": 1.37984,
+      "9": 1.527791,
+      "10": 1.595419,
+      "11": 1.811964,
+      "12": 1.860705,
+      "13": 2.002461,
+      "14": 2.35521,
+      "15": 2.412286
+     }
+    }
+   },
+   "pooled": {
+    "seeds_ok": 0,
+    "defined": 6
+   },
+   "p": null,
+   "null": null,
+   "note": ""
+  },
+  {
+   "id": "LG-COL",
+   "group": "Language guard",
+   "name": "collapse on no more than 3/6 seeds, per arm",
+   "definition": "a seed collapses in an arm if the most-repeated reply share is >=0.4 on ANY probe night of that arm (trunk probes); every arm must have <=3 collapsed seeds (counts only when n<6)",
+   "registered_bar": "collapse on <=3/6 seeds per arm",
+   "verdict_core": "PASS",
+   "verdict": "PASS",
+   "n_seeds": 6,
+   "per_seed": {
+    "both-off": {
+     "42": false,
+     "43": false,
+     "44": false,
+     "100": false,
+     "101": false,
+     "102": false
+    },
+    "consolidated-off": {
+     "42": false,
+     "43": false,
+     "44": false,
+     "100": false,
+     "101": false,
+     "102": false
+    },
+    "hippocampus-off": {
+     "42": false,
+     "43": false,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    },
+    "intact": {
+     "42": false,
+     "43": true,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    },
+    "intact-frozen": {
+     "42": false,
+     "43": false,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    }
+   },
+   "pooled": {
+    "both-off": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "consolidated-off": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "hippocampus-off": {
+     "seeds_ever": 2,
+     "seeds_at_last_probe": 1
+    },
+    "intact": {
+     "seeds_ever": 3,
+     "seeds_at_last_probe": 1
+    },
+    "intact-frozen": {
+     "seeds_ever": 2,
+     "seeds_at_last_probe": 1
+    }
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "KILL-10",
+   "group": "Language guard",
+   "name": "section-10 per-seed kill (collapse on 2 consecutive probe nights, as amended by 13)",
+   "definition": "intact-arm collapse share >=0.4 on two adjacent probe nights ends that seed's life; norm and KL clauses are dropped by 13",
+   "registered_bar": "no seed ended",
+   "verdict_core": "FAIL",
+   "verdict": "FAIL",
+   "n_seeds": 6,
+   "per_seed": {
+    "42": {
+     "seed": 42,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    },
+    "43": {
+     "seed": 43,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    },
+    "44": {
+     "seed": 44,
+     "triggered": true,
+     "night": 15,
+     "first_night": 14
+    },
+    "100": {
+     "seed": 100,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    },
+    "101": {
+     "seed": 101,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    },
+    "102": {
+     "seed": 102,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    }
+   },
+   "pooled": {
+    "triggered": [
+     44
+    ]
+   },
+   "p": null,
+   "null": null,
+   "note": "would have ended: s44 at night 15"
+  }
+ ],
+ "p0": {
+  "valid": false,
+  "age_bins_pooled": [
+   {
+    "age_nights": 1,
+    "recall": 0.2889,
+    "n": 90
+   },
+   {
+    "age_nights": 2,
+    "recall": 0.45,
+    "n": 20
+   },
+   {
+    "age_nights": 3,
+    "recall": 0.2727,
+    "n": 88
+   },
+   {
+    "age_nights": 4,
+    "recall": 0.0714,
+    "n": 14
+   },
+   {
+    "age_nights": 5,
+    "recall": 0.2667,
+    "n": 15
+   },
+   {
+    "age_nights": 6,
+    "recall": 0.2143,
+    "n": 14
+   },
+   {
+    "age_nights": 7,
+    "recall": 0.1486,
+    "n": 74
+   },
+   {
+    "age_nights": 8,
+    "recall": 0.2,
+    "n": 10
+   },
+   {
+    "age_nights": 9,
+    "recall": 0.3,
+    "n": 10
+   },
+   {
+    "age_nights": 10,
+    "recall": 0.0,
+    "n": 1
+   },
+   {
+    "age_nights": 11,
+    "recall": 0.5,
+    "n": 2
+   },
+   {
+    "age_nights": 12,
+    "recall": 0.0,
+    "n": 3
+   },
+   {
+    "age_nights": 13,
+    "recall": 0.0,
+    "n": 2
+   },
+   {
+    "age_nights": 14,
+    "recall": 0.1667,
+    "n": 12
+   }
+  ],
+  "fit": {
+   "bins_used": 11,
+   "power": {
+    "c": 0.3146,
+    "rate": 0.2704,
+    "R2": 0.2849
+   },
+   "exp": {
+    "c": 0.3035,
+    "rate": 0.0648,
+    "R2": 0.3042
+   }
+  },
+  "valid_label": "FAIL"
+ },
+ "savings": {
+  "1": {
+   "per_seed": [
+    {
+     "seed": 42,
+     "branch_night": 1,
+     "G_null_sub": 0.8403,
+     "G_null_sub_excl": 1.0886,
+     "G_raw": 1.0782,
+     "G_excl": 1.5684,
+     "dR": 2,
+     "dR_excl": 2,
+     "dR_null_sub": 2,
+     "recall_A": 2,
+     "recall_B": 0,
+     "G_both_off": 0.2379,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.8403,
+     "trunk_G_null_sub": 0.8455,
+     "trunk_G_raw": 1.0834,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 43,
+     "branch_night": 1,
+     "G_null_sub": 0.4809,
+     "G_null_sub_excl": 0.3598,
+     "G_raw": 0.636,
+     "G_excl": 0.0298,
+     "dR": -2,
+     "dR_excl": -2,
+     "dR_null_sub": -2,
+     "recall_A": 1,
+     "recall_B": 3,
+     "G_both_off": 0.1551,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.4809,
+     "trunk_G_null_sub": -0.4866,
+     "trunk_G_raw": -0.3315,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 44,
+     "branch_night": 1,
+     "G_null_sub": 0.8877,
+     "G_null_sub_excl": 1.3673,
+     "G_raw": 0.0451,
+     "G_excl": 0.1579,
+     "dR": 2,
+     "dR_excl": 1,
+     "dR_null_sub": 2,
+     "recall_A": 2,
+     "recall_B": 0,
+     "G_both_off": -0.8426,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.8877,
+     "trunk_G_null_sub": 0.0789,
+     "trunk_G_raw": -0.7638,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 100,
+     "branch_night": 1,
+     "G_null_sub": 1.9437,
+     "G_null_sub_excl": 2.1738,
+     "G_raw": 5.2559,
+     "G_excl": 6.0759,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 1,
+     "recall_B": 0,
+     "G_both_off": 3.3122,
+     "dR_both_off": 0,
+     "G_null_sub_items": 1.9437,
+     "trunk_G_null_sub": 1.4993,
+     "trunk_G_raw": 4.8115,
+     "trunk_dR": 2,
+     "trunk_dR_null_sub": 2
+    },
+    {
+     "seed": 101,
+     "branch_night": 1,
+     "G_null_sub": -0.0717,
+     "G_null_sub_excl": -0.3873,
+     "G_raw": -2.349,
+     "G_excl": -2.2976,
+     "dR": -1,
+     "dR_excl": -1,
+     "dR_null_sub": -1,
+     "recall_A": 0,
+     "recall_B": 1,
+     "G_both_off": -2.2773,
+     "dR_both_off": 0,
+     "G_null_sub_items": -0.0717,
+     "trunk_G_null_sub": 0.999,
+     "trunk_G_raw": -1.2782,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 102,
+     "branch_night": 1,
+     "G_null_sub": -0.0643,
+     "G_null_sub_excl": -0.0042,
+     "G_raw": 0.2484,
+     "G_excl": -0.4458,
+     "dR": -1,
+     "dR_excl": -1,
+     "dR_null_sub": -1,
+     "recall_A": 1,
+     "recall_B": 2,
+     "G_both_off": 0.3127,
+     "dR_both_off": 0,
+     "G_null_sub_items": -0.0643,
+     "trunk_G_null_sub": 0.3782,
+     "trunk_G_raw": 0.6909,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    }
+   ],
+   "mean_G_null_sub": 0.6694,
+   "pooled_perm_stat": 0.6694,
+   "p": 0.05319468053194681,
+   "mean_dR_null_sub": 0.1667,
+   "mean_G_raw": 0.8191,
+   "mean_G_both_off": 0.1497,
+   "mean_G_excl": 0.7663,
+   "mean_trunk_G_null_sub": 0.5524
+  },
+  "2": {
+   "per_seed": [
+    {
+     "seed": 42,
+     "branch_night": 2,
+     "G_null_sub": 0.9755,
+     "G_null_sub_excl": 1.597,
+     "G_raw": 1.2134,
+     "G_excl": 2.0767,
+     "dR": 0,
+     "dR_excl": 0,
+     "dR_null_sub": 0,
+     "recall_A": 1,
+     "recall_B": 1,
+     "G_both_off": 0.2379,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.9755,
+     "trunk_G_null_sub": -0.493,
+     "trunk_G_raw": -0.2551,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 43,
+     "branch_night": 2,
+     "G_null_sub": 1.0446,
+     "G_null_sub_excl": 0.7962,
+     "G_raw": 1.1997,
+     "G_excl": 0.4661,
+     "dR": 0,
+     "dR_excl": 0,
+     "dR_null_sub": 0,
+     "recall_A": 1,
+     "recall_B": 1,
+     "G_both_off": 0.1551,
+     "dR_both_off": 0,
+     "G_null_sub_items": 1.0446,
+     "trunk_G_null_sub": -0.4086,
+     "trunk_G_raw": -0.2535,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 44,
+     "branch_night": 2,
+     "G_null_sub": 0.9089,
+     "G_null_sub_excl": 1.171,
+     "G_raw": 0.0662,
+     "G_excl": -0.0384,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 2,
+     "recall_B": 1,
+     "G_both_off": -0.8426,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.9089,
+     "trunk_G_null_sub": 0.0304,
+     "trunk_G_raw": -0.8122,
+     "trunk_dR": -1,
+     "trunk_dR_null_sub": -1
+    },
+    {
+     "seed": 100,
+     "branch_night": 2,
+     "G_null_sub": 4.4857,
+     "G_null_sub_excl": 4.9507,
+     "G_raw": 7.7979,
+     "G_excl": 8.8528,
+     "dR": 2,
+     "dR_excl": 2,
+     "dR_null_sub": 2,
+     "recall_A": 2,
+     "recall_B": 0,
+     "G_both_off": 3.3122,
+     "dR_both_off": 0,
+     "G_null_sub_items": 4.4857,
+     "trunk_G_null_sub": 1.6618,
+     "trunk_G_raw": 4.974,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 101,
+     "branch_night": 2,
+     "G_null_sub": 0.7105,
+     "G_null_sub_excl": 0.3126,
+     "G_raw": -1.5668,
+     "G_excl": -1.5977,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 1,
+     "recall_B": 0,
+     "G_both_off": -2.2773,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.7105,
+     "trunk_G_null_sub": -0.0052,
+     "trunk_G_raw": -2.2824,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 102,
+     "branch_night": 2,
+     "G_null_sub": 1.3596,
+     "G_null_sub_excl": 1.7994,
+     "G_raw": 1.6723,
+     "G_excl": 1.3578,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 1,
+     "recall_B": 0,
+     "G_both_off": 0.3127,
+     "dR_both_off": 0,
+     "G_null_sub_items": 1.3596,
+     "trunk_G_null_sub": 0.2764,
+     "trunk_G_raw": 0.5891,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    }
+   ],
+   "mean_G_null_sub": 1.5808,
+   "pooled_perm_stat": 1.5808,
+   "p": 0.0036996300369963003,
+   "mean_dR_null_sub": 0.8333,
+   "mean_G_raw": 1.7305,
+   "mean_G_both_off": 0.1497,
+   "mean_G_excl": 1.7712,
+   "mean_trunk_G_null_sub": 0.177
+  },
+  "3": {
+   "per_seed": [
+    {
+     "seed": 42,
+     "branch_night": 3,
+     "G_null_sub": 0.3772,
+     "G_null_sub_excl": 0.9578,
+     "G_raw": 0.6151,
+     "G_excl": 1.4376,
+     "dR": 0,
+     "dR_excl": 0,
+     "dR_null_sub": 0,
+     "recall_A": 1,
+     "recall_B": 1,
+     "G_both_off": 0.2379,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.3772,
+     "trunk_G_null_sub": -1.1836,
+     "trunk_G_raw": -0.9457,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 43,
+     "branch_night": 3,
+     "G_null_sub": 0.6936,
+     "G_null_sub_excl": 0.5318,
+     "G_raw": 0.8488,
+     "G_excl": 0.2018,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 1,
+     "recall_B": 0,
+     "G_both_off": 0.1551,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.6936,
+     "trunk_G_null_sub": 0.0561,
+     "trunk_G_raw": 0.2112,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 44,
+     "branch_night": 3,
+     "G_null_sub": 1.3019,
+     "G_null_sub_excl": 1.8042,
+     "G_raw": 0.4593,
+     "G_excl": 0.5948,
+     "dR": 0,
+     "dR_excl": 0,
+     "dR_null_sub": 0,
+     "recall_A": 1,
+     "recall_B": 1,
+     "G_both_off": -0.8426,
+     "dR_both_off": 0,
+     "G_null_sub_items": 1.3019,
+     "trunk_G_null_sub": 0.7659,
+     "trunk_G_raw": -0.0767,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 100,
+     "branch_night": 3,
+     "G_null_sub": 0.293,
+     "G_null_sub_excl": 0.4189,
+     "G_raw": 3.6052,
+     "G_excl": 4.3209,
+     "dR": -1,
+     "dR_excl": -1,
+     "dR_null_sub": -1,
+     "recall_A": 1,
+     "recall_B": 2,
+     "G_both_off": 3.3122,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.293,
+     "trunk_G_null_sub": 0.6684,
+     "trunk_G_raw": 3.9806,
+     "trunk_dR": 0,
+     "trunk_dR_null_sub": 0
+    },
+    {
+     "seed": 101,
+     "branch_night": 3,
+     "G_null_sub": 0.9488,
+     "G_null_sub_excl": 0.6935,
+     "G_raw": -1.3285,
+     "G_excl": -1.2168,
+     "dR": 1,
+     "dR_excl": 1,
+     "dR_null_sub": 1,
+     "recall_A": 1,
+     "recall_B": 0,
+     "G_both_off": -2.2773,
+     "dR_both_off": 0,
+     "G_null_sub_items": 0.9488,
+     "trunk_G_null_sub": 0.1272,
+     "trunk_G_raw": -2.1501,
+     "trunk_dR": 1,
+     "trunk_dR_null_sub": 1
+    },
+    {
+     "seed": 102,
+     "branch_night": 3,
+     "G_null_sub": -0.0741,
+     "G_null_sub_excl": 0.1735,
+     "G_raw": 0.2385,
+     "G_excl": -0.2681,
+     "dR": 2,
+     "dR_excl": 2,
+     "dR_null_sub": 2,
+     "recall_A": 2,
+     "recall_B": 0,
+     "G_both_off": 0.3127,
+     "dR_both_off": 0,
+     "G_null_sub_items": -0.0741,
+     "trunk_G_null_sub": 0.7472,
+     "trunk_G_raw": 1.0599,
+     "trunk_dR": -1,
+     "trunk_dR_null_sub": -1
+    }
+   ],
+   "mean_G_null_sub": 0.5901,
+   "pooled_perm_stat": 0.5901,
+   "p": 0.1254874512548745,
+   "mean_dR_null_sub": 0.5,
+   "mean_G_raw": 0.7397,
+   "mean_G_both_off": 0.1497,
+   "mean_G_excl": 0.7633,
+   "mean_trunk_G_null_sub": 0.1969
+  }
+ },
+ "cue": {
+  "cells": {
+   "intact +1": {
+    "n_items": 65,
+    "R_cue": 0.0462,
+    "p": 0.0570942905709429,
+    "per_seed": {
+     "42": 0.0909,
+     "43": 0.1818,
+     "44": -0.0909,
+     "100": 0.0,
+     "101": 0.0909,
+     "102": 0.0
+    },
+    "seeds_positive": 3
+   },
+   "hippocampus-off +3": {
+    "n_items": 64,
+    "R_cue": 0.0312,
+    "p": 0.1136886311368863,
+    "per_seed": {
+     "42": 0.0,
+     "43": 0.0,
+     "44": 0.1,
+     "100": 0.0909,
+     "101": -0.1,
+     "102": 0.0909
+    },
+    "seeds_positive": 3
+   }
+  },
+  "overall": "FAIL"
+ },
+ "transfer": {
+  "overall": "FAIL",
+  "table": {
+   "42": {
+    "intact@k1": {
+     "T": -0.7225,
+     "T0": -1.0458,
+     "dT": 0.3233,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": -0.1827,
+     "T0": -1.0458,
+     "dT": 0.8631,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": 0.2505,
+     "T0": -1.0458,
+     "dT": 1.2963,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": -0.8393,
+     "T0": -1.0458,
+     "dT": 0.2065,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": -0.2104,
+     "T0": -1.0458,
+     "dT": 0.8354,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": 0.1773,
+     "T0": -1.0458,
+     "dT": 1.2231,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": -0.9863,
+     "T0": -1.0458,
+     "dT": 0.0595,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": -1.0458,
+     "T0": -1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   },
+   "43": {
+    "intact@k1": {
+     "T": 1.2402,
+     "T0": 1.0458,
+     "dT": 0.1944,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": 2.0034,
+     "T0": 1.0458,
+     "dT": 0.9576,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": 1.1194,
+     "T0": 1.0458,
+     "dT": 0.0736,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": 1.2107,
+     "T0": 1.0458,
+     "dT": 0.1649,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": 2.033,
+     "T0": 1.0458,
+     "dT": 0.9872,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": 1.0674,
+     "T0": 1.0458,
+     "dT": 0.0216,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": 1.0164,
+     "T0": 1.0458,
+     "dT": -0.0294,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": 1.0458,
+     "T0": 1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   },
+   "44": {
+    "intact@k1": {
+     "T": -0.4262,
+     "T0": -1.0458,
+     "dT": 0.6196,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": 0.2653,
+     "T0": -1.0458,
+     "dT": 1.3111,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": 0.0502,
+     "T0": -1.0458,
+     "dT": 1.096,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": -0.4746,
+     "T0": -1.0458,
+     "dT": 0.5712,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": 0.2456,
+     "T0": -1.0458,
+     "dT": 1.2914,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": -0.0124,
+     "T0": -1.0458,
+     "dT": 1.0334,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": -1.009,
+     "T0": -1.0458,
+     "dT": 0.0368,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": -1.0458,
+     "T0": -1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   },
+   "100": {
+    "intact@k1": {
+     "T": -0.1959,
+     "T0": -1.0458,
+     "dT": 0.8499,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": 1.0154,
+     "T0": -1.0458,
+     "dT": 2.0612,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": -0.0664,
+     "T0": -1.0458,
+     "dT": 0.9794,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": -0.268,
+     "T0": -1.0458,
+     "dT": 0.7778,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": 0.9758,
+     "T0": -1.0458,
+     "dT": 2.0216,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": -0.0396,
+     "T0": -1.0458,
+     "dT": 1.0062,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": -1.0263,
+     "T0": -1.0458,
+     "dT": 0.0195,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": -1.0458,
+     "T0": -1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   },
+   "101": {
+    "intact@k1": {
+     "T": 1.1001,
+     "T0": 1.0458,
+     "dT": 0.0543,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": 0.676,
+     "T0": 1.0458,
+     "dT": -0.3698,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": 0.5802,
+     "T0": 1.0458,
+     "dT": -0.4656,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": 1.147,
+     "T0": 1.0458,
+     "dT": 0.1012,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": 0.6852,
+     "T0": 1.0458,
+     "dT": -0.3606,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": 0.6275,
+     "T0": 1.0458,
+     "dT": -0.4183,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": 0.9207,
+     "T0": 1.0458,
+     "dT": -0.1251,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": 1.0458,
+     "T0": 1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   },
+   "102": {
+    "intact@k1": {
+     "T": 0.4579,
+     "T0": -1.0458,
+     "dT": 1.5037,
+     "night": 3
+    },
+    "intact@k2": {
+     "T": -0.0229,
+     "T0": -1.0458,
+     "dT": 1.0229,
+     "night": 6
+    },
+    "intact@k4": {
+     "T": -0.4824,
+     "T0": -1.0458,
+     "dT": 0.5634,
+     "night": 13
+    },
+    "hippocampus-off@k1": {
+     "T": 0.323,
+     "T0": -1.0458,
+     "dT": 1.3688,
+     "night": 3
+    },
+    "hippocampus-off@k2": {
+     "T": -0.0618,
+     "T0": -1.0458,
+     "dT": 0.984,
+     "night": 6
+    },
+    "hippocampus-off@k4": {
+     "T": -0.494,
+     "T0": -1.0458,
+     "dT": 0.5518,
+     "night": 13
+    },
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": {
+     "T": -0.9204,
+     "T0": -1.0458,
+     "dT": 0.1254,
+     "night": 15
+    },
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": {
+     "T": -1.0458,
+     "T0": -1.0458,
+     "dT": 0.0,
+     "night": 15
+    }
+   }
+  }
+ },
+ "language": {
+  "collapse_arms": {
+   "both-off": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "42": false,
+     "43": false,
+     "44": false,
+     "100": false,
+     "101": false,
+     "102": false
+    },
+    "per_seed_max_share": {
+     "42": 0.056,
+     "43": 0.056,
+     "44": 0.056,
+     "100": 0.056,
+     "101": 0.056,
+     "102": 0.056
+    }
+   },
+   "consolidated-off": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "42": false,
+     "43": false,
+     "44": false,
+     "100": false,
+     "101": false,
+     "102": false
+    },
+    "per_seed_max_share": {
+     "42": 0.056,
+     "43": 0.056,
+     "44": 0.111,
+     "100": 0.056,
+     "101": 0.056,
+     "102": 0.111
+    }
+   },
+   "hippocampus-off": {
+    "seeds_ever": 2,
+    "seeds_at_last_probe": 1,
+    "per_seed_ever": {
+     "42": false,
+     "43": false,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    },
+    "per_seed_max_share": {
+     "42": 0.25,
+     "43": 0.2,
+     "44": 0.45,
+     "100": 0.35,
+     "101": 0.55,
+     "102": 0.25
+    }
+   },
+   "intact": {
+    "seeds_ever": 3,
+    "seeds_at_last_probe": 1,
+    "per_seed_ever": {
+     "42": false,
+     "43": true,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    },
+    "per_seed_max_share": {
+     "42": 0.25,
+     "43": 0.45,
+     "44": 0.55,
+     "100": 0.25,
+     "101": 0.45,
+     "102": 0.2
+    }
+   },
+   "intact-frozen": {
+    "seeds_ever": 2,
+    "seeds_at_last_probe": 1,
+    "per_seed_ever": {
+     "42": false,
+     "43": false,
+     "44": true,
+     "100": false,
+     "101": true,
+     "102": false
+    },
+    "per_seed_max_share": {
+     "42": 0.25,
+     "43": 0.25,
+     "44": 0.55,
+     "100": 0.25,
+     "101": 0.45,
+     "102": 0.2
+    }
+   }
+  }
+ },
+ "adapter_norm": {
+  "42": {
+   "1": {
+    "norm": 64.7972,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 138.4223,
+    "x_night1": 2.1362
+   },
+   "3": {
+    "norm": 178.2661,
+    "x_night1": 2.7511
+   },
+   "4": {
+    "norm": 216.9016,
+    "x_night1": 3.3474
+   },
+   "5": {
+    "norm": 277.0279,
+    "x_night1": 4.2753
+   },
+   "6": {
+    "norm": 325.8516,
+    "x_night1": 5.0288
+   },
+   "7": {
+    "norm": 373.5985,
+    "x_night1": 5.7657
+   },
+   "8": {
+    "norm": 412.8349,
+    "x_night1": 6.3712
+   },
+   "9": {
+    "norm": 443.5878,
+    "x_night1": 6.8458
+   },
+   "10": {
+    "norm": 484.8129,
+    "x_night1": 7.482
+   },
+   "11": {
+    "norm": 514.3271,
+    "x_night1": 7.9375
+   },
+   "12": {
+    "norm": 552.8209,
+    "x_night1": 8.5316
+   },
+   "13": {
+    "norm": 593.2162,
+    "x_night1": 9.155
+   },
+   "14": {
+    "norm": 623.2234,
+    "x_night1": 9.6181
+   },
+   "15": {
+    "norm": 651.0838,
+    "x_night1": 10.048
+   }
+  },
+  "43": {
+   "1": {
+    "norm": 70.9876,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 105.5175,
+    "x_night1": 1.4864
+   },
+   "3": {
+    "norm": 137.5815,
+    "x_night1": 1.9381
+   },
+   "4": {
+    "norm": 210.754,
+    "x_night1": 2.9689
+   },
+   "5": {
+    "norm": 259.0613,
+    "x_night1": 3.6494
+   },
+   "6": {
+    "norm": 323.1497,
+    "x_night1": 4.5522
+   },
+   "7": {
+    "norm": 366.8982,
+    "x_night1": 5.1685
+   },
+   "8": {
+    "norm": 420.4187,
+    "x_night1": 5.9224
+   },
+   "9": {
+    "norm": 460.3516,
+    "x_night1": 6.485
+   },
+   "10": {
+    "norm": 502.0544,
+    "x_night1": 7.0724
+   },
+   "11": {
+    "norm": 533.9479,
+    "x_night1": 7.5217
+   },
+   "12": {
+    "norm": 571.9423,
+    "x_night1": 8.0569
+   },
+   "13": {
+    "norm": 602.5881,
+    "x_night1": 8.4886
+   },
+   "14": {
+    "norm": 640.8287,
+    "x_night1": 9.0273
+   },
+   "15": {
+    "norm": 665.8549,
+    "x_night1": 9.3799
+   }
+  },
+  "44": {
+   "1": {
+    "norm": 53.3665,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 89.6979,
+    "x_night1": 1.6808
+   },
+   "3": {
+    "norm": 129.9137,
+    "x_night1": 2.4344
+   },
+   "4": {
+    "norm": 205.6223,
+    "x_night1": 3.853
+   },
+   "5": {
+    "norm": 256.462,
+    "x_night1": 4.8057
+   },
+   "6": {
+    "norm": 317.4692,
+    "x_night1": 5.9488
+   },
+   "7": {
+    "norm": 344.0435,
+    "x_night1": 6.4468
+   },
+   "8": {
+    "norm": 385.9146,
+    "x_night1": 7.2314
+   },
+   "9": {
+    "norm": 431.9254,
+    "x_night1": 8.0936
+   },
+   "10": {
+    "norm": 456.4088,
+    "x_night1": 8.5523
+   },
+   "11": {
+    "norm": 488.1036,
+    "x_night1": 9.1463
+   },
+   "12": {
+    "norm": 520.4164,
+    "x_night1": 9.7517
+   },
+   "13": {
+    "norm": 563.9771,
+    "x_night1": 10.568
+   },
+   "14": {
+    "norm": 596.7628,
+    "x_night1": 11.1823
+   },
+   "15": {
+    "norm": 626.9145,
+    "x_night1": 11.7473
+   }
+  },
+  "100": {
+   "1": {
+    "norm": 59.0536,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 104.1812,
+    "x_night1": 1.7642
+   },
+   "3": {
+    "norm": 205.5867,
+    "x_night1": 3.4814
+   },
+   "4": {
+    "norm": 241.0308,
+    "x_night1": 4.0816
+   },
+   "5": {
+    "norm": 330.6501,
+    "x_night1": 5.5992
+   },
+   "6": {
+    "norm": 361.1876,
+    "x_night1": 6.1163
+   },
+   "7": {
+    "norm": 387.5139,
+    "x_night1": 6.5621
+   },
+   "8": {
+    "norm": 413.3487,
+    "x_night1": 6.9996
+   },
+   "9": {
+    "norm": 474.3514,
+    "x_night1": 8.0326
+   },
+   "10": {
+    "norm": 511.1807,
+    "x_night1": 8.6562
+   },
+   "11": {
+    "norm": 544.0023,
+    "x_night1": 9.212
+   },
+   "12": {
+    "norm": 570.5987,
+    "x_night1": 9.6624
+   },
+   "13": {
+    "norm": 605.9482,
+    "x_night1": 10.261
+   },
+   "14": {
+    "norm": 639.8988,
+    "x_night1": 10.8359
+   },
+   "15": {
+    "norm": 667.5809,
+    "x_night1": 11.3047
+   }
+  },
+  "101": {
+   "1": {
+    "norm": 54.8478,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 99.8998,
+    "x_night1": 1.8214
+   },
+   "3": {
+    "norm": 173.0771,
+    "x_night1": 3.1556
+   },
+   "4": {
+    "norm": 231.8861,
+    "x_night1": 4.2278
+   },
+   "5": {
+    "norm": 274.264,
+    "x_night1": 5.0005
+   },
+   "6": {
+    "norm": 328.0372,
+    "x_night1": 5.9809
+   },
+   "7": {
+    "norm": 374.2465,
+    "x_night1": 6.8234
+   },
+   "8": {
+    "norm": 415.169,
+    "x_night1": 7.5695
+   },
+   "9": {
+    "norm": 456.6978,
+    "x_night1": 8.3266
+   },
+   "10": {
+    "norm": 490.5047,
+    "x_night1": 8.943
+   },
+   "11": {
+    "norm": 524.7483,
+    "x_night1": 9.5674
+   },
+   "12": {
+    "norm": 547.2977,
+    "x_night1": 9.9785
+   },
+   "13": {
+    "norm": 587.4017,
+    "x_night1": 10.7097
+   },
+   "14": {
+    "norm": 629.7911,
+    "x_night1": 11.4825
+   },
+   "15": {
+    "norm": 653.3266,
+    "x_night1": 11.9116
+   }
+  },
+  "102": {
+   "1": {
+    "norm": 59.6388,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 107.7323,
+    "x_night1": 1.8064
+   },
+   "3": {
+    "norm": 161.4173,
+    "x_night1": 2.7066
+   },
+   "4": {
+    "norm": 242.6107,
+    "x_night1": 4.068
+   },
+   "5": {
+    "norm": 303.5729,
+    "x_night1": 5.0902
+   },
+   "6": {
+    "norm": 327.0077,
+    "x_night1": 5.4831
+   },
+   "7": {
+    "norm": 381.7845,
+    "x_night1": 6.4016
+   },
+   "8": {
+    "norm": 407.5193,
+    "x_night1": 6.8331
+   },
+   "9": {
+    "norm": 453.2827,
+    "x_night1": 7.6005
+   },
+   "10": {
+    "norm": 496.1206,
+    "x_night1": 8.3188
+   },
+   "11": {
+    "norm": 530.7562,
+    "x_night1": 8.8995
+   },
+   "12": {
+    "norm": 566.0799,
+    "x_night1": 9.4918
+   },
+   "13": {
+    "norm": 593.9536,
+    "x_night1": 9.9592
+   },
+   "14": {
+    "norm": 639.2658,
+    "x_night1": 10.719
+   },
+   "15": {
+    "norm": 668.2673,
+    "x_night1": 11.2052
+   }
+  }
+ },
+ "sections": {
+  "Cued recall": "FAIL",
+  "Transfer": "FAIL"
+ }
+}

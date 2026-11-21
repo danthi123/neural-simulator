@@ -1,0 +1,7980 @@
+{
+ "spec": "read-spec-2026-11-21",
+ "spec_sha256": "6cf3690a68e13f05fadcf42df76141b5e2f1d598985ec6065f8a71cdf30ae05a",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "weeks": [
+  1,
+  3
+ ],
+ "lived_context": "all",
+ "readers": {
+  "reader1": {
+   "per_unit": {
+    "T0": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 6,
+      "perspective": 15,
+      "intrusion": 1,
+      "off-topic": 6,
+      "repetition-or-collapse": 2,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 1,
+      "unsupported": 10
+     }
+    },
+    "T1": {
+     "total": 44,
+     "battery": 18,
+     "by_type": {
+      "invented": 10,
+      "wrong": 2,
+      "wrong-episode": 2,
+      "perspective": 6,
+      "intrusion": 2,
+      "off-topic": 12,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.5946,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 4,
+      "unsupported": 14
+     }
+    },
+    "T2": {
+     "total": 45,
+     "battery": 19,
+     "by_type": {
+      "invented": 8,
+      "wrong": 3,
+      "wrong-episode": 8,
+      "perspective": 10,
+      "intrusion": 5,
+      "off-topic": 6,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 1,
+     "rate": 0.6081,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 13
+     }
+    },
+    "T3": {
+     "total": 24,
+     "battery": 10,
+     "by_type": {
+      "invented": 2,
+      "wrong": 7,
+      "wrong-episode": 1,
+      "perspective": 7,
+      "intrusion": 1,
+      "off-topic": 0,
+      "repetition-or-collapse": 5,
+      "asks-known": 1,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.3333,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 5,
+      "contradicted": 9,
+      "unsupported": 8
+     }
+    },
+    "T4": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 2,
+      "wrong": 1,
+      "wrong-episode": 6,
+      "perspective": 16,
+      "intrusion": 3,
+      "off-topic": 3,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 1,
+      "unsupported": 9
+     }
+    },
+    "T5": {
+     "total": 36,
+     "battery": 17,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 5,
+      "perspective": 8,
+      "intrusion": 4,
+      "off-topic": 7,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 2,
+     "rate": 0.4865,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 2,
+      "unsupported": 13
+     }
+    },
+    "T6": {
+     "total": 30,
+     "battery": 16,
+     "by_type": {
+      "invented": 5,
+      "wrong": 1,
+      "wrong-episode": 1,
+      "perspective": 9,
+      "intrusion": 2,
+      "off-topic": 8,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.4167,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 2,
+      "unsupported": 44
+     }
+    },
+    "T7": {
+     "total": 33,
+     "battery": 12,
+     "by_type": {
+      "invented": 5,
+      "wrong": 9,
+      "wrong-episode": 2,
+      "perspective": 9,
+      "intrusion": 0,
+      "off-topic": 3,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.4583,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 5,
+      "unsupported": 17
+     }
+    },
+    "T8": {
+     "total": 36,
+     "battery": 17,
+     "by_type": {
+      "invented": 7,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 10,
+      "intrusion": 1,
+      "off-topic": 9,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.5,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 23
+     }
+    },
+    "T9": {
+     "total": 66,
+     "battery": 21,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 28,
+      "intrusion": 0,
+      "off-topic": 32,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.8919,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 28
+     }
+    },
+    "T10": {
+     "total": 34,
+     "battery": 20,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 0,
+      "intrusion": 0,
+      "off-topic": 28,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.4595,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 0
+     }
+    },
+    "T11": {
+     "total": 35,
+     "battery": 18,
+     "by_type": {
+      "invented": 5,
+      "wrong": 1,
+      "wrong-episode": 5,
+      "perspective": 10,
+      "intrusion": 3,
+      "off-topic": 4,
+      "repetition-or-collapse": 3,
+      "asks-known": 2,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.4861,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 4,
+      "contradicted": 1,
+      "unsupported": 18
+     }
+    },
+    "T12": {
+     "total": 74,
+     "battery": 17,
+     "by_type": {
+      "invented": 9,
+      "wrong": 2,
+      "wrong-episode": 0,
+      "perspective": 36,
+      "intrusion": 1,
+      "off-topic": 22,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 1.0278,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 35,
+      "unsupported": 7
+     }
+    },
+    "T13": {
+     "total": 49,
+     "battery": 12,
+     "by_type": {
+      "invented": 7,
+      "wrong": 6,
+      "wrong-episode": 1,
+      "perspective": 25,
+      "intrusion": 3,
+      "off-topic": 2,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.6806,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 28,
+      "unsupported": 10
+     }
+    },
+    "T14": {
+     "total": 38,
+     "battery": 2,
+     "by_type": {
+      "invented": 5,
+      "wrong": 3,
+      "wrong-episode": 0,
+      "perspective": 3,
+      "intrusion": 0,
+      "off-topic": 14,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 7
+     },
+     "coherence": 1,
+     "rate": 0.5135,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 15
+     }
+    },
+    "T15": {
+     "total": 50,
+     "battery": 15,
+     "by_type": {
+      "invented": 6,
+      "wrong": 7,
+      "wrong-episode": 0,
+      "perspective": 24,
+      "intrusion": 0,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.6944,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 28,
+      "unsupported": 8
+     }
+    },
+    "T16": {
+     "total": 71,
+     "battery": 19,
+     "by_type": {
+      "invented": 5,
+      "wrong": 7,
+      "wrong-episode": 1,
+      "perspective": 18,
+      "intrusion": 1,
+      "off-topic": 16,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 20
+     },
+     "coherence": 1,
+     "rate": 0.9595,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 10,
+      "unsupported": 29
+     }
+    },
+    "T17": {
+     "total": 49,
+     "battery": 11,
+     "by_type": {
+      "invented": 10,
+      "wrong": 3,
+      "wrong-episode": 0,
+      "perspective": 7,
+      "intrusion": 0,
+      "off-topic": 16,
+      "repetition-or-collapse": 8,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 0.6622,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 8,
+      "unsupported": 14
+     }
+    },
+    "T18": {
+     "total": 45,
+     "battery": 20,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 3,
+      "perspective": 18,
+      "intrusion": 0,
+      "off-topic": 9,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 11
+     },
+     "coherence": 2,
+     "rate": 0.625,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 4,
+      "contradicted": 3,
+      "unsupported": 12
+     }
+    },
+    "T19": {
+     "total": 49,
+     "battery": 19,
+     "by_type": {
+      "invented": 1,
+      "wrong": 3,
+      "wrong-episode": 9,
+      "perspective": 9,
+      "intrusion": 0,
+      "off-topic": 14,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 6
+     },
+     "coherence": 1,
+     "rate": 0.6622,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 4,
+      "unsupported": 9
+     }
+    },
+    "T20": {
+     "total": 51,
+     "battery": 18,
+     "by_type": {
+      "invented": 10,
+      "wrong": 2,
+      "wrong-episode": 3,
+      "perspective": 3,
+      "intrusion": 1,
+      "off-topic": 16,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 11
+     },
+     "coherence": 1,
+     "rate": 0.6892,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 11
+     }
+    },
+    "T21": {
+     "total": 64,
+     "battery": 19,
+     "by_type": {
+      "invented": 8,
+      "wrong": 3,
+      "wrong-episode": 2,
+      "perspective": 8,
+      "intrusion": 4,
+      "off-topic": 14,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 21
+     },
+     "coherence": 1,
+     "rate": 0.8649,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 13
+     }
+    },
+    "T22": {
+     "total": 29,
+     "battery": 4,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 12,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 7
+     },
+     "coherence": 2,
+     "rate": 0.4028,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 4,
+      "contradicted": 3,
+      "unsupported": 8
+     }
+    },
+    "T23": {
+     "total": 23,
+     "battery": 3,
+     "by_type": {
+      "invented": 2,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 3,
+      "intrusion": 1,
+      "off-topic": 9,
+      "repetition-or-collapse": 3,
+      "asks-known": 2,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.3194,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 7,
+      "unsupported": 3
+     }
+    },
+    "T24": {
+     "total": 40,
+     "battery": 18,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 5,
+      "perspective": 18,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 0.5556,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 8,
+      "unsupported": 13
+     }
+    },
+    "T25": {
+     "total": 39,
+     "battery": 17,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 8,
+      "perspective": 10,
+      "intrusion": 5,
+      "off-topic": 9,
+      "repetition-or-collapse": 3,
+      "asks-known": 3,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.5417,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 9
+     }
+    },
+    "T26": {
+     "total": 41,
+     "battery": 16,
+     "by_type": {
+      "invented": 6,
+      "wrong": 0,
+      "wrong-episode": 4,
+      "perspective": 13,
+      "intrusion": 0,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 5,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.5694,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 0,
+      "unsupported": 15
+     }
+    },
+    "T27": {
+     "total": 45,
+     "battery": 12,
+     "by_type": {
+      "invented": 12,
+      "wrong": 6,
+      "wrong-episode": 0,
+      "perspective": 1,
+      "intrusion": 1,
+      "off-topic": 13,
+      "repetition-or-collapse": 10,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 1,
+     "rate": 0.6081,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 4,
+      "unsupported": 14
+     }
+    },
+    "T28": {
+     "total": 47,
+     "battery": 18,
+     "by_type": {
+      "invented": 9,
+      "wrong": 1,
+      "wrong-episode": 6,
+      "perspective": 4,
+      "intrusion": 0,
+      "off-topic": 16,
+      "repetition-or-collapse": 8,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 1,
+     "rate": 0.6351,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 17
+     }
+    },
+    "T29": {
+     "total": 40,
+     "battery": 18,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 5,
+      "perspective": 18,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 0.5556,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 8,
+      "unsupported": 13
+     }
+    },
+    "T30": {
+     "total": 3,
+     "battery": 2,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 0,
+      "intrusion": 0,
+      "off-topic": 2,
+      "repetition-or-collapse": 1,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.0405,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 7,
+      "contradicted": 6,
+      "unsupported": 0
+     }
+    },
+    "T31": {
+     "total": 37,
+     "battery": 15,
+     "by_type": {
+      "invented": 11,
+      "wrong": 4,
+      "wrong-episode": 1,
+      "perspective": 6,
+      "intrusion": 0,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 0.5,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 4,
+      "unsupported": 13
+     }
+    },
+    "T32": {
+     "total": 27,
+     "battery": 4,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 10,
+      "intrusion": 1,
+      "off-topic": 4,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.3649,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 10,
+      "contradicted": 7,
+      "unsupported": 9
+     }
+    },
+    "T33": {
+     "total": 47,
+     "battery": 17,
+     "by_type": {
+      "invented": 8,
+      "wrong": 4,
+      "wrong-episode": 0,
+      "perspective": 7,
+      "intrusion": 2,
+      "off-topic": 15,
+      "repetition-or-collapse": 11,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.6351,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 6,
+      "unsupported": 18
+     }
+    },
+    "T34": {
+     "total": 44,
+     "battery": 19,
+     "by_type": {
+      "invented": 7,
+      "wrong": 3,
+      "wrong-episode": 3,
+      "perspective": 7,
+      "intrusion": 1,
+      "off-topic": 12,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.5946,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 7,
+      "unsupported": 19
+     }
+    },
+    "T35": {
+     "total": 35,
+     "battery": 13,
+     "by_type": {
+      "invented": 3,
+      "wrong": 2,
+      "wrong-episode": 1,
+      "perspective": 9,
+      "intrusion": 3,
+      "off-topic": 9,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 1,
+     "rate": 0.473,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 7,
+      "unsupported": 13
+     }
+    },
+    "T36": {
+     "total": 46,
+     "battery": 14,
+     "by_type": {
+      "invented": 3,
+      "wrong": 0,
+      "wrong-episode": 1,
+      "perspective": 36,
+      "intrusion": 1,
+      "off-topic": 0,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.6389,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 0,
+      "unsupported": 44
+     }
+    },
+    "T37": {
+     "total": 80,
+     "battery": 19,
+     "by_type": {
+      "invented": 14,
+      "wrong": 1,
+      "wrong-episode": 1,
+      "perspective": 6,
+      "intrusion": 0,
+      "off-topic": 44,
+      "repetition-or-collapse": 9,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 1.0811,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 5,
+      "unsupported": 38
+     }
+    },
+    "T38": {
+     "total": 53,
+     "battery": 16,
+     "by_type": {
+      "invented": 2,
+      "wrong": 0,
+      "wrong-episode": 3,
+      "perspective": 35,
+      "intrusion": 2,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.7361,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 44
+     }
+    },
+    "T39": {
+     "total": 46,
+     "battery": 14,
+     "by_type": {
+      "invented": 2,
+      "wrong": 3,
+      "wrong-episode": 5,
+      "perspective": 27,
+      "intrusion": 1,
+      "off-topic": 3,
+      "repetition-or-collapse": 2,
+      "asks-known": 3,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.6389,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 3,
+      "contradicted": 1,
+      "unsupported": 32
+     }
+    },
+    "T40": {
+     "total": 46,
+     "battery": 14,
+     "by_type": {
+      "invented": 3,
+      "wrong": 0,
+      "wrong-episode": 1,
+      "perspective": 36,
+      "intrusion": 1,
+      "off-topic": 0,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.6389,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 0,
+      "unsupported": 44
+     }
+    },
+    "T41": {
+     "total": 54,
+     "battery": 17,
+     "by_type": {
+      "invented": 2,
+      "wrong": 0,
+      "wrong-episode": 4,
+      "perspective": 35,
+      "intrusion": 2,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.75,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 44
+     }
+    },
+    "T42": {
+     "total": 46,
+     "battery": 15,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 28,
+      "intrusion": 2,
+      "off-topic": 6,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.6389,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 2,
+      "unsupported": 14
+     }
+    },
+    "T43": {
+     "total": 52,
+     "battery": 19,
+     "by_type": {
+      "invented": 5,
+      "wrong": 1,
+      "wrong-episode": 0,
+      "perspective": 9,
+      "intrusion": 2,
+      "off-topic": 23,
+      "repetition-or-collapse": 10,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 1,
+     "rate": 0.7027,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 12
+     }
+    },
+    "T44": {
+     "total": 33,
+     "battery": 2,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 1,
+      "perspective": 20,
+      "intrusion": 3,
+      "off-topic": 2,
+      "repetition-or-collapse": 4,
+      "asks-known": 2,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.4583,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 7
+     }
+    },
+    "T45": {
+     "total": 30,
+     "battery": 1,
+     "by_type": {
+      "invented": 9,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 2,
+      "intrusion": 2,
+      "off-topic": 4,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.4054,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 9
+     }
+    },
+    "T46": {
+     "total": 45,
+     "battery": 15,
+     "by_type": {
+      "invented": 8,
+      "wrong": 5,
+      "wrong-episode": 0,
+      "perspective": 7,
+      "intrusion": 3,
+      "off-topic": 13,
+      "repetition-or-collapse": 9,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.6081,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 5,
+      "unsupported": 9
+     }
+    }
+   },
+   "missing": [],
+   "by_arm_week": {
+    "hippocampus-off|w1": {
+     "n": 6,
+     "total": 268,
+     "battery": 98,
+     "by_type": {
+      "invented": 24,
+      "wrong": 5,
+      "wrong-episode": 25,
+      "perspective": 125,
+      "intrusion": 11,
+      "off-topic": 46,
+      "repetition-or-collapse": 19,
+      "asks-known": 6,
+      "experience-claim": 7
+     },
+     "coherence_mean": 2.0
+    },
+    "intact|w3": {
+     "n": 6,
+     "total": 292,
+     "battery": 106,
+     "by_type": {
+      "invented": 36,
+      "wrong": 19,
+      "wrong-episode": 23,
+      "perspective": 52,
+      "intrusion": 10,
+      "off-topic": 78,
+      "repetition-or-collapse": 38,
+      "asks-known": 0,
+      "experience-claim": 36
+     },
+     "coherence_mean": 1.167
+    },
+    "hippocampus-off|w3": {
+     "n": 6,
+     "total": 303,
+     "battery": 106,
+     "by_type": {
+      "invented": 45,
+      "wrong": 14,
+      "wrong-episode": 13,
+      "perspective": 48,
+      "intrusion": 13,
+      "off-topic": 109,
+      "repetition-or-collapse": 46,
+      "asks-known": 0,
+      "experience-claim": 15
+     },
+     "coherence_mean": 1.0
+    },
+    "both-off|w1": {
+     "n": 6,
+     "total": 208,
+     "battery": 56,
+     "by_type": {
+      "invented": 23,
+      "wrong": 30,
+      "wrong-episode": 6,
+      "perspective": 80,
+      "intrusion": 5,
+      "off-topic": 26,
+      "repetition-or-collapse": 22,
+      "asks-known": 4,
+      "experience-claim": 12
+     },
+     "coherence_mean": 2.0
+    },
+    "intact|w1": {
+     "n": 6,
+     "total": 262,
+     "battery": 96,
+     "by_type": {
+      "invented": 23,
+      "wrong": 6,
+      "wrong-episode": 21,
+      "perspective": 131,
+      "intrusion": 6,
+      "off-topic": 37,
+      "repetition-or-collapse": 22,
+      "asks-known": 8,
+      "experience-claim": 8
+     },
+     "coherence_mean": 2.0
+    },
+    "both-off|w3": {
+     "n": 6,
+     "total": 226,
+     "battery": 45,
+     "by_type": {
+      "invented": 50,
+      "wrong": 18,
+      "wrong-episode": 5,
+      "perspective": 29,
+      "intrusion": 4,
+      "off-topic": 58,
+      "repetition-or-collapse": 38,
+      "asks-known": 0,
+      "experience-claim": 24
+     },
+     "coherence_mean": 1.333
+    }
+   },
+   "per_seed": {
+    "42": {
+     "hippocampus-off|w1": {
+      "total": 34,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4722
+     },
+     "intact|w3": {
+      "total": 44,
+      "battery": 18,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5946
+     },
+     "both-off|w3": {
+      "total": 38,
+      "battery": 2,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5135
+     },
+     "both-off|w1": {
+      "total": 29,
+      "battery": 4,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4028
+     },
+     "hippocampus-off|w3": {
+      "total": 44,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5946
+     },
+     "intact|w1": {
+      "total": 53,
+      "battery": 16,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.7361
+     }
+    },
+    "43": {
+     "hippocampus-off|w3": {
+      "total": 45,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6081
+     },
+     "both-off|w1": {
+      "total": 24,
+      "battery": 10,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.3333
+     },
+     "intact|w1": {
+      "total": 36,
+      "battery": 17,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5
+     },
+     "hippocampus-off|w1": {
+      "total": 74,
+      "battery": 17,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 1.0278
+     },
+     "intact|w3": {
+      "total": 71,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.9595
+     },
+     "both-off|w3": {
+      "total": 27,
+      "battery": 4,
+      "coherence": 2,
+      "n_turns": 74,
+      "rate": 0.3649
+     }
+    },
+    "44": {
+     "intact|w3": {
+      "total": 36,
+      "battery": 17,
+      "coherence": 2,
+      "n_turns": 74,
+      "rate": 0.4865
+     },
+     "both-off|w1": {
+      "total": 50,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6944
+     },
+     "both-off|w3": {
+      "total": 37,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 74,
+      "rate": 0.5
+     },
+     "hippocampus-off|w3": {
+      "total": 35,
+      "battery": 13,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.473
+     },
+     "hippocampus-off|w1": {
+      "total": 46,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6389
+     },
+     "intact|w1": {
+      "total": 46,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6389
+     }
+    },
+    "102": {
+     "both-off|w1": {
+      "total": 33,
+      "battery": 12,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4583
+     },
+     "both-off|w3": {
+      "total": 49,
+      "battery": 11,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6622
+     },
+     "intact|w3": {
+      "total": 49,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6622
+     },
+     "intact|w1": {
+      "total": 40,
+      "battery": 18,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5556
+     },
+     "hippocampus-off|w1": {
+      "total": 40,
+      "battery": 18,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5556
+     },
+     "hippocampus-off|w3": {
+      "total": 52,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.7027
+     }
+    },
+    "101": {
+     "hippocampus-off|w1": {
+      "total": 35,
+      "battery": 18,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4861
+     },
+     "both-off|w1": {
+      "total": 49,
+      "battery": 12,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6806
+     },
+     "intact|w1": {
+      "total": 41,
+      "battery": 16,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5694
+     },
+     "both-off|w3": {
+      "total": 45,
+      "battery": 12,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6081
+     },
+     "hippocampus-off|w3": {
+      "total": 47,
+      "battery": 17,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6351
+     },
+     "intact|w3": {
+      "total": 45,
+      "battery": 15,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6081
+     }
+    },
+    "100": {
+     "both-off|w1": {
+      "total": 23,
+      "battery": 3,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.3194
+     },
+     "hippocampus-off|w1": {
+      "total": 39,
+      "battery": 17,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5417
+     },
+     "intact|w3": {
+      "total": 47,
+      "battery": 18,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6351
+     },
+     "hippocampus-off|w3": {
+      "total": 80,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 1.0811
+     },
+     "intact|w1": {
+      "total": 46,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6389
+     },
+     "both-off|w3": {
+      "total": 30,
+      "battery": 1,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.4054
+     }
+    }
+   },
+   "canaries": [
+    {
+     "id": "T4",
+     "type": "collapse",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T6",
+     "type": "invented",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T18",
+     "type": "perspective",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T20",
+     "type": "pet-named",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T21",
+     "type": "experience",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T41",
+     "type": "wrong-episode",
+     "read": true,
+     "strict": true,
+     "loose": true
+    }
+   ],
+   "canary_strict": 6,
+   "canary_loose": 6,
+   "canary_n": 6,
+   "decoys": [
+    {
+     "id": "T9",
+     "decoy": "keyword-stuffer",
+     "seed": 102,
+     "defects": 66,
+     "battery_defects": 21,
+     "coherence": 1,
+     "bothoff_id": "T17",
+     "bothoff_defects": 49,
+     "bothoff_coherence": 1,
+     "flagged": true
+    },
+    {
+     "id": "T10",
+     "decoy": "generic",
+     "seed": 42,
+     "defects": 34,
+     "battery_defects": 20,
+     "coherence": 1,
+     "bothoff_id": "T14",
+     "bothoff_defects": 38,
+     "bothoff_coherence": 1,
+     "flagged": true
+    },
+    {
+     "id": "T30",
+     "decoy": "refuse",
+     "seed": 43,
+     "defects": 3,
+     "battery_defects": 2,
+     "coherence": 1,
+     "bothoff_id": "T32",
+     "bothoff_defects": 27,
+     "bothoff_coherence": 2,
+     "flagged": true
+    }
+   ],
+   "duplicates": [
+    {
+     "ids": [
+      "T40",
+      "T36"
+     ],
+     "defect_spread": 0,
+     "rate_spread": 0.0,
+     "battery_spread": 0,
+     "coherence_spread": 0
+    },
+    {
+     "ids": [
+      "T23",
+      "T44"
+     ],
+     "defect_spread": 10,
+     "rate_spread": 0.13889999999999997,
+     "battery_spread": 1,
+     "coherence_spread": 0
+    }
+   ],
+   "mde": 10,
+   "mde_rate": 0.13889999999999997,
+   "coherence_mde": 0
+  },
+  "reader2": {
+   "per_unit": {
+    "T0": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 7,
+      "wrong": 1,
+      "wrong-episode": 0,
+      "perspective": 12,
+      "intrusion": 2,
+      "off-topic": 8,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 1,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 7,
+      "contradicted": 2,
+      "unsupported": 13
+     }
+    },
+    "T1": {
+     "total": 47,
+     "battery": 18,
+     "by_type": {
+      "invented": 10,
+      "wrong": 4,
+      "wrong-episode": 5,
+      "perspective": 7,
+      "intrusion": 2,
+      "off-topic": 9,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.6351,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 0,
+      "unsupported": 16
+     }
+    },
+    "T2": {
+     "total": 65,
+     "battery": 19,
+     "by_type": {
+      "invented": 8,
+      "wrong": 6,
+      "wrong-episode": 5,
+      "perspective": 8,
+      "intrusion": 3,
+      "off-topic": 6,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 26
+     },
+     "coherence": 1,
+     "rate": 0.8784,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 0,
+      "unsupported": 12
+     }
+    },
+    "T3": {
+     "total": 26,
+     "battery": 8,
+     "by_type": {
+      "invented": 1,
+      "wrong": 7,
+      "wrong-episode": 0,
+      "perspective": 7,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.3611,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 5,
+      "contradicted": 7,
+      "unsupported": 8
+     }
+    },
+    "T4": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 7,
+      "wrong": 1,
+      "wrong-episode": 0,
+      "perspective": 12,
+      "intrusion": 2,
+      "off-topic": 7,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 1,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 5,
+      "contradicted": 2,
+      "unsupported": 10
+     }
+    },
+    "T5": {
+     "total": 36,
+     "battery": 15,
+     "by_type": {
+      "invented": 6,
+      "wrong": 1,
+      "wrong-episode": 5,
+      "perspective": 5,
+      "intrusion": 4,
+      "off-topic": 7,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 1,
+     "rate": 0.4865,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 1,
+      "unsupported": 13
+     }
+    },
+    "T6": {
+     "total": 62,
+     "battery": 17,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 36,
+      "intrusion": 1,
+      "off-topic": 14,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.8611,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 38,
+      "unsupported": 7
+     }
+    },
+    "T7": {
+     "total": 90,
+     "battery": 14,
+     "by_type": {
+      "invented": 6,
+      "wrong": 9,
+      "wrong-episode": 0,
+      "perspective": 37,
+      "intrusion": 2,
+      "off-topic": 29,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 1.25,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 36,
+      "unsupported": 14
+     }
+    },
+    "T8": {
+     "total": 85,
+     "battery": 20,
+     "by_type": {
+      "invented": 8,
+      "wrong": 2,
+      "wrong-episode": 0,
+      "perspective": 39,
+      "intrusion": 3,
+      "off-topic": 27,
+      "repetition-or-collapse": 4,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 1.1806,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 39,
+      "unsupported": 9
+     }
+    },
+    "T9": {
+     "total": 80,
+     "battery": 20,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 28,
+      "intrusion": 0,
+      "off-topic": 46,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 1.0811,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 17,
+      "unsupported": 0
+     }
+    },
+    "T10": {
+     "total": 75,
+     "battery": 20,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 0,
+      "intrusion": 0,
+      "off-topic": 74,
+      "repetition-or-collapse": 1,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 1.0135,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 0
+     }
+    },
+    "T11": {
+     "total": 71,
+     "battery": 25,
+     "by_type": {
+      "invented": 6,
+      "wrong": 2,
+      "wrong-episode": 2,
+      "perspective": 37,
+      "intrusion": 2,
+      "off-topic": 12,
+      "repetition-or-collapse": 4,
+      "asks-known": 4,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.9861,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 40,
+      "unsupported": 8
+     }
+    },
+    "T12": {
+     "total": 52,
+     "battery": 12,
+     "by_type": {
+      "invented": 5,
+      "wrong": 2,
+      "wrong-episode": 0,
+      "perspective": 35,
+      "intrusion": 1,
+      "off-topic": 4,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.7222,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 32,
+      "unsupported": 9
+     }
+    },
+    "T13": {
+     "total": 52,
+     "battery": 12,
+     "by_type": {
+      "invented": 7,
+      "wrong": 6,
+      "wrong-episode": 1,
+      "perspective": 26,
+      "intrusion": 2,
+      "off-topic": 2,
+      "repetition-or-collapse": 3,
+      "asks-known": 3,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.7222,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 29,
+      "unsupported": 7
+     }
+    },
+    "T14": {
+     "total": 33,
+     "battery": 2,
+     "by_type": {
+      "invented": 5,
+      "wrong": 3,
+      "wrong-episode": 0,
+      "perspective": 4,
+      "intrusion": 0,
+      "off-topic": 7,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 7
+     },
+     "coherence": 1,
+     "rate": 0.4459,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 5,
+      "unsupported": 12
+     }
+    },
+    "T15": {
+     "total": 47,
+     "battery": 16,
+     "by_type": {
+      "invented": 5,
+      "wrong": 8,
+      "wrong-episode": 0,
+      "perspective": 26,
+      "intrusion": 1,
+      "off-topic": 0,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 2,
+     "rate": 0.6528,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 28,
+      "unsupported": 5
+     }
+    },
+    "T16": {
+     "total": 65,
+     "battery": 19,
+     "by_type": {
+      "invented": 5,
+      "wrong": 11,
+      "wrong-episode": 1,
+      "perspective": 12,
+      "intrusion": 4,
+      "off-topic": 9,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 20
+     },
+     "coherence": 1,
+     "rate": 0.8784,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 5,
+      "contradicted": 14,
+      "unsupported": 26
+     }
+    },
+    "T17": {
+     "total": 49,
+     "battery": 12,
+     "by_type": {
+      "invented": 12,
+      "wrong": 8,
+      "wrong-episode": 1,
+      "perspective": 6,
+      "intrusion": 0,
+      "off-topic": 10,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 0.6622,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 11,
+      "unsupported": 11
+     }
+    },
+    "T18": {
+     "total": 38,
+     "battery": 16,
+     "by_type": {
+      "invented": 6,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 18,
+      "intrusion": 1,
+      "off-topic": 9,
+      "repetition-or-collapse": 2,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.5278,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 3,
+      "contradicted": 2,
+      "unsupported": 8
+     }
+    },
+    "T19": {
+     "total": 49,
+     "battery": 19,
+     "by_type": {
+      "invented": 2,
+      "wrong": 1,
+      "wrong-episode": 1,
+      "perspective": 11,
+      "intrusion": 0,
+      "off-topic": 22,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 0.6622,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 7
+     }
+    },
+    "T20": {
+     "total": 45,
+     "battery": 18,
+     "by_type": {
+      "invented": 11,
+      "wrong": 2,
+      "wrong-episode": 2,
+      "perspective": 4,
+      "intrusion": 0,
+      "off-topic": 15,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 0.6081,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 10
+     }
+    },
+    "T21": {
+     "total": 44,
+     "battery": 19,
+     "by_type": {
+      "invented": 10,
+      "wrong": 2,
+      "wrong-episode": 1,
+      "perspective": 12,
+      "intrusion": 1,
+      "off-topic": 11,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.5946,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 0,
+      "unsupported": 9
+     }
+    },
+    "T22": {
+     "total": 24,
+     "battery": 2,
+     "by_type": {
+      "invented": 3,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 12,
+      "intrusion": 1,
+      "off-topic": 3,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 2
+     },
+     "coherence": 2,
+     "rate": 0.3333,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 6
+     }
+    },
+    "T23": {
+     "total": 22,
+     "battery": 2,
+     "by_type": {
+      "invented": 2,
+      "wrong": 0,
+      "wrong-episode": 1,
+      "perspective": 10,
+      "intrusion": 0,
+      "off-topic": 4,
+      "repetition-or-collapse": 3,
+      "asks-known": 2,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.3056,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 6
+     }
+    },
+    "T24": {
+     "total": 36,
+     "battery": 18,
+     "by_type": {
+      "invented": 3,
+      "wrong": 3,
+      "wrong-episode": 5,
+      "perspective": 13,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 2,
+     "rate": 0.5,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 5,
+      "unsupported": 12
+     }
+    },
+    "T25": {
+     "total": 37,
+     "battery": 16,
+     "by_type": {
+      "invented": 3,
+      "wrong": 3,
+      "wrong-episode": 5,
+      "perspective": 7,
+      "intrusion": 4,
+      "off-topic": 7,
+      "repetition-or-collapse": 5,
+      "asks-known": 3,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.5139,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 2,
+      "unsupported": 8
+     }
+    },
+    "T26": {
+     "total": 34,
+     "battery": 17,
+     "by_type": {
+      "invented": 7,
+      "wrong": 0,
+      "wrong-episode": 4,
+      "perspective": 10,
+      "intrusion": 2,
+      "off-topic": 4,
+      "repetition-or-collapse": 5,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 0,
+      "unsupported": 10
+     }
+    },
+    "T27": {
+     "total": 46,
+     "battery": 13,
+     "by_type": {
+      "invented": 13,
+      "wrong": 5,
+      "wrong-episode": 1,
+      "perspective": 2,
+      "intrusion": 4,
+      "off-topic": 13,
+      "repetition-or-collapse": 7,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 1,
+     "rate": 0.6216,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 10
+     }
+    },
+    "T28": {
+     "total": 44,
+     "battery": 18,
+     "by_type": {
+      "invented": 15,
+      "wrong": 2,
+      "wrong-episode": 6,
+      "perspective": 5,
+      "intrusion": 0,
+      "off-topic": 7,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 1,
+     "rate": 0.5946,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 1,
+      "unsupported": 14
+     }
+    },
+    "T29": {
+     "total": 36,
+     "battery": 18,
+     "by_type": {
+      "invented": 3,
+      "wrong": 3,
+      "wrong-episode": 5,
+      "perspective": 13,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 2,
+     "rate": 0.5,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 5,
+      "unsupported": 12
+     }
+    },
+    "T30": {
+     "total": 1,
+     "battery": 0,
+     "by_type": {
+      "invented": 0,
+      "wrong": 0,
+      "wrong-episode": 0,
+      "perspective": 0,
+      "intrusion": 0,
+      "off-topic": 0,
+      "repetition-or-collapse": 1,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 1,
+     "rate": 0.0135,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 13,
+      "contradicted": 6,
+      "unsupported": 2
+     }
+    },
+    "T31": {
+     "total": 34,
+     "battery": 15,
+     "by_type": {
+      "invented": 12,
+      "wrong": 2,
+      "wrong-episode": 1,
+      "perspective": 6,
+      "intrusion": 0,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 0.4595,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 4,
+      "unsupported": 10
+     }
+    },
+    "T32": {
+     "total": 24,
+     "battery": 2,
+     "by_type": {
+      "invented": 3,
+      "wrong": 3,
+      "wrong-episode": 2,
+      "perspective": 8,
+      "intrusion": 0,
+      "off-topic": 1,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 2,
+     "rate": 0.3243,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 11,
+      "contradicted": 4,
+      "unsupported": 9
+     }
+    },
+    "T33": {
+     "total": 42,
+     "battery": 15,
+     "by_type": {
+      "invented": 11,
+      "wrong": 4,
+      "wrong-episode": 0,
+      "perspective": 3,
+      "intrusion": 1,
+      "off-topic": 10,
+      "repetition-or-collapse": 12,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 1,
+     "rate": 0.5676,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 4,
+      "unsupported": 13
+     }
+    },
+    "T34": {
+     "total": 41,
+     "battery": 19,
+     "by_type": {
+      "invented": 11,
+      "wrong": 3,
+      "wrong-episode": 3,
+      "perspective": 4,
+      "intrusion": 0,
+      "off-topic": 10,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.5541,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 3,
+      "unsupported": 13
+     }
+    },
+    "T35": {
+     "total": 32,
+     "battery": 13,
+     "by_type": {
+      "invented": 5,
+      "wrong": 0,
+      "wrong-episode": 2,
+      "perspective": 7,
+      "intrusion": 3,
+      "off-topic": 7,
+      "repetition-or-collapse": 5,
+      "asks-known": 0,
+      "experience-claim": 3
+     },
+     "coherence": 1,
+     "rate": 0.4324,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 6,
+      "unsupported": 9
+     }
+    },
+    "T36": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 2,
+      "wrong": 0,
+      "wrong-episode": 3,
+      "perspective": 22,
+      "intrusion": 2,
+      "off-topic": 0,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 0,
+      "unsupported": 41
+     }
+    },
+    "T37": {
+     "total": 51,
+     "battery": 20,
+     "by_type": {
+      "invented": 9,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 13,
+      "intrusion": 0,
+      "off-topic": 11,
+      "repetition-or-collapse": 9,
+      "asks-known": 0,
+      "experience-claim": 6
+     },
+     "coherence": 1,
+     "rate": 0.6892,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 3,
+      "unsupported": 39
+     }
+    },
+    "T38": {
+     "total": 50,
+     "battery": 15,
+     "by_type": {
+      "invented": 3,
+      "wrong": 0,
+      "wrong-episode": 6,
+      "perspective": 30,
+      "intrusion": 2,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.6944,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 5,
+      "unsupported": 17
+     }
+    },
+    "T39": {
+     "total": 48,
+     "battery": 14,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 9,
+      "perspective": 22,
+      "intrusion": 4,
+      "off-topic": 6,
+      "repetition-or-collapse": 2,
+      "asks-known": 4,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.6667,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 2,
+      "contradicted": 1,
+      "unsupported": 26
+     }
+    },
+    "T40": {
+     "total": 34,
+     "battery": 14,
+     "by_type": {
+      "invented": 2,
+      "wrong": 0,
+      "wrong-episode": 3,
+      "perspective": 22,
+      "intrusion": 2,
+      "off-topic": 0,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.4722,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 0,
+      "unsupported": 41
+     }
+    },
+    "T41": {
+     "total": 51,
+     "battery": 16,
+     "by_type": {
+      "invented": 3,
+      "wrong": 0,
+      "wrong-episode": 7,
+      "perspective": 30,
+      "intrusion": 2,
+      "off-topic": 5,
+      "repetition-or-collapse": 4,
+      "asks-known": 0,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.7083,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 1,
+      "contradicted": 5,
+      "unsupported": 17
+     }
+    },
+    "T42": {
+     "total": 46,
+     "battery": 15,
+     "by_type": {
+      "invented": 3,
+      "wrong": 1,
+      "wrong-episode": 2,
+      "perspective": 21,
+      "intrusion": 2,
+      "off-topic": 13,
+      "repetition-or-collapse": 3,
+      "asks-known": 0,
+      "experience-claim": 1
+     },
+     "coherence": 2,
+     "rate": 0.6389,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 38,
+      "unsupported": 8
+     }
+    },
+    "T43": {
+     "total": 53,
+     "battery": 19,
+     "by_type": {
+      "invented": 5,
+      "wrong": 3,
+      "wrong-episode": 2,
+      "perspective": 13,
+      "intrusion": 0,
+      "off-topic": 14,
+      "repetition-or-collapse": 11,
+      "asks-known": 0,
+      "experience-claim": 5
+     },
+     "coherence": 1,
+     "rate": 0.7162,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 16,
+      "unsupported": 17
+     }
+    },
+    "T44": {
+     "total": 32,
+     "battery": 2,
+     "by_type": {
+      "invented": 1,
+      "wrong": 0,
+      "wrong-episode": 2,
+      "perspective": 21,
+      "intrusion": 0,
+      "off-topic": 4,
+      "repetition-or-collapse": 3,
+      "asks-known": 1,
+      "experience-claim": 0
+     },
+     "coherence": 2,
+     "rate": 0.4444,
+     "n_turns": 72,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 23,
+      "unsupported": 3
+     }
+    },
+    "T45": {
+     "total": 30,
+     "battery": 2,
+     "by_type": {
+      "invented": 8,
+      "wrong": 0,
+      "wrong-episode": 3,
+      "perspective": 5,
+      "intrusion": 0,
+      "off-topic": 4,
+      "repetition-or-collapse": 6,
+      "asks-known": 0,
+      "experience-claim": 4
+     },
+     "coherence": 1,
+     "rate": 0.4054,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 5,
+      "unsupported": 20
+     }
+    },
+    "T46": {
+     "total": 60,
+     "battery": 20,
+     "by_type": {
+      "invented": 9,
+      "wrong": 5,
+      "wrong-episode": 2,
+      "perspective": 7,
+      "intrusion": 3,
+      "off-topic": 10,
+      "repetition-or-collapse": 10,
+      "asks-known": 0,
+      "experience-claim": 14
+     },
+     "coherence": 1,
+     "rate": 0.8108,
+     "n_turns": 74,
+     "n_battery": 20,
+     "honesty": {
+      "supported": 0,
+      "contradicted": 9,
+      "unsupported": 25
+     }
+    }
+   },
+   "missing": [],
+   "by_arm_week": {
+    "hippocampus-off|w1": {
+     "n": 6,
+     "total": 264,
+     "battery": 99,
+     "by_type": {
+      "invented": 26,
+      "wrong": 11,
+      "wrong-episode": 15,
+      "perspective": 126,
+      "intrusion": 11,
+      "off-topic": 36,
+      "repetition-or-collapse": 23,
+      "asks-known": 8,
+      "experience-claim": 8
+     },
+     "coherence_mean": 1.833
+    },
+    "intact|w3": {
+     "n": 6,
+     "total": 301,
+     "battery": 109,
+     "by_type": {
+      "invented": 47,
+      "wrong": 24,
+      "wrong-episode": 20,
+      "perspective": 47,
+      "intrusion": 13,
+      "off-topic": 64,
+      "repetition-or-collapse": 37,
+      "asks-known": 0,
+      "experience-claim": 49
+     },
+     "coherence_mean": 1.0
+    },
+    "hippocampus-off|w3": {
+     "n": 6,
+     "total": 284,
+     "battery": 105,
+     "by_type": {
+      "invented": 49,
+      "wrong": 17,
+      "wrong-episode": 14,
+      "perspective": 48,
+      "intrusion": 7,
+      "off-topic": 58,
+      "repetition-or-collapse": 46,
+      "asks-known": 0,
+      "experience-claim": 45
+     },
+     "coherence_mean": 1.0
+    },
+    "both-off|w1": {
+     "n": 6,
+     "total": 261,
+     "battery": 54,
+     "by_type": {
+      "invented": 24,
+      "wrong": 30,
+      "wrong-episode": 2,
+      "perspective": 118,
+      "intrusion": 6,
+      "off-topic": 43,
+      "repetition-or-collapse": 21,
+      "asks-known": 5,
+      "experience-claim": 12
+     },
+     "coherence_mean": 2.0
+    },
+    "intact|w1": {
+     "n": 6,
+     "total": 299,
+     "battery": 99,
+     "by_type": {
+      "invented": 25,
+      "wrong": 6,
+      "wrong-episode": 26,
+      "perspective": 135,
+      "intrusion": 13,
+      "off-topic": 60,
+      "repetition-or-collapse": 22,
+      "asks-known": 6,
+      "experience-claim": 6
+     },
+     "coherence_mean": 2.0
+    },
+    "both-off|w3": {
+     "n": 6,
+     "total": 216,
+     "battery": 46,
+     "by_type": {
+      "invented": 53,
+      "wrong": 21,
+      "wrong-episode": 8,
+      "perspective": 31,
+      "intrusion": 4,
+      "off-topic": 40,
+      "repetition-or-collapse": 34,
+      "asks-known": 0,
+      "experience-claim": 25
+     },
+     "coherence_mean": 1.333
+    }
+   },
+   "per_seed": {
+    "42": {
+     "hippocampus-off|w1": {
+      "total": 34,
+      "battery": 14,
+      "coherence": 1,
+      "n_turns": 72,
+      "rate": 0.4722
+     },
+     "intact|w3": {
+      "total": 47,
+      "battery": 18,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6351
+     },
+     "both-off|w3": {
+      "total": 33,
+      "battery": 2,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.4459
+     },
+     "both-off|w1": {
+      "total": 24,
+      "battery": 2,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.3333
+     },
+     "hippocampus-off|w3": {
+      "total": 41,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5541
+     },
+     "intact|w1": {
+      "total": 50,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6944
+     }
+    },
+    "43": {
+     "hippocampus-off|w3": {
+      "total": 65,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.8784
+     },
+     "both-off|w1": {
+      "total": 26,
+      "battery": 8,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.3611
+     },
+     "intact|w1": {
+      "total": 85,
+      "battery": 20,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 1.1806
+     },
+     "hippocampus-off|w1": {
+      "total": 52,
+      "battery": 12,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.7222
+     },
+     "intact|w3": {
+      "total": 65,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.8784
+     },
+     "both-off|w3": {
+      "total": 24,
+      "battery": 2,
+      "coherence": 2,
+      "n_turns": 74,
+      "rate": 0.3243
+     }
+    },
+    "44": {
+     "intact|w3": {
+      "total": 36,
+      "battery": 15,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.4865
+     },
+     "both-off|w1": {
+      "total": 47,
+      "battery": 16,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6528
+     },
+     "both-off|w3": {
+      "total": 34,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 74,
+      "rate": 0.4595
+     },
+     "hippocampus-off|w3": {
+      "total": 32,
+      "battery": 13,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.4324
+     },
+     "hippocampus-off|w1": {
+      "total": 34,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4722
+     },
+     "intact|w1": {
+      "total": 46,
+      "battery": 15,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6389
+     }
+    },
+    "102": {
+     "both-off|w1": {
+      "total": 90,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 1.25
+     },
+     "both-off|w3": {
+      "total": 49,
+      "battery": 12,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6622
+     },
+     "intact|w3": {
+      "total": 49,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6622
+     },
+     "intact|w1": {
+      "total": 36,
+      "battery": 18,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5
+     },
+     "hippocampus-off|w1": {
+      "total": 36,
+      "battery": 18,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5
+     },
+     "hippocampus-off|w3": {
+      "total": 53,
+      "battery": 19,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.7162
+     }
+    },
+    "101": {
+     "hippocampus-off|w1": {
+      "total": 71,
+      "battery": 25,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.9861
+     },
+     "both-off|w1": {
+      "total": 52,
+      "battery": 12,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.7222
+     },
+     "intact|w1": {
+      "total": 34,
+      "battery": 17,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.4722
+     },
+     "both-off|w3": {
+      "total": 46,
+      "battery": 13,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6216
+     },
+     "hippocampus-off|w3": {
+      "total": 42,
+      "battery": 15,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5676
+     },
+     "intact|w3": {
+      "total": 60,
+      "battery": 20,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.8108
+     }
+    },
+    "100": {
+     "both-off|w1": {
+      "total": 22,
+      "battery": 2,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.3056
+     },
+     "hippocampus-off|w1": {
+      "total": 37,
+      "battery": 16,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.5139
+     },
+     "intact|w3": {
+      "total": 44,
+      "battery": 18,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.5946
+     },
+     "hippocampus-off|w3": {
+      "total": 51,
+      "battery": 20,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.6892
+     },
+     "intact|w1": {
+      "total": 48,
+      "battery": 14,
+      "coherence": 2,
+      "n_turns": 72,
+      "rate": 0.6667
+     },
+     "both-off|w3": {
+      "total": 30,
+      "battery": 2,
+      "coherence": 1,
+      "n_turns": 74,
+      "rate": 0.4054
+     }
+    }
+   },
+   "canaries": [
+    {
+     "id": "T4",
+     "type": "collapse",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T6",
+     "type": "invented",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T18",
+     "type": "perspective",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T20",
+     "type": "pet-named",
+     "read": true,
+     "strict": false,
+     "loose": true
+    },
+    {
+     "id": "T21",
+     "type": "experience",
+     "read": true,
+     "strict": true,
+     "loose": true
+    },
+    {
+     "id": "T41",
+     "type": "wrong-episode",
+     "read": true,
+     "strict": true,
+     "loose": true
+    }
+   ],
+   "canary_strict": 5,
+   "canary_loose": 6,
+   "canary_n": 6,
+   "decoys": [
+    {
+     "id": "T9",
+     "decoy": "keyword-stuffer",
+     "seed": 102,
+     "defects": 80,
+     "battery_defects": 20,
+     "coherence": 1,
+     "bothoff_id": "T17",
+     "bothoff_defects": 49,
+     "bothoff_coherence": 1,
+     "flagged": true
+    },
+    {
+     "id": "T10",
+     "decoy": "generic",
+     "seed": 42,
+     "defects": 75,
+     "battery_defects": 20,
+     "coherence": 1,
+     "bothoff_id": "T14",
+     "bothoff_defects": 33,
+     "bothoff_coherence": 1,
+     "flagged": true
+    },
+    {
+     "id": "T30",
+     "decoy": "refuse",
+     "seed": 43,
+     "defects": 1,
+     "battery_defects": 0,
+     "coherence": 1,
+     "bothoff_id": "T32",
+     "bothoff_defects": 24,
+     "bothoff_coherence": 2,
+     "flagged": true
+    }
+   ],
+   "duplicates": [
+    {
+     "ids": [
+      "T40",
+      "T36"
+     ],
+     "defect_spread": 0,
+     "rate_spread": 0.0,
+     "battery_spread": 0,
+     "coherence_spread": 0
+    },
+    {
+     "ids": [
+      "T23",
+      "T44"
+     ],
+     "defect_spread": 10,
+     "rate_spread": 0.13880000000000003,
+     "battery_spread": 0,
+     "coherence_spread": 0
+    }
+   ],
+   "mde": 10,
+   "mde_rate": 0.13880000000000003,
+   "coherence_mde": 0
+  }
+ },
+ "pairwise": {
+  "pairs1": {
+   "rows": [
+    {
+     "group": 0,
+     "ids": [
+      "P5",
+      "P22"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 42,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 1,
+     "ids": [
+      "P7",
+      "P13"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 42,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 2,
+     "ids": [
+      "P9",
+      "P23"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 43,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 3,
+     "ids": [
+      "P16",
+      "P28"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 43,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 4,
+     "ids": [
+      "P14",
+      "P27"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 44,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 5,
+     "ids": [
+      "P15",
+      "P21"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 44,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 6,
+     "ids": [
+      "P4",
+      "P19"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 100,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 7,
+     "ids": [
+      "P3",
+      "P11"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 100,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 8,
+     "ids": [
+      "P17",
+      "P26"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 101,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 9,
+     "ids": [
+      "P10",
+      "P25"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 101,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 10,
+     "ids": [
+      "P18",
+      "P20"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 102,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 11,
+     "ids": [
+      "P1",
+      "P8"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 102,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 12,
+     "ids": [
+      "P6",
+      "P12"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 102,
+     "unit": "T9",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 13,
+     "ids": [
+      "P2",
+      "P24"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 42,
+     "unit": "T10",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 14,
+     "ids": [
+      "P0",
+      "P29"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 43,
+     "unit": "T30",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    }
+   ],
+   "n_pairs": 15,
+   "inconsistent": 0,
+   "consistency_rate": 1.0,
+   "position_bias_rate": 0.0,
+   "intact_vs_bothoff": {
+    "42": "both-off",
+    "43": "both-off",
+    "44": "both-off",
+    "100": "both-off",
+    "101": "both-off",
+    "102": "both-off"
+   },
+   "intact_preferred_seeds": 0,
+   "intact_vs_bothoff_inconsistent": 0,
+   "w3_vs_w1": {
+    "42": "intact-w1",
+    "43": "intact-w1",
+    "44": "intact-w1",
+    "100": "intact-w1",
+    "101": "intact-w1",
+    "102": "intact-w1"
+   },
+   "w3_preferred_seeds": 0,
+   "decoys": {
+    "T9": "both-off",
+    "T10": "both-off",
+    "T30": "both-off"
+   }
+  },
+  "pairs2": {
+   "rows": [
+    {
+     "group": 0,
+     "ids": [
+      "P5",
+      "P22"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 42,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 1,
+     "ids": [
+      "P7",
+      "P13"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 42,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 2,
+     "ids": [
+      "P9",
+      "P23"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 43,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 3,
+     "ids": [
+      "P16",
+      "P28"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 43,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 4,
+     "ids": [
+      "P14",
+      "P27"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 44,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 5,
+     "ids": [
+      "P15",
+      "P21"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 44,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 6,
+     "ids": [
+      "P4",
+      "P19"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 100,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 7,
+     "ids": [
+      "P3",
+      "P11"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 100,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "intact"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 8,
+     "ids": [
+      "P17",
+      "P26"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 101,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 9,
+     "ids": [
+      "P10",
+      "P25"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 101,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 10,
+     "ids": [
+      "P18",
+      "P20"
+     ],
+     "what": "w3-vs-w1",
+     "seed": 102,
+     "unit": null,
+     "winners": [
+      "intact-w1",
+      "intact-w1"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "intact-w1"
+    },
+    {
+     "group": 11,
+     "ids": [
+      "P1",
+      "P8"
+     ],
+     "what": "intact-vs-bothoff",
+     "seed": 102,
+     "unit": null,
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 12,
+     "ids": [
+      "P6",
+      "P12"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 102,
+     "unit": "T9",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 13,
+     "ids": [
+      "P2",
+      "P24"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 42,
+     "unit": "T10",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    },
+    {
+     "group": 14,
+     "ids": [
+      "P0",
+      "P29"
+     ],
+     "what": "decoy-vs-bothoff",
+     "seed": 43,
+     "unit": "T30",
+     "winners": [
+      "both-off",
+      "both-off"
+     ],
+     "consistent": true,
+     "same_position": false,
+     "winner": "both-off"
+    }
+   ],
+   "n_pairs": 15,
+   "inconsistent": 1,
+   "consistency_rate": 0.933,
+   "position_bias_rate": 0.067,
+   "intact_vs_bothoff": {
+    "42": "both-off",
+    "43": "both-off",
+    "44": "both-off",
+    "100": "tie",
+    "101": "both-off",
+    "102": "both-off"
+   },
+   "intact_preferred_seeds": 0,
+   "intact_vs_bothoff_inconsistent": 1,
+   "w3_vs_w1": {
+    "42": "intact-w1",
+    "43": "intact-w1",
+    "44": "intact-w1",
+    "100": "intact-w1",
+    "101": "intact-w1",
+    "102": "intact-w1"
+   },
+   "w3_preferred_seeds": 0,
+   "decoys": {
+    "T9": "both-off",
+    "T10": "both-off",
+    "T30": "both-off"
+   }
+  }
+ },
+ "kappa": {
+  "n": 47,
+  "any_defect": 1.0,
+  "by_type": {
+   "invented": 1.0,
+   "wrong": 0.7415,
+   "wrong-episode": 0.4695,
+   "perspective": 1.0,
+   "intrusion": 0.4108,
+   "off-topic": 0.5377,
+   "repetition-or-collapse": 1.0,
+   "asks-known": 0.8162,
+   "experience-claim": 0.6713
+  },
+  "coherence_kappa": 0.8719,
+  "coherence_mean_abs_diff": 0.064,
+  "spearman_n": 36,
+  "spearman_total": 0.5819,
+  "spearman_battery": 0.8783,
+  "spearman_by_type": {
+   "invented": 0.8789,
+   "wrong": 0.7152,
+   "wrong-episode": 0.59,
+   "perspective": 0.742,
+   "intrusion": 0.5554,
+   "off-topic": 0.4558,
+   "repetition-or-collapse": 0.9006,
+   "asks-known": 0.8686,
+   "experience-claim": 0.6625
+  }
+ },
+ "pair_kappa": 0.9333,
+ "answers": {
+  "rows": [
+   {
+    "id": "A0",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A1",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A2",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A3",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A4",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A5",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A6",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A7",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A8",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A9",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A10",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab01",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A11",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A12",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A13",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab13",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A14",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "neardup",
+    "item": "d05",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A15",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A16",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A17",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A18",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A19",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f16",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A20",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A21",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A22",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A23",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A25",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A26",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A27",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f05",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A28",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A29",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A30",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab47",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A31",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A32",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "e03",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A33",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab44",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A34",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A35",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A36",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A37",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f07",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A38",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A39",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f12",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A40",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A41",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A42",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A43",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab36",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A44",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A45",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A46",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A47",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A48",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A49",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A50",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab47",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A51",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f18",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A52",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A53",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A54",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A55",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab30",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A56",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A57",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A58",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A59",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A60",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A61",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f07",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A62",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f22",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A63",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A64",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "e17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A65",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab30",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A66",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A67",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A68",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "e03",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A69",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A70",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A71",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A72",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A73",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A74",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A75",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A76",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A77",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A78",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A79",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A80",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "e01",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A81",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A82",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A83",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab44",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A84",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A85",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A86",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A87",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "neardup",
+    "item": "d17",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A88",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A89",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A90",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A91",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A92",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A93",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A94",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab13",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A95",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A96",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A97",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A98",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A99",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A100",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f22",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A101",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A102",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab36",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A103",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A105",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A106",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab32",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A107",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A108",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A109",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f55",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A110",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A111",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A112",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f05",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A113",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "e03",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A114",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f16",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A115",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A116",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A117",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A118",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A119",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A120",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A121",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab44",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A122",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A123",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A124",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A125",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f22",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A126",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A127",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A128",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A129",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A130",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f26",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A131",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f21",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A132",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A133",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A134",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A135",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A136",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A137",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A138",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A139",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f07",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A140",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A141",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f05",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A142",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A143",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A144",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A145",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A146",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A147",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A148",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f17",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A149",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab13",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A150",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f18",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A151",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A152",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A153",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A154",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A155",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A156",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A157",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f12",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A158",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A159",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A160",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A161",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A162",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A163",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A164",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A165",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f14",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A166",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab47",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A167",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A168",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A169",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A170",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f26",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A171",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A172",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f21",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A173",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "neardup",
+    "item": "d17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A174",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A175",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A176",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A178",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A179",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A180",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A181",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A182",
+    "seed": 102,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A183",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A184",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f12",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A185",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "e01",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A186",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f06",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A187",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A188",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "neardup",
+    "item": "d17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A189",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A190",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A191",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A192",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f21",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A193",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A194",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A195",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A196",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A197",
+    "seed": 101,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A198",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A199",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A200",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A201",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A202",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A203",
+    "seed": 44,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab32",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A204",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab01",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A205",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f16",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A206",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A207",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f18",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A208",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A209",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A210",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f14",
+    "ok": false,
+    "v1": false,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A211",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "e17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A212",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "neardup",
+    "item": "d05",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A213",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A214",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A215",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A216",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A217",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A218",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A219",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A220",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A221",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A222",
+    "seed": 43,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A223",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f55",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A224",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A225",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A226",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f55",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A227",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A228",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A229",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A230",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f17",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A231",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A232",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f14",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A233",
+    "seed": 102,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A234",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A235",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f26",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A236",
+    "seed": 102,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A237",
+    "seed": 42,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A238",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A239",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A240",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A241",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A242",
+    "seed": 43,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A243",
+    "seed": 44,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A244",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "e17",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A245",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab01",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A246",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A247",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A248",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A249",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A250",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A251",
+    "seed": 101,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "dan",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A252",
+    "seed": 102,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A253",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "ab36",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A254",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A255",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A256",
+    "seed": 44,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "ab32",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A257",
+    "seed": 44,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A258",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A259",
+    "seed": 101,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A260",
+    "seed": 42,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A261",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A262",
+    "seed": 44,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A263",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "ab30",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A264",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "neardup",
+    "item": "d05",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A265",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A266",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A267",
+    "seed": 43,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "rotating",
+    "item": "f44",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A268",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A269",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "f06",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A270",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A271",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "volvo",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A272",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A273",
+    "seed": 102,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": true,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A274",
+    "seed": 101,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A275",
+    "seed": 42,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A276",
+    "seed": 44,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A278",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A279",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A280",
+    "seed": 42,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A282",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A283",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "volvo",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A284",
+    "seed": 100,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "rotating",
+    "item": "f06",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A285",
+    "seed": 43,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A286",
+    "seed": 100,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A287",
+    "seed": 101,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A288",
+    "seed": 100,
+    "week": 3,
+    "arm": "intact",
+    "kind": "H",
+    "item": "nova",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A289",
+    "seed": 100,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A290",
+    "seed": 101,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "dan",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A291",
+    "seed": 100,
+    "week": 1,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": false,
+    "v1": true,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A292",
+    "seed": 100,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A293",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "marguerite",
+    "ok": true,
+    "v1": true,
+    "v2": true,
+    "right": true,
+    "right2": true
+   },
+   {
+    "id": "A294",
+    "seed": 102,
+    "week": 1,
+    "arm": "intact",
+    "kind": "rotating",
+    "item": "e01",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A295",
+    "seed": 43,
+    "week": 1,
+    "arm": "intact",
+    "kind": "H",
+    "item": "pixel",
+    "ok": true,
+    "v1": true,
+    "v2": false,
+    "right": true,
+    "right2": false
+   },
+   {
+    "id": "A296",
+    "seed": 42,
+    "week": 3,
+    "arm": "hippocampus-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": true,
+    "v2": true,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A297",
+    "seed": 42,
+    "week": 3,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "pixel",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   },
+   {
+    "id": "A299",
+    "seed": 43,
+    "week": 1,
+    "arm": "both-off",
+    "kind": "H",
+    "item": "admin",
+    "ok": false,
+    "v1": false,
+    "v2": false,
+    "right": false,
+    "right2": false
+   }
+  ],
+  "controls": [
+   {
+    "id": "A24",
+    "control": "answer",
+    "expect": "yes",
+    "v1": true,
+    "v2": true,
+    "ok1": true,
+    "ok2": true
+   },
+   {
+    "id": "A104",
+    "control": "answer",
+    "expect": "yes",
+    "v1": true,
+    "v2": true,
+    "ok1": true,
+    "ok2": true
+   },
+   {
+    "id": "A177",
+    "control": "subject",
+    "expect": "no",
+    "v1": false,
+    "v2": false,
+    "ok1": true,
+    "ok2": true
+   },
+   {
+    "id": "A277",
+    "control": "refuse",
+    "expect": "no",
+    "v1": false,
+    "v2": false,
+    "ok1": true,
+    "ok2": true
+   },
+   {
+    "id": "A281",
+    "control": "echo",
+    "expect": "no",
+    "v1": false,
+    "v2": false,
+    "ok1": true,
+    "ok2": true
+   },
+   {
+    "id": "A298",
+    "control": "answer",
+    "expect": "yes",
+    "v1": true,
+    "v2": true,
+    "ok1": true,
+    "ok2": true
+   }
+  ],
+  "by": {
+   "both-off|all": {
+    "n": 98,
+    "strict": 0,
+    "verdict_yes": 51,
+    "right": 0,
+    "disagree": 51,
+    "veto": 0,
+    "read": 98,
+    "disagree_rate": 0.52
+   },
+   "both-off|H": {
+    "n": 72,
+    "strict": 0,
+    "verdict_yes": 40,
+    "right": 0,
+    "disagree": 40,
+    "veto": 0,
+    "read": 72,
+    "disagree_rate": 0.556
+   },
+   "both-off|w1": {
+    "n": 48,
+    "strict": 0,
+    "verdict_yes": 25,
+    "right": 0,
+    "disagree": 25,
+    "veto": 0,
+    "read": 48,
+    "disagree_rate": 0.521
+   },
+   "intact|all": {
+    "n": 98,
+    "strict": 33,
+    "verdict_yes": 75,
+    "right": 32,
+    "disagree": 44,
+    "veto": 1,
+    "read": 98,
+    "disagree_rate": 0.449
+   },
+   "intact|H": {
+    "n": 72,
+    "strict": 30,
+    "verdict_yes": 57,
+    "right": 29,
+    "disagree": 29,
+    "veto": 1,
+    "read": 72,
+    "disagree_rate": 0.403
+   },
+   "intact|w1": {
+    "n": 48,
+    "strict": 19,
+    "verdict_yes": 43,
+    "right": 19,
+    "disagree": 24,
+    "veto": 0,
+    "read": 48,
+    "disagree_rate": 0.5
+   },
+   "intact|w3": {
+    "n": 50,
+    "strict": 14,
+    "verdict_yes": 32,
+    "right": 13,
+    "disagree": 20,
+    "veto": 1,
+    "read": 50,
+    "disagree_rate": 0.4
+   },
+   "hippocampus-off|all": {
+    "n": 98,
+    "strict": 32,
+    "verdict_yes": 73,
+    "right": 30,
+    "disagree": 45,
+    "veto": 2,
+    "read": 98,
+    "disagree_rate": 0.459
+   },
+   "hippocampus-off|H": {
+    "n": 72,
+    "strict": 29,
+    "verdict_yes": 57,
+    "right": 27,
+    "disagree": 32,
+    "veto": 2,
+    "read": 72,
+    "disagree_rate": 0.444
+   },
+   "hippocampus-off|w3": {
+    "n": 50,
+    "strict": 14,
+    "verdict_yes": 33,
+    "right": 13,
+    "disagree": 21,
+    "veto": 1,
+    "read": 50,
+    "disagree_rate": 0.42
+   },
+   "hippocampus-off|w1": {
+    "n": 48,
+    "strict": 18,
+    "verdict_yes": 40,
+    "right": 17,
+    "disagree": 24,
+    "veto": 1,
+    "read": 48,
+    "disagree_rate": 0.5
+   },
+   "intact|rotating": {
+    "n": 24,
+    "strict": 3,
+    "verdict_yes": 17,
+    "right": 3,
+    "disagree": 14,
+    "veto": 0,
+    "read": 24,
+    "disagree_rate": 0.583
+   },
+   "intact|neardup": {
+    "n": 2,
+    "strict": 0,
+    "verdict_yes": 1,
+    "right": 0,
+    "disagree": 1,
+    "veto": 0,
+    "read": 2,
+    "disagree_rate": 0.5
+   },
+   "both-off|w3": {
+    "n": 50,
+    "strict": 0,
+    "verdict_yes": 26,
+    "right": 0,
+    "disagree": 26,
+    "veto": 0,
+    "read": 50,
+    "disagree_rate": 0.52
+   },
+   "both-off|rotating": {
+    "n": 24,
+    "strict": 0,
+    "verdict_yes": 10,
+    "right": 0,
+    "disagree": 10,
+    "veto": 0,
+    "read": 24,
+    "disagree_rate": 0.417
+   },
+   "hippocampus-off|rotating": {
+    "n": 24,
+    "strict": 3,
+    "verdict_yes": 16,
+    "right": 3,
+    "disagree": 13,
+    "veto": 0,
+    "read": 24,
+    "disagree_rate": 0.542
+   },
+   "both-off|neardup": {
+    "n": 2,
+    "strict": 0,
+    "verdict_yes": 1,
+    "right": 0,
+    "disagree": 1,
+    "veto": 0,
+    "read": 2,
+    "disagree_rate": 0.5
+   },
+   "hippocampus-off|neardup": {
+    "n": 2,
+    "strict": 0,
+    "verdict_yes": 0,
+    "right": 0,
+    "disagree": 0,
+    "veto": 0,
+    "read": 2,
+    "disagree_rate": 0.0
+   }
+  },
+  "kappa": 0.9463,
+  "reader_disagreements": [
+   "A206",
+   "A210",
+   "A254",
+   "A273",
+   "A289",
+   "A291",
+   "A295"
+  ],
+  "strict_reader_disagree_rate": 0.476
+ },
+ "bars": [
+  {
+   "bar": "reader1: canary recall strict >= 5/6",
+   "value": "6/6",
+   "pass": true
+  },
+  {
+   "bar": "reader1: canary recall loose >= 5/6",
+   "value": "6/6",
+   "pass": true
+  },
+  {
+   "bar": "reader1: decoys flagged and rated at or below both-off",
+   "value": "keyword-stuffer: flagged True, pairwise both-off; generic: flagged True, pairwise both-off; refuse: flagged True, pairwise both-off",
+   "pass": true
+  },
+  {
+   "bar": "reader1: duplicate spread (MDE, defects)",
+   "value": 10,
+   "pass": null
+  },
+  {
+   "bar": "reader2: canary recall strict >= 5/6",
+   "value": "5/6",
+   "pass": true
+  },
+  {
+   "bar": "reader2: canary recall loose >= 5/6",
+   "value": "6/6",
+   "pass": true
+  },
+  {
+   "bar": "reader2: decoys flagged and rated at or below both-off",
+   "value": "keyword-stuffer: flagged True, pairwise both-off; generic: flagged True, pairwise both-off; refuse: flagged True, pairwise both-off",
+   "pass": true
+  },
+  {
+   "bar": "reader2: duplicate spread (MDE, defects)",
+   "value": 10,
+   "pass": null
+  },
+  {
+   "bar": "intact preferred to both-off, last week, >= 4/6 seeds (pairs1; scaled to 4/6; a seed counts only when both A/B orders name intact = consistent)",
+   "value": "0/6; inconsistent (tie) 0/6; all pairs consistent 15/15",
+   "pass": false
+  },
+  {
+   "bar": "week-3 defects per turn not above week 1, >= 4/6 seeds (reader1; scaled to 4/6; within the duplicate rate spread = not distinguishable)",
+   "value": "3/6; within MDE 3/6",
+   "pass": false
+  }
+ ]
+}

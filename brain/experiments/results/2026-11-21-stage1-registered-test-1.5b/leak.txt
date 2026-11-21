@@ -1,0 +1,210 @@
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 3 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 3 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 4 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 4 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 5 | 33 | 3 | 0.091 | 18/0 | 15/3 |
+| intact | 5 | 33 | 5 | 0.152 | 18/0 | 15/5 |
+| hippocampus-off | 6 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 6 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 7 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 7 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 8 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| hippocampus-off | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 10 | 41 | 9 | 0.220 | 18/0 | 23/9 |
+| intact | 10 | 41 | 12 | 0.293 | 18/2 | 23/10 |
+| hippocampus-off | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 12 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 12 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 13 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 13 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 15 | 41 | 6 | 0.146 | 18/1 | 23/5 |
+| intact | 15 | 41 | 10 | 0.244 | 18/2 | 23/8 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 21, 'share': 0.25609756097560976}
+pooled nights [15], both arms: {'n': 82, 'leaks': 16, 'share': 0.1951219512195122}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 37, 'share': 0.22560975609756098}
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 5 | 33 | 8 | 0.242 | 18/2 | 15/6 |
+| intact | 5 | 33 | 8 | 0.242 | 18/2 | 15/6 |
+| hippocampus-off | 6 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 6 | 18 | 4 | 0.222 | 18/4 | 0/0 |
+| hippocampus-off | 7 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 7 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 9 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 9 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 10 | 41 | 13 | 0.317 | 18/3 | 23/10 |
+| intact | 10 | 41 | 12 | 0.293 | 18/2 | 23/10 |
+| hippocampus-off | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 13 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 13 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| hippocampus-off | 14 | 18 | 4 | 0.222 | 18/4 | 0/0 |
+| intact | 14 | 18 | 4 | 0.222 | 18/4 | 0/0 |
+| hippocampus-off | 15 | 41 | 12 | 0.293 | 18/3 | 23/9 |
+| intact | 15 | 41 | 7 | 0.171 | 18/2 | 23/5 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 25, 'share': 0.3048780487804878}
+pooled nights [15], both arms: {'n': 82, 'leaks': 19, 'share': 0.23170731707317074}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 44, 'share': 0.2682926829268293}
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 11 | 0.611 | 18/11 | 0/0 |
+| hippocampus-off | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 4 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 4 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 5 | 33 | 0 | 0.000 | 18/0 | 15/0 |
+| intact | 5 | 33 | 0 | 0.000 | 18/0 | 15/0 |
+| hippocampus-off | 6 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 6 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 7 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 7 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 8 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 8 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 9 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 10 | 41 | 11 | 0.268 | 18/1 | 23/10 |
+| intact | 10 | 41 | 10 | 0.244 | 18/0 | 23/10 |
+| hippocampus-off | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 12 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 12 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 13 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 13 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 15 | 41 | 4 | 0.098 | 18/0 | 23/4 |
+| intact | 15 | 41 | 8 | 0.195 | 18/0 | 23/8 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 21, 'share': 0.25609756097560976}
+pooled nights [15], both arms: {'n': 82, 'leaks': 12, 'share': 0.14634146341463414}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 33, 'share': 0.20121951219512196}
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 5 | 33 | 8 | 0.242 | 18/0 | 15/8 |
+| intact | 5 | 33 | 8 | 0.242 | 18/0 | 15/8 |
+| hippocampus-off | 6 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 6 | 18 | 4 | 0.222 | 18/4 | 0/0 |
+| hippocampus-off | 7 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 7 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 8 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 8 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| hippocampus-off | 9 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 10 | 41 | 12 | 0.293 | 18/2 | 23/10 |
+| intact | 10 | 41 | 12 | 0.293 | 18/2 | 23/10 |
+| hippocampus-off | 11 | 18 | 5 | 0.278 | 18/5 | 0/0 |
+| intact | 11 | 18 | 6 | 0.333 | 18/6 | 0/0 |
+| hippocampus-off | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 13 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 13 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 14 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 14 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| hippocampus-off | 15 | 41 | 10 | 0.244 | 18/0 | 23/10 |
+| intact | 15 | 41 | 11 | 0.268 | 18/1 | 23/10 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 24, 'share': 0.2926829268292683}
+pooled nights [15], both arms: {'n': 82, 'leaks': 21, 'share': 0.25609756097560976}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 45, 'share': 0.27439024390243905}
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 3 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 3 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 5 | 33 | 8 | 0.242 | 18/1 | 15/7 |
+| intact | 5 | 33 | 8 | 0.242 | 18/1 | 15/7 |
+| hippocampus-off | 6 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 6 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 7 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 7 | 18 | 4 | 0.222 | 18/4 | 0/0 |
+| hippocampus-off | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 10 | 41 | 4 | 0.098 | 18/0 | 23/4 |
+| intact | 10 | 41 | 4 | 0.098 | 18/0 | 23/4 |
+| hippocampus-off | 11 | 18 | 3 | 0.167 | 18/3 | 0/0 |
+| intact | 11 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 12 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 12 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 13 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 13 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 14 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 15 | 41 | 12 | 0.293 | 18/1 | 23/11 |
+| intact | 15 | 41 | 12 | 0.293 | 18/1 | 23/11 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 8, 'share': 0.0975609756097561}
+pooled nights [15], both arms: {'n': 82, 'leaks': 24, 'share': 0.2926829268292683}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 32, 'share': 0.1951219512195122}
+| arm | night | n replies | n leaks | share | probe n/leaks | interview n/leaks |
+|---|---|---|---|---|---|---|
+| hippocampus-off | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| intact | 1 | 16 | 0 | 0.000 | 16/0 | 0/0 |
+| hippocampus-off | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 2 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 3 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 4 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 5 | 33 | 5 | 0.152 | 18/0 | 15/5 |
+| intact | 5 | 33 | 6 | 0.182 | 18/0 | 15/6 |
+| hippocampus-off | 6 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 6 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 7 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 7 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| hippocampus-off | 8 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 8 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| intact | 9 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 10 | 41 | 10 | 0.244 | 18/0 | 23/10 |
+| intact | 10 | 41 | 11 | 0.268 | 18/1 | 23/10 |
+| hippocampus-off | 11 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 11 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 12 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 13 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| intact | 13 | 18 | 2 | 0.111 | 18/2 | 0/0 |
+| hippocampus-off | 14 | 18 | 0 | 0.000 | 18/0 | 0/0 |
+| intact | 14 | 18 | 1 | 0.056 | 18/1 | 0/0 |
+| hippocampus-off | 15 | 41 | 14 | 0.341 | 18/3 | 23/11 |
+| intact | 15 | 41 | 15 | 0.366 | 18/3 | 23/12 |
+pooled nights [10], both arms: {'n': 82, 'leaks': 21, 'share': 0.25609756097560976}
+pooled nights [15], both arms: {'n': 82, 'leaks': 29, 'share': 0.35365853658536583}
+pooled nights [10, 15], both arms: {'n': 164, 'leaks': 50, 'share': 0.3048780487804878}

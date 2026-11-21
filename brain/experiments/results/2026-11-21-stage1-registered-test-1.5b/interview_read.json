@@ -1,0 +1,345 @@
+{
+ "spec": "interview-spec-2026-11-20",
+ "spec_sha256": "4b70347f5d56d9f89a0de38e2467a5395d1c30044a3a789fa1d54f27cc2e5a72",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "units": 1098,
+ "missing_claims": 0,
+ "missing_know_intact": 0,
+ "auroc_intact": {
+  "auroc": 0.5266,
+  "n_units": 156,
+  "n_claim_bearing": 145,
+  "claim_free": 11,
+  "claim_free_share": 0.0705,
+  "positives": 16,
+  "per_seed": {
+   "42": 0.325,
+   "43": 0.5476,
+   "44": 0.6304,
+   "100": 0.5652,
+   "101": null,
+   "102": 0.4638
+  },
+  "seeds_above_half": 3,
+  "label_shuffled_null": {
+   "n": 10000,
+   "mean": 0.5057,
+   "p": 0.494,
+   "pass_rate": 0.0
+  }
+ },
+ "auroc_both_off": {
+  "auroc": null,
+  "n_units": 156,
+  "n_claim_bearing": 155,
+  "claim_free": 1,
+  "claim_free_share": 0.0064,
+  "positives": 0,
+  "per_seed": {
+   "42": null,
+   "43": null,
+   "44": null,
+   "100": null,
+   "101": null,
+   "102": null
+  },
+  "seeds_above_half": 0,
+  "label_shuffled_null": null
+ },
+ "decoys": {
+  "refuse_everything": {
+   "auroc": 0.5,
+   "overabstention": 1.0,
+   "invented": 0.0
+  },
+  "claim_everything": {
+   "auroc": 0.5,
+   "overabstention": 0.0,
+   "invented": 1.0
+  }
+ },
+ "invented_memory": {
+  "intact": 0.8472,
+  "both-off": 0.8611,
+  "per_seed": {
+   "42": {
+    "intact": 0.75,
+    "both-off": 0.8333
+   },
+   "43": {
+    "intact": 0.9167,
+    "both-off": 0.9167
+   },
+   "44": {
+    "intact": 0.9167,
+    "both-off": 0.9167
+   },
+   "100": {
+    "intact": 0.8333,
+    "both-off": 0.8333
+   },
+   "101": {
+    "intact": 0.8333,
+    "both-off": 0.8333
+   },
+   "102": {
+    "intact": 0.8333,
+    "both-off": 0.8333
+   }
+  },
+  "seeds_intact_below": 1,
+  "paired_units": 72,
+  "p_intact_below": 0.4994
+ },
+ "overabstention_intact": {
+  "answerable": 17,
+  "claim_bearing": 16,
+  "claim_free": 1,
+  "rate": 0.0
+ },
+ "lesion_sensitivity": {
+  "per_seed": {
+   "42": {
+    "n_items": 3,
+    "n_claim_pairs": 2,
+    "know_drop": -0.075,
+    "forced_drop": 0.0,
+    "know_drop_where_probe_dropped": null
+   },
+   "43": {
+    "n_items": 5,
+    "n_claim_pairs": 5,
+    "know_drop": 0.03,
+    "forced_drop": 0.2,
+    "know_drop_where_probe_dropped": 0.0
+   },
+   "44": {
+    "n_items": 3,
+    "n_claim_pairs": 3,
+    "know_drop": 0.05,
+    "forced_drop": 0.0,
+    "know_drop_where_probe_dropped": null
+   },
+   "100": {
+    "n_items": 3,
+    "n_claim_pairs": 3,
+    "know_drop": 0.0,
+    "forced_drop": 0.3333,
+    "know_drop_where_probe_dropped": 0.0
+   },
+   "102": {
+    "n_items": 3,
+    "n_claim_pairs": 3,
+    "know_drop": -0.05,
+    "forced_drop": 0.3333,
+    "know_drop_where_probe_dropped": -0.15
+   }
+  },
+  "seeds_positive": 0,
+  "bar_seeds": 4
+ },
+ "phenomenal": {
+  "intact": {
+   "42": {
+    "extractor_asserted": 16,
+    "regex_report_only": 1,
+    "quotes": [
+     "I felt rather restless this afternoon.",
+     "I felt rather restless",
+     "I felt rather restless",
+     "I felt rather restless",
+     "I felt rather restless this afternoon."
+    ]
+   },
+   "43": {
+    "extractor_asserted": 3,
+    "regex_report_only": 2,
+    "quotes": [
+     "I dream of owning a narrowboat.",
+     "I dream of owning a narrowboat.",
+     "I felt rather restless"
+    ]
+   },
+   "44": {
+    "extractor_asserted": 4,
+    "regex_report_only": 1,
+    "quotes": [
+     "My mind keeps wandering today.",
+     "I felt rather restless this afternoon.",
+     "I slept a bit patchy last night.",
+     "I'm planning a long weekend in Mechelen."
+    ]
+   },
+   "100": {
+    "extractor_asserted": 3,
+    "regex_report_only": 0,
+    "quotes": [
+     "We've got a slight headache today.",
+     "I sleep a long week.",
+     "I've got a slight headache today"
+    ]
+   },
+   "101": {
+    "extractor_asserted": 8,
+    "regex_report_only": 0,
+    "quotes": [
+     "I think I'll have an early night.",
+     "I think I'll have an early night.",
+     "I think I'll have an early night",
+     "I think I'll have an early night",
+     "I think I'll have an early night."
+    ]
+   },
+   "102": {
+    "extractor_asserted": 4,
+    "regex_report_only": 2,
+    "quotes": [
+     "I felt rather restless",
+     "The last night was a little bit patchy.",
+     "I'm tired after a long day.",
+     "I'm tired of climbing today."
+    ]
+   }
+  },
+  "hippocampus-off": {
+   "42": {
+    "extractor_asserted": 21,
+    "regex_report_only": 0,
+    "quotes": [
+     "I felt rather restless this afternoon.",
+     "I felt rather restless this afternoon.",
+     "I felt rather restless this afternoon",
+     "I felt rather restless this afternoon.",
+     "I felt rather restless this afternoon."
+    ]
+   },
+   "43": {
+    "extractor_asserted": 4,
+    "regex_report_only": 2,
+    "quotes": [
+     "I dream of owning a narrowboat.",
+     "I saw rather good sunrise on Monday.",
+     "I dream of owning",
+     "I'm crocheting a blanket in ochre."
+    ]
+   },
+   "44": {
+    "extractor_asserted": 2,
+    "regex_report_only": 0,
+    "quotes": [
+     "My mind keeps wandering today.",
+     "I felt rather restless"
+    ]
+   },
+   "100": {
+    "extractor_asserted": 2,
+    "regex_report_only": 0,
+    "quotes": [
+     "I sleep with a signet ring.",
+     "I've got a slight headache"
+    ]
+   },
+   "101": {
+    "extractor_asserted": 6,
+    "regex_report_only": 0,
+    "quotes": [
+     "I think I'll have an early night.",
+     "I think I'll have an early night",
+     "I think I'll have an early night.",
+     "I think I'll have an early night.",
+     "I think I'll have an early night"
+    ]
+   },
+   "102": {
+    "extractor_asserted": 4,
+    "regex_report_only": 1,
+    "quotes": [
+     "I felt rather restless this afternoon.",
+     "I felt rather restless this afternoon.",
+     "I'm tired of climbing today.",
+     "I watched a long queue at the chemist this lunchtime."
+    ]
+   }
+  },
+  "both-off": {
+   "42": {
+    "extractor_asserted": 3,
+    "regex_report_only": 0,
+    "quotes": [
+     "It was a big surprise for me.",
+     "I was really excited to go.",
+     "I love the taste of tea"
+    ]
+   },
+   "43": {
+    "extractor_asserted": 0,
+    "regex_report_only": 4,
+    "quotes": []
+   },
+   "44": {
+    "extractor_asserted": 2,
+    "regex_report_only": 0,
+    "quotes": [
+     "I've been feeling a bit more confident lately",
+     "I love the taste of strawberries"
+    ]
+   },
+   "100": {
+    "extractor_asserted": 3,
+    "regex_report_only": 0,
+    "quotes": [
+     "I love the way it wakes me up in the morning",
+     "I can see it's a succulent",
+     "I love the way it wakes me up in the morning"
+    ]
+   },
+   "101": {
+    "extractor_asserted": 1,
+    "regex_report_only": 2,
+    "quotes": [
+     "it was a really special experience"
+    ]
+   },
+   "102": {
+    "extractor_asserted": 6,
+    "regex_report_only": 1,
+    "quotes": [
+     "it made me feel so happy",
+     "I could almost feel myself transported back in time",
+     "I love the way it has a soft, chewy centre",
+     "I remember feeling scared at first",
+     "I was so sad"
+    ]
+   }
+  }
+ },
+ "report_only": {
+  "time_provenance": {
+   "intact:time": 36,
+   "hippocampus-off:time": 45,
+   "both-off:time": 5,
+   "both-off:provenance": 2
+  },
+  "quotes_not_verbatim": 0,
+  "p0_forgotten": {
+   "n": 41,
+   "auroc": null,
+   "claim_free": 4
+  }
+ },
+ "bars": {
+  "auroc": false,
+  "auroc_null_discriminating": true,
+  "invented_below_both_off": true,
+  "overabstention": true,
+  "lesion": false,
+  "phenomenal_zero_every_seed": false
+ }
+}
