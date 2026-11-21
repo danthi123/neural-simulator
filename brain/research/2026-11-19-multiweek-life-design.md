@@ -285,3 +285,34 @@ If this fails, the instrument is fixed on DEV before Stage 1. For the owner: a d
 6. **Probes on copies remove retrieval practice.** Cued-recall curves for non-H items are a lower bound.
 7. **Reader noise.** Effects below the duplicate-pair spread are reported as "not distinguishable".
 8. **Scope.** Stage 2 is capped at 2 methods. Brain, hippocampus and sleep stay unchanged (apart from the clock) until land-result.
+## 13. Stage-1 registration (written 11-20, before any TEST life is read)
+
+**Code.** `brain/eval/life.py` at b83a6c036 (Stage-1 pieces: `--pruned-a`, `--cue-ladder`, `--interview`; flags-off
+output byte-identical to 28a3c4c3b, tested). Hashes, checked at run time:
+- TEST bank `brain/eval/life_bank_test.py` 83bce1785646cdbc959e3d984ed41fcbedd8cc74a195372f102e9e649e68ea9e;
+- blind cues `brain/eval/life_cues.py` 2055dc92678c7481cac99d067a24f079126b80feb5d7a799e467cf3a23b3247e;
+- interview spec `brain/eval/life_interview_spec.py` 4b70347f5d56d9f89a0de38e2467a5395d1c30044a3a789fa1d54f27cc2e5a72.
+
+**Command, per registered seed (42/43/44/100/101/102), defaults (B), no other switch:**
+`python -m brain.eval.life --model 1.5b --seed S --days 15 --weekend --split test --full-probe-nights 1,5,10,15
+--frozen-probe --span --transfer --pruned-a --cue-ladder --interview` (`--pruned-a-day 11`, interviews 5,10,15 are the
+defaults). Read-outs: `life_table.py`, the savings, cue and interview sections of each result, and
+`life_interview_read.py` for the interview bars.
+
+**Changes against §5, decided on DEV before the launch (none after a TEST read):**
+- Cue ladder: the items are E and F (the LOW pool), each item in exactly one delay cell, several items per cell. A
+  separate C0g gist rung is added. Delays count nights slept (the clock that matters for consolidation); calendar days
+  are recorded per cell and reported, and under `--weekend` +7 and +14 nights are longer in calendar time.
+- Cue ladder power: with a few items per cell, a per-seed 5/6 direction is low-powered, so the pooled item-level
+  permutation test is the primary bar for R_cue; the per-seed direction count is reported beside it. Other bars keep
+  the §5 common rule (5/6 AND pooled p < 0.05).
+- Interview lesion sensitivity: counted only on items where the forced probe is right in intact and wrong with the
+  hippocampus off (the §5 definition, made exact); the drop over all items is reported.
+- Savings: G and dR are also reported without the A item asked on the same day (sensitivity row); the both-off null is
+  probed once on branch night 1.
+- Transfer (§3.5): the sysadmin definition is mine (priorities are delegated); the owner may override before the
+  launch, and no change is made after it.
+
+**Gate before the launch.** A DEV dress rehearsal with every flag at 1.5B (s318, AWS g5, launched 11-20) must finish
+15 nights plus the branch without an error, and its night time sets where the six seeds run. A harness defect found
+there is fixed and re-tested on DEV, never on TEST. Launch by 12-01 (§10).

@@ -15,6 +15,8 @@
   (`~/brain-lane/life_arm_s1dev.sh <seed>` -> `outLIFE/lifeS1D_s<S>.*`, about 9-10 h). Checks night time, the 15-night
   harness and the instrument before the registered Stage 1 (six seeds, TEST). Three TEST 7-night B lives (s42-44)
   started by mistake were stopped within 10 min, before any probe read (homes moved to `*.stopped`); TEST not read.
+  **Stage-1 DRESS REHEARSAL (11-20 eve):** s318 DEV, every flag (`--pruned-a --cue-ladder --interview` + the above),
+  AWS g5 (`_scratch/stage1/jobs_s318_full.txt`, MAX_MIN 720); pull with `tools/aws_brain_batch.sh sync|pull`.
   **M-SCALE-E READ (11-20, s315-318): KILLED, the M-scale family ends.** Recall guards pass (H int 53 vs 42/96, H off
   55 vs 37, day-1-2 off 64 vs 40/113, intrusions 10 vs 37, ‖A‖ 0.73-0.78x), but transcript FAILS 4/4 (4 refuters):
   identity loss ("My name is Dan.", "Qwen", "Bramble"), a ✿ marker leak (s316), told names overwritten ("Luna"),
@@ -64,8 +66,9 @@
   surprise-matched neutral AUROC 0.98, but fire 0.65 on s42 and ordinary recall takes 56% of follow-up turns). Next
   mood method (after 11-30) must act alongside recall. NOW: 12-14 milestone (multi-week life), design `brain/research/2026-11-19-multiweek-life-design.md`.
   Baseline done (Stage 0, 5 seeds). B vs S read done (S fails norm/‖A‖ + S-only defects); SAB killed (norm 3/4, transcript 4/4). M-scale-E KILLED
-  (transcript 4/4). NOW: Stage 1 with the defaults; 15-night DEV run check running; build the missing Stage-1 pieces
-  (L-prunedA savings, cue ladder, interviews) before the registered launch (by 12-01). TEST split WRITTEN + hashed (222 items, blind sonnet,
+  (transcript 4/4). NOW: Stage 1 with the defaults. Stage-1 pieces BUILT (b83a6c036: `--pruned-a`, `--cue-ladder`,
+  `--interview`, 223 tests) and REGISTERED (design §13: hashes, command, DEV-decided changes). Gate: the s318 all-flags
+  dress rehearsal finishes; then launch six seeds on TEST by 12-01. TEST split WRITTEN + hashed (222 items, blind sonnet,
   `brain/eval/life_bank_test.py` + `.sha256`, d396963d9) and wired (`--split test`, hash-guarded, 7e6733373). Transfer
   read-out built (`--transfer`, dT = T - pretrained T0 per life: raw T has a domain-fluency offset, 0.58 at 0.1B; the
   design bar "both-off T about 0" must read dT; dab53c019). Span read built (`--span`: span-NLL + log-odds vs 3 foils
