@@ -500,6 +500,8 @@ def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: in
     rp = replay_priority_record(b, ledger) if brain_kw.get("replay_priority") is not None else None
     if rp is not None:
         info["replay_priority"] = rp
+    if brain_kw.get("keep_bank") is not None and getattr(b, "last_keep_record", None):
+        info["keep_bank"] = b.last_keep_record
     if extras:   # M-use / M-scale read-outs, present only when one of the new flags is on
         info.update({k: b.meta[k] for k in ("adapter_budget", "norm_pre_night", "downscale_g") if k in b.meta})
     return rows, info
@@ -519,6 +521,8 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False, le
     rp = replay_priority_record(b, ledger) if brain_kw.get("replay_priority") is not None and ledger is not None else None
     if rp is not None:
         out["replay_priority"] = rp
+    if brain_kw.get("keep_bank") is not None and getattr(b, "last_keep_record", None):
+        out["keep_bank"] = b.last_keep_record
     return out
 
 
@@ -894,6 +898,9 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             raise ValueError(f"resume: this life has replay_priority {saved_rp!r}, not {brain_kw['replay_priority']!r}")
         if saved_rp is not None:
             brain_kw["replay_priority"] = saved_rp
+        saved_kb = (res.get("brain_kw") or {}).get("keep_bank")    # the --keep-bank is the one the life was started with
+        if brain_kw.get("keep_bank") != saved_kb:
+            raise ValueError(f"resume: this life has keep_bank {saved_kb!r}, not {brain_kw.get('keep_bank')!r}")
         if res.get("lang_guard") is not None:     # the --lang-guard flag is the one the life was started with
             lang_guard = True
         elif lang_guard:
@@ -1091,6 +1098,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
     ap.add_argument("--replay-priority", default=None, choices=("strength_x_loss", "loss"),
                     help="D2-PR: Brain(replay_priority=...), loss-prioritised replay (brain/research/2026-11-21-replay-priority-prereg.md)")
+    ap.add_argument("--keep-bank", default=None, choices=("prior",),
+                    help="K-P: Brain(keep_bank='prior'), the sleep keep set drawn from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md)")
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
     ap.add_argument("--downscale-factors", default=None, choices=("B", "AB"), help="M-scale-3 variant: AB = sqrt(g) on A and B")
     ap.add_argument("--downscale-when", default=None, choices=("before", "end"), help="M-scale-E: end = the cut after replay")
@@ -1120,6 +1129,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["sleep_downscale"] = a.sleep_downscale
     if a.replay_priority:
         kw["replay_priority"] = a.replay_priority
+    if a.keep_bank:
+        kw["keep_bank"] = a.keep_bank
     if a.rank:
         kw["rank"] = a.rank
     if a.downscale_factors:
