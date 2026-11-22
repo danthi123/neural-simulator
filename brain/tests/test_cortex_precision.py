@@ -33,6 +33,15 @@ def test_cuda_fp32_opt_in(fake):
     assert fake[-1] == "cpu fp32"
 
 
+def test_cuda_fp32_turns_tf32_off_default_leaves_it(fake):
+    import torch
+    torch.backends.cuda.matmul.allow_tf32 = True; torch.backends.cudnn.allow_tf32 = True   # as rwkv.model sets them
+    C.Cortex("m", device="cuda")
+    assert torch.backends.cuda.matmul.allow_tf32 and torch.backends.cudnn.allow_tf32      # default untouched
+    C.Cortex("m", device="cuda", cuda_precision="fp32")
+    assert not torch.backends.cuda.matmul.allow_tf32 and not torch.backends.cudnn.allow_tf32
+
+
 def test_bad_precision_refused(fake):
     with pytest.raises(ValueError):
         C.Cortex("m", device="cuda", cuda_precision="bf16")
