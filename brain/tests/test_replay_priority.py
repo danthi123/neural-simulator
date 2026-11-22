@@ -113,6 +113,38 @@ def test_loss_weights_equal_L_e_and_plastic_flag_restored(tmp_path, night):
     assert p.enabled is False
 
 
+def test_loss_a_weights_equal_loss_weights_pow_alpha(tmp_path, night):
+    assert bb.REPLAY_ALPHA == 0.6
+    a = _brain(str(tmp_path / "a"), replay_priority="loss")
+    b = _brain(str(tmp_path / "b"), replay_priority="loss_a")
+    a.sleep(), b.sleep()
+    wl = [w for _, w in night[0]["eps"]]
+    wa = [w for _, w in night[1]["eps"]]
+    assert wa == pytest.approx([x ** 0.6 for x in wl])
+    for r in b.last_replay_weights:
+        assert r["weight"] == pytest.approx(r["loss"] ** 0.6) and "strength" in r
+    assert sum(r["share"] for r in b.last_replay_weights) == pytest.approx(1.0)
+    tot = sum(max(x["weight"], 1e-3) for x in b.last_replay_weights)
+    for r in b.last_replay_weights:   # alpha applied once, before the shares are normalised
+        assert r["share"] == pytest.approx(max(r["weight"], 1e-3) / tot)
+
+
+def test_loss_a_meta_roundtrip_and_unknown_still_raises(tmp_path, night):
+    home = str(tmp_path / "h")
+    b = _brain(home, replay_priority="loss_a")
+    b.save()
+    assert json.load(open(os.path.join(home, "meta.json")))["replay_priority"] == "loss_a"
+    b2 = Brain(home, cortex=StubCortex(), **KW)
+    assert b2._replay_priority == "loss_a" and "replay_priority" not in b2.meta
+    with pytest.raises(ValueError):
+        Brain(str(tmp_path / "x"), cortex=StubCortex(), **KW, replay_priority="loss_b")
+    m = json.load(open(os.path.join(home, "meta.json")))
+    m["replay_priority"] = "bogus"
+    json.dump(m, open(os.path.join(home, "meta.json"), "w"))
+    with pytest.raises(ValueError):
+        Brain(home, cortex=StubCortex(), **KW)
+
+
 def test_rng_untouched_and_replay_seed_same(tmp_path, night):
     a = _brain(str(tmp_path / "a"))
     b = _brain(str(tmp_path / "b"), replay_priority="loss")

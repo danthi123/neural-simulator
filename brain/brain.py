@@ -86,6 +86,10 @@ class CortexMismatch(RuntimeError):
 
 
 
+# D2-PR2: exponent of the tempered loss-prioritised replay ("loss_a"): w_e = L_e ** REPLAY_ALPHA. 0.6 is the value of
+# Schaul et al. 2016 (prioritized experience replay, proportional variant), taken as written, not tuned
+# (brain/research/2026-11-22-replay-priority-2-prereg.md).
+REPLAY_ALPHA = 0.6
 MONITOR_OVERLAP = 0.75   # declared scaffold (reply_monitor): share of a draft's words found in one earlier text
 
 
@@ -253,7 +257,8 @@ class Brain:
         replay_priority: (switch, default OFF = None: Brain.sleep byte-identical) D2-PR, loss-prioritised replay
         (brain/research/2026-11-21-replay-priority-prereg.md): at the start of a night, before replay, each replayed
         episode gets L_e = the cortex's mean per-token NLL of its replay text under the current adapters (no gradient,
-        no RNG). "strength_x_loss" = replay weight effective_strength * L_e; "loss" = L_e. The night's weights are in
+        no RNG). "strength_x_loss" = replay weight effective_strength * L_e; "loss" = L_e; "loss_a" (D2-PR2, brain/research/2026-11-22-replay-priority-2-prereg.md) = L_e ** REPLAY_ALPHA
+        (0.6, Schaul et al. 2016), the tempered form. The night's weights are in
         last_replay_weights. A non-default choice is saved in meta.json (like use_gate).
         keep_bank: (switch, default OFF = None: Brain.sleep byte-identical, no keep_bank.json) K-P, the sleep keep set drawn
         from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md). "prior" = once per life, the
@@ -339,8 +344,8 @@ class Brain:
         if rank not in (None, "raw"):
             raise ValueError(f"rank must be None or 'raw', not {rank!r}")
         self.rank = rank
-        if replay_priority not in (None, "strength_x_loss", "loss"):
-            raise ValueError(f"replay_priority must be None, 'strength_x_loss' or 'loss', not {replay_priority!r}")
+        if replay_priority not in (None, "strength_x_loss", "loss", "loss_a"):
+            raise ValueError(f"replay_priority must be None, 'strength_x_loss', 'loss' or 'loss_a', not {replay_priority!r}")
         self._replay_priority = self._replay_priority_arg = replay_priority
         self.last_replay_weights = None   # the last night's per-episode weights (only with replay_priority on)
         if keep_bank not in (None, "prior"):
@@ -933,7 +938,12 @@ class Brain:
                     tgt = tgt.to(lp.device)
                     loss = float(torch.nn.functional.nll_loss(lp[:-1], tgt))
                     st = float(self.hippocampus.effective_strength(e, now))
-                    w = loss if self._replay_priority == "loss" else st * loss
+                    if self._replay_priority == "loss":
+                        w = loss
+                    elif self._replay_priority == "loss_a":
+                        w = loss ** REPLAY_ALPHA
+                    else:
+                        w = st * loss
                     rows.append({"text": e.text, "permanent": bool(e.permanent), "strength": st, "loss": loss, "weight": w})
         finally:
             plastic.enabled = was
@@ -1191,8 +1201,8 @@ class Brain:
         self._use_gate = ug
         rp = self._replay_priority_arg or meta.pop("replay_priority", None)
         meta.pop("replay_priority", None)
-        if rp not in (None, "strength_x_loss", "loss"):
-            raise ValueError(f"replay_priority in {self.home}/meta.json must be 'strength_x_loss' or 'loss', not {rp!r}")
+        if rp not in (None, "strength_x_loss", "loss", "loss_a"):
+            raise ValueError(f"replay_priority in {self.home}/meta.json must be 'strength_x_loss', 'loss' or 'loss_a', not {rp!r}")
         self._replay_priority = rp
         kb = meta.pop("keep_bank", None)
         if kb not in (None, "prior"):
