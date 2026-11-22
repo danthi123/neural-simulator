@@ -8,14 +8,16 @@ With no consolidated synapses the live cortex IS the pretrained one (same code p
 from __future__ import annotations
 
 import fcntl
+import hashlib
 import json
 import os
+import random
 
 import torch
 import torch.nn.functional as F
 
 from brain import clock
-from brain.cortex import Cortex, model_size, resolve_model
+from brain.cortex import END_OF_TEXT, Cortex, model_size, resolve_model
 from brain.hippocampus import Episode, Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus
 from brain.plastic_cortex import PlasticCortex
@@ -42,6 +44,16 @@ ORDINARY = [
     "\n\nAssistant: Rain can be cozy.\n\n",
     "User: What's a good way to spend a rainy afternoon?\n\nAssistant: Reading a book with tea is nice.\n\n",
     "User: Can you count to five?\n\nAssistant: One, two, three, four, five.\n\n"]
+# K-P keep bank (switch Brain(keep_bank="prior"), default OFF; brain/research/2026-11-21-sleep-language-keep-prereg.md):
+# the host fixes these five numbers (SCAFFOLDS.md); the texts are the frozen cortex's own samples.
+KEEP_BANK_N = 512
+KEEP_BANK_TOKENS = 64
+KEEP_BANK_TEMP = 1.0
+KEEP_BANK_TOP_P = 1.0   # A1: a plain continuation, no top-p narrowing, no presence/frequency penalty, no turn-boundary stop
+KEEP_BANK_FRAME = "User:"
+KEEP_BANK_NIGHT = 64
+KEEP_BANK_SEED_OFFSET = 104729
+KEEP_BANK_FILE = "keep_bank.json"
 ADAPTERS = "cortex_adapters.pt"
 EPISODES = "episodes"            # one file per episode (tensors), written once
 EPISODE_INDEX = "episodes.json"  # text + strength/uses/times per episode, rewritten after a turn (small)
@@ -75,6 +87,17 @@ class CortexMismatch(RuntimeError):
 
 
 MONITOR_OVERLAP = 0.75   # declared scaffold (reply_monitor): share of a draft's words found in one earlier text
+
+
+def _sample_full(logits, temperature: float = 1.0) -> int:
+    """K-P A1 sampler: one token from the FULL softmax(logits / temperature) (top_p 1.0, no top-k, no penalties), drawn
+    with the global numpy RNG (the caller seeds and restores it), on any device. Not rwkv PIPELINE.sample_logits with
+    top_p=1.0: it keeps tokens with prob >= the sorted prob where the float32 cumsum first reaches top_p, and over the
+    65536-token vocabulary the cumsum ends below 1.0 (0.99989 on the 0.1B "User:" logits), so np.argmax finds no True,
+    the cutoff is the top prob and every draw is GREEDY. Here: float64, renormalised, so np.random.choice accepts it."""
+    import numpy as np
+    p = torch.softmax(logits.detach().float().cpu().double() / float(temperature), -1).numpy()
+    return int(np.random.choice(len(p), p=p / p.sum()))
 
 
 def _words(t: str) -> list[str]:
@@ -193,7 +216,7 @@ class Brain:
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
                  sleep_downscale: float | None = None, rank: str | None = None,
                  downscale_factors: str = "B", downscale_when: str = "before",
-                 replay_priority: str | None = None):
+                 replay_priority: str | None = None, keep_bank: str | None = None):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -232,6 +255,14 @@ class Brain:
         episode gets L_e = the cortex's mean per-token NLL of its replay text under the current adapters (no gradient,
         no RNG). "strength_x_loss" = replay weight effective_strength * L_e; "loss" = L_e. The night's weights are in
         last_replay_weights. A non-default choice is saved in meta.json (like use_gate).
+        keep_bank: (switch, default OFF = None: Brain.sleep byte-identical, no keep_bank.json) K-P, the sleep keep set drawn
+        from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md). "prior" = once per life, the
+        FROZEN cortex (adapters off, birth state) samples KEEP_BANK_N texts of up to KEEP_BANK_TOKENS tokens after the frame
+        KEEP_BANK_FRAME at temperature KEEP_BANK_TEMP (own RNG fork, seed sleep_seed + 104729), stored in
+        <home>/keep_bank.json; each night replaces ORDINARY with a fresh random subset of KEEP_BANK_NIGHT of them (seed
+        sleep_seed + sleeps + 104729). The night record is in last_keep_record. A non-default choice is saved in meta.json;
+        reopening a home saved with "prior" under keep_bank=None adopts it (like replay_priority), but switching it ON in a
+        home that already slept without it is refused (a life is one condition).
         rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
         similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
         Not saved: pass it each time.
@@ -312,6 +343,11 @@ class Brain:
             raise ValueError(f"replay_priority must be None, 'strength_x_loss' or 'loss', not {replay_priority!r}")
         self._replay_priority = self._replay_priority_arg = replay_priority
         self.last_replay_weights = None   # the last night's per-episode weights (only with replay_priority on)
+        if keep_bank not in (None, "prior"):
+            raise ValueError(f"keep_bank must be None or 'prior', not {keep_bank!r}")
+        self._keep_bank_mode = self._keep_bank_arg = keep_bank
+        self._keep_bank_texts = None
+        self.last_keep_record = None      # the last night's keep-bank record (only with keep_bank on)
         self.sleep_downscale = None if sleep_downscale is None else float(sleep_downscale)
         if downscale_factors not in ("B", "AB"):
             raise ValueError(f"downscale_factors must be 'B' or 'AB', not {downscale_factors!r}")
@@ -802,13 +838,24 @@ class Brain:
             heard = [e.text.removeprefix("User: ").strip() for e in self._night_episodes()
                      if not e.permanent and e.text.startswith("User: ")]
             guard = guard + guard_texts(self.raw_cortex, self.base, heard, split=self.sleep_rehearse == "reply")
+        generic, subset = ORDINARY, None
+        if self._keep_bank_mode is not None:
+            bank = self._keep_bank()
+            generic = random.Random(self.sleep_seed + self.meta.get("sleeps", 0) + KEEP_BANK_SEED_OFFSET).sample(
+                bank, min(KEEP_BANK_NIGHT, len(bank)))
+            subset = generic
         with torch.random.fork_rng(devices=[]):
-            losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
+            losses = replay_into_cortex(plastic, base, eps, generic, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],
                                         seed=self.sleep_seed + self.meta.get("sleeps", 0),
                                         log=self.sleep_log, guard=guard)
         for prm in plastic.parameters():
             prm.grad = None
+        if subset is not None:
+            self.last_keep_record = {
+                "bank_size": len(self._keep_bank_texts), "subset_n": len(subset),
+                "subset_hash": hashlib.sha1("\x00".join(subset).encode()).hexdigest()[:12],
+                "mean_keep_kl": (sum(k for _, k in losses) / len(losses)) if losses else None}
         if self.sleep_downscale is not None and self.meta.get("adapter_budget") is None:
             self.meta["adapter_budget"] = self.sleep_downscale * plastic.adapter_norm()   # first slept night sets it
         if self.sleep_downscale is not None and self.downscale_when == "end":   # M-scale-E: the cut after replay (no RNG)
@@ -818,6 +865,55 @@ class Brain:
         self._adapters_dirty = True
         self.cortex.refresh()
         return losses
+
+    def _keep_bank(self) -> list:
+        """K-P: the life's keep bank. Loaded from <home>/keep_bank.json when it exists, else sampled once from the frozen
+        cortex (raw_cortex = adapters off, from the birth state `base`) and written there. The sampling forks the torch
+        RNG and seeds it sleep_seed + KEEP_BANK_SEED_OFFSET, so the global RNG and the replay draws are untouched.
+        Each text is the frame plus the cortex's continuation, closed with a blank line like an ORDINARY text."""
+        if self._keep_bank_texts is not None:
+            return self._keep_bank_texts
+        path = os.path.join(self.home, KEEP_BANK_FILE)
+        if os.path.exists(path):
+            with open(path) as fh:
+                texts = json.load(fh)["texts"]
+        else:
+            import numpy as np
+            texts, lens = [], []
+            seed = self.sleep_seed + KEEP_BANK_SEED_OFFSET
+            lg, st = self.raw_cortex.read(KEEP_BANK_FRAME, self.base)
+            # _sample_full draws with np.random (any device); torch is forked too: seed both, restore both
+            nps = np.random.get_state()
+            devs = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else []
+            try:
+                with torch.random.fork_rng(devices=devs):
+                    torch.manual_seed(seed)
+                    np.random.seed(seed % (2 ** 32))
+                    pipe = self.raw_cortex.pipe   # decode only: the draw is _sample_full (rwkv top_p=1.0 is greedy)
+                    for _ in range(KEEP_BANK_N):
+                        # A1: plain continuation (not speak): 64 tokens or end of text, full softmax (top_p 1.0), no penalties, no turn stop
+                        lg_i, st_i, ids = lg, st, []
+                        for _ in range(KEEP_BANK_TOKENS):
+                            tok = _sample_full(lg_i, KEEP_BANK_TEMP)
+                            if tok == END_OF_TEXT:
+                                break
+                            ids.append(tok)
+                            lg_i, st_i = self.raw_cortex.forward([tok], st_i)
+                        t = pipe.decode(ids).strip()
+                        lens.append(len(ids))
+                        texts.append(KEEP_BANK_FRAME + ("" if t.startswith(("'", ",", ".", "?", "!")) else " ") + t + "\n\n")
+            finally:
+                np.random.set_state(nps)
+            self._write_json(KEEP_BANK_FILE, {"n": KEEP_BANK_N, "tokens": KEEP_BANK_TOKENS, "temperature": KEEP_BANK_TEMP,
+                                              "frame": KEEP_BANK_FRAME, "seed": seed,
+                                              "top_p": KEEP_BANK_TOP_P, "presence_penalty": 0.0,
+                                              "frequency_penalty": 0.0,
+                                              "stop_rule": "64 tokens or end of text",
+                                              "sampler": "full softmax, float64, np.random.choice (not rwkv top_p)",
+                                              "mean_tokens": sum(lens) / len(lens),
+                                              "texts": texts})
+        self._keep_bank_texts = texts
+        return texts
 
     def _prioritised_replay(self, plastic, night_eps, now) -> list:
         """D2-PR: [(replay text, weight)] with weight = effective_strength * L_e or L_e, L_e the mean per-token NLL of the
@@ -1020,6 +1116,10 @@ class Brain:
             meta["replay_priority"] = self._replay_priority
         else:
             meta.pop("replay_priority", None)
+        if self._keep_bank_mode is not None:
+            meta["keep_bank"] = self._keep_bank_mode
+        else:
+            meta.pop("keep_bank", None)
         self._write_json("meta.json", meta)
         p = self.cortex.plastic
         if p is not None and (self._adapters_dirty or not os.path.exists(os.path.join(self.home, ADAPTERS))):
@@ -1094,6 +1194,13 @@ class Brain:
         if rp not in (None, "strength_x_loss", "loss"):
             raise ValueError(f"replay_priority in {self.home}/meta.json must be 'strength_x_loss' or 'loss', not {rp!r}")
         self._replay_priority = rp
+        kb = meta.pop("keep_bank", None)
+        if kb not in (None, "prior"):
+            raise ValueError(f"keep_bank in {self.home}/meta.json must be 'prior', not {kb!r}")
+        if self._keep_bank_arg is not None and kb is None and meta.get("sleeps", 0) > 0:
+            raise ValueError(f"resume: {self.home} slept {meta['sleeps']} night(s) without keep_bank; a life keeps one "
+                             f"condition (keep_bank={self._keep_bank_arg!r} refused)")
+        self._keep_bank_mode = self._keep_bank_arg or kb
         if key != self.key:
             enabled = self.hippocampus.enabled
             self.hippocampus = self._make_hippocampus(key)
