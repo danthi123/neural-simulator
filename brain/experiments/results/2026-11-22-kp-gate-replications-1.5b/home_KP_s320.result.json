@@ -1,0 +1,17 @@
+{
+ "home": "/home/dant123/Projects/sim/_scratch/kpgate_w/home_KP_s320",
+ "night": 16,
+ "keep_bank": "prior",
+ "keep_record": {
+  "bank_size": 512,
+  "subset_n": 64,
+  "subset_hash": "ba34b793cdf8",
+  "mean_keep_kl": 0.4685766625062873
+ },
+ "mean_replay": 0.427239964545394,
+ "mean_keep": 0.4685766625062873,
+ "timing": {
+  "bank_s": 5820.181590080261,
+  "night_total_s": 8641.835756778717
+ }
+}

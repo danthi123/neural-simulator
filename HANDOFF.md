@@ -19,8 +19,8 @@
   s320); leak 0.04 vs 0.29; recall up (once-told F 19/34 vs 7/34). COSTS to register as TEST bars: self-name "Dan"
   8/18 vs 0/18; stock-refusal collapse nights 59/1158 rows vs 0 (abstention rise: any flip needs a ruling). Device
   confound (K-P fp16 AWS, B fp32 pool) not explanatory per refuter; B-fp16 lives `lifeBg_s<S>` launching on AWS
-  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s321 repeat s316; s320 on W
-  (`_scratch/kpgate_w/run_w320.sh`): add its row, and its bank is the s320 bank-quality proxy.
+  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s320/s321 repeat s316 (s320 0.85 vs B 2.93); W runs lifeKPc_s319 (K-P CPU fp32 life,
+  `_scratch/kpcpu/`), closing the device confound on one seed.
 - **BUILT (31de906ca, not frozen): TEST split v2** (design `brain/research/2026-11-22-fresh-test-split-design.md`, 4c9c0504f): age ladder
   (12 items/seed, 22 rows at age>=10), slot-matched never-told floor + FM-v2 bar, `--split test2`, `--age-ladder` OFF.
   Workflow builds validator, blind bank writer, code, opus review, fix (uncommitted in worktree until reviewed).
