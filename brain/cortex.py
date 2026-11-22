@@ -65,6 +65,11 @@ class Cortex:
         strategy = f"cuda {cuda_precision}" if device == "cuda" else "cpu fp32"
         self.strategy = strategy
         self.model = RWKV(model=model_path[:-4] if model_path.endswith(".pth") else model_path, strategy=strategy)
+        if device == "cuda" and cuda_precision == "fp32":
+            # rwkv.model turns TF32 on process-wide at import and in RWKV.__init__ (rwkv/model.py 11-12, 179-180), so
+            # "fp32" matmuls (here and in the sleep's PlasticCortex) would run TF32. True fp32 needs them off again.
+            torch.backends.cuda.matmul.allow_tf32 = False
+            torch.backends.cudnn.allow_tf32 = False
         self.pipe = PIPELINE(self.model, "rwkv_vocab_v20230424")
         self.n_layers = self.model.args.n_layer
 
