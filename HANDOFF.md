@@ -31,11 +31,9 @@
 - **OPEN:** AWS cap for 11-22 only: $150, aim < $100 (owner); remove after 11-22 to restore $50 (drop-in `~/.config/systemd/user/aws-guard.service.d/cap-override.conf`). Split v2 built (31de906ca), not frozen: DEV row check `lifeAL_s322` on AWS (`launch_al_now.sh`), then hash-freeze. W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
   i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`), retry pull then terminate. RAG
   index stale.
-- **FORCED SHUTDOWN 11-22 ~17:50 UTC (display dead).** On return:
-  (1) remove `~/.config/systemd/user/aws-guard.service.d/cap-override.conf` ($150 was 11-22 only) + daemon-reload;
-  (2) pull AWS (instances self-stop when done; results stay on disk): `AWS_BRAIN_STATE=research/queue/.aws_brain.<x>
-  bash tools/aws_brain_batch.sh pull` for x = bg320, bgr321, al322 (bg319 already pulled, batch 20261122-0832).
-  bgr321 and al322 share local batch dir 20261122-1027 (same-minute launch): pull each explicitly, check both JSONs.
+- **REBOOTED 11-22 13:16 EST: gpu-unlock WORKS** (journal: stage=handoff ret=0, "gpu_unlock: unlocked", ss0=0x88888888
+  ss1=0x8; kernel 7.3.5-2, driver 620.73, no Xid). **Owner: do NOT use W compute until told** (another session uses it).
+  AWS pulls via `_scratch/stage2/pull_loop2.sh` (status-based; bg320 done, bgr321/al322 ~19:30 UTC); cap drop-in auto-removed after 11-22.
 - **AFTER THE REBOOT (owner runs `bash ~/Projects/sim/_scratch/gpu-unlock-go.sh`, then powers on):** check
   `journalctl -k -b | grep gpu_unlock`, nvidia-smi, one gpu_queue daemon only (two = card off the bus), llama-swap VRAM;
   then the K-P identity gate (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, 59881a228) on GPU fp32:
