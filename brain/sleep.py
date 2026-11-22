@@ -25,17 +25,25 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
     then the KL covers only the positions that predict the reply tokens, so the prefix (a heard turn) stays free to be
     learned by replay (reply-only rehearsal). A (prefix, reply, context) triple (the teacher night): the student reads
     prefix + reply with no context; the target is the pretrained cortex reading context + prefix + reply, on the
-    positions that predict the reply. Returns the per-step losses."""
+    positions that predict the reply. A `generic` item may be a str (unchanged path) or a (text, positions) pair (K-P-U,
+    Brain(keep_bank="prior_u")): then the keep KL is indexed by `positions` (logit rows of the text) on both the
+    reference and the student, and batchmean runs over the kept positions only. Replay RNG unchanged.
+    Returns the per-step losses."""
     rng = random.Random(seed)
     torch.manual_seed(seed)
     c = plastic.cortex
     opt = torch.optim.Adam([p for p in plastic.parameters() if p.requires_grad], lr=lr)
     weights = [max(s, 1e-3) for _, s in episodes]
-    gen_ids = [_ids(c, g) for g in generic]
+    gen_ids = [_ids(c, g if isinstance(g, str) else g[0]) for g in generic]
+    gen_pos = [None if isinstance(g, str) else list(g[1]) for g in generic]
     # the pretrained cortex's behaviour on ordinary text, held as the protection target
     plastic.enabled = False
     with torch.no_grad():
         ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in gen_ids]
+        for j, pos in enumerate(gen_pos):
+            if pos is not None:
+                gen_pos[j] = torch.tensor(pos, dtype=torch.long, device=ref[j].device)
+                ref[j] = ref[j][gen_pos[j]]
         g_ids, g_from, g_ref = [], [], []
         for g in guard:
             if isinstance(g, str) or len(g) == 2:
@@ -59,7 +67,12 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
         replay = F.cross_entropy(logits[:-1], torch.tensor(ids[1:], device=logits.device))
         j = rng.randrange(len(gen_ids))
         g_logits, _ = plastic(gen_ids[j], base_state)
-        keep = F.kl_div(F.log_softmax(g_logits, -1), ref[j], log_target=True, reduction="batchmean")
+        if gen_pos[j] is None:
+            keep = F.kl_div(F.log_softmax(g_logits, -1), ref[j], log_target=True, reduction="batchmean")
+        elif len(gen_pos[j]):
+            keep = F.kl_div(F.log_softmax(g_logits, -1)[gen_pos[j]], ref[j], log_target=True, reduction="batchmean")
+        else:   # a pair with no kept position adds no keep term
+            keep = g_logits.sum() * 0.0
         loss = replay + kl_weight * keep
         if g_ids:
             m = grng.randrange(len(g_ids))   # own RNG: the replay sequence is the same as with no guard

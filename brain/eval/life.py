@@ -520,6 +520,8 @@ def live_day(home: str, cortex, day: dict, ledger: dict, sim: SimClock, seed: in
         info["replay_priority"] = rp
     if brain_kw.get("keep_bank") is not None and getattr(b, "last_keep_record", None):
         info["keep_bank"] = b.last_keep_record
+        if "kept_pos_share" in b.last_keep_record:   # K-P-U only (prereg 2026-11-23-kp-identity section 1)
+            info["kept_pos_share"] = b.last_keep_record["kept_pos_share"]
     if extras:   # M-use / M-scale read-outs, present only when one of the new flags is on
         info.update({k: b.meta[k] for k in ("adapter_budget", "norm_pre_night", "downscale_g") if k in b.meta})
     return rows, info
@@ -541,6 +543,8 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False, le
         out["replay_priority"] = rp
     if brain_kw.get("keep_bank") is not None and getattr(b, "last_keep_record", None):
         out["keep_bank"] = b.last_keep_record
+        if "kept_pos_share" in b.last_keep_record:   # K-P-U only (prereg 2026-11-23-kp-identity section 1)
+            out["kept_pos_share"] = b.last_keep_record["kept_pos_share"]
     return out
 
 
@@ -1150,8 +1154,9 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--replay-priority", default=None, choices=("strength_x_loss", "loss", "loss_a"),
                     help="D2-PR: Brain(replay_priority=...), loss-prioritised replay (brain/research/2026-11-21-replay-priority-prereg.md); "
                          "loss_a = D2-PR2 tempered, L_e**0.6 (brain/research/2026-11-22-replay-priority-2-prereg.md)")
-    ap.add_argument("--keep-bank", default=None, choices=("prior",),
-                    help="K-P: Brain(keep_bank='prior'), the sleep keep set drawn from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md)")
+    ap.add_argument("--keep-bank", default=None, choices=("prior", "prior_u", "prior_0"),
+                    help="K-P: Brain(keep_bank='prior'), the sleep keep set drawn from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md); "
+                         "prior_u = K-P-U (keep KL on User-turn positions only), prior_0 = K-P-0 (no frame) (brain/research/2026-11-23-kp-identity-prereg.md)")
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
     ap.add_argument("--downscale-factors", default=None, choices=("B", "AB"), help="M-scale-3 variant: AB = sqrt(g) on A and B")
     ap.add_argument("--downscale-when", default=None, choices=("before", "end"), help="M-scale-E: end = the cut after replay")

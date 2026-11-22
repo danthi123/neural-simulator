@@ -13,6 +13,8 @@ Run it twice from the same snapshot (keep_bank=None = arm B, keep_bank="prior" =
 For keep_bank="prior" on a home saved without it, the copy's meta.json is marked first (the explicit switch-on that
 Brain refuses to make by itself in a home that already slept), and the bank is sampled once into dst_home/keep_bank.json.
 Pass the life's own Brain kwargs (sleep_steps, sleep_lr, sleep_kl_weight, adapter_rank, inquiry, ...) as brain_kw.
+bank_from (default None = unchanged): a keep_bank.json copied into dst_home before the night (the K-P-U gate reuses the
+matching K-P after-home's bank, which is the same bank by construction, prereg 2026-11-23-kp-identity section 2).
 """
 from __future__ import annotations
 
@@ -23,10 +25,13 @@ import shutil
 from brain.brain import Brain
 
 
-def one_night(src_home: str, dst_home: str, keep_bank: str | None = None, cortex=None, sleep_seed: int = 0, **brain_kw) -> dict:
+def one_night(src_home: str, dst_home: str, keep_bank: str | None = None, cortex=None, sleep_seed: int = 0,
+              bank_from: str | None = None, **brain_kw) -> dict:
     if os.path.exists(dst_home):
         raise FileExistsError(dst_home)
     shutil.copytree(src_home, dst_home, ignore=shutil.ignore_patterns(".lock"))
+    if bank_from is not None:
+        shutil.copyfile(bank_from, os.path.join(dst_home, "keep_bank.json"))
     mp = os.path.join(dst_home, "meta.json")
     with open(mp) as fh:
         meta = json.load(fh)
