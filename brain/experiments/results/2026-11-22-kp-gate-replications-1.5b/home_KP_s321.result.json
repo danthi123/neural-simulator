@@ -1,0 +1,17 @@
+{
+ "home": "/home/node/brain-lane/kpgate/home_KP_s321",
+ "night": 16,
+ "keep_bank": "prior",
+ "keep_record": {
+  "bank_size": 512,
+  "subset_n": 64,
+  "subset_hash": "ac5b65dae3f8",
+  "mean_keep_kl": 0.4661272165675958
+ },
+ "mean_replay": 0.4117842517172297,
+ "mean_keep": 0.4661272165675958,
+ "timing": {
+  "bank_s": 8273.712458848953,
+  "night_total_s": 11483.313972234726
+ }
+}
