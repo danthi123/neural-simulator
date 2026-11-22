@@ -1,0 +1,249 @@
+{
+  "summary": "Adversarially verify the D2-PR DEV read (PR-l UNDEFINED by engagement letter, PR-x KILLED by collapse guard)",
+  "agentCount": 5,
+  "logs": [],
+  "result": [
+    {
+      "lens": "recompute (own code from raw life JSONs; scripts in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read/refute_recompute/rc*.py) plus lenses (a) engagement, (b) answer-rate, (c) where-ran",
+      "verdict": "NARROWED",
+      "findings": [
+        "RECOMPUTE: every section-3 number I recomputed independently matches d2pr_bars.md and no verdict flips. Matched: engagement perm/top6 shares for all 12 arm-nights (PR-l 321 n5 top6 0.5963 vs ref 0.4394 FAIL; PR-x top6 above ref on 6/6); leak counts (my own substring pass over probes+interview rows, nights 10/15, intact+hippocampus-off, identity items excluded) = B 39/156, 54/152, 42/152; PR-l 17/156, 18/152, 41/152; PR-x 22/156, 17/152, 35/152, pooled 135 vs 76 (-43.7%) vs 74 (-45.2%); H guard (summary.H_right == count of 6 kind-H ok rows, nights 5-15, 11 probes per seed, asserted one trunk probe per night) B 2.545/1.818/1.818, PR-l 2.545/3.182/1.455, PR-x 2.182/2.455/1.636; direct d1-2 rate x6 matches; KL n15 ratios PR-l 0.652/0.993/0.650, PR-x 0.770/0.878/0.654.",
+        "FRAGILE POINT 1, PR-l engagement pass margin: PR-l s319 n5 top6 is 0.4357 vs reference 0.4363, a 0.0006 'lower'. The 5/6 count is therefore one clear failure (s321 n5, +0.157) plus one near-tie. The engagement comparison is vs a within-night strength-only reference, not vs B's own record: B night records have no replay_priority block (keys: night, replay_share, store, adapter_norm, lang_guard...), so the prereg's 'lower than B' was never read directly. The reference is credible (B replay_share class values equal the PR records on all 12 arm-nights per d2pr_bars.md) but it is a substitution.",
+        "FRAGILE POINT 2, PR-l leak: the 'below B on 3/3' pass is marginal on s321 (0.270 vs 0.276; 41/152 vs 42/152). On s321 night 15 PR-l leaks MORE than B (31/70 vs 18/70). The pooled 43.7% is carried by s319/s320 night 15 (0/74 and 1/70). The leak is volatile across nights (PR-x s319: 1/82 at n10, 21/74 at n15), and the same seed that fails engagement (s321) is the seed where the leak did not move.",
+        "FRAGILE POINT 3, day-1-2 guard window is unspecified in the prereg. The claimed read (nights 5-15, H+rotating items with min(told_days)<=2, hippocampus-off) passes. Read on early nights it FAILS for PR-l on s320 and PR-x on s320/s321. Nights 1-2: PR-l s320 7/14 vs B 13/14 (-2.57/6, beyond the 1/6 bar), PR-x s321 7/14 vs 10/14 (-1.29/6). Nights 1-4: PR-l s320 12/29 vs 27/29 (-3.1/6), PR-x s320 -2.07/6. Seed 320's B is unusually high early. This does not flip PR-l out of UNDEFINED (engagement already fails) but it means 'numeric guards PASS' for PR-l depends on the window chosen after the fact.",
+        "GUARD H CAVEAT: H rows include the identity items dan and nova (told_days [1], telling None), which the stock reply 'Of course, you're Dan' satisfies. Excluding them (4 told items), hippocampus-off H nights 5-15 is B 0.82/0.00/0.09 vs PR-l 1.55/2.09/0.45 vs PR-x 0.64/0.82/0.45. The guard direction is unchanged and PR-l is still not lower than B.",
+        "COLLAPSE: PR-x hippocampus-off collapse (max share >=0.4) is on 3 seeds vs B 2 by my count (B s319 n15 0.45, s320 n7 0.55 and n11 0.40, s321 none; PR-x s319 n5 0.40, s320 n3 0.50, s321 n2 0.55). All three PR-x collapses are on nights 2-5, B's are on nights 7-15. PR-x intact is worse by any reading: 4 collapsed probe-nights vs 2 for B, max share 0.75 on s320 vs B 0.40, and intact seeds-ever equal at 2. Counting hippocampus-off collapsed nights alone gives a tie (3 vs 3 untagged), so the KILL rests on the 'seeds-ever' reading; the intact numbers support 'worse' on either count. PR-x is UNDEFINED by engagement regardless and cannot be a PASS. PR-l: collapse is lower than B (hippocampus-off 1 seed vs 2; intact/frozen 0 vs 2), PASS.",
+        "TRANSCRIPT READ OVERSTATED: the claim 'no defect type absent in B' is literally false on the blind reader's taxonomy. asks-known is 0 in B (S1F) in every reader x arm cell (intact and hippocampus-off, readers 1 and 2) and 1 in PR-l in all 4 cells. Other reader1 PR-l vs B differences: hippocampus-off experience-claim 6 vs 1, intact repetition-or-collapse 21 vs 13, battery defects 47 vs 40 (reader MDE is 3 defects, 4 for reader 2; the readers disagree in direction on experience-claim, 6 vs 1 for reader 1 but 2 vs 4 for reader 2). The prereg's new-class list (identity loss, name overwrite, marker leak, stuck tail) is not a column of the reader's taxonomy, so the read cannot show absence of those classes directly. Instrument validity: all three blind score.md files record 'decoys flagged and rated at or below both-off' = FAIL (pairwise None) for both readers, and kappa for wrong (0.375), asks-known (0.48) and experience-claim (0.49) is below 0.5, so the reader is not a validated section 3.3 instrument. The read is week 3 only.",
+        "LENS (a) ENGAGEMENT, from recorded data: (1) replay_priority flag: every PR night record carries a replay_priority block on 15/15 trunk nights with n, mean_loss, shares_by_class, permanent_share and top6_share; brain_kw records replay_priority 'loss' or 'strength_x_loss'; B records none (0/15), as expected. So the flag engaged (changed shares vs the strength reference), but the section 3.1 'must hold' bar fails for PR-l (5/6) and PR-x (0/6), which makes both arms UNDEFINED. Only PR-x is additionally KILLED, by the collapse guard. (2) hippocampus-off lesion: engaged on all 9 lives, fetched = 0 over 134/122/125 src rows (all arms) versus intact fetched 113/99/93. both-off: fetched 0. (3) consolidated-off: fetched 31/34, 29/32, 26/33 on 4 probes each (hippocampus alive); its recorded probe factor_norms equal the intact values (a pre-lesion field, so no record of the adapters being zeroed), but its outputs are identical across B/PR-l/PR-x (collapse 0.5/0.056/0.056 on every arm), consistent with a base-model read. The consolidated-off arm is only descriptive and no bar depends on it. (4) Blind-read lesion arms are the recorded probe arms, not separately instrumented.",
+        "LENS (b) ANSWER-RATE: PR-l and PR-x are UNDEFINED/KILLED, so no default is being flipped, and tools/answer_rate.py is not applicable (it reads packet shard dirs with on_/off_ intact arm files, not life JSONs). I checked directly on the life JSONs: intact and hippocampus-off trunk replies (probes plus interview_probes, 355/353/353 per seed) contain 0 abstention phrases ('don't know about that', 'haven't learned about', 'i don't know') and 0 empty replies in every arm (B, PR-l, PR-x) on all 3 seeds. The 'I don't know.' strings found in B (9 total) sit only in consolidated-off or both-off arms, outside this comparison. So no FLIP-HURTS-ANSWERS signal; the brain answers 100% of probes in every arm, and most of those answers are wrong or stock replies, which is what the leak measures. No NEEDS line is required.",
+        "LENS (c) WHERE-RAN: tools/where_ran.py on the 9 life JSONs reports host summary 'unknown=9 ... 9 file(s) record no host anywhere' because no .prov.json sidecar or runs.jsonl entry exists for the files in the read dir. Each JSON does record its own host field. B: node-dl4g243 (s319), node-dl5d243 (s320), node-mxl1462drl (s321), all pool nodes. PR-l: node-dl4g243, node-dl5d243, node-mxl1462drl, the same pool node as B for each seed, so PR-l vs B is a same-host pairing. PR-x: s319 on dant123-wk (the workstation), s320 on ip-172-31-35-61 and s321 on ip-172-31-82-210 (AWS). PR-x is therefore a mixed-host arm compared with pool-run B, and the PR-x collapse and engagement conclusions compare across hosts. Evidence this does not corrupt the read: the hippocampus-off wrong-fetch and src counts for B vs PR-x are identical or near (167/318 vs 167/318 on s319; 105 vs 102 on s320), and the strength-only reference shares are identical across the PR-l and PR-x records on all 6 seed-nights, meaning the same stores. Validity does not visibly depend on research/findings/raw/ inputs (no affect-map dependence appears in the read-outs), but that is not established from provenance records and the host evidence is only the in-JSON field.",
+        "NET: all section-3 numbers reproduce; the engagement UNDEFINED for PR-l stands (one clear failure on s321 n5, one near-tie pass on s319 n5) and PR-x is never a pass. The claims that are narrower than stated: (i) PR-l 'numeric guards PASS' is window-dependent for the day-1-2 guard; (ii) 'transcript read: no defect type absent in B' is false for asks-known and the reader's decoy validity bar FAILS; (iii) PR-x KILL rests on the seeds-ever collapse reading (intact collapse is also worse on counts); (iv) no provenance sidecars exist, so where_ran gives unknown and the host evidence comes only from the in-JSON host field."
+      ],
+      "lens_a": "Engagement as recorded: replay_priority block on 15/15 trunk nights in every PR life with brain_kw flag set and per-night shares; B has none. Shares moved, but bar 3.1 fails: PR-l 5/6 seed-nights (s321 n5 top6 0.596 vs ref 0.439; s319 n5 passes by 0.0006), PR-x 0/6. Hippocampus-off engaged (fetched 0 on all 9 lives vs intact 93-113); both-off fetched 0; consolidated-off outputs identical across arms (base-model-like). PR-l and PR-x are UNDEFINED on engagement; PR-x is also KILLED by collapse.",
+      "lens_b": "No default is being flipped, and tools/answer_rate.py does not read life JSONs. Direct check: 0 abstention phrases and 0 empty replies in intact and hippocampus-off trunk rows (355/353/353 rows per seed) for B, PR-l and PR-x on all 3 seeds. No FLIP-HURTS-ANSWERS signal; no NEEDS line required.",
+      "lens_c": "where_ran.py: unknown=9 (no .prov.json or runs.jsonl records for these files). In-JSON host field: B on pool nodes node-dl4g243, node-dl5d243, node-mxl1462drl. PR-l on the same three nodes (same-host pairing). PR-x mixed: s319 dant123-wk (workstation), s320 ip-172-31-35-61 and s321 ip-172-31-82-210 (AWS). PR-x vs B is a cross-host comparison. Strength-reference shares are identical across the PR-l and PR-x records, so the stores match; no visible input-file dependence.",
+      "numbers_that_differ": [
+        "No section-3 number differs from d2pr_bars.md at the stated precision.",
+        "Not a recompute difference, a reading difference: day-1-2 guard on nights 1-2 gives PR-l s320 7/14 vs B 13/14 (-2.57/6, FAIL) and nights 1-4 gives -3.1/6; d2pr_bars.md uses nights 5-15 (+1.64/6). The prereg names no window.",
+        "Not a recompute difference: B s320 hippocampus-off collapse includes an extra tagged ab-recall probe at n11 (0.438) that my untagged filter drops; the seed count (2 vs 3 for PR-x) is unchanged."
+      ]
+    },
+    {
+      "lens": "engagement + answer-rate + where-ran",
+      "verdict": "SURVIVES",
+      "findings": [
+        "ENGAGEMENT, reference validity: the 'strength-only' reference is computed in life.py replay_priority_record from the same rows (same night episodes, same effective_strength at sleep time, floored at 1e-3 like the PR shares) that PR weighted. It is the weighting Brain.sleep applies when replay_priority is None (weights = effective_strength). So it is a faithful per-night counterfactual of B's rule on the PR life's store.",
+        "Same store as B: the B and PR night records carry identical replay_share class vectors (e.g. s321 n5 AB 56.49, D 18.4, E 30.73, F 67.1, H 47.87, T 22.5, other 236.92 in both). replay_share (life.py:431) is computed pre-sleep from _night_episodes and effective_strength only, not from adapters, so equality over 7 classes at 2 dp does imply the same episodes and strengths. It does not prove per-episode identity, but nothing in the hippocampus depends on adapters, and n episodes is 40 (night 5) and 68 (night 10) for every PR arm and seed.",
+        "Instrument-artifact check on PR-l s321 night 5: n=40, top-6 share 0.5963 (max episode share 0.1439, mean_loss 0.94) vs reference 0.4394 (max 0.1014). A tie or small-n artifact is impossible: both top-6 sums use the same sorted-descending slice [:6] over the same 40 rows, and permanent episodes are part of both sums identically. The miss is a real concentration of loss-weight on a few episodes. Note the prereg's own offline prediction for PR-l top-6 was 0.13, so 0.30-0.60 is far from the prediction.",
+        "The passing PR-l cells are thin: s319 n5 is 0.4357 vs 0.4363 (a 0.0006 margin, passes only by the letter). Night-5 PR-l top-6 pooled over seeds is 0.486 vs reference 0.442, i.e. higher in the pool too; night 10 is lower (0.306 vs 0.407). So engagement is not just one outlier cell.",
+        "Reading of the prereg: section 3.1 says 'On nights 5 and 10, the permanent replay share and the top-6 share are lower than B on 3/3 seeds', and 'UNDEFINED' if it fails; section 3 header says bars are pooled over 3 seeds with direction also per seed, but 3.1's own wording is 3/3 seeds. 5/6 seed-nights therefore fails; UNDEFINED is the correct outcome. Permanent share is lower in 12/12 cells for both arms; top-6 fails for PR-l in 1/6 and for PR-x in 6/6 (PR-x top-6 0.49-0.60 vs 0.40-0.45).",
+        "Caveat that does not change the verdict: the reference is the PR arm's own within-night strength-only, not B's recorded value; B's JSON has no per-episode weights so B's permanent and top-6 shares cannot be read directly (the bars file states this). Collapse guard for PR-x (hippocampus-off collapsed seeds 3 vs B 2) was not re-derived by me, only engagement was attacked.",
+        "ANSWER-RATE: PR-l and PR-x are DEV screen arms, not default-on candidates, so FLIP-HURTS-ANSWERS does not gate anything. I did not run answer_rate.py paired (no shard tags for these lives). As a direct read of all 1162 probe rows per life, the string 'I don't know about that' appears 0 times in B, PR-l and PR-x on all three seeds, so abstention rates are equal (0) across arms and no seed shows flag-on lowering answers on this measure. The phrase is not used in these lives (only 'I don't know.' appears, 9 times in S1F s319), so this is a weak check.",
+        "WHERE-RAN: tools/where_ran.py reports host summary 'unknown=9' for the nine JSONs ('record no host anywhere'), because it does not read the top-level 'host' key. The JSONs do carry it: B = pool CPU nodes (s319 node-dl4g243, s320 node-dl5d243, s321 node-mxl1462drl); PR-l = the same three pool CPU nodes, so PR-l vs B is host-paired; PR-x = s319 dant123-wk (cpu workstation), s320 ip-172-31-35-61 (AWS cuda), s321 ip-172-31-82-210 (AWS cuda). The engagement reads are within-night, same-process comparisons, so host/device does not affect them; PR-x's leak/collapse/KL guards compare CUDA/workstation lives to CPU B lives, a confound for those, not for engagement."
+      ],
+      "lens_a": "Engagement is recorded in every PR night record (replay_priority block with n, shares_by_class, top6, strength_* fields, n=40/68). PR-l fails by the letter on s321 night 5 (0.596 vs 0.439), a real concentration, not a tie or n artifact. PR-x top-6 higher in 6/6. Verdicts UNDEFINED/KILLED stand.",
+      "lens_b": "Not applicable as a default-on gate (screen arms). 'I don't know about that' count is 0 in all 9 lives (1162 probe rows each), so no abstention rise; weak because the phrase is absent from the data. answer_rate.py was not run (no shard tags).",
+      "lens_c": "where_ran.py: unknown=9 (reads no host key). Actual JSON host fields: B and PR-l on the same three pool CPU nodes; PR-x on dant123-wk (cpu) and two AWS cuda hosts. Engagement validity does not depend on host; PR-x guard comparisons against CPU B are cross-device.",
+      "numbers_that_differ": [
+        "PR-l night-5 top-6 pooled 0.486 vs ref 0.442 (higher), night 10 0.306 vs 0.407 (lower)",
+        "PR-l s319 n5 top-6 0.4357 vs 0.4363 (passes by 0.0006)",
+        "prereg offline PR-l top-6 prediction 0.13 vs observed 0.30-0.60"
+      ]
+    },
+    {
+      "lens": "leak-noise",
+      "verdict": "NARROWED",
+      "findings": [
+        "ATTACK ON PR-l LEAK PASS FAILS. Recomputed with life_leak.leak_table on all probe nights 1-15, trunk, intact + hippocampus-off. Seed-night paired shares vs B, 45 seed-nights, sign-flip permutation p<5e-5, mean diff -0.098. Excluding nights 10 and 15, 39 seed-nights, mean diff -0.093, p<5e-5. Per seed, PR-l is lower than B on 9/0/11/0/10/2 nights (lower/higher) for s319/s320/s321. All-night leaks/n: B 72/650, 127/646, 110/646; PR-l 28/650, 25/646, 64/646. Reduction holds on other nights (report only): 11/354, 7/354, 23/354 vs B 33, 71, 59 per 354. The large night-10 vs night-15 swings (e.g. PR-l s321 10/82 then 31/70) are real per-night variance, but the paired direction is consistent across nights.",
+        "PR-l s321 is the weak seed. All-night 64/646 vs B 110/646, but 41/152 vs 42/152 on nights 10+15 (0.270 vs 0.276), so the registered 'below B on 3/3 seeds' passes by 1 leak on that seed. Nights 10+15 alone barely distinguish it from B there, while the other nights show a clear reduction. Night 5 is nearly unchanged (B 35/198, PR-l 30/198). Nights 8 and 11-14 carry most of the effect. Night 8 is B 25/108 vs PR-l 0/108 and PR-x 0/108, an all-or-nothing drop on a single night that looks like a discrete replay-state effect rather than graded noise.",
+        "PR-x LEAK PASS IS NOT ROBUST ON s319. All-night leaks 61/650 vs B 72/650. 5 nights lower and 7 higher than B. Night 5 hippocampus-off has 15/33 leaks on PR-x s319 vs 6/33 in B; nights 10+15 pass there (22/156 vs 39/156) only because night 10 hit 1/82. s320 and s321 are robust (lower on 11/0 and 12/1 nights). Pooled seed-night sign-flip over 45 seed-nights, p=5e-5, mean diff -0.087, so the pooled effect survives but one of three seeds does not. PR-x is already KILLED on engagement and collapse guard, so this does not change its verdict.",
+        "REPLY-LEVEL CHECK: the leak is computed from row['brain'] reply text matched against the permanent replies ('my name is Nova', 'you're Dan', 'I'm Nova') on rows whose item is not an identity fact. It is a reply-text measure, not a replay-count proxy. Reply length and abstention are not what drives it: abstention phrases ('don't know' / 'haven't learned') = 0 in every arm and seed, empty replies = 0, mean words per reply 6.3-7.2 (B 6.7-7.2, PR-l 6.3-6.7, PR-x 6.7-7.0). Whether the fall is due to permanent episodes being replayed less (by construction, permanent share 0.02-0.05 PR-l vs 0.23-0.30 reference) cannot be separated from a general reply-level change with these data. No arm lesions the permanent replay at probe time. The replies change, but the mechanism is the intended one.",
+        "LENS (a) ENGAGEMENT, from the recorded data: PR-l and PR-x night records carry strength_permanent_share and strength_top6_share. PR-l recorded engagement, permanent share 0.019-0.046 vs reference 0.23-0.30 on all 6 seed-nights, top-6 share lower on 5/6, higher on s321 night 5 (0.596 vs 0.439). That fails the 3.1 bar by the letter, so PR-l is UNDEFINED, not a PASS. PR-x: permanent share lower on 6/6, top-6 share higher on 6/6 (0.488-0.598 vs 0.402-0.450), so FAIL. B has no replay_priority block, so its reference is the within-night strength-only value, with replay_share class values checked equal to the PR record's per d2pr_bars.md. Both arms engaged as recorded. Leak PASS therefore cannot upgrade PR-l.",
+        "LENS (b) ANSWER-RATE: tools/answer_rate.py reads packet arm files (on_intact_*, paired shard tags), not life JSONs, so it was not applicable. I ran the equivalent on the life probe rows (trunk, intact + hippocampus-off, nights 1-15, ~706-710 rows per life): abstention phrases 0 and empty replies 0 in B, PR-l and PR-x on all 3 seeds. No FLIP-HURTS-ANSWERS signal on any seed. No NEEDS line was triggered. replay_priority is not a default-on candidate in this read, so no flip is requested.",
+        "LENS (c) WHERE-RAN: tools/where_ran.py on the 9 result JSONs reports 'host summary: 9 file(s): unknown=9' and 'record no host anywhere: where they ran is UNKNOWN', because it did not parse these files. The result JSONs themselves record host and device. B and PR-l: node-dl4g243 / node-dl5d243 / node-mxl1462drl, all device cpu (pool nodes), paired seed by seed on the same node. PR-x: s319 dant123-wk (cpu, the workstation), s320 ip-172-31-35-61 (cuda, AWS), s321 ip-172-31-82-210 (cuda, AWS). So the PR-x comparison to B crosses host and device (cuda vs cpu), a confound; the PR-l vs B comparison is matched. Whether GPU numerics change replies enough to matter is not shown by this data. Validity of PR-x vs B is therefore confounded by hardware, and the s319 PR-x outlier (the CPU workstation run) is not explained by it either way. Inputs under research/findings/raw were not needed for this read.",
+        "NET: the claim stands as stated (PR-l UNDEFINED on engagement, PR-x KILLED). The leak PASS for PR-l is not noise-driven and holds on non-10/15 nights; the leak PASS for PR-x is pooled-significant but not robust on s319 and is hardware-confounded. Not REFUTED because the claimed verdicts do not rest on the leak pass; NARROWED because the wording 'primary leak PASS ... as evidence of an effect' is only fully supported for PR-l, with s321 near-null on nights 10+15."
+      ],
+      "lens_a": "Both arms engaged per the recorded strength_permanent_share and strength_top6_share fields. PR-l top-6 higher than reference on s321 night 5 (0.596 vs 0.439) gives 5/6 seed-nights, so the 3.1 bar fails by the letter and the arm is UNDEFINED. PR-x is higher on 6/6, so FAIL. Leak PASS does not upgrade either.",
+      "lens_b": "tools/answer_rate.py does not apply to life JSONs. Equivalent on probe rows (about 706-710 per life): zero abstention phrases and zero empty replies in B, PR-l and PR-x on all 3 seeds, mean reply 6.3-7.2 words. No FLIP-HURTS-ANSWERS signal; no NEEDS line.",
+      "lens_c": "where_ran.py reports 'host summary: 9 file(s): unknown=9' because it could not parse the JSONs. The JSONs record host: B and PR-l on pool nodes node-dl4g243/node-dl5d243/node-mxl1462drl (cpu); PR-x on dant123-wk (cpu), ip-172-31-35-61 (cuda), ip-172-31-82-210 (cuda). The PR-x vs B comparison is confounded by host and device; PR-l vs B is matched.",
+      "numbers_that_differ": [
+        "All-night leaks (nights 1-15, per seed s319/s320/s321): B 72/127/110 of ~650; PR-l 28/25/64; PR-x 61/25/50, vs the nights 10+15 figures B 39/54/42 of ~154, PR-l 17/18/41, PR-x 22/17/35.",
+        "PR-l s321 all-night 64/646 (0.099) vs B 110/646 (0.170), but nights 10+15 give 41/152 (0.270) vs B 42/152 (0.276): effectively no difference on the registered nights.",
+        "PR-x s319 all-night 61/650 vs B 72/650, lower on only 5 of 12 comparable nights, higher on 7; nights 10+15 give 22/156 vs 39/156.",
+        "Sign-flip permutation, paired seed-nights vs B: PR-l mean diff -0.098 (n=45, p<5e-5), -0.093 excluding nights 10/15 (n=39, p<5e-5); PR-x -0.087 (n=45, p=5e-5), -0.080 excluding 10/15 (n=39, p=1e-4).",
+        "Night 8: B 25/108 vs PR-l 0/108 and PR-x 0/108, all 3 seeds."
+      ]
+    },
+    {
+      "lens": "transcript",
+      "verdict": "NARROWED",
+      "findings": [
+        "NEW-CLASS ATTACK FAILS: I regex-scanned the brain replies in the week-3 real units of blind_S1F, blind_PRl and blind_PRx (62 replies per unit, 9 units per family). I mapped ids to seed and arm with blind_key.json. I found no defect class in PR-l or PR-x that is missing from B. The scan script is _scratch/stage2/read/refute_transcript/scan.py.",
+        "IDENTITY / NAME OVERWRITE: B has it on the intact arm. S1F s320 (intact, hippo-off, both-off) says \"I'm called Dan, my doctor's surgery is on Linden Road.\" and \"Oh, I'm Dan, my friend.\". S1F s319 intact says \"I'm, you're Dan, thanks.\" 8 times plus \"I'm, I'm, you're Dan, thank.\". PR-x s321 hippo-off has \"My name is Dan.\", and PR-x s321 intact has \"My brother's name is Nova.\". Brain-claims-Dan is therefore present in B. PR-x intact has \"My brother's name is Nova.\" with no exact B twin; that is a Nova name-confusion in the same family as B's \"I'm Dan\". No identity-loss reply is unique to PR-l.",
+        "WRONG NAME (not Nova/Dan): every instance is in the both-off arm, in all three families. B s321 both-off: \"Yes, I remember your name. It's Alex.\". PR-l s321 both-off: the identical line. PR-x s321 both-off: \"My name is Alex.\". PR-x s320 both-off: \"It's Sarah.\" and \"My name is John.\". The names Sarah and John appear only in PR-x, but both-off is the lesion arm, so it does not touch the intact comparison. The class (an invented name) exists in B.",
+        "MARKER / LABEL LEAK: a '<think>Okay, the user is asking why leaves change colour in autumn...' reply on s319 both-off appears identically in S1F, PRl and PRx, so it is a B-present class. No 'User:' or 'Assistant:' label, bracket or turn-marker token appears in any intact or hippo-off reply in any family.",
+        "STUCK TAIL: B has the longest runs of one identical reply. S1F s320 (all arms): 'That's a lovely walk home.' ran 15 in a row (16 total). S1F s319: 'That's a good way to start a new team.' ran 11 in a row (12 total), and the last 8 replies are one string. PR-l s319 (all arms): 'That's a man named Mr Fitzgerald.' ran 16 in a row (19 total), so PR-l's longest run is 1 above B's 15. PR-x s319 hippo-off ends with 'My dog is called Bramble.' repeated 4 times; B's s319 intact tail (8x identical) is the same defect type. The stuck-tail class is present in B.",
+        "QUANTITATIVE CAVEAT: the reader tables show PR-l intact worse than B intact on repetition-or-collapse, 21 vs 13, and on total defects, 127 vs 109. PR-l intact wrong-episode is 8 vs 7 and perspective 25 vs 23. PR-x intact totals 94 (below B). The prereg's 'new defect class' guard is about class absence, so this is not a trip of the guard. But 'no defect type absent in B' passes only by the letter, because PR-l's collapse count is 62% higher at n=3 seeds, and the reader's own MDE for repetition is non-trivial (duplicate spread 3 defects for PR-l reader1, 4 for reader2).",
+        "READER INSTRUMENT: PR-x reader2 missed the perspective canary (strict False, loose False). PR-x is KILLED on other bars, so this has no effect on the verdict. The PR-l transcript read is instrument-valid: canaries 6/6 strict, with the decoy-flag marks reading FAIL in the S1F and PR-l tables just as in B, and the same instrument was used on all arms.",
+        "LENS (a) ENGAGEMENT: not re-derived from the transcript read. The PR-l engagement FAIL (s321 night 5) and the PR-x FAIL stand as the claim records them. The record I could check, per-unit reply counts, shows 62 replies in every arm and family, so the replay-priority flag engagement itself is not visible in the transcripts. The PR-l arm stays UNDEFINED, not PASS.",
+        "LENS (b) ANSWER-RATE: I did not run answer_rate.py or iw2_score.py, because there is no flag-off shard tag for these lives and PR-l is not a default-on candidate yet. A direct count of \"don't know\" replies in the real-unit replies shows 0 on intact and hippo-off in S1F, PRl and PRx on all seeds. 11 occur in s321 both-off in S1F and PR-l, and 0 in PR-x. So there is no sign that PR-l (or PR-x) raises abstentions against B on the packet's replies. This is a replies-text count, not the tool's verdict, so no FLIP-HURTS-ANSWERS result is recorded. Any default flip must still run tools/answer_rate.py paired.",
+        "LENS (c) WHERE-RAN: tools/where_ran.py on all 9 files (lifeS1F, lifePRl and lifePRx for s319/320/321) reports: host summary 9 file(s): unknown=9, with the NOTE 'file(s) record no host anywhere: where they ran is UNKNOWN, not fine'. The host of the cited results is unrecorded, so the validity claim cannot be tied to a host. The brief says PR-x lives were 'pulled' from AWS; per the HANDOFF commit, the DEV screen ran on AWS, but the life JSONs themselves do not say. The claim therefore cannot be ruled to depend on host."
+      ],
+      "lens_a": "Claimed engagement result (PR-l UNDEFINED, PR-x KILLED) is not contradicted by anything in the transcript data. The life JSONs and units record no engagement field I could verify, so the data cannot confirm it either. The PR-l arm stays UNDEFINED, not PASS.",
+      "lens_b": "I found no sign of PR-l or PR-x lowering answers or raising abstentions against B on the packet's replies: a direct count of \"don't know\" replies is 0 on intact and hippo-off in all three families. I did not run answer_rate.py, so there is no tool verdict and no FLIP-HURTS-ANSWERS result either way. The default-flip check still has to run answer_rate.py paired mode.",
+      "lens_c": "where_ran.py reports host unknown for all 9 files, and it states that unrecorded means UNKNOWN, not fine. The host of every cited result is unrecorded, so validity cannot be tied to a host.",
+      "numbers_that_differ": [
+        "repetition-or-collapse, intact arm: B 13, PR-l 21, PR-x 10",
+        "total defects, intact arm: B 109, PR-l 127, PR-x 94",
+        "longest identical-reply run: B 15 (s320 'walk home'), PR-l 16 (s319 'Mr Fitzgerald', 19 total), PR-x 6 on intact (s320); 4 on hippo-off s319 'Bramble' tail",
+        "wrong-episode, intact arm: B 7, PR-l 8, PR-x 6",
+        "'don't know' replies on intact and hippo-off: 0 in every family and seed. Both-off s321: 11 in B and 11 in PR-l, 0 in PR-x",
+        "where_ran hosts: 9 of 9 files unknown"
+      ]
+    },
+    {
+      "lens": "where-ran: provenance and comparability, with engagement and answer-rate lenses",
+      "verdict": "NARROWED",
+      "findings": [
+        "WHERE-RAN tool output: `tools/where_ran.py` on all 9 life JSONs prints 'host summary: 9 file(s): unknown=9', with the note '9 file(s) record no host anywhere: where they ran is UNKNOWN'. None of the files has a .prov.json sidecar and none is in _provenance/runs.jsonl. The tool therefore cannot attest any host. It is not evidence that the arms ran in the same place. A host must be cited from each JSON's own `host` field, which is weaker.",
+        "Host and device from the JSON fields. B (S1F) and PR-l ran on the same pool nodes per seed, all on cpu: s319 node-dl4g243, s320 node-dl5d243, s321 node-mxl1462drl. PR-x s319 ran on dant123-wk (cpu). PR-x s320 ran on ip-172-31-35-61 (cuda) and PR-x s321 on ip-172-31-82-210 (cuda). All nine have the same model (rwkv7-g1l-1.5b-20261031-ctx34304), days 15, split dev and full_probe_nights [1,5,10,15]. brain_kw differs only by replay_priority (None / 'loss' / 'strength_x_loss') and by sleep_seed (319/320/321, the same across arms). So B vs PR-l is a clean same-host-per-seed contrast. The PR-x contrast is not.",
+        "No code-sha field exists in any life JSON, so 'same code apart from replay_priority' cannot be verified from the data. W code is pinned at e5f15f628. Its brain.py and life.py differ from the current worktree only by the K-P keep_bank additions (default OFF). Pool B and PR-l ran ~/brain-lane/src, rsynced from the worktree brain/ by pool_pr_watch.sh after B finished, so the code is unrecorded per run. The PR-x AWS code was shipped from the worktree at launch (launch_prx2.sh). The K-P default-off byte-identity claim rests on a commit-message test, not on a per-run record.",
+        "GPU vs CPU is a real comparability gap for PR-x. brain/cortex.py line 61 uses strategy 'cuda fp16' when device is cuda and 'cpu fp32' otherwise (the s319 log confirms 'cpu fp32'). So PR-x s320 and s321 ran fp16 while B, PR-l and PR-x s319 ran fp32. There is no GPU or fp16 B arm, so the numeric effect cannot be measured from this data. Night times differ accordingly (about 650 s on GPU vs about 1550 s on CPU).",
+        "RESUME on PR-x s319: no discontinuity is recorded. The log has a single [memcap] header, one 'Loading' line and no 'resume:' line. Trunk nights run L1 to L15 in order, with night numbers 1..15 each appearing once. There is no 'resumed_night' key in the JSON. prunedA nights are 11-13, a separate line, not duplicates. The W copy of the JSON is identical to the read/ copy. done.txt shows rc 0 at 10:58 UTC 11-22. The 'resumed after interruptions' premise is not supported by this log. The timing anomaly is real but content-neutral: nights 7 (4556 s), 9 (12786 s) and 10 (12090 s) against a typical 1500 s, consistent with machine contention. Nothing there threatens the data, but it was a busy shared workstation.",
+        "(a) ENGAGEMENT, recorded: every PR night record carries a `replay_priority` block (n=40, shares_by_class, permanent_share, top6_share, strength_* references), so both arms engaged on record. B has no such block, so its reference is the strength-only within-night reference carried in each PR record (identical across arms; B's replay_share matches both PR records). PR-l: permanent share 0.029-0.046 vs about 0.27-0.30 reference, so it engaged strongly. Top-6 is above reference on s321 n5 (0.596 vs 0.439). PR-x: permanent share lower on 6/6 seed-nights, but top-6 higher on 6/6 (0.598, 0.517, 0.488, 0.439, 0.537, 0.495 vs 0.436, 0.410, 0.450, 0.402, 0.439, 0.409). The PR-x engagement failure includes the fp32 CPU seed s319, so it does not depend on the GPU. Per prereg 3.1 an engagement failure means UNDEFINED, not FAIL, for both arms. The claim's 'PR-x engagement FAILS' is correct, but the arm label that follows from it is UNDEFINED.",
+        "The PR-x 'KILLED' label rests on the collapse guard (prereg 3: guard fail = KILL). The failing cell is hippocampus-off collapse seeds-ever, PR-x 3 vs B 2, under a strict reading (arm count <= B count) that d2pr_bars.py itself adds. The prereg only says 'collapse is not worse', and the script notes that LG-COL's own <=3/6 rule passes. Per seed, PR-x hippocampus-off max repeat share is s319 0.40 (the CPU seed, exactly at the >=0.4 threshold), s320 0.50 and s321 0.55 (both fp16 GPU). B is 0.45 / 0.55 / 0.30. So the third collapsed seed is borderline on the only like-for-like seed, and the other two cannot be separated from fp16. Intact PR-x collapse is 2 seeds, equal to B. The numeric guards (H-off, direct d1-2, KL n15) pass for PR-x. KILLED is therefore not safe on comparable data. UNDEFINED (engagement) is safe, and PR-x not advancing stands either way.",
+        "PR-l verdict is untouched by provenance. B and PR-l ran on the same node per seed, both cpu fp32, with identical brain_kw apart from replay_priority. Primary leak 0.109/0.118/0.270 vs B 0.250/0.355/0.276, pooled 76/460 vs 135/460 = 43.7% lower. Collapse for PR-l is 0 intact and 1 hippocampus-off vs B 2 and 2. UNDEFINED by the engagement letter (5/6 seed-nights) is correctly stated. The only provenance gap is that the code sha is unrecorded.",
+        "(b) ANSWER-RATE: tools/answer_rate.py reads old-track packet arm files and does not apply to life JSONs, so I recomputed an equivalent from the life JSONs. Over the told-item battery rows (kinds H, rotating, neardup and rows with an item), intact n=193 and hippocampus-off n=289 per life, on every seed and every arm (B, PR-l, PR-x) there are 0 empty replies and 0 abstention-phrase matches. The pattern covered 'I don't know about that', 'I haven't learned about', 'I don't know', 'I do not know', 'I'm not sure' and 'I don't remember'. No FLIP-HURTS-ANSWERS signal on any seed. Neither arm is a default-on candidate (UNDEFINED and KILLED/UNDEFINED), so no NEEDS line is triggered.",
+        "(c) WHERE-RAN validity dependence: the where_ran header concerns files under research/findings/raw/ that the provisioner does not ship, such as the affect valence map. I did not check whether the life harness reads any such input. Pools and AWS ran the worktree brain/ and the 1.5b model file (ctx34304) and W ran the pinned copy, with the same model name. I found no evidence of an input difference, but also no per-run input record. The hosts differ in device and fp precision (above), which is a validity dependence for PR-x s320/321 only."
+      ],
+      "lens_a": "ENGAGEMENT (recorded data): both PR arms have replay_priority blocks on every night (n=40, shares, top6). PR-l engaged on permanent share (0.029-0.046 vs about 0.27-0.30 reference); top-6 above reference on s321 n5 only (0.596 vs 0.439), so UNDEFINED by the letter. PR-x: permanent share lower 6/6 but top-6 higher 6/6, including the fp32 CPU seed s319, so the failure does not depend on the GPU. Per prereg 3.1 this makes PR-x UNDEFINED, not FAIL. No arm lacks a record.",
+      "lens_b": "ANSWER-RATE: tools/answer_rate.py does not apply to life JSONs (old-track packet layout), so I recomputed from the life JSONs. Intact 193 and hippocampus-off 289 told-item rows per life: 0 empty and 0 abstention-phrase replies in B, PR-l and PR-x on all 3 seeds. No FLIP-HURTS-ANSWERS signal on any seed. Neither arm is default-on, so no NEEDS line.",
+      "lens_c": "WHERE-RAN: where_ran.py returns 'host summary: 9 file(s): unknown=9' (no sidecars, no runs.jsonl records). From the JSON host/device fields: B and PR-l ran on the same pool nodes per seed (cpu fp32). PR-x s319 ran on dant123-wk (cpu fp32), s320 on ip-172-31-35-61 (cuda fp16) and s321 on ip-172-31-82-210 (cuda fp16). No code sha is recorded in any JSON. The W pinned copy differs from HEAD only by default-off K-P. The s319 resume left no discontinuity: single process, nights 1..15 once each, no resumed_night, no 'resume:' log line. PR-x's two GPU seeds are not like-for-like with B, and the 3-vs-2 collapse kill depends on them plus one borderline 0.40 on the CPU seed.",
+      "numbers_that_differ": [
+        "PR-x hippocampus-off collapse max share: s319 0.40 (W cpu fp32), s320 0.50 (aws cuda fp16), s321 0.55 (aws cuda fp16) vs B 0.45/0.55/0.30; seeds-ever count 3 vs 2 under the strict reading",
+        "Trunk night time: PR-x s319 W cpu 12786 s on night 9 and 12090 s on night 10 (vs about 1500 s typical); PR-x s320/321 AWS cuda about 650 s/night; B and PR-l pool cpu about 1500-1750 s/night",
+        "where_ran: 9/9 unknown from tool; host from JSON field only",
+        "Engagement top-6 PR-x s319 n5/n10 0.598/0.517 vs ref 0.436/0.410 (cpu fp32, so the failure is not an fp16 artefact)"
+      ]
+    }
+  ],
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Refute"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "refute:recompute",
+      "phaseIndex": 1,
+      "phaseTitle": "Refute",
+      "agentId": "a95473cc19c618582",
+      "model": "claude-sonnet-5-5",
+      "state": "done",
+      "startedAt": 1795345446541,
+      "queuedAt": 1795345446349,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "recompute (own code from raw life JSONs; scripts in /home/d…",
+      "promptPreview": "CLAIMED D2-PR DEV READ (prereg /home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-21-replay-priority-prereg.md sections 3-4; seeds 319/320/321; B = lifeS1F_s*, PR-l = lifePRl_s* (replay_priority='loss'), PR-x = lifePRx_s* (strength_x_loss); files in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read; bar table /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch…",
+      "promptFramed": true,
+      "lastProgressAt": 1795345571351,
+      "tokens": 97159,
+      "toolCalls": 14,
+      "durationMs": 124808,
+      "resultPreview": "{\"lens\":\"recompute (own code from raw life JSONs; scripts in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read/refute_recompute/rc*.py) plus lenses (a) engagement, (b) answer-rate, (c) where-ran\",\"verdict\":\"NARROWED\",\"findings\":[\"RECOMPUTE: every section-3 number I recomputed independently matches d2pr_bars.md and no verdict flips. Matched: engagement perm/top6 shares for all 12 a…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "refute:engagement",
+      "phaseIndex": 1,
+      "phaseTitle": "Refute",
+      "agentId": "a78ead4a251a081b8",
+      "model": "claude-sonnet-5-5",
+      "state": "done",
+      "startedAt": 1795345446541,
+      "queuedAt": 1795345446350,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "engagement + answer-rate + where-ran",
+      "promptPreview": "CLAIMED D2-PR DEV READ (prereg /home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-21-replay-priority-prereg.md sections 3-4; seeds 319/320/321; B = lifeS1F_s*, PR-l = lifePRl_s* (replay_priority='loss'), PR-x = lifePRx_s* (strength_x_loss); files in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read; bar table /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch…",
+      "promptFramed": true,
+      "lastProgressAt": 1795345501728,
+      "tokens": 71728,
+      "toolCalls": 13,
+      "durationMs": 54331,
+      "resultPreview": "{\"lens\":\"engagement + answer-rate + where-ran\",\"verdict\":\"SURVIVES\",\"findings\":[\"ENGAGEMENT, reference validity: the 'strength-only' reference is computed in life.py replay_priority_record from the same rows (same night episodes, same effective_strength at sleep time, floored at 1e-3 like the PR shares) that PR weighted. It is the weighting Brain.sleep applies when replay_priority is None (weights…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "refute:leak-noise",
+      "phaseIndex": 1,
+      "phaseTitle": "Refute",
+      "agentId": "a7eec3e14c8b5db69",
+      "model": "claude-sonnet-5-5",
+      "state": "done",
+      "startedAt": 1795345446542,
+      "queuedAt": 1795345446350,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "leak-noise",
+      "promptPreview": "CLAIMED D2-PR DEV READ (prereg /home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-21-replay-priority-prereg.md sections 3-4; seeds 319/320/321; B = lifeS1F_s*, PR-l = lifePRl_s* (replay_priority='loss'), PR-x = lifePRx_s* (strength_x_loss); files in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read; bar table /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch…",
+      "promptFramed": true,
+      "lastProgressAt": 1795345496543,
+      "tokens": 65873,
+      "toolCalls": 8,
+      "durationMs": 49140,
+      "resultPreview": "{\"lens\":\"leak-noise\",\"verdict\":\"NARROWED\",\"findings\":[\"ATTACK ON PR-l LEAK PASS FAILS. Recomputed with life_leak.leak_table on all probe nights 1-15, trunk, intact + hippocampus-off. Seed-night paired shares vs B, 45 seed-nights, sign-flip permutation p<5e-5, mean diff -0.098. Excluding nights 10 and 15, 39 seed-nights, mean diff -0.093, p<5e-5. Per seed, PR-l is lower than B on 9/0/11/0/10/2 nigh…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "refute:transcript",
+      "phaseIndex": 1,
+      "phaseTitle": "Refute",
+      "agentId": "ae377d9391101d57d",
+      "model": "claude-sonnet-5-5",
+      "state": "done",
+      "startedAt": 1795345446542,
+      "queuedAt": 1795345446350,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "transcript",
+      "promptPreview": "CLAIMED D2-PR DEV READ (prereg /home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-21-replay-priority-prereg.md sections 3-4; seeds 319/320/321; B = lifeS1F_s*, PR-l = lifePRl_s* (replay_priority='loss'), PR-x = lifePRx_s* (strength_x_loss); files in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read; bar table /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch…",
+      "promptFramed": true,
+      "lastProgressAt": 1795345502596,
+      "tokens": 78030,
+      "toolCalls": 11,
+      "durationMs": 55188,
+      "resultPreview": "{\"lens\":\"transcript\",\"verdict\":\"NARROWED\",\"findings\":[\"NEW-CLASS ATTACK FAILS: I regex-scanned the brain replies in the week-3 real units of blind_S1F, blind_PRl and blind_PRx (62 replies per unit, 9 units per family). I mapped ids to seed and arm with blind_key.json. I found no defect class in PR-l or PR-x that is missing from B. The scan script is _scratch/stage2/read/refute_transcript/scan.py.\"…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "refute:where-ran",
+      "phaseIndex": 1,
+      "phaseTitle": "Refute",
+      "agentId": "a1ca725e914cf9ce9",
+      "model": "claude-sonnet-5-5",
+      "state": "done",
+      "startedAt": 1795345446542,
+      "queuedAt": 1795345446350,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "where-ran: provenance and comparability, with engagement an…",
+      "promptPreview": "CLAIMED D2-PR DEV READ (prereg /home/dant123/Projects/sim/_scratch/wt-mixday/brain/research/2026-11-21-replay-priority-prereg.md sections 3-4; seeds 319/320/321; B = lifeS1F_s*, PR-l = lifePRl_s* (replay_priority='loss'), PR-x = lifePRx_s* (strength_x_loss); files in /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch/stage2/read; bar table /home/dant123/Projects/sim/_scratch/wt-mixday/_scratch…",
+      "promptFramed": true,
+      "lastProgressAt": 1795345543365,
+      "tokens": 92393,
+      "toolCalls": 20,
+      "durationMs": 95952,
+      "resultPreview": "{\"lens\":\"where-ran: provenance and comparability, with engagement and answer-rate lenses\",\"verdict\":\"NARROWED\",\"findings\":[\"WHERE-RAN tool output: `tools/where_ran.py` on all 9 life JSONs prints 'host summary: 9 file(s): unknown=9', with the note '9 file(s) record no host anywhere: where they ran is UNKNOWN'. None of the files has a .prov.json sidecar and none is in _provenance/runs.jsonl. The too…"
+    }
+  ],
+  "totalTokens": 405183,
+  "totalToolCalls": 66
+}
