@@ -946,6 +946,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         res = {"seed": seed, "split": split, "days": days, "model": getattr(cortex, "model_name", None), "device": device,
                "host": socket.gethostname(), "brain_kw": brain_kw, "full_probe_nights": sorted(full_nights),
                "ledger": ledger, "schedule": sched, "lived": [], "nights": [], "probes": [], "todo": TODO}
+        if getattr(cortex, "strategy", None) == "cuda fp32":
+            res["strategy"] = "cuda fp32"      # recorded only off the default (default JSON unchanged)
         if frozen_probe:
             res["frozen_probe"] = True
         if transfer:
@@ -1130,6 +1132,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=None)
     ap.add_argument("--device", default="cpu")
+    ap.add_argument("--cuda-precision", choices=("fp16", "fp32"), default="fp16",
+                    help="speaking-path precision on --device cuda (default fp16, unchanged); fp32 matches CPU numerics")
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--split", default="dev", choices=SPLITS)
@@ -1189,7 +1193,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
         kw["downscale_when"] = a.downscale_when
     if a.inquiry is not None:
         kw["inquiry"] = None if a.inquiry.lower() == "none" else "auto" if a.inquiry.lower() == "auto" else float(a.inquiry)
-    cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
+    cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device, cuda_precision=a.cuda_precision)
     full = {int(x) for x in a.full_probe_nights.split(",") if x.strip()}
     res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe,
               transfer=a.transfer, span=a.span, **({"pruned_a": True, "pruned_a_day": a.pruned_a_day} if a.pruned_a else {}),

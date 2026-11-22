@@ -54,11 +54,16 @@ def model_name(model_path: str) -> str:
 
 
 class Cortex:
-    def __init__(self, model_path: str = DEFAULT_MODEL, device: str = "cpu"):
+    def __init__(self, model_path: str = DEFAULT_MODEL, device: str = "cpu", cuda_precision: str = "fp16"):
         model_path = resolve_model(model_path)
         self.model_path = model_path
         self.model_name = model_name(model_path)   # recorded in a brain home: Brain.meta["cortex_model"]
-        strategy = "cuda fp16" if device == "cuda" else "cpu fp32"
+        # cuda_precision (switch, default "fp16" = unchanged): "fp32" runs the speaking path in full precision on the GPU,
+        # matching the CPU's fp32 numerics (the sleep's PlasticCortex already trains in fp32 on every device).
+        if cuda_precision not in ("fp16", "fp32"):
+            raise ValueError(f"cuda_precision must be fp16 or fp32, not {cuda_precision!r}")
+        strategy = f"cuda {cuda_precision}" if device == "cuda" else "cpu fp32"
+        self.strategy = strategy
         self.model = RWKV(model=model_path[:-4] if model_path.endswith(".pth") else model_path, strategy=strategy)
         self.pipe = PIPELINE(self.model, "rwkv_vocab_v20230424")
         self.n_layers = self.model.args.n_layer
