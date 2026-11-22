@@ -17,6 +17,11 @@
   `_scratch/stage2/wcode_e5f15f6`, out `_scratch/stage2/wout/`, ~27 min/night, started 13:30 UTC). PR-x s320/s321 on AWS
   g5 after 00:05 UTC 11-22 (`_scratch/stage2/launch_prx2.sh`, state `.aws_brain.prx<S>`; ships the worktree brain/ at launch:
   keep brain/ committed until then). Read with `life_bars.py`, `life_leak.py` and the prereg bars; add the language-guard NLL.
+- **K-P (language-keep method, prereg `brain/research/2026-11-21-sleep-language-keep-prereg.md` §5-6):** built (d777f71c9,
+  default OFF byte-identical). Gate run 2 LAUNCH (gate-overridden): one night from s316 n15 took held-out KL 2.40 -> 0.86
+  (B 2.80), NLL 4.18 -> 2.81 (B 4.59), replay still writes. DEV screen s319-321 on AWS g5 (`_scratch/stage2/launch_kp.sh`,
+  state `.aws_brain.kp<S>`, out `_scratch/brainv2/aws/<batch>/lifeKP_s<S>`), read vs `lifeS1F_s<S>` with §3 bars.
+  PR-x s320/321 AWS lives DONE and pulled (`_scratch/brainv2/aws/20261121-19*`).
 - **NEXT STEP:** (1) language-guard method: before-build on the sleep keep set (broader ordinary-text interleave vs a
   norm bound); separating reads first (`life_langguard.measure()` ORDINARY vs HELDOUT on saved homes; keep-only night).
   (2) D2-PR read (timebox 11-23). (3) First-person echo record check. (4) Label-shuffle null for `life_bars.py` (§5).
