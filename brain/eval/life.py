@@ -56,6 +56,8 @@ TODO = [
         "pruned-store copy on full nights", "evening same-day recall in the hippocampus-off arm", "gist slots (E gist_q)"]
 
 TEST_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_bank_test.sha256")
+TEST2_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_bank_test2.sha256")   # TEST v2 (design 2026-11-22)
+SPLITS = ("dev", "test", "test2")
 
 
 def use_split(split: str):
@@ -65,13 +67,21 @@ def use_split(split: str):
     if split == "dev":
         LB = _DEV_BANK
         return LB
-    if split != "test":
-        raise ValueError(f"split must be dev or test, not {split!r}")
-    from brain.eval import life_bank_test as T
-    want = open(TEST_HASH_FILE).read().split()[0]
+    if split not in ("test", "test2"):
+        raise ValueError(f"split must be dev, test or test2, not {split!r}")
+    if split == "test":
+        from brain.eval import life_bank_test as T
+        hfile = TEST_HASH_FILE
+    else:   # TEST v2 (design 2026-11-22 section 4): frozen by its own hash file, committed before the first v2 run
+        hfile = TEST2_HASH_FILE
+        if not os.path.exists(hfile):
+            raise RuntimeError(f"TEST v2 split is not frozen: the hash file {hfile} is missing (write it with sha256sum "
+                               "brain/eval/life_bank_test2.py at the freeze, design 2026-11-22 section 4)")
+        from brain.eval import life_bank_test2 as T
+    want = open(hfile).read().split()[0]
     got = hashlib.sha256(open(T.__file__, "rb").read()).hexdigest()
     if got != want:
-        raise RuntimeError(f"TEST split changed: sha256 {got[:12]} != recorded {want[:12]} ({TEST_HASH_FILE})")
+        raise RuntimeError(f"TEST split changed: sha256 {got[:12]} != recorded {want[:12]} ({hfile})")
     LB = T
     return LB
 
@@ -215,9 +225,10 @@ def episode_is_source(item, recalled: str | None) -> bool:
     return recalled.strip() == f"User: {item.telling}".strip() or item.telling in recalled
 
 
-def battery(seed: int, night: int, ledger: dict) -> list:
+def battery(seed: int, night: int, ledger: dict, exclude=None) -> list:
     """The morning battery after night `night` (design 6): opens (fresh state each), then a conversation of 6 H + <=2 rotating
-    direct questions by age, 2 near-duplicate frames and 3 never-told questions."""
+    direct questions by age, 2 near-duplicate frames and 3 never-told questions. exclude (--age-ladder only, design
+    2026-11-22 section 2): item ids left out of the rotating draw and the D near-duplicate pool; None = unchanged."""
     rng = random.Random(seed * 100003 + night)
     items = LB.ALL
     opens = LB.OPEN if len(LB.OPEN) <= 6 else random.Random(seed + 29).sample(LB.OPEN, 6)   # TEST: 6 of 12 per seed
@@ -226,12 +237,19 @@ def battery(seed: int, night: int, ledger: dict) -> list:
     qs += [{"kind": "H", "text": h.direct, "item": h.id} for h in LB.H]
     old = sorted((i for i, e in ledger.items() if e["cls"] in ("AB", "E", "F") and min(e["told_days"]) <= night),
                  key=lambda i: (min(ledger[i]["told_days"]), i))
+    if exclude is not None:
+        ex = set(exclude)
+        old = [i for i in old if i not in ex]
     if old:
         half = max(len(old) // 2, 1)
         for pool in (old[:half], old[half:] or old[:half]):
             pick = rng.choice(pool)
             qs.append({"kind": "rotating", "text": items[pick].direct, "item": pick})
-    dpool = [x.id for x in random.Random(seed).sample(LB.D, 2)]
+    if exclude is None:
+        dpool = [x.id for x in random.Random(seed).sample(LB.D, 2)]
+    else:
+        dfree = [x for x in LB.D if x.id not in ex]
+        dpool = [x.id for x in random.Random(seed).sample(dfree, min(2, len(dfree)))]
     for i in dpool:
         told_ = i in ledger and min(ledger[i]["told_days"]) <= night
         qs.append({"kind": "neardup", "text": items[i].direct, "item": i, "told": told_})
@@ -528,10 +546,12 @@ def night_after_cut(home, cortex, day_no, sim, seed, brain_kw, weekend=False, le
 
 def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimClock, seed: int, brain_kw: dict,
           work: str, check_pending: bool = True, weekend: bool = False, extras: bool = False, transfer: bool = False,
-          span: bool = False, span_classes=None, tag: str | None = None) -> list:
+          span: bool = False, span_classes=None, tag: str | None = None, age_ladder: dict | None = None) -> list:
     """The morning battery on a disk copy of the trunk home, one arm at a time. The copy is opened with
     sleep_on_restart=False; the trunk is never opened here. span_classes restricts the span read's items (foils
-    unchanged); tag marks an extra probe (--pruned-a's trunk AB recall) that is not one of the night's arms."""
+    unchanged); tag marks an extra probe (--pruned-a's trunk AB recall) that is not one of the night's arms.
+    age_ladder (--age-ladder only): the plan; the arm's due ladder questions run on the same copy after the battery,
+    transfer and span reads, each from a fresh conversation, into rec["age_ladder"] (never rec["rows"])."""
     out = []
     for arm in arms:
         h_off, c_off = ARMS.get(arm, (False, False))   # the frozen arm is an intact copy
@@ -569,6 +589,13 @@ def probe(home: str, cortex, night: int, arms, qs: list, ledger: dict, sim: SimC
                 rec["span"] = sp
             if tag:
                 rec["tag"] = tag
+            if age_ladder is not None:
+                from brain.eval import life_age_ladder as LA
+                if arm in LA.arms_for(age_ladder, night):
+                    t1 = time.time()
+                    rec["age_ladder"] = LA.run_age_ladder(b, age_ladder, night, ledger, LB, sim,
+                                                          day_start(night + 1, weekend), seed, sys.modules[__name__])
+                    rec["age_ladder_seconds"] = round(time.time() - t1, 1)
         finally:
             b.release()
             shutil.rmtree(cp, ignore_errors=True)
@@ -826,6 +853,9 @@ def write_outputs(res: dict, out: str):
     if "interview" in res:      # --interview only: the interview block's own section
         from brain.eval import life_interview
         L += life_interview.interview_md(res)
+    if "age_ladder" in res:     # --age-ladder only: the ladder block's own section
+        from brain.eval import life_age_ladder
+        L += life_age_ladder.ladder_md(res)
     L.append("\n## TODO (not in Stage 0)\n\n" + "\n".join(f"- {t}" for t in res["todo"]))
     _atomic(out + ".md", "\n".join(L) + "\n")
 
@@ -857,7 +887,7 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
         frozen_probe: bool = False, transfer: bool = False, span: bool = False, pruned_a: bool = False,
         pruned_a_day: int = 11, cue_ladder: bool = False, interview: bool = False, interview_nights=None,
-        lang_guard: bool = False) -> dict:
+        lang_guard: bool = False, age_ladder: bool = False) -> dict:
     """pruned_a (--pruned-a, needs span and days >= pruned_a_day + 2): at L<bd> 09:00 the trunk is copied to the
     L-prunedA branch with every A episode deleted; the branch lives L<bd>..L<bd+2> after the other lines, and each
     branch morning runs the AB recall battery + an AB span read on hippocampus-off (both-off once, the null). The
@@ -905,6 +935,10 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             lang_guard = True
         elif lang_guard:
             raise ValueError("resume: this life was started without --lang-guard")
+        if res.get("age_ladder") is not None:     # the --age-ladder flag is the one the life was started with
+            age_ladder = True
+        elif age_ladder:
+            raise ValueError("resume: this life was started without --age-ladder")
     else:
         shutil.rmtree(homes, ignore_errors=True)
         os.makedirs(homes, exist_ok=True)
@@ -918,11 +952,23 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             res["transfer"] = True
         if span:
             res["span"] = True
+    ladder_ex = None
+    if age_ladder:      # design 2026-11-22 section 2: the plan is re-derived and must equal the saved one
+        from brain.eval import life_age_ladder
+        lplan = life_age_ladder.age_ladder_plan(seed, days, sched, ledger, LB)
+        if res.get("age_ladder") is not None and res["age_ladder"] != json.loads(json.dumps(lplan)):
+            raise ValueError("resume: the --age-ladder plan differs from the one this life was started with")
+        res["age_ladder"] = lplan
+        ladder_ex = lplan["exclude"]
+        miss = [n for n in lplan["arm_nights"]["both-off"] if n not in full_nights]
+        if miss:
+            log(f"--age-ladder: nights {miss} are not --full-probe-nights, so they have no both-off ladder rows")
+    bkw = {} if ladder_ex is None else {"exclude": ladder_ex}
     if cue_ladder:      # the plan is re-derived and must equal the saved one (same bank, cue texts and horizon)
         from brain.eval import life_ladder
         cues = life_ladder.load_cues(split)
-        cfg = {"plan": life_ladder.ladder_plan(seed, days, sched, ledger, split, weekend),
-               "config": {"cues_sha256": life_ladder.cues_sha(), "split": split, "weekend": weekend,
+        cfg = {"plan": life_ladder.ladder_plan(seed, days, sched, ledger, split, weekend, **bkw),
+               "config": {"cues_sha256": life_ladder.cues_sha(split), "split": split, "weekend": weekend,
                           "arms": list(LIGHT_ARMS), "full_night_arms": list(life_ladder.FULL_EXTRA)}}
         saved = res.get("cue_ladder")
         if saved is not None and saved != cfg:
@@ -1042,9 +1088,10 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                     ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d)
                     ninfo.update(store=ip["store"], adapter_norm=ip["adapter_norm"])
                 if arms:
-                    qs = battery(seed, d, ledger)
+                    qs = battery(seed, d, ledger, **bkw)
+                    lad = {"age_ladder": res["age_ladder"]} if age_ladder and line == "trunk" else {}
                     for p in probe(trunk, cortex, d, arms, qs, ledger, sim, seed, kw, work, check_pending=sleeps, weekend=weekend,
-                                   extras=extras, transfer=transfer, span=span):
+                                   extras=extras, transfer=transfer, span=span, **lad):
                         p["line"] = line
                         res["probes"].append(p)
                     ip = next(p for p in res["probes"] if p["line"] == line and p["night"] == d and p["arm"] == "intact")
@@ -1061,7 +1108,7 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                     if d in res["interview"]["nights"]:
                         res["interview_probes"] += life_interview.interview_probe(
                             trunk, cortex, d, tuple(res["interview"]["arms"]), ledger, sim, seed, kw, work,
-                            battery(seed, d, ledger), LB, sys.modules[__name__], weekend=weekend)
+                            battery(seed, d, ledger, **bkw), LB, sys.modules[__name__], weekend=weekend)
                 if lang_guard and line == "trunk" and "lang_guard" not in ninfo:   # every trunk night, once
                     ninfo["lang_guard"] = life_langguard.night_read(trunk, cortex, d, sim, kw, work, weekend=weekend)
                 if line == "trunk" and pruned_a and bd <= d <= bd + 2:   # the unpruned AB recall (span: the normal probe)
@@ -1085,7 +1132,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--days", type=int, default=7)
-    ap.add_argument("--split", default="dev")
+    ap.add_argument("--split", default="dev", choices=SPLITS)
     ap.add_argument("--full-probe-nights", default="1,4,7")
     ap.add_argument("--nosleep-arm", action="store_true")
     ap.add_argument("--weekend", action="store_true", help="Stage 1: +48 h world-clock jump after every fifth lived day")
@@ -1117,6 +1164,8 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
                     help="mornings of the interview (with --interview; unset = 5,10,15, or the saved nights on --resume)")
     ap.add_argument("--lang-guard", action="store_true",
                     help="design 5 language guard: KL and NLL of the adapters-on cortex vs pretrained on a frozen held-out set, every trunk night")
+    ap.add_argument("--age-ladder", action="store_true",
+                    help="design 2026-11-22 age-ladder sub-battery (fixed old-age rows, slot floor, FM-v2) into probe['age_ladder']")
     ap.add_argument("--inquiry", default=None, help="auto | none | a bar in nats; unset = the Brain default")
     a = ap.parse_args(argv)
     kw = dict(brain_kw or {})
@@ -1145,6 +1194,7 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     res = run(cortex, a.seed, a.days, a.split, a.homes, a.out, full, a.nosleep_arm, a.resume, kw, a.weekend, a.device, frozen_probe=a.frozen_probe,
               transfer=a.transfer, span=a.span, **({"pruned_a": True, "pruned_a_day": a.pruned_a_day} if a.pruned_a else {}),
               **({"cue_ladder": True} if a.cue_ladder else {}), **({"lang_guard": True} if a.lang_guard else {}),
+              **({"age_ladder": True} if a.age_ladder else {}),
               **({"interview": True, "interview_nights": None if a.interview_nights is None else
                     [int(x) for x in a.interview_nights.split(",") if x.strip()]} if a.interview else {}))
     print(f"wrote {a.out}.json and {a.out}.md; nights {[n['seconds'] for n in res['nights'] if n['line'] == 'trunk']}")
