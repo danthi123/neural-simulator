@@ -22,6 +22,14 @@
   (B 2.80), NLL 4.18 -> 2.81 (B 4.59), replay still writes. DEV screen s319-321 on AWS g5 (`_scratch/stage2/launch_kp.sh`,
   state `.aws_brain.kp<S>`, out `_scratch/brainv2/aws/<batch>/lifeKP_s<S>`), read vs `lifeS1F_s<S>` with §3 bars.
   PR-x s320/321 AWS lives DONE and pulled (`_scratch/brainv2/aws/20261121-19*`).
+- **D2-PR INTERIM (11-22, not the read; PR-x s319 on W still running):** PR-l all 3 done, files in `_scratch/stage2/read/`.
+  Leak n10+15 PR-l vs B: 0.109/0.118/0.270 vs 0.250/0.355/0.276 (below 3/3, pooled 44% lower; s321 41 vs 42 and night 15
+  worse). Engagement: permanent share far below strength-only 3/3; top-6 HIGHER on s321 n5 (0.596 vs 0.439) = letter
+  miss; PR-x top-6 higher everywhere. LG KL n15 PR-l below B, collapse lower. Report-only echo (`brain/eval/life_echo.py`,
+  42d8c8d14): PR-l 0.13/0.00/0.19 vs B 0.31/0.31/0.38 intact; echo is equal hippocampus-off, so it lives in the cortex
+  (speaker_contrast acts only at reinstatement: not tried). Still to read: H-off guard, day-1-2, transcript, skeptic.
+- **K-P pool gate replication:** 15 GB pools OOM in the K-P sleep (pool42 s320 KP read VOID, renamed *.INVALID*);
+  all 3 seeds now serial on pool40 (23 GB, `~/brain-lane/kpgate/serial.log`). Next heavy job: a fresh TEST split (§9).
 - **NEXT STEP:** (1) language-guard method: before-build on the sleep keep set (broader ordinary-text interleave vs a
   norm bound); separating reads first (`life_langguard.measure()` ORDINARY vs HELDOUT on saved homes; keep-only night).
   (2) D2-PR read (timebox 11-23). (3) First-person echo record check. (4) Label-shuffle null for `life_bars.py` (§5).
