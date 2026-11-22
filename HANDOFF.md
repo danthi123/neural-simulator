@@ -16,15 +16,16 @@
   -44% robust over nights (p<5e-5), guards pass; PR-x crosses fp16/fp32 so no KILL. Neither goes to TEST. KEEP the
   replay-priority lever: next method PR-l + per-episode share cap (own prereg; name the day-1-2 window; fp32 every arm).
   Report-only echo read `brain/eval/life_echo.py`: echo equal hippocampus-off (in the cortex); PR-l lowers it.
+- **LIVE: D2-PR2 DEV screen** (prereg `brain/research/2026-11-22-replay-priority-2-prereg.md`, built c91c0c200, `loss_a`
+  = L_e**0.6): PR-a s319 pool41, s320 pool42 (same nodes as B, CPU fp32, started ~17:15 UTC 11-22, `outLIFE/lifePRa_s<S>`);
+  s321 pool40 node-mxl1462drl (started by hand ~13:20 UTC 11-22; the watcher's pgrep matched its own ssh line). Read with `d2pr_bars.py` (results/2026-11-22-d2pr-dev-read-1.5b/) + §7 blind read. Lever 3 of 3.
 - **K-P (language-keep method, prereg `brain/research/2026-11-21-sleep-language-keep-prereg.md` §5-6):** built (d777f71c9,
   default OFF byte-identical). Gate run 2 LAUNCH (gate-overridden): one night from s316 n15 took held-out KL 2.40 -> 0.86
   (B 2.80), NLL 4.18 -> 2.81 (B 4.59), replay still writes. DEV screen s319-321 on AWS g5 (`_scratch/stage2/launch_kp.sh`,
   state `.aws_brain.kp<S>`, out `_scratch/brainv2/aws/<batch>/lifeKP_s<S>`), read vs `lifeS1F_s<S>` with §3 bars.
-  K-P one-night gate replications: s319 on W (`_scratch/kpgate_w`), s321 then s320 on pool40 (`~/brain-lane/kpgate`;
-  15 GB pools OOM in K-P sleep, pool42 s320 read VOID; stop pool40's loop at s319). Pools 41/42 free: next heavy job is
-  a fresh TEST split (§9) for the K-P / PR TEST lives.
-- **NEXT STEP:** (1) K-P DEV read when AWS lives land (§3 bars, gate-overridden label). (2) PR-l+cap prereg and DEV
-  screen. (3) Fresh TEST split (§9; more old-age items per seed, P0). (4) Label-shuffle null for `life_bars.py` (§5).
+  Gate replications (report only, results/2026-11-22-kp-gate-replications-1.5b.md): s319 and s321 repeat s316
+  (held-out KL 0.76/0.81 vs B 2.79/2.76). s320 running on W (`_scratch/kpgate_w/run_w320.sh`); add its row when done.
+- **NEXT STEP:** (1) K-P DEV read when AWS lives land (§3 bars, gate-overridden label). (2) D2-PR2 read when PR-a lands. (3) Fresh TEST split (§9; more old-age items per seed, P0). (4) Label-shuffle null for `life_bars.py` (§5).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend

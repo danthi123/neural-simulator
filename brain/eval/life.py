@@ -1096,8 +1096,9 @@ def main(argv=None, cortex: Cortex | None = None, brain_kw: dict | None = None):
     ap.add_argument("--key-bar", default=None)
     ap.add_argument("--use-gate", action="store_true", help="M-use: Brain(use_gate='raw_win')")
     ap.add_argument("--sleep-downscale", type=float, default=None, help="M-scale: Brain(sleep_downscale=K), K 1.0 pre-registered")
-    ap.add_argument("--replay-priority", default=None, choices=("strength_x_loss", "loss"),
-                    help="D2-PR: Brain(replay_priority=...), loss-prioritised replay (brain/research/2026-11-21-replay-priority-prereg.md)")
+    ap.add_argument("--replay-priority", default=None, choices=("strength_x_loss", "loss", "loss_a"),
+                    help="D2-PR: Brain(replay_priority=...), loss-prioritised replay (brain/research/2026-11-21-replay-priority-prereg.md); "
+                         "loss_a = D2-PR2 tempered, L_e**0.6 (brain/research/2026-11-22-replay-priority-2-prereg.md)")
     ap.add_argument("--keep-bank", default=None, choices=("prior",),
                     help="K-P: Brain(keep_bank='prior'), the sleep keep set drawn from the cortex's own prior (brain/research/2026-11-21-sleep-language-keep-prereg.md)")
     ap.add_argument("--rank", default=None, choices=("raw",), help="R-raw: Brain(rank='raw')")
