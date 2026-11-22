@@ -129,3 +129,37 @@ Timebox: 2 days from launch. The grid is B vs K-P on three seeds. No second bank
 - Every launch through the override branch is labelled "gate-overridden" in the screen's record.
 - The screen's own §3 bars are the decision and are unchanged.
 - If condition 1 fails, that is the second bank failure (§4 KILLED; next method CLS merge-and-reset).
+
+## 6. Amendment A2 (2026-11-22, after gate run 2, before any K-P life)
+
+**Sampler deviation from A1's wording, found in review before gate run 2.**
+- A1 names rwkv `pipe.sample_logits` at top_p 1.0. On CPU that call is greedy. The float32 cumulative sum over 65536
+  tokens ends below 1.0, so its cutoff falls on the top token: 200 of 200 draws were the argmax on the 0.1B model.
+- The bank therefore samples through `Brain._sample_full`: a float64 full softmax at temperature 1, drawn with the
+  seeded numpy RNG. This follows A1's stated meaning (a full temperature-1 sample) and recorded no result before
+  the change. A regression test pins it.
+
+**Gate run 2 (W CPU, seed 316, from `home_s316_n15`; files `_scratch/langdrift/gate/`).**
+
+| Measure | Snapshot | B | K-P run 1 | K-P run 2 |
+|---|---|---|---|---|
+| Held-out KL to pretrained | 2.399 | 2.799 | 1.593 | 0.862 |
+| Held-out NLL (pretrained 1.931) | 4.179 | 4.589 | 3.435 | 2.812 |
+| Prose KL | 4.674 | 4.474 | 3.224 | 1.657 |
+| Keep ORDINARY KL | 0.032 | 0.147 | 0.260 | 0.237 |
+| Replayed-episode NLL | 0.599 | 0.770 | 0.506 | 0.451 |
+| Held-out increment, ratio to B | | 1.00x | 0.76x | 0.99x |
+
+- Bank: 511 of 512 texts distinct, mean 63.4 tokens, 4 of 512 (0.8%) contain a told key, 29.5% contain
+  "Assistant:".
+- §5 rule applied:
+  - Condition 1 (bank bars): PASS.
+  - Condition 2 (replayed NLL at most B's + 0.2): PASS, 0.451 against 0.970.
+  - Condition 3: the increment bar FAILS (0.99x). The override branch holds (held-out KL 0.862, below 2.40 and
+    below 2.80).
+- **Verdict: LAUNCH (gate-overridden).** The screen's §3 bars are unchanged and decide.
+- Caveats:
+  - One night on one seed.
+  - The night repairs held-out drift. That is not the same as preventing drift over a life, which the screen tests.
+  - The 3 ORDINARY texts lose ground (KL 0.032 -> 0.237).
+  - On a loaded CPU the night took 8.95 h, with the bank taking 2.4 h of that.
