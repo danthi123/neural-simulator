@@ -42,9 +42,11 @@ import torch
 from brain.brain import Brain
 from brain.eval import life as L
 from brain.eval import life_cues as LC
+from brain.eval import life_cues_split as CS     # test2 cue texts, life_cues.py kept frozen
 from brain.experiments.strict_scorer import correct_answer
 
 CUES_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_cues.sha256")
+CUES_TEST2_HASH_FILE = os.path.join(os.path.dirname(__file__), "life_cues_test2.sha256")   # TEST v2 cue texts
 DELAYS = (1, 3, 7, 14)
 RUNGS = {"E": ("C0", "C0g", "C1", "C2", "C3", "C4"), "F": ("C0", "C1", "C2", "C3", "C4")}
 FULL_EXTRA = ("both-off",)
@@ -53,20 +55,33 @@ NOTE = ("auto scorer (strict_scorer.correct_answer, cue text as the question), P
         "registered primary")
 
 
-def cues_sha() -> str:
-    return hashlib.sha256(open(LC.__file__, "rb").read()).hexdigest()
+def _cue_file(split: str | None) -> str:
+    if split == "test2":     # TEST v2 cue texts live in their own data file (design 2026-11-22 section 4)
+        import importlib
+        return importlib.import_module("brain.eval.life_cues_test2").__file__
+    return LC.__file__
+
+
+def cues_sha(split: str | None = None) -> str:
+    """sha256 of the file holding the split's cue texts (life_cues.py for dev/test, life_cues_test2.py for test2)."""
+    return hashlib.sha256(open(_cue_file(split), "rb").read()).hexdigest()
 
 
 def load_cues(split: str) -> dict:
-    """{item: (C2, C3)} of the split. TEST: life_cues.py must hash to life_cues.sha256 (fail closed)."""
-    if split not in LC.CUES:
+    """{item: (C2, C3)} of the split. TEST: life_cues.py must hash to life_cues.sha256; TEST v2: life_cues_test2.py
+    must hash to life_cues_test2.sha256 (fail closed, also when the hash file is missing)."""
+    cs = CS.cues(split)
+    if cs is None:
         raise ValueError(f"no cue texts for split {split!r}")
-    if split == "test":
-        want = open(CUES_HASH_FILE).read().split()[0]
-        got = cues_sha()
+    if split in ("test", "test2"):
+        hfile = CUES_HASH_FILE if split == "test" else CUES_TEST2_HASH_FILE
+        if not os.path.exists(hfile):
+            raise RuntimeError(f"cue texts of split {split!r} are not frozen: the hash file {hfile} is missing")
+        want = open(hfile).read().split()[0]
+        got = cues_sha(split)
         if got != want:
-            raise RuntimeError(f"cue texts changed: sha256 {got[:12]} != recorded {want[:12]} ({CUES_HASH_FILE})")
-    return LC.CUES[split]
+            raise RuntimeError(f"cue texts changed: sha256 {got[:12]} != recorded {want[:12]} ({hfile})")
+    return cs
 
 
 def live_asked_late(sched: list, ledger: dict) -> set:
@@ -81,13 +96,15 @@ def live_asked_late(sched: list, ledger: dict) -> set:
     return out
 
 
-def ladder_plan(seed: int, days: int, sched: list, ledger: dict, split: str = "dev", weekend: bool = False) -> dict:
+def ladder_plan(seed: int, days: int, sched: list, ledger: dict, split: str = "dev", weekend: bool = False,
+                exclude=None) -> dict:
     # The bank of THIS split, set on the module life_ladder imports: under `python -m brain.eval.life` the running life
     # is __main__, a different module object whose use_split() does not reach L.LB (L.LB would stay DEV on a TEST life).
     bank = L.use_split(split)
     late = live_asked_late(sched, ledger)
-    rot = {n: {q["item"] for q in L.battery(seed, n, ledger) if q["kind"] == "rotating"} for n in range(1, days + 1)}
-    ov = LC.overlaps(split, bank)
+    bkw = {} if exclude is None else {"exclude": exclude}    # --age-ladder: the battery the life actually asks
+    rot = {n: {q["item"] for q in L.battery(seed, n, ledger, **bkw) if q["kind"] == "rotating"} for n in range(1, days + 1)}
+    ov = CS.overlaps(split, bank)
     elig, unplaced = [], []
     for iid in sorted(ledger):
         e = ledger[iid]

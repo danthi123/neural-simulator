@@ -94,7 +94,7 @@ def units(sel: dict, bank) -> list:
         for iid in sel["picks"][b]:
             if b == "never":
                 q = never[iid][0]
-                tp = SP.NEVER_TOPICS[q]
+                tp = getattr(bank, "NEVER_TOPICS", SP.NEVER_TOPICS)[q]   # TEST v2 carries its own topics
             else:
                 it = bank.ALL[iid]
                 q, tp = it.direct, SP.topic(it.partial)

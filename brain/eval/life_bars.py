@@ -232,6 +232,157 @@ def p0_seed(res: dict, offset: int | None = None) -> dict:
         AGE_OFFSET = keep
 
 
+# ---------------------------------------------------------------- P0-v2 (age ladder, design 2026-11-22 section 3)
+LADDER_FLOOR_NIGHTS = (11, 15)    # the floor and FM-v2 window, inclusive
+FM_BAR_NIGHT = 15                 # FM-v2: night 15 is the bar for intact and both-off
+FM_MARGIN = 0.10
+
+
+def ladder_rows(res: dict, arm: str = "hippocampus-off") -> list:
+    """The age-ladder rows of one arm (trunk, untagged probes), each with its probe night."""
+    return [dict(x, night=p["night"]) for p in _arm_probes(res, arm) for x in p.get("age_ladder") or []]
+
+
+def _item_weighted(rows: list):
+    """Each item's mean over its rows, then the mean over items. -> (rate, n_items, {item: mean})."""
+    per: dict = {}
+    for r in rows:
+        per.setdefault(r["item"], []).append(bool(r["ok"]))
+    m = {i: sum(v) / len(v) for i, v in per.items()}
+    return (sum(m.values()) / len(m) if m else None), len(m), m
+
+
+def _per_question(rows: list, field: str, lo: int, hi: int):
+    """Mean over never questions of the per-question rate of `field` on nights lo..hi. -> (rate, n_questions, n_rows)."""
+    per: dict = {}
+    for r in rows:
+        if r["kind"] == "never" and lo <= r["night"] <= hi:
+            per.setdefault(r["item"], []).append(bool(r[field]))
+    if not per:
+        return None, 0, 0
+    return sum(sum(v) / len(v) for v in per.values()) / len(per), len(per), sum(len(v) for v in per.values())
+
+
+def low_recall_obs_dedup(res: dict, arm: str = "hippocampus-off") -> list:
+    """The pooled v1 observation set of a ladder life: battery + cue-C0 + ladder rows (LOW items), deduplicated by
+    (item, night) keeping the ladder row. age = harness age (age_nights - AGE_OFFSET for ladder rows)."""
+    lad = [{"item": r["item"], "age": r["age_nights"] - AGE_OFFSET, "ok": bool(r["ok"]), "src": "ladder",
+            "night": r["night"]} for r in ladder_rows(res, arm) if r["kind"] in ("ladder", "control")]
+    have = {(o["item"], o["night"]) for o in lad}
+    led, out = res["ledger"], []
+    for o in low_recall_obs(res, arm):
+        t = _told_once(led, o["item"], 99)
+        night = None if t is None else o["age"] + t
+        if (o["item"], night) not in have:
+            out.append(o)
+    return out + [{k: v for k, v in o.items() if k != "night"} for o in lad]
+
+
+def p0_seed_ladder(res: dict) -> dict:
+    rows = ladder_rows(res)
+    it = [r for r in rows if r["kind"] in ("ladder", "control")]
+    r1, n1, m1 = _item_weighted([r for r in it if r["age_nights"] == 1])
+    rL, nL, mL = _item_weighted([r for r in it if r["age_nights"] >= 10])
+    rc, nc, _ = _item_weighted([r for r in it if r["kind"] == "control"])
+    sp = low_span_rows(res)
+    l1, k1 = _lo(sp, 1, 1)
+    lL, kL = _lo(sp, 10)
+    fl, fq, fr = _per_question(rows, "slot_false", *LADDER_FLOOR_NIGHTS)
+    hs = [p["summary"] for p in _arm_probes(res, "hippocampus-off")]
+    hr = sum(s["H_right"] for s in hs) / max(sum(s["H_n"] for s in hs), 1) if hs else None
+    c_drop = None if r1 is None or rL is None else r1 - rL
+    c_floor = None if rL is None or fl is None else rL - fl
+    c_lo = None if l1 is None or lL is None else lL < l1
+    flags = None if None in (c_drop, c_floor, c_lo) else (c_drop >= 0.15 - EPS, c_lo, c_floor >= 0.10 - EPS)
+    return {"seed": res["seed"], "instrument": "age-ladder", "recall_age1": _r(r1), "n_items_age1": n1,
+            "recall_age10p": _r(rL), "n_items_age10p": nL, "recall_controls": _r(rc), "n_controls": nc,
+            "matched_night_drop": _r(None if rc is None or rL is None else rc - rL),
+            "logodds_age1": _r(l1), "n_lo_age1": k1, "logodds_age10p": _r(lL), "n_lo_age10p": kL,
+            "drop": _r(c_drop), "floor_margin": _r(c_floor), "slot_floor": _r(fl), "floor_questions": fq,
+            "floor_rows": fr, "H_off": _r(hr),
+            "item_means_age1": {i: _r(v) for i, v in sorted(m1.items())},
+            "item_means_age10p": {i: _r(v) for i, v in sorted(mL.items())},
+            "clauses": None if flags is None else {"drop>=0.15": flags[0], "logodds_lower": flags[1],
+                                                   "above_floor+0.10": flags[2]},
+            "pass": None if flags is None else all(flags)}
+
+
+def p0_ladder(results: list) -> dict:
+    n = len(results)
+    seeds = [p0_seed_ladder(r) for r in results]
+    cr = count_rule({s["seed"]: s["pass"] for s in seeds})
+    core = "PASS" if cr["ok"] else ("UNDEFINED" if cr["defined"] == 0 else "FAIL")
+    groups = []
+    for s in seeds:     # pooled item-level permutation: items nested in seeds, age-1 vs age>=10 item means within seed
+        a, b = list(s["item_means_age1"].values()), list(s["item_means_age10p"].values())
+        if a and b:
+            groups.append((a + b, len(a)))
+    obs, pv = perm_label_p(groups, np.random.default_rng(RNG_SEED + 1))
+    allrows = [r for res in results for r in ladder_rows(res) if r["kind"] in ("ladder", "control")]
+    bins = []
+    for a in sorted({r["age_nights"] for r in allrows}):
+        sel = [r["ok"] for r in allrows if r["age_nights"] == a]
+        bins.append((a, sum(sel) / len(sel), len(sel)))
+    fit = _fit([b[0] for b in bins], [b[1] for b in bins], [b[2] for b in bins])
+    mnd = [s["matched_night_drop"] for s in seeds if s["matched_night_drop"] is not None]
+    pooled_drop = _mean([s["drop"] for s in seeds])
+    v1 = [o for r in results for o in low_recall_obs_dedup(r)]
+    v1_bins = []
+    for a in sorted({o["age"] + AGE_OFFSET for o in v1}):
+        sel = [o["ok"] for o in v1 if o["age"] + AGE_OFFSET == a]
+        v1_bins.append({"age_nights": a, "recall": _r(sum(sel) / len(sel)), "n": len(sel)})
+    label = ("night-confounded" if mnd and _mean(mnd) < 0.15 - EPS and pooled_drop is not None and pooled_drop >= 0.15 - EPS
+             else "")
+    return {"bar": bar("P0", "P0", "Forgetting precondition P0-v2 (age ladder, hippocampus-off, LOW items)",
+                       "per seed: item-weighted ladder recall(age 1: 12 ladder + 8 matched-night controls) - recall(age>=10) "
+                       ">= 0.15 AND mean log-odds(age>=10) < log-odds(age 1) (span rows) AND recall(age>=10) - slot-matched "
+                       "never-told floor (nights 11-15, per question) >= 0.10; VALID if >=5/6 seeds",
+                       "VALID if >=5/6 seeds pass; else savings UNDEFINED (design 2026-11-22 section 3)", n, core,
+                       per_seed=seeds,
+                       pooled={"seeds_passing": cr["count"], "defined_seeds": cr["defined"], "need": cr["need"],
+                               "sensitivity_age_offset0_passing": "n/a (ladder)", "perm_stat": _r(obs),
+                               "mean_matched_night_drop": _r(_mean(mnd))},
+                       p=pv, null=None,
+                       note="a seed with an empty age bin is UNDEFINED and counts as not passing; the pooled permutation "
+                            "is reported beside the 5/6 count" + (f"; drop labelled {label}" if label else "")),
+            "valid": core == "PASS", "age_bins_pooled": [{"age_nights": a, "recall": _r(r), "n": m} for a, r, m in bins],
+            "fit": fit, "valid_label": _label(core, n), "instrument": "age-ladder", "v1_style_bins_dedup": v1_bins,
+            "drop_label": label or None}
+
+
+def fm_v2_seed(res: dict) -> dict:
+    """FM-v2 rates (per question, then averaged) per arm: hippocampus-off on nights 11-15, intact and both-off on night 15
+    (nights 5 and 10 reported). v1-style (STOCK included) from the same rows."""
+    out = {"seed": res["seed"]}
+    for arm in ("hippocampus-off", "intact", "both-off"):
+        rows = ladder_rows(res, arm)
+        lo, hi = LADDER_FLOOR_NIGHTS if arm == "hippocampus-off" else (FM_BAR_NIGHT, FM_BAR_NIGHT)
+        fm, q, nr = _per_question(rows, "fm_v2", lo, hi)
+        v1, _, _ = _per_question(rows, "v1_false", lo, hi)
+        out[arm] = {"fm_v2": _r(fm), "v1_style": _r(v1), "questions": q, "rows": nr,
+                    "by_night": {nt: _r(_per_question(rows, "fm_v2", nt, nt)[0]) for nt in sorted({r["night"] for r in rows
+                                                                                                  if r["kind"] == "never"})}}
+    b, i, h = (out[a]["fm_v2"] for a in ("both-off", "intact", "hippocampus-off"))
+    out["pass"] = None if None in (b, i, h) else (i <= b + FM_MARGIN + EPS and h <= b + FM_MARGIN + EPS)
+    return out
+
+
+def fm_v2(results: list) -> dict:
+    n = len(results)
+    seeds = [fm_v2_seed(r) for r in results]
+    cr = count_rule({s["seed"]: s["pass"] for s in seeds})
+    core = "PASS" if cr["ok"] else ("UNDEFINED" if cr["defined"] == 0 else "FAIL")
+    m = {a: _r(_mean([s[a]["fm_v2"] for s in seeds])) for a in ("hippocampus-off", "intact", "both-off")}
+    v1 = {a: _r(_mean([s[a]["v1_style"] for s in seeds])) for a in ("hippocampus-off", "intact", "both-off")}
+    return bar("FM-v2", "P0", "False memory FM-v2 (never-told ladder questions, any told key, STOCK out)",
+               "per question then averaged: hippocampus-off nights 11-15, intact and both-off night 15; per seed intact <= "
+               "both-off + 0.10 AND hippocampus-off <= both-off + 0.10; >=5/6 seeds", "PASS if >=5/6 seeds; its own "
+               "verdict, never gates savings (design 2026-11-22 section 3b)", n, core, per_seed=seeds,
+               pooled={"seeds_passing": cr["count"], "defined": cr["defined"], "need": cr["need"], "mean_fm_v2": m,
+                       "mean_v1_style": v1}, p=None, null={"both-off": m["both-off"]},
+               note="v1_style = the Stage-1 rate (any told key, STOCK included) on the same rows")
+
+
 def _fit(ages: list, rates: list, ns: list):
     """Weighted least squares in log space over bins with recall > 0 and age >= 1: power law c*a^-b and exponential c*exp(-l*a).
     R2 is on the raw (rate) scale, weighted by n. Report only."""
@@ -727,12 +878,15 @@ def analyse(results: list) -> dict:
     results = sorted(results, key=lambda r: r["seed"])
     n = len(results)
     rng = np.random.default_rng(RNG_SEED)
-    p = p0(results)
+    lad = [bool(r.get("age_ladder")) for r in results]
+    if any(lad) and not all(lad):
+        raise ValueError("life_bars: some lives have the age ladder and some do not; read them apart")
+    p = p0_ladder(results) if any(lad) else p0(results)
     sv = savings(results, p["valid"], p["valid_label"], rng)
     cu = cue(results, p["valid"], rng)
     tr = transfer(results, rng)
     lg = language(results)
-    bars = [p["bar"]] + sv["bars"] + cu["bars"] + tr["bars"] + lg["bars"]
+    bars = [p["bar"]] + ([fm_v2(results)] if any(lad) else []) + sv["bars"] + cu["bars"] + tr["bars"] + lg["bars"]
     return {"n_seeds": n, "seeds": [r["seed"] for r in results], "n_perm": N_PERM, "rng_seed": RNG_SEED, "bars": bars,
             "p0": {k: v for k, v in p.items() if k != "bar"}, "savings": sv["detail"], "cue": {"cells": cu["cells"], "overall": cu["overall"]},
             "transfer": {"overall": tr["overall"], "table": tr["table"]}, "language": {"collapse_arms": lg["collapse_arms"]},
@@ -769,9 +923,16 @@ def render(A: dict) -> str:
         if b.get("note"):
             L_.append(f"- note: {b['note']}")
     p0_ = A["p0"]
-    L_ += ["\n## P0 detail: LOW recall by age (hippocampus-off, pooled over seeds; age = nights slept)\n", "| age | recall | n |", "|---|---|---|"]
+    lad = p0_.get("instrument") == "age-ladder"
+    L_ += ["\n## P0 detail: LOW recall by age (hippocampus-off, pooled over seeds; age = nights slept)"
+           + (" - age-ladder rows (P0-v2)" if lad else "") + "\n", "| age | recall | n |", "|---|---|---|"]
     L_ += [f"| {b['age_nights']} | {_f(b['recall'])} | {b['n']} |" for b in p0_["age_bins_pooled"]]
     L_.append(f"\nFits (report only): {_f(p0_['fit'])}")
+    if lad:
+        L_ += ["\nOffset-0 sensitivity: n/a (ladder). Drop label: " + (p0_.get("drop_label") or "none") + ".",
+               "\n### v1 observation set (battery + cue-C0 + ladder, deduplicated by (item, night), ladder row kept)\n",
+               "| age | recall | n |", "|---|---|---|"]
+        L_ += [f"| {b['age_nights']} | {_f(b['recall'])} | {b['n']} |" for b in p0_["v1_style_bins_dedup"]]
     L_ += ["\n## Savings detail per branch night\n", "| branch night | seed | G_null_sub | excl | G raw | G both-off | dR | dR_null_sub | recall A/B | trunk G_null_sub |",
            "|---|---|---|---|---|---|---|---|---|---|"]
     for nk, d in sorted(A["savings"].items()):

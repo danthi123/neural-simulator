@@ -19,9 +19,9 @@
   s320); leak 0.04 vs 0.29; recall up (once-told F 19/34 vs 7/34). COSTS to register as TEST bars: self-name "Dan"
   8/18 vs 0/18; stock-refusal collapse nights 59/1158 rows vs 0 (abstention rise: any flip needs a ruling). Device
   confound (K-P fp16 AWS, B fp32 pool) not explanatory per refuter; B-fp16 lives `lifeBg_s<S>` launching on AWS
-  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s321 repeat s316; s320 on W
-  (`_scratch/kpgate_w/run_w320.sh`): add its row, and its bank is the s320 bank-quality proxy.
-- **BUILDING: TEST split v2** (design `brain/research/2026-11-22-fresh-test-split-design.md`, 4c9c0504f): age ladder
+  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s320/s321 repeat s316 (s320 0.85 vs B 2.93); W runs lifeKPc_s319 (K-P CPU fp32 life,
+  `_scratch/kpcpu/`), closing the device confound on one seed.
+- **BUILT (31de906ca, not frozen): TEST split v2** (design `brain/research/2026-11-22-fresh-test-split-design.md`, 4c9c0504f): age ladder
   (12 items/seed, 22 rows at age>=10), slot-matched never-told floor + FM-v2 bar, `--split test2`, `--age-ladder` OFF.
   Workflow builds validator, blind bank writer, code, opus review, fix (uncommitted in worktree until reviewed).
 - **NEXT STEP:** (1) Land split v2 (review diff, hash-freeze bank + cues, one DEV 1.5B check). (2) Read B-fp16 vs K-P
@@ -34,7 +34,7 @@
 - **OWNER WORDS (2026-11-20, verbatim):** "Looks like the GPU fell off the bus earlier? I won't be home to reboot until
   Monday so continue with CPU, pool, and AWS until then. The MTALLM Claude session also may need AWS for GPU access, I
   am preapproving that access as needed so don't ask for permission."
-- **OPEN:** W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
+- **OPEN:** AWS cap for 11-22 only: $150, aim < $100 (owner); remove after 11-22 to restore $50 (drop-in `~/.config/systemd/user/aws-guard.service.d/cap-override.conf`). Split v2 built (31de906ca), not frozen: DEV row check `lifeAL_s322` on AWS (`launch_al_now.sh`), then hash-freeze. W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
   i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`), retry pull then terminate. RAG
   index stale. MTALLM stopped 11-21; final hand-off `~/Projects/mtallm/experiments/reports/sim_handoff.md` (84ecd10) read: info only; its §6 says a 1.5B in-context reader invents untold attributes when many people are in view (check any in-context judge at that density).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.

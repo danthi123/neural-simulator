@@ -14,10 +14,12 @@ Method: one extra night (night 16) from each seed's `lifeS1F` night-15 home, B (
 | 321 | before (n15) | 2.858 | 4.674 | | 0.609 | |
 | 321 | B n16 | 2.760 | 4.507 | 0.028 | 0.546 | 72.9 |
 | 321 | K-P n16 | **0.813** | **2.737** | 0.139 | 0.500 | 70.6 |
+| 320 | before (n15) | 2.379 | 4.107 | 0.025 | 0.577 | 69.7 |
+| 320 | B n16 | 2.927 | 4.516 | 0.034 | 0.718 | 72.0 |
+| 320 | K-P n16 | **0.850** | **2.747** | 0.201 | **0.431** | 69.5 |
 | 316 (gate) | K-P vs B | 0.86 vs 2.80 | 2.81 vs 4.59 | | 0.451 vs 0.770 | |
 
 Read: on both seeds, one K-P night cuts held-out KL by about 3.5x against B, and held-out NLL from about 4.6 to about 2.7.
-Replayed-episode NLL is no worse than B (s319 better, s321 slightly better). This repeats the s316 gate on 3/3 seeds.
+Replayed-episode NLL is no worse than B (s319 better, s321 slightly better). This repeats the s316 gate on 4/4 seeds (s320 added 11-22, W CPU; its bank: 512/512 distinct, 62.8 tokens, 9/512 texts with a told key).
 K-P gives up a little on its own three ordinary texts (KL 0.13-0.14 vs B 0.03-0.04): the prior bank replaces them in
-the keep term. The bank costs 75-140 min of CPU sampling per night (`bank_s` 4553 on W, 8274 on pool40). s320 is
-running on W. Caveat: one night only. The 15-day DEV lives (AWS, fp16) are the registered read.
+the keep term. The bank costs 75-140 min of CPU sampling per night (`bank_s` 4553 on W, 8274 on pool40). Caveat: one night only. The 15-day DEV lives (AWS, fp16) are the registered read.

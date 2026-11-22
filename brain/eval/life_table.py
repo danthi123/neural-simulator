@@ -46,6 +46,16 @@ def seed_rows(res: dict, line: str = "trunk") -> list:
         lg = nights.get(night, {}).get("lang_guard")     # --lang-guard lives only
         if lg:
             r["kl"], r["nll_on"], r["nll_off"] = lg["kl"], lg["nll_on"], lg["nll_off"]
+        lad = o.get("age_ladder")     # --age-ladder lives only (hippocampus-off ladder rows of that morning)
+        if lad:
+            it = [x for x in lad if x["kind"] != "never"]
+            nv = [x for x in lad if x["kind"] == "never"]
+            r["lad_ok"], r["lad_n"] = sum(1 for x in it if x["ok"]), len(it)
+            r["lad_old_ok"] = sum(1 for x in it if x["ok"] and x["age_nights"] >= 10)
+            r["lad_old_n"] = sum(1 for x in it if x["age_nights"] >= 10)
+            for k in ("slot_false", "fm_v2", "v1_false"):
+                r[k] = sum(1 for x in nv if x[k])
+            r["nv_n"] = len(nv)
         r["d1_cost"] = r["right_off"] - r["right_int"]
         r["d2_excess"] = None if b is None else r["intr_int"] - r["intr_both"]
         rows.append(r)
@@ -117,14 +127,20 @@ def render(results: list) -> str:
             continue
         L.append(f"\n## {line}\n")
         lgc = any(r.get("kl") is not None for r in rows)     # --lang-guard columns only when the field exists
+        ldc = any(r.get("lad_n") is not None for r in rows)    # --age-ladder columns only when the field exists
         L.append("| seed | night | s | store | norm | H int/off | wf | fetched | D1 cost | D2 int/off/both | D2 excess | never false int/off | col int/off |"
-                 + (" KL | KL / night-1 |" if lgc else ""))
-        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|" + ("---|---|" if lgc else ""))
+                 + (" KL | KL / night-1 |" if lgc else "")
+                 + (" ladder recall off (age>=10) | slot floor off | FM-v2 off | v1-style off |" if ldc else ""))
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|" + ("---|---|" if lgc else "")
+                 + ("---|---|---|---|" if ldc else ""))
         for r in rows:
             L.append(f"| {r['seed']} | {r['night']} | {_f(r['seconds'])} | {r['store']} | {r['norm']} | {r['H_int']}/{r['H_off']} of {r['H_n']} "
                      f"| {r['wf']}/{r['src']} | {r['fetched']} | {r['d1_cost']:+d} of {r['direct_n']} | {r['intr_int']}/{r['intr_off']}/{_f(r['intr_both'])} of {r['open_n']} "
                      f"| {_f(r['d2_excess'])} | {r['never_false_int']}/{r['never_false_off']} of {r['never_n']} | {r['col_int']}/{r['col_off']} |"
-                     + (f" {_f(r.get('kl'))} | {_f(r.get('kl_ratio'))} |" if lgc else ""))
+                     + (f" {_f(r.get('kl'))} | {_f(r.get('kl_ratio'))} |" if lgc else "")
+                     + ((f" {r['lad_ok']}/{r['lad_n']} ({r['lad_old_ok']}/{r['lad_old_n']}) | {r['slot_false']}/{r['nv_n']} "
+                         f"| {r['fm_v2']}/{r['nv_n']} | {r['v1_false']}/{r['nv_n']} |" if r.get("lad_n") is not None
+                         else " - | - | - | - |") if ldc else ""))
         L.append("\n### M-use / M-scale read-outs (new columns)\n")
         L.append("fetched/right/wrong = intact-probe fetches of the direct questions with a source (counts). boosts = live-day "
                  "fetches whose use update was granted/denied (M-use runs only). max strength = largest non-permanent episode "
