@@ -54,6 +54,11 @@ KEEP_BANK_FRAME = "User:"
 KEEP_BANK_NIGHT = 64
 KEEP_BANK_SEED_OFFSET = 104729
 KEEP_BANK_FILE = "keep_bank.json"
+# K-P-U / K-P-0 (brain/research/2026-11-23-kp-identity-prereg.md; switches, default OFF): "prior_u" = the K-P bank byte for
+# byte, keep KL only on positions predicting a token inside a frame ("User") turn (brain/keep_mask.py); "prior_0" = the
+# same sampler and numbers with no frame, sampled from the end-of-text start state (the unconditioned prior), whole-text KL.
+KEEP_BANK_MODES = (None, "prior", "prior_u", "prior_0")
+KEEP_BANK_FRAME_0 = ""   # declared scaffold (SCAFFOLDS.md): the K-P-0 empty frame
 ADAPTERS = "cortex_adapters.pt"
 EPISODES = "episodes"            # one file per episode (tensors), written once
 EPISODE_INDEX = "episodes.json"  # text + strength/uses/times per episode, rewritten after a turn (small)
@@ -268,6 +273,11 @@ class Brain:
         sleep_seed + sleeps + 104729). The night record is in last_keep_record. A non-default choice is saved in meta.json;
         reopening a home saved with "prior" under keep_bank=None adopts it (like replay_priority), but switching it ON in a
         home that already slept without it is refused (a life is one condition).
+        "prior_u" (K-P-U, brain/research/2026-11-23-kp-identity-prereg.md): the same bank file and nightly subset as
+        "prior"; the keep KL counts only positions that predict a token inside a frame ("User") turn
+        (brain/keep_mask.py); the record adds kept_pos_share. "prior_0" (K-P-0): the same sampler and numbers with frame
+        "" from the end-of-text start state (bank file records frame ""), whole-text KL. Switching between modes in a
+        home that already slept is refused, as for "prior".
         rank: (switch, default OFF = None: recall competition verbatim) R-raw: "raw" = the winner is the highest raw
         similarity, strength only gates firing (Hippocampus.RANK_ON_RAW; brain/research/2026-11-20-hub-rank-raw-prereg.md).
         Not saved: pass it each time.
@@ -348,8 +358,8 @@ class Brain:
             raise ValueError(f"replay_priority must be None, 'strength_x_loss', 'loss' or 'loss_a', not {replay_priority!r}")
         self._replay_priority = self._replay_priority_arg = replay_priority
         self.last_replay_weights = None   # the last night's per-episode weights (only with replay_priority on)
-        if keep_bank not in (None, "prior"):
-            raise ValueError(f"keep_bank must be None or 'prior', not {keep_bank!r}")
+        if keep_bank not in KEEP_BANK_MODES:
+            raise ValueError(f"keep_bank must be None, 'prior', 'prior_u' or 'prior_0', not {keep_bank!r}")
         self._keep_bank_mode = self._keep_bank_arg = keep_bank
         self._keep_bank_texts = None
         self.last_keep_record = None      # the last night's keep-bank record (only with keep_bank on)
@@ -849,6 +859,15 @@ class Brain:
             generic = random.Random(self.sleep_seed + self.meta.get("sleeps", 0) + KEEP_BANK_SEED_OFFSET).sample(
                 bank, min(KEEP_BANK_NIGHT, len(bank)))
             subset = generic
+            if self._keep_bank_mode == "prior_u":   # K-P-U: (text, kept positions) pairs, the turn rule on the sleep's ids
+                from brain.keep_mask import frame_turn_positions
+                pipe = plastic.cortex.pipe
+                pairs = []
+                for t in subset:
+                    ids = pipe.encode(t)
+                    pairs.append((t, frame_turn_positions(ids, pipe.decode, KEEP_BANK_FRAME), len(ids)))
+                generic = [(t, pos) for t, pos, _ in pairs]
+                kept_share = sum(len(pos) for _, pos, _ in pairs) / max(sum(n for _, _, n in pairs), 1)
         with torch.random.fork_rng(devices=[]):
             losses = replay_into_cortex(plastic, base, eps, generic, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],
@@ -861,6 +880,11 @@ class Brain:
                 "bank_size": len(self._keep_bank_texts), "subset_n": len(subset),
                 "subset_hash": hashlib.sha1("\x00".join(subset).encode()).hexdigest()[:12],
                 "mean_keep_kl": (sum(k for _, k in losses) / len(losses)) if losses else None}
+            if self._keep_bank_mode == "prior_u":
+                self.last_keep_record["mode"] = "prior_u"
+                self.last_keep_record["kept_pos_share"] = kept_share
+            elif self._keep_bank_mode == "prior_0":
+                self.last_keep_record["mode"] = "prior_0"
         if self.sleep_downscale is not None and self.meta.get("adapter_budget") is None:
             self.meta["adapter_budget"] = self.sleep_downscale * plastic.adapter_norm()   # first slept night sets it
         if self.sleep_downscale is not None and self.downscale_when == "end":   # M-scale-E: the cut after replay (no RNG)
@@ -879,14 +903,22 @@ class Brain:
         if self._keep_bank_texts is not None:
             return self._keep_bank_texts
         path = os.path.join(self.home, KEEP_BANK_FILE)
+        frame = KEEP_BANK_FRAME_0 if self._keep_bank_mode == "prior_0" else KEEP_BANK_FRAME
         if os.path.exists(path):
             with open(path) as fh:
-                texts = json.load(fh)["texts"]
+                blob = json.load(fh)
+            texts = blob["texts"]
+            if blob.get("frame", KEEP_BANK_FRAME) != frame:
+                raise ValueError(f"{path}: bank frame {blob.get('frame')!r} does not match keep_bank="
+                                 f"{self._keep_bank_mode!r} (frame {frame!r})")
         else:
             import numpy as np
             texts, lens = [], []
             seed = self.sleep_seed + KEEP_BANK_SEED_OFFSET
-            lg, st = self.raw_cortex.read(KEEP_BANK_FRAME, self.base)
+            if frame:
+                lg, st = self.raw_cortex.read(frame, self.base)
+            else:   # K-P-0: end of text from a FRESH state (not the birth state), the cortex's unconditioned prior
+                lg, st = self.raw_cortex.forward([END_OF_TEXT], None)
             # _sample_full draws with np.random (any device); torch is forked too: seed both, restore both
             nps = np.random.get_state()
             devs = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else []
@@ -906,16 +938,18 @@ class Brain:
                             lg_i, st_i = self.raw_cortex.forward([tok], st_i)
                         t = pipe.decode(ids).strip()
                         lens.append(len(ids))
-                        texts.append(KEEP_BANK_FRAME + ("" if t.startswith(("'", ",", ".", "?", "!")) else " ") + t + "\n\n")
+                        texts.append((frame + ("" if t.startswith(("'", ",", ".", "?", "!")) else " ") if frame else "")
+                                     + t + "\n\n")
             finally:
                 np.random.set_state(nps)
             self._write_json(KEEP_BANK_FILE, {"n": KEEP_BANK_N, "tokens": KEEP_BANK_TOKENS, "temperature": KEEP_BANK_TEMP,
-                                              "frame": KEEP_BANK_FRAME, "seed": seed,
+                                              "frame": frame, "seed": seed,
                                               "top_p": KEEP_BANK_TOP_P, "presence_penalty": 0.0,
                                               "frequency_penalty": 0.0,
                                               "stop_rule": "64 tokens or end of text",
                                               "sampler": "full softmax, float64, np.random.choice (not rwkv top_p)",
                                               "mean_tokens": sum(lens) / len(lens),
+                                              **({} if frame else {"start": "eot from a fresh state"}),
                                               "texts": texts})
         self._keep_bank_texts = texts
         return texts
@@ -1205,10 +1239,13 @@ class Brain:
             raise ValueError(f"replay_priority in {self.home}/meta.json must be 'strength_x_loss', 'loss' or 'loss_a', not {rp!r}")
         self._replay_priority = rp
         kb = meta.pop("keep_bank", None)
-        if kb not in (None, "prior"):
-            raise ValueError(f"keep_bank in {self.home}/meta.json must be 'prior', not {kb!r}")
+        if kb not in KEEP_BANK_MODES:
+            raise ValueError(f"keep_bank in {self.home}/meta.json must be 'prior', 'prior_u' or 'prior_0', not {kb!r}")
         if self._keep_bank_arg is not None and kb is None and meta.get("sleeps", 0) > 0:
             raise ValueError(f"resume: {self.home} slept {meta['sleeps']} night(s) without keep_bank; a life keeps one "
+                             f"condition (keep_bank={self._keep_bank_arg!r} refused)")
+        if self._keep_bank_arg is not None and kb is not None and kb != self._keep_bank_arg and meta.get("sleeps", 0) > 0:
+            raise ValueError(f"resume: {self.home} slept {meta['sleeps']} night(s) with keep_bank={kb!r}; a life keeps one "
                              f"condition (keep_bank={self._keep_bank_arg!r} refused)")
         self._keep_bank_mode = self._keep_bank_arg or kb
         if key != self.key:

@@ -33,7 +33,9 @@
 - **OPEN:** AWS cap for 11-22 only: $150, aim < $100 (owner); remove after 11-22 to restore $50 (drop-in `~/.config/systemd/user/aws-guard.service.d/cap-override.conf`). Split v2 built (31de906ca), not frozen: DEV row check `lifeAL_s322` on AWS (`launch_al_now.sh`), then hash-freeze. W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
   i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`), retry pull then terminate. RAG
   index stale. MTALLM stopped 11-21; final hand-off `~/Projects/mtallm/experiments/reports/sim_handoff.md` (84ecd10) read: info only; its §6 says a 1.5B in-context reader invents untold attributes when many people are in view (check any in-context judge at that density).
-- **AFTER THE 11-22/23 REBOOT (owner reboots W; gpu-unlock installed by the owner, guide `_scratch/gpu-unlock-install.md`):**
-  check `journalctl -k -b | grep gpu_unlock` + nvidia-smi + bf16 matmul; then `--cuda-precision fp32` parity check
-  (lang_guard nll_off must equal CPU 1.930773), then K-P lives on GPU fp32; stop or resume `_scratch/kpcpu/run.sh`.
+- **AFTER THE REBOOT (owner runs `bash ~/Projects/sim/_scratch/gpu-unlock-go.sh`, then powers on):** check
+  `journalctl -k -b | grep gpu_unlock`, nvidia-smi, one gpu_queue daemon only (two = card off the bus), llama-swap VRAM;
+  then the K-P identity gate (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, 59881a228) on GPU fp32:
+  `tools/gpu_queue.sh add 'DEVICE=cuda bash _scratch/wt-mixday/_scratch/kpid/run_gate.sh > _scratch/wt-mixday/_scratch/kpid/run_gate.log 2>&1'`;
+  resume or stop `_scratch/kpcpu/run.sh` (K-P CPU fp32 life s319, killed by the reboot).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
