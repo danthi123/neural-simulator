@@ -8,24 +8,25 @@
   (G_null_sub +0.67, p 0.053); cued recall, transfer, self-report measured negatives; language guard FAIL (held-out NLL
   1.93 -> 3.8-4.25, KL 13-17x night 1, keep term holds only its 3 texts); §7 FAIL (readers prefer the untrained cortex
   6/6, week 1 over week 3 6/6). Measurement milestone met on the §5 letter; no capability passes. Programme kill
-  ruled NOT met (only s44 meets the per-seed kill, nights 14-15; the single-night reading would meet it: owner may override).
-  Aggregator `brain/eval/life_bars.py` (6e1f4932e, built on DEV only). Defects in order: language drift in sleep, first-person
-  echo (150/311 wrong H answers), stock self-reply leak (24%), told keys on never-told questions.
-- **D2-PR READ DONE (11-22, `results/2026-11-22-d2pr-dev-read-1.5b.md`, 5 refuters): PR-l and PR-x both UNDEFINED**
-  (engagement: loss weight concentrates replay, top-6 above the strength-only reference; PR-l 5/6, PR-x 0/6). PR-l leak
-  -44% robust over nights (p<5e-5), guards pass; PR-x crosses fp16/fp32 so no KILL. Neither goes to TEST. KEEP the
-  replay-priority lever: next method PR-l + per-episode share cap (own prereg; name the day-1-2 window; fp32 every arm).
-  Report-only echo read `brain/eval/life_echo.py`: echo equal hippocampus-off (in the cortex); PR-l lowers it.
+  ruled NOT met. Defects in order: language drift in sleep, first-person echo, stock self-reply leak (24%), told keys on never-told.
+- **D2-PR READ DONE (11-22, `results/2026-11-22-d2pr-dev-read-1.5b.md`): PR-l, PR-x UNDEFINED** (engagement: loss weight
+  concentrates replay). PR-l leak -44% robust, guards pass. Next method = D2-PR2 below. Echo lives in the cortex (`life_echo.py`).
 - **LIVE: D2-PR2 DEV screen** (prereg `brain/research/2026-11-22-replay-priority-2-prereg.md`, built c91c0c200, `loss_a`
   = L_e**0.6): PR-a s319 pool41, s320 pool42 (same nodes as B, CPU fp32, started ~17:15 UTC 11-22, `outLIFE/lifePRa_s<S>`);
   s321 pool40 node-mxl1462drl (started by hand ~13:20 UTC 11-22; the watcher's pgrep matched its own ssh line). Read with `d2pr_bars.py` (results/2026-11-22-d2pr-dev-read-1.5b/) + §7 blind read. Lever 3 of 3.
-- **K-P (language-keep method, prereg `brain/research/2026-11-21-sleep-language-keep-prereg.md` §5-6):** built (d777f71c9,
-  default OFF byte-identical). Gate run 2 LAUNCH (gate-overridden): one night from s316 n15 took held-out KL 2.40 -> 0.86
-  (B 2.80), NLL 4.18 -> 2.81 (B 4.59), replay still writes. DEV screen s319-321 on AWS g5 (`_scratch/stage2/launch_kp.sh`,
-  state `.aws_brain.kp<S>`, out `_scratch/brainv2/aws/<batch>/lifeKP_s<S>`), read vs `lifeS1F_s<S>` with §3 bars.
-  Gate replications (report only, results/2026-11-22-kp-gate-replications-1.5b.md): s319 and s321 repeat s316
-  (held-out KL 0.76/0.81 vs B 2.79/2.76). s320 running on W (`_scratch/kpgate_w/run_w320.sh`); add its row when done.
-- **NEXT STEP:** (1) K-P DEV read when AWS lives land (§3 bars, gate-overridden label). (2) D2-PR2 read when PR-a lands. (3) Fresh TEST split (§9; more old-age items per seed, P0). (4) Label-shuffle null for `life_bars.py` (§5).
+- **K-P DEV READ DONE (11-22, `results/2026-11-22-kp-dev-read-1.5b.md`, 4 refuters): KEEP at DEV (gate-overridden).**
+  Held-out KL n15 0.118x B (0.32 vs 2.72), NLL 2.21 vs 4.51; every numeric guard passes (day-1-2 window n5-15; n1-4 fails
+  s320); leak 0.04 vs 0.29; recall up (once-told F 19/34 vs 7/34). COSTS to register as TEST bars: self-name "Dan"
+  8/18 vs 0/18; stock-refusal collapse nights 59/1158 rows vs 0 (abstention rise: any flip needs a ruling). Device
+  confound (K-P fp16 AWS, B fp32 pool) not explanatory per refuter; B-fp16 lives `lifeBg_s<S>` launching on AWS
+  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s321 repeat s316; s320 on W
+  (`_scratch/kpgate_w/run_w320.sh`): add its row, and its bank is the s320 bank-quality proxy.
+- **BUILDING: TEST split v2** (design `brain/research/2026-11-22-fresh-test-split-design.md`, 4c9c0504f): age ladder
+  (12 items/seed, 22 rows at age>=10), slot-matched never-told floor + FM-v2 bar, `--split test2`, `--age-ladder` OFF.
+  Workflow builds validator, blind bank writer, code, opus review, fix (uncommitted in worktree until reviewed).
+- **NEXT STEP:** (1) Land split v2 (review diff, hash-freeze bank + cues, one DEV 1.5B check). (2) Read B-fp16 vs K-P
+  when AWS lands. (3) D2-PR2 read when PR-a lands. (4) Prereg the six-seed TEST on v2: B, K-P (+ D2-PR2 if it passes),
+  with self-name and abstention bars named. (5) Label-shuffle null for `life_bars.py`.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
