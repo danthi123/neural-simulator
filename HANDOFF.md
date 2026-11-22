@@ -3,12 +3,8 @@
 - **TASK:** 12-14 milestone, multi-week life with nightly sleep (board #286). Design
   `brain/research/2026-11-19-multiweek-life-design.md` (§5 bars, §13 registration). Older state: `brain/experiments/results/`.
 - **TYPE:** build · **DRIVER:** claude · **TIMEBOX:** Stage-2 methods by 12-08, 2 days each; read/land 12-10 to 12-14.
-- **STATE (11-21): STAGE 1 READ** (`results/2026-11-21-stage1-registered-test-1.5b.md`, six TEST seeds, every flag,
-  5 skeptics: every verdict survives). P0 NOT VALID (never-told false 0.40-0.76, old bins thin) -> savings UNDEFINED
-  (G_null_sub +0.67, p 0.053); cued recall, transfer, self-report measured negatives; language guard FAIL (held-out NLL
-  1.93 -> 3.8-4.25, KL 13-17x night 1, keep term holds only its 3 texts); §7 FAIL (readers prefer the untrained cortex
-  6/6, week 1 over week 3 6/6). Measurement milestone met on the §5 letter; no capability passes. Programme kill
-  ruled NOT met. Defects in order: language drift in sleep, first-person echo, stock self-reply leak (24%), told keys on never-told.
+- **STATE (11-21): STAGE 1 READ** (`results/2026-11-21-stage1-registered-test-1.5b.md`): P0 NOT VALID, savings
+  UNDEFINED, language guard FAIL, §7 FAIL; no capability passes. Defects: language drift, echo, stock leak, told keys on never-told.
 - **D2-PR READ DONE (11-22, `results/2026-11-22-d2pr-dev-read-1.5b.md`): PR-l, PR-x UNDEFINED** (engagement: loss weight
   concentrates replay). PR-l leak -44% robust, guards pass. Next method = D2-PR2 below. Echo lives in the cortex (`life_echo.py`).
 - **LIVE: D2-PR2 DEV screen** (prereg `brain/research/2026-11-22-replay-priority-2-prereg.md`, built c91c0c200, `loss_a`
@@ -37,4 +33,7 @@
 - **OPEN:** AWS cap for 11-22 only: $150, aim < $100 (owner); remove after 11-22 to restore $50 (drop-in `~/.config/systemd/user/aws-guard.service.d/cap-override.conf`). Split v2 built (31de906ca), not frozen: DEV row check `lifeAL_s322` on AWS (`launch_al_now.sh`), then hash-freeze. W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
   i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`), retry pull then terminate. RAG
   index stale. MTALLM stopped 11-21; final hand-off `~/Projects/mtallm/experiments/reports/sim_handoff.md` (84ecd10) read: info only; its §6 says a 1.5B in-context reader invents untold attributes when many people are in view (check any in-context judge at that density).
+- **AFTER THE 11-22/23 REBOOT (owner reboots W; gpu-unlock installed by the owner, guide `_scratch/gpu-unlock-install.md`):**
+  check `journalctl -k -b | grep gpu_unlock` + nvidia-smi + bf16 matmul; then `--cuda-precision fp32` parity check
+  (lang_guard nll_off must equal CPU 1.930773), then K-P lives on GPU fp32; stop or resume `_scratch/kpcpu/run.sh`.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
