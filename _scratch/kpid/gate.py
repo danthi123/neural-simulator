@@ -144,7 +144,7 @@ def cmd_drift(a):
     if os.path.exists(a.out):
         print("skip drift (exists)", a.out)
         return
-    env = dict(os.environ, PYTHONPATH=REPO, DRIFT_MODEL=a.model, DRIFT_DEVICE=a.device, DRIFT_PRECISION=a.cuda_precision)
+    env = dict(os.environ, PYTHONPATH=os.pathsep.join(p for p in (REPO, os.environ.get("PYTHONPATH", "")) if p), DRIFT_MODEL=a.model, DRIFT_DEVICE=a.device, DRIFT_PRECISION=a.cuda_precision)
     if a.sets:
         env["SETS"] = a.sets
     label = f"kpid_{a.arm}_s{a.seed}_{os.getpid()}"
