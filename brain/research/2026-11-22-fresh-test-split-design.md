@@ -171,3 +171,8 @@ false keys). That is allowed under §9 (fresh split, v1 verdict untouched), but 
 8. Expected-fail not priced. **Fixed:** NOT VALID meaning, bars still read, go/no-go rule.
 9. Minor. **Fixed:** clipping for `days < 15`, 15-day host-only check; floor population (60 rows on 24 questions,
    nights 11-15) and the v1-style rate from the same rows stated.
+
+## FROZEN 2026-11-23 (DEV row check passed: brain/experiments/results/2026-11-23-age-ladder-dev-row-check-s322.md)
+- `life_bank_test2.py` sha256 5e77577859ea87ce..., `life_cues_test2.py` sha256 794da243af3f6b26... (files `brain/eval/*_test2.sha256`).
+  Both unchanged since 31de906ca. Split tests 61 passed / 2 skipped; `use_split("test2")` and `load_cues("test2")` pass the hash guard.
+- From here no item, cue, seed or bank edit; any edit invalidates the hashes and the split.
