@@ -148,3 +148,7 @@
   `cortex_adapters.pt` before the first night (all three matched). Code: brain/ at 9fd474dde, `_scratch/kpid/gate.py`
   and `drift_read.py` (committed with this amendment, exactly as shipped to the nodes); runner `_scratch/kpid/pool/run_pool_gate.sh`, launcher `_scratch/kpid/pool/launch.sh`.
 - Bars, reads and verdict rules are unchanged.
+- **A1 fix (07:25 UTC 11-23, before any drift or probe read exists):** the drift step failed on all three nodes
+  (`ModuleNotFoundError: rwkv`) because `gate.py` replaced PYTHONPATH with the repo path, dropping the pools' rwkv
+  location. `gate.py` now prepends the repo to the existing PYTHONPATH (no other change; W behaviour identical). The B
+  nights had completed and are kept (`home_B_s<S>.result.json`); the runner resumes at drift B.
