@@ -455,3 +455,6 @@ Board #286: end-of-night shrink killed on transcript 4/4; Stage 1 with defaults;
 
 ## 2026-11-23  stage2-dev-reads
 Board #286: split v2 frozen; K-P same-device costs hold; D2-PR2 PR-a passes DEV and enters TEST; identity gate live on pools.
+
+## 2026-11-23  kpid-gate-read
+Board #286: identity gate read (no variant), test2 arms fixed, freeze gates built.

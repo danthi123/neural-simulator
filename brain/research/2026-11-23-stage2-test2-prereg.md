@@ -266,3 +266,9 @@ D2-PR2 PR-a number. Rulings:
   - `life_compare.py`: LG-P1 passes 3/3 (KL n15 0.351/0.294/0.323 vs 2.093/2.693/2.616); LG-P2 passes 3/3. G1 passes
     (+1.18/+0.27/+1.36); G2b passes; G4 passes on all rows and on non-refusal rows. G2a fails 2/3 (s320 and s321 both
     -1.03). G3 fails (hoff seeds-ever 2 vs 1, intact 1 vs 0). LG-FIX fails.
+
+## Amendment T2 (2026-11-23, before the freeze): arm list fixed
+- K-P identity gate read (`results/2026-11-23-kp-identity-gate-read.md`, 2 refuters not refuted): K-P-U UNDEFINED, K-P-0 FAIL
+  (bar 1, marginal). No variant enters. **Arms: B, K-P (unchanged, `--keep-bank prior`), D2-PR2 (`--replay-priority loss_a`).**
+  K-P's G7/G8/G10/G2a/G3 Expected-fail stands (header). K-P-f is not built in this window (the identity prereg's timebox bars a
+  second bank or mask rule); the §0 K-P-f screen is therefore not run.
