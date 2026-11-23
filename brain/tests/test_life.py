@@ -250,3 +250,29 @@ def test_dev_split_runs_from_a_dirty_tree(tmp_path, monkeypatch):
     monkeypatch.setattr(life, "_git_dirty", lambda: True)
     res = _run(tmp_path, "d", 1)
     assert res["provenance"]["brain_tree_dirty"] is True
+
+
+def test_registered_guard_also_runs_on_resume(tmp_path, monkeypatch):
+    """Prereg test2 section 3: the dirty-tree guard covers --resume too (the arg split or the saved split is test2);
+    the refusal writes nothing. A dev resume from a dirty tree is unchanged."""
+    monkeypatch.delenv("BRAIN_CODE_COMMIT", raising=False)
+    monkeypatch.delenv("BRAIN_CODE_CLEAN", raising=False)
+    _run(tmp_path, "g", 1)
+    o = str(tmp_path / "g" / "o" / "life_s7") + ".json"
+    with open(o) as fh:
+        saved = json.load(fh)
+    saved["split"] = "test2"                     # a registered life, as saved
+    with open(o, "w") as fh:
+        json.dump(saved, fh)
+    before = _hash(str(tmp_path / "g"))
+    monkeypatch.setattr(life, "_git_dirty", lambda: True)
+    with pytest.raises(RuntimeError, match="dirty"):
+        _run(tmp_path, "g", 2, resume=True)
+    monkeypatch.setattr(life, "_git_dirty", lambda: None)   # git-archive tree without the env pair
+    with pytest.raises(RuntimeError, match="git unavailable"):
+        _run(tmp_path, "g", 2, resume=True)
+    assert _hash(str(tmp_path / "g")) == before              # nothing written by either refusal
+    monkeypatch.setattr(life, "_git_dirty", lambda: True)
+    _run(tmp_path, "d", 1)
+    res = _run(tmp_path, "d", 2, resume=True)                # dev resume from a dirty tree: allowed, as before
+    assert len(res["nights"]) == 2

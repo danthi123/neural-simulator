@@ -974,6 +974,9 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
             state = json.load(fh)
         with open(out + ".json") as fh:
             res = json.load(fh)
+        # The test2 dirty-tree guard also covers a resume (the saved split counts too), before anything is written.
+        if REGISTERED_SPLIT in (split, res.get("split")):
+            registered_guard(REGISTERED_SPLIT, {"brain_tree_dirty": _git_dirty()})
         log(f"resume: {state}")
         saved = res.get("pruned_a")      # the --pruned-a config is the one the life was started with
         if saved is not None:
