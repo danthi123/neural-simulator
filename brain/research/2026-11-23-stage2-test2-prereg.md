@@ -31,7 +31,11 @@ Written before any v2 TEST life. Rules: design `2026-11-19-multiweek-life-design
     (8/11), s320 hoff n11-12 (11/11), s321 intact n15 (11/11). Reader: lived "I've seen it" claims, generic assistant
     prose, both-off confabulation where B refused (invented 55 vs 22-27).
   - d12 nights 1-4: s320 -1.24 of 6 (21/29 vs 27/29).
-- D2-PR2 (`replay_priority="loss_a"`) DEV screen is running (CPU fp32, s319-321). Not read.
+- D2-PR2 (`replay_priority="loss_a"`) DEV read committed 11-23 (`results/2026-11-23-d2pr2-pra-dev-read-1.5b.md`): PASSES 3.1-3.3
+  by the letter of its §4, so the D2-PR2 arm ENTERS. Registered risk: on DEV s321 PR-a collapsed on probe nights 1-2 (top reply
+  share 0.50, 0.45: the §10 per-seed kill would have ended it), B 0/3. In TEST the §10 kill is live for every arm; a PR-a seed it
+  ends counts as missing for later-night bars and as a collapse in G-collapse, and if it ends >= 2 of 6 PR-a seeds while B loses
+  fewer, D2-PR2 is NARROWED at best whatever its primary shows. Leak DEV: 48/460 vs B 135/460 (-64%).
 
 ## 2. Arms, seeds, command
 | Arm | Switch | Enters the TEST |
