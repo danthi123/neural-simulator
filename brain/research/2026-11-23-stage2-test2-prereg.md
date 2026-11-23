@@ -272,3 +272,14 @@ D2-PR2 PR-a number. Rulings:
   (bar 1, marginal). No variant enters. **Arms: B, K-P (unchanged, `--keep-bank prior`), D2-PR2 (`--replay-priority loss_a`).**
   K-P's G7/G8/G10/G2a/G3 Expected-fail stands (header). K-P-f is not built in this window (the identity prereg's timebox bars a
   second bank or mask rule); the §0 K-P-f screen is therefore not run.
+
+## Amendment T3 (2026-11-23, before the freeze): launch window and concurrency
+- Replaces the §3 launch days and instance count and the §7 "launch 12-04-05": the 18 lives launch over **three UTC days,
+  12-04 to 12-06**, scheduled by worst-case costing (each life at its dead-man `AWS_BRAIN_MAX_MIN` = §3 timing +30%,
+  plus 15 min grace and 15 min boot) so that no UTC day exceeds the $50/UTC-day cap (worst $47.47 / $45.11 / $38.72,
+  about $131 worst, about $102 expected). **At most 6 instances run at once.** Nothing else runs on AWS on those days.
+- **Read by 12-10, unchanged** (bars, costs, §7 and G9 reads, 5 skeptics); land 12-14 unchanged.
+- The plan's start date (day 1) is a parameter (`brain/research/test2_launch/launch_plan.sh go <D1>`). An earlier start
+  is allowed only once the freeze is committed and the per-day cap holds on every launch day; the read date stays 12-10
+  or earlier. The §7 rule "D2-PR2 is dropped first if the launch slips" applies to a start later than 12-04.
+- All lives run one AMI, resolved once at `go` and pinned on every launch (recorded in each life's provenance).

@@ -4,6 +4,10 @@
 # the workstation is off, e.g. on gaming nights).
 #   bash tools/aws_brain_batch.sh launch <jobs.txt> [instance-type]   # default g5.xlarge (A10G 24 GB, ~$1/h)
 #   bash tools/aws_brain_batch.sh status | sync | pull | terminate
+# Optional env: AWS_BRAIN_ENV="K=V ..." (exported for every job via ~/brainv2/env.sh), AWS_BRAIN_AMI=ami-... (pin the
+# image instead of the newest Deep Learning AMI), AWS_BRAIN_AMI_RECORD=1 (export AWS_AMI_ID in env.sh for life.py
+# provenance), AWS_BRAIN_UPLOAD (extra inputs), AWS_BRAIN_PULL_WORK=1 (pull also copies ~/brainv2/work/, e.g. life
+# homes). All unset = the old behaviour exactly (no env.sh is written).
 # sync: while the instance runs, copy the results so far (no start, no terminate). Poll with `sync`, not `status`:
 # a stopped g6 cannot always restart (InsufficientInstanceCapacity, 2026-11-16), and the results live on its disk.
 # jobs.txt: the tools/brain_batch_run.sh format ("<name> <sleep_probe args>" or "<name> brain.<module> <args>",
@@ -39,10 +43,18 @@ launch)
   [ -s "$JOBS" ] || { echo "no jobs in $JOBS"; exit 1; }
   [ -f "$STATE" ] && { echo "⛔ a brain batch is already recorded in $STATE ($(get instance)); pull/terminate it first"; exit 1; }
   bash "$ROOT/tools/aws_budget.sh" check "$TYPE" || { echo "⛔ refused by tools/aws_budget.sh (daily cap)"; exit 1; }
-  # Off-the-shelf image with the NVIDIA driver and PyTorch (/opt/pytorch), newest Ubuntu 22.04 build.
-  AMI=$(aws ec2 describe-images --region "$REGION" --owners amazon --filters \
+  # Optional AWS_BRAIN_ENV="K1=V1 K2=V2": exported for every job (written to ~/brainv2/env.sh, which run.sh sources;
+  # no spaces inside a value). A BRAIN_CODE_COMMIT in it must be the HEAD that git archive ships. Unset = unchanged.
+  for kv in ${AWS_BRAIN_ENV:-}; do
+    [[ "$kv" =~ ^[A-Za-z_][A-Za-z0-9_]*=.*$ ]] || { echo "⛔ AWS_BRAIN_ENV entry '$kv' is not K=V"; exit 1; }
+    [[ "$kv" == BRAIN_CODE_COMMIT=* && "${kv#*=}" != "$(git rev-parse HEAD)" ]] \
+      && { echo "⛔ AWS_BRAIN_ENV BRAIN_CODE_COMMIT is not HEAD ($(git rev-parse HEAD)), which is what ships"; exit 1; }
+  done
+  # Off-the-shelf image with the NVIDIA driver and PyTorch (/opt/pytorch), newest Ubuntu 22.04 build, unless
+  # AWS_BRAIN_AMI pins one (a multi-day batch of lives must run one image).
+  AMI="${AWS_BRAIN_AMI:-$(aws ec2 describe-images --region "$REGION" --owners amazon --filters \
     "Name=name,Values=Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.* (Ubuntu 22.04)*" "Name=state,Values=available" \
-    --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text)
+    --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text)}"
   [[ "$AMI" == ami-* ]] || { echo "could not find the Deep Learning AMI"; exit 1; }
   MYIP=$(curl -s https://checkip.amazonaws.com | tr -d '\n'); [ -n "$MYIP" ] || { echo "no public IP"; exit 1; }
   VPC=$(aws ec2 describe-vpcs --region "$REGION" --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text)
@@ -56,7 +68,7 @@ launch)
   [[ "$IID" == i-* ]] || { echo "run-instances failed; deleting SG $SG"; aws ec2 delete-security-group --region "$REGION" --group-id "$SG"; exit 1; }
   BATCH="$(date +%Y%m%d-%H%M)"
   { echo "# LIVE brain batch launched $(date '+%F %T %Z') type=$TYPE ami=$AMI -- pull: tools/aws_brain_batch.sh pull"
-    echo "instance=$IID"; echo "sg=$SG"; echo "batch=$BATCH"; echo "jobs=$JOBS"; } > "$STATE"
+    echo "instance=$IID"; echo "sg=$SG"; echo "batch=$BATCH"; echo "jobs=$JOBS"; [ -n "${AWS_BRAIN_AMI_RECORD:-}" ] && echo "ami=$AMI"; } > "$STATE"
   echo "[aws-brain] launched $IID ($TYPE), waiting for it to boot..."
   aws ec2 wait instance-status-ok --region "$REGION" --instance-ids "$IID"
   IP=$(ip_of "$IID"); R=(ubuntu@"$IP")
@@ -65,6 +77,14 @@ launch)
   "${SSH[@]}" "${R[@]}" "mkdir -p ~/brainv2/code ~/brainv2/models ~/brainv2/results && /opt/pytorch/bin/python -m pip -q install rwkv==0.8.32 && /opt/pytorch/bin/python -c 'import torch; assert torch.cuda.is_available(); print(torch.__version__, torch.cuda.get_device_name(0))'" \
     || { echo "⛔ provisioning failed; stopping the instance"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
   git archive HEAD brain | "${SSH[@]}" "${R[@]}" "tar -x -C ~/brainv2/code"
+  # ~/brainv2/env.sh (run.sh sources it), only when AWS_BRAIN_ENV or AWS_BRAIN_AMI_RECORD is set: AWS_AMI_ID
+  # (life.py provenance; record-only) if AWS_BRAIN_AMI_RECORD, then AWS_BRAIN_ENV. Both unset = no env.sh (unchanged).
+  if [ -n "${AWS_BRAIN_ENV:-}" ] || [ -n "${AWS_BRAIN_AMI_RECORD:-}" ]; then
+    { [ -n "${AWS_BRAIN_AMI_RECORD:-}" ] && printf 'export AWS_AMI_ID=%q\n' "$AMI"
+      for kv in ${AWS_BRAIN_ENV:-}; do printf 'export %s=%q\n' "${kv%%=*}" "${kv#*=}"; done; } \
+      | "${SSH[@]}" "${R[@]}" "cat > ~/brainv2/env.sh" \
+      || { echo "⛔ could not write ~/brainv2/env.sh; stopping"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
+  fi
   # Optional extra inputs before any job starts: AWS_BRAIN_UPLOAD="local=>remote;..." (remote relative to ~/brainv2;
   # a local dir with a trailing / copies its contents). Unset = unchanged behaviour.
   if [ -n "${AWS_BRAIN_UPLOAD:-}" ]; then
@@ -110,6 +130,11 @@ pull)
   OUT="$ROOT/_scratch/brainv2/aws/$(get batch)"; mkdir -p "$OUT"
   rsync -a -e "${SSH[*]}" ubuntu@"$(ip_of "$IID")":brainv2/results/ ubuntu@"$(ip_of "$IID")":brainv2/run.log "$OUT/" \
     || { echo "⛔ pull failed; instance left as is ($IID)"; exit 1; }
+  # AWS_BRAIN_PULL_WORK=1: also copy ~/brainv2/work/ (life homes, keep_bank.json) before any terminate. Unset = unchanged.
+  if [ "${AWS_BRAIN_PULL_WORK:-}" = 1 ]; then
+    rsync -a -e "${SSH[*]}" ubuntu@"$(ip_of "$IID")":brainv2/work/ "$OUT/work/" \
+      || { echo "⛔ pull of brainv2/work failed; instance left as is ($IID)"; exit 1; }
+  fi
   echo "[aws-brain] results in $OUT:"; tail -3 "$OUT/run.log"
   if grep -q "all done" "$OUT/run.log" || [ "$S" = stopped ]; then exec bash "$0" terminate; fi
   echo "[aws-brain] jobs still running; it will stop itself. Pull again later."

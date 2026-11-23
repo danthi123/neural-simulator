@@ -1,0 +1,2 @@
+# TEST v2 (prereg brain/research/2026-11-23-stage2-test2-prereg.md section 2), arm KP, seed 42; one life per instance
+lifeKP_s42 brain.eval.life --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --days 15 --weekend --split test2 --age-ladder --full-probe-nights 1,5,10,15 --frozen-probe --span --transfer --pruned-a --cue-ladder --interview --lang-guard --device cuda --keep-bank prior --homes ../work/lifeKP_s42
