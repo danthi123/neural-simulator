@@ -1,0 +1,2 @@
+# recall-voice DEV (prereg brain/research/2026-11-23-recall-voice-dev-prereg.md), arm M2 on K-P, seed 319; = _scratch/stage2/jobs_kp_319.txt + --brain-kw-extra; AWS g5 (EXTRA adds --device cuda; fp16 default); one life per instance
+lifeM2_s319 brain.experiments.life_kw --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 319 --days 15 --weekend --split dev --full-probe-nights 1,5,10,15 --frozen-probe --span --transfer --pruned-a --cue-ladder --interview --lang-guard --keep-bank prior --homes ../work/lifeM2_s319 --brain-kw-extra {"speaker_contrast":3.0}
