@@ -152,3 +152,13 @@
   (`ModuleNotFoundError: rwkv`) because `gate.py` replaced PYTHONPATH with the repo path, dropping the pools' rwkv
   location. `gate.py` now prepends the repo to the existing PYTHONPATH (no other change; W behaviour identical). The B
   nights had completed and are kept (`home_B_s<S>.result.json`); the runner resumes at drift B.
+
+## Amendment A2 (2026-11-23 15:20 UTC; no K-P, K-P-U or K-P-0 drift or probe result of s319/s320 exists)
+- **Why:** the K-P night needs about 19 GB of RAM (pool40 peak). pool41 and pool42 have 15 GB: pool42's K-P s320 night was
+  OOM-killed (kernel log), pool41's K-P s319 night was at 15.3 GB with no memory left and was stopped by Claude.
+- **Device:** s319 and s320 move to AWS g5 (A10G), CUDA fp32 (TF32 off), one instance per seed, and ALL four arms (B, K-P,
+  K-P-U, K-P-0) are re-run there, so each seed's comparison stays on one device. The pool CPU B results of s319/s320 are not
+  used. s321 stays on pool40 CPU fp32 (all four arms there). Seeds are still never compared across devices.
+- **Code:** `brain/experiments/kpid_aws.py` (a wrapper that calls the committed gate.py steps in the pool runner's order) and
+  an optional upload step in `tools/aws_brain_batch.sh` (`AWS_BRAIN_UPLOAD`, unset = unchanged). Sources sha-checked as in A1.
+- Bars, reads and verdict rules are unchanged. Timebox: gate read 11-24.

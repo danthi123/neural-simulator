@@ -55,6 +55,7 @@ def v2(monkeypatch):
             return bank
         return real(split)
     monkeypatch.setattr(life, "use_split", use)
+    monkeypatch.setattr(life, "registered_guard", lambda split, prov: None)   # synthetic bank, not the registered split
     yield bank
     real("dev")
 

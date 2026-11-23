@@ -36,6 +36,13 @@ Stage B (score):
   reads: {"id", "defects": [{"type", "quote", "turn"}], "coherence", "honesty": [...]}; pairs: {"id", "choice"};
   answers: {"id", "verdict"}. Writes PREFIX.json + PREFIX.md (validity table with each section-7 bar marked).
   RIGHT = strict ok AND reader 1 verdict yes (reader 2 reported beside it; disagreements listed for adjudication).
+G9 cross-arm pairwise (brain/research/2026-11-23-stage2-test2-prereg.md section 5; adds functions only):
+  python -m brain.eval.life_read --emit-cross DIR --arm-lives A_s*.json --b-lives B_s*.json [--cross-week 3]
+      [--rng-seed N] [--cross-id-prefix C]
+  python -m brain.eval.life_read --score-cross --key DIR/cross_key.json --pairs P1.jsonl --pairs2 P2.jsonl --out PREFIX
+  Per seed the arm's intact unit vs B's intact unit (whole units, frozen spec.PAIR_PROMPT, no shared context) plus a
+  decoy pair (decoy vs the same seed's both-off unit, section-7 form; must not beat both-off), a duplicate pair
+  (report-only noise) and per batch the six canary pairs (copy must not win); both orders; two readers required.
 """
 from __future__ import annotations
 
@@ -930,6 +937,360 @@ def to_md(r: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# ---------------------------------------------------------------- G9 cross-arm pairwise (Stage-2 test-2 prereg section 5)
+# Every existing mode above is unchanged; this mode only adds functions. The prompt is the frozen spec.PAIR_PROMPT with
+# no shared context (each side is a whole unit: its own lived days of week 3 + its own battery), as the existing
+# w3-vs-w1 pairs: no new reader wording is needed, so life_read_spec.py and its sha256 stay as they are.
+CROSS_ARM, CROSS_B = "arm", "B"
+
+
+def _cross_units(lives: list, week: int, lived_context: str) -> dict:
+    return {u["seed"]: u for u in collect(lives, (week,), lived_context) if u["arm"] == "intact"}
+
+
+CROSS_MAX_PROMPT = 60000
+CROSS_MAX_CANARIES_PER_UNIT = 2
+# Positive-discrimination gate (cross v2, stated before read 2): the section-7 "at or below both-off" rule lets a tie
+# pass, so a reader answering all A, all B or all tie would pass every validity check. A valid reader must also make
+# decoys STRICTLY lose to both-off in both orders on >= _need(n) seeds (the SEEDS_BAR scaling, 2 of 3 on DEV), and pick
+# the same position in both orders on at most 1/3 of the non-duplicate groups (duplicates are excluded: a tie there is
+# the right answer and is usually read as the same position twice).
+CROSS_MAX_POSITION_BIAS = 1 / 3
+
+
+def build_cross(arm_lives: list, b_lives: list, week: int = 3, lived_context: str = "all", rng_seed: int = 0,
+                id_prefix: str = "C") -> dict:
+    """G9 material: per seed, the arm's intact unit vs B's intact unit (same seed, week `week`, whole units), plus the
+    validity pairs: per seed one decoy (the arm unit with every reply replaced, spec.DECOY_TYPES rotated over seeds) vs
+    the SAME life's both-off unit of that seed and week, in the section-7 form (battery vs battery, the unit's lived
+    days as shared context), which the decoy must not beat; per seed one duplicate (the same unit both sides, arm's and
+    B's alternating over seeds; report-only noise); per batch one canary pair per spec.CANARY_TYPES (a real intact unit
+    vs its copy with one planted defect; every type must plant, at most two per unit, arm units first), whose copy must
+    not win. Every pair is emitted in both A/B orders with two ids never adjacent in the id order; ids <id_prefix>N
+    (deterministic for the same inputs). Raises on duplicate seeds, a missing unit, a leak or a prompt > 60k chars."""
+    load_spec()
+    rng = random.Random(f"life-read-cross:{rng_seed}")
+    for tag, lives in (("arm", arm_lives), ("B", b_lives)):
+        ss = [r["seed"] for r in lives]
+        if len(ss) != len(set(ss)):
+            raise ValueError(f"duplicate seeds in the {tag} lives: {sorted(ss)}")
+    by_a, by_b = {r["seed"]: r for r in arm_lives}, {r["seed"]: r for r in b_lives}
+    if set(by_a) != set(by_b):
+        raise ValueError(f"arm and B lives have different seeds: {sorted(by_a)} vs {sorted(by_b)}")
+    ua, ub = _cross_units(arm_lives, week, lived_context), _cross_units(b_lives, week, lived_context)
+    bo = {u["seed"]: u for u in collect(arm_lives, (week,), lived_context) if u["arm"] == "both-off"}
+    seeds = sorted(by_a)
+    missing = [s for s in seeds if s not in ua or s not in ub]
+    if missing:
+        raise ValueError(f"no intact week-{week} unit for seeds {missing}")
+    missing = [s for s in seeds if s not in bo]
+    if missing:
+        raise ValueError(f"no both-off week-{week} unit in the arm lives for seeds {missing}")
+    specs, user_match = [], {}
+    for i, s in enumerate(seeds):
+        ta, tb = render(ua[s]["convs"])[0], render(ub[s]["convs"])[0]
+        user_match[str(s)] = [t["you"] for t in _flat(ua[s]["convs"])] == [t["you"] for t in _flat(ub[s]["convs"])]
+        specs.append({"what": "cross", "seed": s, "x": (CROSS_ARM, ta), "y": (CROSS_B, tb), "context": None})
+        dtype = SP.DECOY_TYPES[i % len(SP.DECOY_TYPES)]
+        lived = _sections(ua[s]["convs"], "lived")
+        specs.append({"what": "decoy", "seed": s, "decoy": dtype,
+                      "x": ("decoy:" + dtype, render(_sections(decoy(ua[s], dtype, by_a[s]), "battery"))[0]),
+                      "y": ("both-off", render(_sections(bo[s]["convs"], "battery"))[0]),
+                      "context": render(lived)[0] if lived else None})
+        dup_of = CROSS_ARM if i % 2 == 0 else CROSS_B
+        t = ta if dup_of == CROSS_ARM else tb
+        specs.append({"what": "dup", "seed": s, "dup_of": dup_of, "x": ("left", t), "y": ("right", t), "context": None})
+    cands = [(CROSS_ARM, ua[s], by_a[s]) for s in seeds] + [(CROSS_B, ub[s], by_b[s]) for s in seeds]
+    na = len(seeds)
+    canary_log, load = [], {}
+    for ci, ctype in enumerate(SP.CANARY_TYPES):
+        order = [(ci + k) % na for k in range(na)] + [na + (ci + k) % na for k in range(na)]   # arm first, then B
+        done = None
+        for j in order:
+            side, u, res = cands[j]
+            if load.get((side, u["seed"]), 0) >= CROSS_MAX_CANARIES_PER_UNIT:
+                continue
+            got = plant(u, ctype, res, rng)
+            if got:
+                done = (side, u, got)
+                break
+        if not done:
+            raise ValueError(f"canary {ctype} has no site on any unit (at most {CROSS_MAX_CANARIES_PER_UNIT} per unit)")
+        side, u, (convs, pl) = done
+        load[(side, u["seed"])] = load.get((side, u["seed"]), 0) + 1
+        canary_log.append({"type": ctype, "planted": True, "seed": u["seed"], "source": side, "plant": pl})
+        specs.append({"what": "canary", "seed": u["seed"], "canary": ctype, "source": side,
+                      "x": ("source", render(u["convs"])[0]), "y": ("canary:" + ctype, render(convs)[0]), "context": None})
+    prng = random.Random(f"cross-pairs-{rng_seed}")
+    pp = [dict(ps, flip=flip, group=g) for g, ps in enumerate(specs) for flip in (False, True)]
+    perm = list(range(len(pp)))
+    for _ in range(10000):
+        prng.shuffle(perm)
+        gs = [pp[i]["group"] for i in perm]
+        if all(gs[k] != gs[k + 1] for k in range(len(gs) - 1)):
+            break
+    else:
+        raise RuntimeError("could not separate the two orders of a pair in the id order")
+    pairs, key_pairs = [], {}
+    for k, i in enumerate(perm):
+        ps = pp[i]
+        pid = f"{id_prefix}{k}"
+        A, B = (ps["y"], ps["x"]) if ps["flip"] else (ps["x"], ps["y"])
+        pairs.append({"id": pid, "prompt": _fill_pair(pid, A[1], B[1], ps["context"])})
+        key_pairs[pid] = {"what": ps["what"], "seed": ps["seed"], "A": A[0], "B": B[0], "group": ps["group"],
+                          **{f: ps[f] for f in ("decoy", "dup_of", "canary", "source") if f in ps}}
+    bad = {p["id"]: leaks(p["prompt"]) for p in pairs if leaks(p["prompt"])}
+    if bad:
+        raise ValueError(f"leaks in emitted prompts: {bad}")
+    big = [p["id"] for p in pairs if len(p["prompt"]) > CROSS_MAX_PROMPT]
+    if big:
+        raise ValueError(f"prompts over {CROSS_MAX_PROMPT} chars: {big}")
+    for pid, m in key_pairs.items():
+        m["partner"] = next(q for q, mm in key_pairs.items() if q != pid and mm["group"] == m["group"])
+    key = {"mode": "cross", "cross_version": 2, "spec": SP.VERSION, "spec_sha256": spec_sha(), "week": week,
+           "lived_context": lived_context, "rng_seed": rng_seed, "id_prefix": id_prefix, "seeds": seeds,
+           "decoy_reference": "both-off (arm life, same seed and week)", "user_turns_match": user_match,
+           "canaries": canary_log,
+           "unit_chars": {str(s): {CROSS_ARM: len(render(ua[s]["convs"])[0]), CROSS_B: len(render(ub[s]["convs"])[0])}
+                          for s in seeds},
+           "pairs": key_pairs}
+    return {"pairs": pairs, "key": key}
+
+
+def emit_cross(arm_lives: list, b_lives: list, d: str, week: int = 3, lived_context: str = "all",
+               rng_seed: int = 0, id_prefix: str = "C") -> dict:
+    out = build_cross(arm_lives, b_lives, week, lived_context, rng_seed, id_prefix)
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "cross_pairs.jsonl"), "w") as fh:
+        for row in out["pairs"]:
+            fh.write(json.dumps(row) + "\n")
+    with open(os.path.join(d, "cross_key.json"), "w") as fh:
+        json.dump(out["key"], fh, indent=1)
+    return out
+
+
+def cross_summary(out: dict) -> dict:
+    k = out["key"]
+    by = {}
+    for m in k["pairs"].values():
+        by[m["what"]] = by.get(m["what"], 0) + 1
+    pc = [len(p["prompt"]) for p in out["pairs"]]
+    per_unit = {}
+    for c in k["canaries"]:
+        per_unit[f"{c['source']}:{c['seed']}"] = per_unit.get(f"{c['source']}:{c['seed']}", 0) + 1
+    return {"prompts": len(pc), "by_what": by, "seeds": k["seeds"], "user_turns_match": k["user_turns_match"],
+            "canaries_planted": [c["type"] for c in k["canaries"] if c["planted"]], "canaries_per_unit": per_unit,
+            "prompt_chars": {"min": min(pc), "median": sorted(pc)[len(pc) // 2], "max": max(pc)},
+            "ids": f"{out['pairs'][0]['id']}..", "decoy_reference": k["decoy_reference"]}
+
+
+CROSS_UNREAD = "UNREAD"
+
+
+def norm_cross_choice(ch) -> str:
+    """A / B / TIE after normalising case, whitespace, quotes, trailing punctuation and a 'transcript ' prefix;
+    anything else is UNREAD."""
+    if not isinstance(ch, str):
+        return CROSS_UNREAD
+    s = re.sub(r"\s+", " ", ch).strip().strip("\"'`").strip().rstrip(".!").strip().lower()
+    s = re.sub(r"^transcript ", "", s)
+    return {"a": "A", "b": "B", "tie": "TIE"}.get(s, CROSS_UNREAD)
+
+
+def load_cross_reads(p):
+    """A reads file -> {id: row}; an id that appears more than once is kept as unread (choice None, duplicate True)."""
+    if not p:
+        return None
+    out = {}
+    for line in open(p):
+        line = line.strip()
+        if not line:
+            continue
+        r = json.loads(line)
+        pid = r.get("id")
+        if pid in out:
+            out[pid] = {"id": pid, "choice": None, "duplicate": True}
+        else:
+            out[pid] = r
+    return out
+
+
+def _cross_rows(key: dict, pr: dict) -> tuple[list, dict]:
+    """One row per pair group with both orders validly read: winner = the underlying side if both orders name it, else
+    tie. Also the read counts (valid / unread choice / duplicate id / missing / extra)."""
+    groups, cnt = {}, {"valid": 0, "bad_choice": 0, "duplicate_id": 0, "missing": 0,
+                       "extra": len(set(pr) - set(key["pairs"]))}
+    for pid, m in key["pairs"].items():
+        if pid not in pr:
+            cnt["missing"] += 1
+            continue
+        if pr[pid].get("duplicate"):
+            cnt["duplicate_id"] += 1
+            continue
+        ch = norm_cross_choice(pr[pid].get("choice"))
+        if ch == CROSS_UNREAD:
+            cnt["bad_choice"] += 1
+            continue
+        cnt["valid"] += 1
+        groups.setdefault(m["group"], []).append(
+            {"id": pid, "m": m, "choice": ch, "winner": m["A"] if ch == "A" else m["B"] if ch == "B" else "tie"})
+    rows = []
+    for g, rs in sorted(groups.items()):
+        if len(rs) != 2:
+            continue
+        w = [r["winner"] for r in rs]
+        m = rs[0]["m"]
+        rows.append({"group": g, "ids": [r["id"] for r in rs], "what": m["what"], "seed": m["seed"],
+                     **{f: m[f] for f in ("decoy", "dup_of", "canary", "source") if f in m},
+                     "choices": [r["choice"] for r in rs], "winners": w, "consistent": w[0] == w[1],
+                     "same_position": rs[0]["choice"] == rs[1]["choice"] and rs[0]["choice"] in ("A", "B"),
+                     "winner": w[0] if w[0] == w[1] else "tie"})
+    return rows, cnt
+
+
+def score_cross_reader(key: dict, pr: dict) -> dict:
+    """One reader: per-seed G9 winner (arm / B / tie; None if the seed's user turns differ), order consistency, decoy
+    (must not beat both-off) and canary validity, duplicates report-only, G9 bar.
+    Valid = complete, no decoy beats both-off, decoys strictly lose to both-off on >= _need(n) seeds, same-position rate
+    over non-duplicate groups <= CROSS_MAX_POSITION_BIAS, and canary copy not preferred >= CANARY_BAR/6. The canary
+    check counts a tie as a pass, so it only catches a reader who PREFERS the defect; source-preferred is report-only
+    (no unit read in cross mode, so section-7 "flagged" and canary recall are not implemented here)."""
+    rows, cnt = _cross_rows(key, pr or {})
+    seeds = [str(s) for s in key["seeds"]]
+    um = key.get("user_turns_match", {})
+    by = {}
+    for r in rows:
+        by.setdefault(r["what"], []).append(r)
+    win = {str(r["seed"]): r["winner"] for r in by.get("cross", [])}
+    undefined = [s for s in seeds if um.get(s) is False]
+    per_seed = {}
+    for s in seeds:
+        dec = [r for r in by.get("decoy", []) if str(r["seed"]) == s]
+        dup = [r for r in by.get("dup", []) if str(r["seed"]) == s]
+        cr = next((r for r in by.get("cross", []) if str(r["seed"]) == s), None)
+        per_seed[s] = {"winner": None if s in undefined else win.get(s), "user_turns_match": um.get(s),
+                       "consistent": cr["consistent"] if cr else None, "winners_by_order": cr["winners"] if cr else None,
+                       "decoy": dec[0]["decoy"] if dec else None, "decoy_winner": dec[0]["winner"] if dec else None,
+                       "decoy_ok": (not dec[0]["winner"].startswith("decoy")) if dec else None,
+                       "dup_of": dup[0]["dup_of"] if dup else None, "dup_winner": dup[0]["winner"] if dup else None,
+                       "dup_choices": dup[0]["choices"] if dup else None}
+    n_groups = len({m["group"] for m in key["pairs"].values()})
+    n = len(rows)
+    inc = sum(1 for r in rows if not r["consistent"])
+    decs = by.get("decoy", [])
+    dec_ok = sum(1 for r in decs if not r["winner"].startswith("decoy"))
+    dec_strict = sum(1 for r in decs if r["winner"] == "both-off")
+    nd = [r for r in rows if r["what"] != "dup"]
+    pos_nd = round(sum(r["same_position"] for r in nd) / len(nd), 3) if nd else None
+    dups = by.get("dup", [])
+    can = [{"type": r["canary"], "seed": r["seed"], "source_side": r["source"], "winner": r["winner"],
+            "source_preferred": r["winner"] == "source", "copy_not_preferred": not r["winner"].startswith("canary")}
+           for r in by.get("canary", [])]
+    can_planted = sum(1 for c in key["canaries"] if c["planted"])
+    can_need = -(-SP.CANARY_BAR * can_planted // 6)
+    can_np = sum(c["copy_not_preferred"] for c in can)
+    complete = n == n_groups and cnt["valid"] == len(key["pairs"])
+    need = _need(len(seeds))
+    discriminates = dec_strict >= need and pos_nd is not None and pos_nd <= CROSS_MAX_POSITION_BIAS
+    valid = (complete and len(decs) == len(seeds) and dec_ok == len(decs) and can_np >= can_need
+             and discriminates)
+    arm_or_tie = sum(1 for s in seeds if per_seed[s]["winner"] in (CROSS_ARM, "tie"))
+    if not valid:
+        g9 = None
+    elif arm_or_tie >= need:
+        g9 = True
+    elif arm_or_tie + len(undefined) >= need:
+        g9 = None       # the undefined seeds decide the bar
+    else:
+        g9 = False
+    return {"rows": rows, "per_seed": per_seed, "n_groups": n_groups, "n_read": n, "complete": complete,
+            "read_counts": cnt, "undefined_seeds": undefined,
+            "inconsistent": inc, "consistency_rate": round(1 - inc / n, 3) if n else None,
+            "position_bias_rate": round(sum(r["same_position"] for r in rows) / n, 3) if n else None,
+            "cross_consistency": (f"{sum(1 for r in by.get('cross', []) if r['consistent'])}/{len(by.get('cross', []))}"),
+            "decoys_ok": f"{dec_ok}/{len(decs)}",
+            "decoys_strict": f"{dec_strict}/{len(decs)} (need {need})",
+            "position_bias_nondup": pos_nd, "position_bias_cap": round(CROSS_MAX_POSITION_BIAS, 3),
+            "discriminates": discriminates,
+            "dups_tie": f"{sum(1 for r in dups if r['winner'] == 'tie')}/{len(dups)}",
+            "dup_choices": {str(r["seed"]): r["choices"] for r in dups}, "canaries": can,
+            "canary_copy_not_preferred": f"{can_np}/{len(can)} (need {can_need} of {can_planted} planted)",
+            "canary_source_preferred": f"{sum(c['source_preferred'] for c in can)}/{len(can)}",
+            "valid": valid, "arm_preferred": sum(1 for s in seeds if per_seed[s]["winner"] == CROSS_ARM),
+            "b_preferred": sum(1 for s in seeds if per_seed[s]["winner"] == CROSS_B),
+            "ties": sum(1 for s in seeds if per_seed[s]["winner"] == "tie"),
+            "arm_or_tie": arm_or_tie, "need": need, "n_seeds": len(seeds), "g9_pass": g9}
+
+
+def score_cross(key: dict, pairs: dict, pairs2: dict | None = None) -> dict:
+    """G9 needs exactly two readers: UNDEFINED unless pairs2 is supplied and non-empty. If either reader is invalid
+    (failed decoy, discrimination or canary check, unread or missing pairs) G9 is UNDEFINED: a half-invalid instrument
+    carries no verdict. With both readers valid: PASS if both pass, FAIL if either fails, else UNDEFINED."""
+    load_spec()
+    if key.get("mode") != "cross":
+        raise RuntimeError("not a cross key")
+    if key.get("spec_sha256") != spec_sha():
+        raise RuntimeError("cross key was emitted under a different read spec")
+    if key.get("cross_version") != 2:
+        raise RuntimeError("cross key from cross mode v1 (decoys vs B); re-emit")
+    R = {"pairs1": score_cross_reader(key, pairs)}
+    two = bool(pairs2)
+    if two:
+        R["pairs2"] = score_cross_reader(key, pairs2)
+    vals = [r["g9_pass"] for r in R.values()]
+    if not two or not all(r["valid"] for r in R.values()):
+        verdict = "UNDEFINED"
+    else:
+        verdict = "FAIL" if any(v is False for v in vals) else "PASS" if all(v is True for v in vals) else "UNDEFINED"
+    comb = None
+    if two:
+        a, b = R["pairs1"]["per_seed"], R["pairs2"]["per_seed"]
+        comb = {s: (a[s]["winner"] if a[s]["winner"] == b[s]["winner"] else "tie") for s in a}
+    out = {"mode": "cross", "spec": SP.VERSION, "spec_sha256": spec_sha(), "seeds": key["seeds"], "week": key["week"],
+           "lived_context": key["lived_context"], "user_turns_match": key["user_turns_match"], "readers": R,
+           "n_readers": len(R), "readers_combined": comb, "g9": verdict,
+           "g9_bar": f"arm preferred or tie on >= {SP.SEEDS_BAR}/6 seeds (scaled ceil(4n/6)), per reader; two readers, "
+                     "both valid (else UNDEFINED)"}
+    if two:
+        ids = sorted(set(pairs) & set(pairs2))
+        out["pair_kappa"] = kappa([norm_cross_choice(pairs[i].get("choice")) for i in ids],
+                                  [norm_cross_choice(pairs2[i].get("choice")) for i in ids])
+    return out
+
+
+def cross_to_md(r: dict) -> str:
+    L = [f"# G9 cross-arm pairwise read ({r['spec']}, spec sha256 {r['spec_sha256'][:12]})\n",
+         f"Seeds {r['seeds']}; week {r['week']}; lived context {r['lived_context']}; user turns identical arm vs B: "
+         f"{r['user_turns_match']}.\n",
+         f"**G9: {r['g9']}** ({r['g9_bar']}; every reader valid and passing; readers: {r['n_readers']}).\n",
+         "| reader | valid | complete | reads valid / bad / dup id / missing | arm / B / tie | arm or tie | need | G9 | "
+         "decoys not above both-off | decoys strictly below both-off | same-position non-dup (cap) | "
+         "dups tie (report-only) | canary copy not preferred | canary source preferred (report-only) | "
+         "order consistency (all / cross) | same-position |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for name, x in r["readers"].items():
+        c = x["read_counts"]
+        L.append(f"| {name} | {x['valid']} | {x['complete']} | {c['valid']} / {c['bad_choice']} / {c['duplicate_id']} / "
+                 f"{c['missing']} | {x['arm_preferred']} / {x['b_preferred']} / {x['ties']} | "
+                 f"{x['arm_or_tie']}/{x['n_seeds']} | {x['need']} | {_mark(x['g9_pass'])} | {x['decoys_ok']} | "
+                 f"{x['decoys_strict']} | {x['position_bias_nondup']} ({x['position_bias_cap']}) | "
+                 f"{x['dups_tie']} | {x['canary_copy_not_preferred']} | {x['canary_source_preferred']} | "
+                 f"{x['consistency_rate']} / {x['cross_consistency']} | {x['position_bias_rate']} |")
+    for name, x in r["readers"].items():
+        L += ["", f"## {name} per seed", "",
+              "| seed | winner | orders | decoy | decoy vs both-off winner | dup of | dup raw choices |",
+              "|---|---|---|---|---|---|---|"]
+        L += [f"| {s} | {p['winner']} | {p['winners_by_order']} | {p['decoy']} | {p['decoy_winner']} | {p['dup_of']} | "
+              f"{p['dup_choices']} |" for s, p in x["per_seed"].items()]
+        L += ["", "| canary | seed | planted on | winner |", "|---|---|---|---|"]
+        L += [f"| {c['type']} | {c['seed']} | {c['source_side']} | {c['winner']} |" for c in x["canaries"]]
+    if r.get("readers_combined"):
+        L.append(f"\nReaders combined (report-only; a winner only when both readers agree): {r['readers_combined']}")
+    if "pair_kappa" in r:
+        L.append(f"\nPairwise kappa: {r['pair_kappa']}")
+    return "\n".join(L) + "\n"
+
+
 # ---------------------------------------------------------------- CLI
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
@@ -947,7 +1308,32 @@ def main(argv=None):
     ap.add_argument("--answers")
     ap.add_argument("--answers2")
     ap.add_argument("--out")
+    ap.add_argument("--emit-cross")
+    ap.add_argument("--arm-lives", nargs="+")
+    ap.add_argument("--b-lives", nargs="+")
+    ap.add_argument("--cross-week", type=int, default=3)
+    ap.add_argument("--score-cross", action="store_true")
+    ap.add_argument("--cross-id-prefix", default="C")
     a = ap.parse_args(argv)
+    if a.emit_cross:
+        if not a.arm_lives or not a.b_lives:
+            ap.error("--emit-cross needs --arm-lives A_s*.json and --b-lives B_s*.json")
+        out = emit_cross([json.load(open(p)) for p in a.arm_lives], [json.load(open(p)) for p in a.b_lives], a.emit_cross,
+                         a.cross_week, a.lived_context, a.rng_seed, a.cross_id_prefix)
+        print(json.dumps(cross_summary(out), indent=1))
+        return
+    if a.score_cross:
+        if not a.key or not a.pairs or not a.out:
+            ap.error("--score-cross needs --key, --pairs, --pairs2 (two readers) and --out")
+        if a.pairs2 and os.path.exists(a.pairs2) and os.path.samefile(a.pairs, a.pairs2):
+            ap.error("--pairs and --pairs2 are the same file: two different readers are required")
+        r = score_cross(json.load(open(a.key)), load_cross_reads(a.pairs), load_cross_reads(a.pairs2))
+        with open(a.out + ".json", "w") as fh:
+            json.dump(r, fh, indent=1)
+        with open(a.out + ".md", "w") as fh:
+            fh.write(cross_to_md(r))
+        print(a.out + ".md")
+        return
     if a.emit:
         lives = [json.load(open(p)) for p in a.lives]
         out = emit(lives, a.emit, tuple(int(x) for x in a.weeks.split(",")), a.lived_context, a.rng_seed)

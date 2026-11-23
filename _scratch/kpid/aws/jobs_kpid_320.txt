@@ -1,0 +1,1 @@
+kpid_s320 brain.experiments.kpid_aws --seed 320 --sha a3967f4826fd21718f643591bbc26fb13d9382a4da90c2652dd71309e039ef9e --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth

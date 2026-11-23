@@ -38,12 +38,13 @@ def run_driver(root: str, code: str, args: list, timeout: int = 1800) -> str:
 
 
 TIMING_KEYS = ("seconds", "live_seconds", "age_ladder_seconds")
+RECORD_ONLY_KEYS = ("provenance",)   # life.provenance(): stack record (prereg test2 T1), absent from the pre-change code
 
 
 def scrub(x):
     """A life result without wall-clock timings (the only fields that differ between two identical runs)."""
     if isinstance(x, dict):
-        return {k: scrub(v) for k, v in x.items() if k not in TIMING_KEYS}
+        return {k: scrub(v) for k, v in x.items() if k not in TIMING_KEYS + RECORD_ONLY_KEYS}
     if isinstance(x, list):
         return [scrub(v) for v in x]
     return x

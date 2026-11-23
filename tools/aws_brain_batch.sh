@@ -65,6 +65,16 @@ launch)
   "${SSH[@]}" "${R[@]}" "mkdir -p ~/brainv2/code ~/brainv2/models ~/brainv2/results && /opt/pytorch/bin/python -m pip -q install rwkv==0.8.32 && /opt/pytorch/bin/python -c 'import torch; assert torch.cuda.is_available(); print(torch.__version__, torch.cuda.get_device_name(0))'" \
     || { echo "⛔ provisioning failed; stopping the instance"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
   git archive HEAD brain | "${SSH[@]}" "${R[@]}" "tar -x -C ~/brainv2/code"
+  # Optional extra inputs before any job starts: AWS_BRAIN_UPLOAD="local=>remote;..." (remote relative to ~/brainv2;
+  # a local dir with a trailing / copies its contents). Unset = unchanged behaviour.
+  if [ -n "${AWS_BRAIN_UPLOAD:-}" ]; then
+    IFS=';' read -ra UPS <<< "$AWS_BRAIN_UPLOAD"
+    for u in "${UPS[@]}"; do
+      l=${u%%=>*}; r=${u#*=>}
+      "${SSH[@]}" "${R[@]}" "mkdir -p ~/brainv2/$(dirname "$r")" && rsync -a -e "${SSH[*]}" "$l" "${R[0]}:brainv2/$r" \
+        || { echo "⛔ upload of $l failed; stopping"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
+    done
+  fi
   for m in $(grep -o 'rwkv7-[A-Za-z0-9._-]*\.pth' "$JOBS" | sort -u); do
     rsync -a -e "${SSH[*]}" "$MODELS/$m" "${R[0]}:brainv2/models/" || { echo "⛔ upload of $m failed; stopping"; aws ec2 stop-instances --region "$REGION" --instance-ids "$IID" >/dev/null; exit 1; }
   done
