@@ -161,9 +161,10 @@ def test_resume_after_a_cut_between_save_and_night(tmp_path):
 
 
 def _scrub(x):
-    """A life result without timings, host and the Brain-kwarg echo (the only places an explicit-off flag may show)."""
+    """A life result without timings, host, the record-only stack `provenance` (prereg test2 T1) and the Brain-kwarg echo
+    (the only places an explicit-off flag may show)."""
     if isinstance(x, dict):
-        return {k: _scrub(v) for k, v in x.items() if k not in ("seconds", "live_seconds", "host", "brain_kw")}
+        return {k: _scrub(v) for k, v in x.items() if k not in ("seconds", "live_seconds", "host", "brain_kw", "provenance")}
     if isinstance(x, list):
         return [_scrub(v) for v in x]
     return x
@@ -192,3 +193,60 @@ def test_use_gate_and_frozen_probe_life(tmp_path):
     assert any("fetch" in r for x in res["lived"] for r in x["rows"])
     text = life_table.render([res])
     assert "M-use / M-scale read-outs" in text and "boosts granted/denied" in text
+
+
+def test_provenance_recorded_and_record_only(tmp_path, monkeypatch):
+    """Prereg test2 Amendment T1 device rule: life.py records the stack at life start (fields only); the replies of a
+    life are the same whatever the env-derived fields say."""
+    import torch
+    monkeypatch.setenv("AWS_AMI_ID", "ami-test")
+    monkeypatch.setenv("BRAIN_CODE_COMMIT", "fallback-commit")
+    a = _run(tmp_path, "pa", 1)
+    p = a["provenance"]
+    assert set(p) == {"cuda_precision", "torch", "torch_cuda", "gpu_name", "tf32_matmul", "tf32_cudnn", "code_commit", "aws_ami_id",
+                      "frozen_sha256", "brain_tree_dirty", "brain_code_clean_env"}
+    assert set(p["frozen_sha256"]) <= set(life.FROZEN_FILES) and "brain/eval/life.py" in p["frozen_sha256"]
+    assert p["frozen_sha256"]["brain/eval/life_read_spec.py"] == open(
+        os.path.join(life.REPO_ROOT, "brain/eval/life_read_spec.sha256")).read().split()[0]
+    assert p["brain_tree_dirty"] in (True, False, None)
+    assert p["torch"] == torch.__version__ and p["torch_cuda"] == torch.version.cuda and p["gpu_name"] is None   # cpu life
+    assert p["tf32_matmul"] == torch.backends.cuda.matmul.allow_tf32 and p["aws_ami_id"] == "ami-test" and p["code_commit"]
+    with open(str(tmp_path / "pa" / "o" / "life_s7") + ".json") as fh:
+        assert json.load(fh)["provenance"] == p
+    monkeypatch.delenv("AWS_AMI_ID")
+    b = _run(tmp_path, "pb", 1)
+    assert b["provenance"]["aws_ami_id"] is None and _replies(a) == _replies(b)
+
+
+def test_registered_split_refuses_dirty_tree_or_no_git(tmp_path, monkeypatch):
+    """Prereg test2 section 3: --split test2 refuses to START from a dirty brain/ tree, or without git unless
+    BRAIN_CODE_COMMIT and BRAIN_CODE_CLEAN=1 (AWS git-archive launch). Nothing is written before the refusal."""
+    monkeypatch.delenv("BRAIN_CODE_COMMIT", raising=False)
+    monkeypatch.delenv("BRAIN_CODE_CLEAN", raising=False)
+    monkeypatch.setattr(life, "_git_dirty", lambda: True)
+    with pytest.raises(RuntimeError, match="dirty"):
+        life.run(StubCortex(), 7, 1, "test2", str(tmp_path / "r" / "h"), str(tmp_path / "r" / "o" / "life_s7"), {1},
+                 brain_kw=BKW, log=lambda *_: None)
+    assert not (tmp_path / "r").exists()
+    monkeypatch.setenv("BRAIN_CODE_COMMIT", "abc")
+    monkeypatch.setenv("BRAIN_CODE_CLEAN", "1")
+    with pytest.raises(RuntimeError, match="dirty"):        # the override never covers a tree git sees as dirty
+        life.registered_guard("test2", {"brain_tree_dirty": True})
+    life.registered_guard("test2", {"brain_tree_dirty": None})   # no git + both env: allowed
+    monkeypatch.delenv("BRAIN_CODE_CLEAN")
+    with pytest.raises(RuntimeError, match="git unavailable"):
+        life.registered_guard("test2", {"brain_tree_dirty": None})
+    monkeypatch.setenv("BRAIN_CODE_CLEAN", "1")
+    monkeypatch.delenv("BRAIN_CODE_COMMIT")
+    with pytest.raises(RuntimeError, match="git unavailable"):
+        life.registered_guard("test2", {"brain_tree_dirty": None})
+    life.registered_guard("test2", {"brain_tree_dirty": False})  # clean tree: allowed
+    for split in ("dev", "test"):                                 # unregistered splits: unchanged
+        life.registered_guard(split, {"brain_tree_dirty": True})
+        life.registered_guard(split, {"brain_tree_dirty": None})
+
+
+def test_dev_split_runs_from_a_dirty_tree(tmp_path, monkeypatch):
+    monkeypatch.setattr(life, "_git_dirty", lambda: True)
+    res = _run(tmp_path, "d", 1)
+    assert res["provenance"]["brain_tree_dirty"] is True

@@ -887,6 +887,73 @@ def _savings_md(res: dict) -> list:
     return L
 
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# prereg 2026-11-23-stage2-test2 section 7: every file whose sha256 a life records (paths relative to the repo)
+FROZEN_FILES = tuple(f"brain/eval/{f}" for f in (
+    "life_bank_test2.py", "life_bank_test2.sha256", "life_cues_test2.py", "life_cues_test2.sha256",
+    "life_interview_spec.py", "life_heldout.py", "life_read_spec.py", "life.py", "life_age_ladder.py", "life_bars.py",
+    "life_leak.py", "life_costs.py", "life_compare.py", "life_read.py", "life_interview_read.py", "life_table.py")) + (
+    "brain/brain.py", "brain/sleep.py", "brain/cortex.py")
+REGISTERED_SPLIT = "test2"
+
+
+def _try(f):
+    try:
+        return f()
+    except Exception:
+        return None
+
+
+def frozen_sha256() -> dict:
+    """sha256 of each section-7 file that exists, keyed by repo-relative path."""
+    out = {}
+    for rel in FROZEN_FILES:
+        fp = os.path.join(REPO_ROOT, rel)
+        if os.path.isfile(fp):
+            with open(fp, "rb") as fh:
+                out[rel] = hashlib.sha256(fh.read()).hexdigest()
+    return out
+
+
+def _git_dirty():
+    """True/False = `git status --porcelain -- brain/` non-empty/empty; None = no git (e.g. an AWS git-archive tree)."""
+    def f():
+        r = __import__("subprocess").run(["git", "status", "--porcelain", "--", "brain/"], cwd=REPO_ROOT,
+                                         capture_output=True, text=True, timeout=30)
+        return None if r.returncode != 0 else bool(r.stdout.strip())
+    return _try(f)
+
+
+def registered_guard(split: str, prov: dict):
+    """Prereg test2 section 3: a registered (--split test2) life refuses to START from a dirty brain/ tree. Without git
+    (AWS lives shipped by git archive) it starts only with BRAIN_CODE_COMMIT set and BRAIN_CODE_CLEAN=1. dev/test: no-op."""
+    if split != REGISTERED_SPLIT:
+        return
+    dirty = prov.get("brain_tree_dirty")
+    if dirty is True:
+        raise RuntimeError("registered run (--split test2) refused: the brain/ tree is dirty (git status --porcelain -- brain/)")
+    if dirty is None and not (os.environ.get("BRAIN_CODE_COMMIT") and os.environ.get("BRAIN_CODE_CLEAN") == "1"):
+        raise RuntimeError("registered run (--split test2) refused: git unavailable; set BRAIN_CODE_COMMIT and "
+                           "BRAIN_CODE_CLEAN=1 (git-archive launch)")
+
+
+def provenance(cortex, device: str) -> dict:
+    """Software/device stack at life start (prereg test2 Amendment T1 device rule): record-only. Reads flags, versions, the
+    section-7 file hashes and the brain/ tree status; draws no RNG, changes no state. A field it cannot read is None."""
+    commit = _try(lambda: __import__("subprocess").run(
+        ["git", "rev-parse", "HEAD"], cwd=os.path.dirname(os.path.abspath(__file__)), capture_output=True, text=True,
+        timeout=10).stdout.strip() or None)
+    return {"cuda_precision": getattr(cortex, "strategy", None), "torch": _try(lambda: torch.__version__),
+            "torch_cuda": _try(lambda: torch.version.cuda),
+            "gpu_name": _try(lambda: torch.cuda.get_device_name()) if device == "cuda" else None,
+            "tf32_matmul": _try(lambda: bool(torch.backends.cuda.matmul.allow_tf32)),
+            "tf32_cudnn": _try(lambda: bool(torch.backends.cudnn.allow_tf32)),
+            "code_commit": commit or os.environ.get("BRAIN_CODE_COMMIT") or None,
+            "aws_ami_id": os.environ.get("AWS_AMI_ID") or None,
+            "frozen_sha256": frozen_sha256(), "brain_tree_dirty": _git_dirty(),
+            "brain_code_clean_env": os.environ.get("BRAIN_CODE_CLEAN") == "1"}
+
+
 def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nights=(), nosleep_arm: bool = False,
         resume: bool = False, brain_kw: dict | None = None, weekend: bool = False, device: str = "cpu", log=print,
         frozen_probe: bool = False, transfer: bool = False, span: bool = False, pruned_a: bool = False,
@@ -944,6 +1011,8 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
         elif age_ladder:
             raise ValueError("resume: this life was started without --age-ladder")
     else:
+        prov = provenance(cortex, device)   # record-only (prereg test2 T1 device rule); reads no RNG
+        registered_guard(split, prov)       # before anything is deleted or written
         shutil.rmtree(homes, ignore_errors=True)
         os.makedirs(homes, exist_ok=True)
         state = {"seed": seed, "arms": {}}
@@ -952,6 +1021,7 @@ def run(cortex, seed: int, days: int, split: str, homes: str, out: str, full_nig
                "ledger": ledger, "schedule": sched, "lived": [], "nights": [], "probes": [], "todo": TODO}
         if getattr(cortex, "strategy", None) == "cuda fp32":
             res["strategy"] = "cuda fp32"      # recorded only off the default (default JSON unchanged)
+        res["provenance"] = prov
         if frozen_probe:
             res["frozen_probe"] = True
         if transfer:
