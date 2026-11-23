@@ -155,7 +155,7 @@ def minipc_checks(st, now):
     ev, idle_since = [], st.setdefault("minipc_idle_since", {})
     for host in MINIPCS:
         rc, out = sh(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", host,
-                      "pgrep -f '[b]rain[._]|kpid/[g]ate[.]py' >/dev/null && echo BUSY || echo IDLE"]   # gate.py runs from brain-lane paths, timeout=30)
+                      "pgrep -f '[b]rain[._]|kpid/[g]ate[.]py' >/dev/null && echo BUSY || echo IDLE"], timeout=30)  # gate.py: brain-lane paths
         if "IDLE" not in out:      # busy, or unreachable (a powered-off node is not idle capacity to stock)
             idle_since[host] = None
             st["seen"].pop(f"minipc-idle-{host}", None)     # busy ends the episode (as w-gpu-idle)
