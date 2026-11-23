@@ -11,15 +11,18 @@
     leak 48/460 vs 135/460, blind week-3 read no new class). Refuters 2/2 said HELD on s321 collapse nights 1-2 (would trip the
     §10 per-seed kill; B 0/3). Ruling: enters TEST with that risk registered in the test2 prereg (≥2/6 PR-a seeds killed -> NARROWED at best).
   - **TEST split v2 FROZEN** (a8f7c4429 on main): bank sha 5e775778, cues 794da243; DEV row check s322 passed.
-- **LIVE: K-P identity gate** (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, A1: pool CPU fp32, all four arms
-  B/KP/KPU/KP0 per node): s319 pool41, s320 pool42, s321 pool40, started 06:14 UTC 11-23, out
-  `~/brain-lane/kpid_repo/_scratch/kpid/pool_cpu/` (done.txt per node). When all three are done: rsync each pool_cpu/ to
-  `_scratch/kpid/pool_cpu_<node>/`, merge into one dir, `gate.py score <dir>`, read per prereg §3-4, refute.
-- **NEXT STEP:** (1) Identity gate read -> picks exactly one of K-P / K-P-U / K-P-0 for the test2 arm list (if KEEP, DEV
-  lives of the variant launch per the identity prereg). (2) Finalise test2 prereg §0 arm list: B, K-P(variant), D2-PR2.
-  Freeze 12-02, launch 12-04 AWS g5 fp16, read 12-10. (3) `life_costs.py` (frozen G7-G11 scorer; the reads used a regex
-  re-implementation). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` does not read the life JSON
-  top-level host field (returns unknown): small fix.
+- **LIVE: K-P identity gate** (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, A1 + A2): s321 DONE on pool40 CPU
+  (results `_scratch/kpid/pool_cpu_s321/`); s319 AWS i-060248e4bafa8eea6 (state `research/queue/.aws_brain.kpid319`) and s320 AWS
+  i-0f5b1870885547a77 (`.aws_brain.kpid320`), CUDA fp32, all four arms each (~1 h per seed left at 16:30 UTC). A background loop
+  pulls each when stopped; if it died: `AWS_BRAIN_STATE=research/queue/.aws_brain.kpid<S> bash tools/aws_brain_batch.sh pull`
+  (results `_scratch/brainv2/aws/<batch>/kpid_s<S>/`). Read: `gate.py score <dir>` per seed (devices differ by seed: never
+  compare across seeds), prereg §3-4, refute; picks one of K-P / K-P-U / K-P-0 for test2.
+- **DONE 11-23:** test2 freeze gates built + landed (6998bc538): `life_costs.py`, `life_compare.py`, G9 mode validated (read 2),
+  provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
+  of a test2 life skips the dirty-tree guard; AWS test2 lives must set BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1 (launcher not
+  yet updated); two leftover tmp dirs under brain/experiments/results/2026-11-18-inquiry-gate-dev-1.5b/ block a local test2 start.
+- **NEXT STEP:** (1) identity gate read. (2) test2 §0 arm list + freeze 12-02 (launcher env above). (3) Label-shuffle null for
+  `life_bars.py`. (4) `tools/where_ran.py` ignores the life JSON host field. (5) sim-rag-autoupdate.service fails to start.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
