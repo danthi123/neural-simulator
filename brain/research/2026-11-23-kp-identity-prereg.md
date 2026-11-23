@@ -138,3 +138,13 @@
 - **Timebox: 2 days.** Gate on 11-23 and 11-24, DEV lives launched by 11-24 and read by 11-25, inside the test2 §0
   window (prereg 11-25, read 12-01). No second mask rule, label cap, bank size or keep weight is tried in this window.
 - One life per arm per seed at DEV: no generalisation claim (six seeds come only at TEST).
+
+## Amendment A1 (2026-11-23 06:15 UTC, before any gate result exists)
+- **Device:** the W GPU and W CPU are held by the owner, so the gate runs on the pool CPUs, fp32: s319 on pool41, s320
+  on pool42, s321 on pool40. Each seed re-runs ALL four arms (B, K-P, K-P-U, K-P-0) on its own node, so every
+  within-seed comparison stays on one device; the W-CPU B / K-P reuse in "Fallback" is not used. Seeds are not
+  compared across nodes.
+- **Inputs:** each node's `~/brain-lane/kpgate/src_s<S>` is checked against the W source by the sha256 of
+  `cortex_adapters.pt` before the first night (all three matched). Code: brain/ at 9fd474dde, `_scratch/kpid/gate.py`
+  and `drift_read.py` (committed with this amendment, exactly as shipped to the nodes); runner `_scratch/kpid/pool/run_pool_gate.sh`, launcher `_scratch/kpid/pool/launch.sh`.
+- Bars, reads and verdict rules are unchanged.
