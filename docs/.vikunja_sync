@@ -452,3 +452,6 @@ Board #286: end-of-night shrink killed on transcript 4/4; Stage 1 with defaults;
 #286: D2-PR DEV read (PR-l/PR-x UNDEFINED on engagement; leak -44%; next PR-l + share cap).
 
 ## 2026-11-22  K-P DEV read KEEP at DEV; fresh TEST split v2 design (board 286)
+
+## 2026-11-23  stage2-dev-reads
+Board #286: split v2 frozen; K-P same-device costs hold; D2-PR2 PR-a passes DEV and enters TEST; identity gate live on pools.

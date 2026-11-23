@@ -66,3 +66,19 @@ unknown for these JSONs (it does not read the top-level host field); hosts above
 Caveats: DEV, 3 seeds, one life each; per-night leak is noisy (s321 n10 21/82 vs n15 1/70; PR-a s321 is -47% there against
 -64% pooled); no code sha in the JSONs; B carries no per-episode weights, so engagement is vs the in-night strength-only ref.
 Run needed: life_read.py blind readers (2 sonnet, week 3) on lifePRa_s319/320/321 vs lifeS1F (reader runs are Claude calls, not local compute).
+
+## Blind read and ruling (2026-11-23, Claude; written before any TEST v2 life exists)
+- Blind week-3 read (`transcript_score_PRa.md`, 2 sonnet readers, each saw only its own unit; scored by `life_read --score`):
+  no defect type absent in B (all 9 types occur in B); marker leak identical (one `<think>`, s319 both-off, both arms); "What's
+  your name?" Nova 5/6 PR-a vs 4/6 B. Instrument weak: canary 3/4 r1, pairwise decoy bar not run, r2 duplicate spread 27,
+  total-count Spearman 0.13; the read rests on battery-only counts, n=3. Pooled, PR-a has more invented (39/35 vs 22/27),
+  more repetition-or-collapse (battery 8/11 vs 5/7) and more unsupported self-claims; B s319's low count is a collapse artifact.
+- s321 collapse: intact top-reply share 0.50 n1 ("You're Dan, my friend."), 0.45 n2, 0.30 n4, <= 0.20 n5-15 (week-1 event).
+  Week-3 lived-trunk stock acknowledgement x14 on s321 (B s321 x2; B has the class on s319/s320, x12/x16).
+- Both refuters REFUTED the writer's "Passes -> TEST" wording (HELD: KILL-10 on s321 unadjudicated; weeks 1-2 never blind-read).
+- **Ruling.** The §10/§13 per-seed kill (collapse on 2 consecutive probe nights ends a life) is a life-running rule, not one of
+  this prereg's 3.3 guards; the registered collapse guard (seeds-ever <= B per arm) passes, and the blind clause finds no new
+  class. By the letter of §4 the outcome is **PASSES 3.1-3.3 on DEV**, so PR-a enters the TEST v2 arm list. It enters with a
+  registered risk, not a waiver: in TEST the §10 per-seed kill is live, so an early collapse ends that PR-a seed, and test2
+  prereg G-collapse counts it against PR-a (added to the test2 prereg in the same commit). No bar is relaxed; DEV numbers
+  are not a generalisation claim (one life per arm per seed).

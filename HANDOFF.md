@@ -3,40 +3,33 @@
 - **TASK:** 12-14 milestone, multi-week life with nightly sleep (board #286). Design
   `brain/research/2026-11-19-multiweek-life-design.md` (§5 bars, §13 registration). Older state: `brain/experiments/results/`.
 - **TYPE:** build · **DRIVER:** claude · **TIMEBOX:** Stage-2 methods by 12-08, 2 days each; read/land 12-10 to 12-14.
-- **STATE:** Stage 1 read 11-21 (no capability passes; defects: language drift, echo, stock leak, never-told keys).
-  D2-PR read 11-22: PR-l/PR-x UNDEFINED (engagement); next = D2-PR2 below.
-- **LIVE: D2-PR2 DEV screen** (prereg `brain/research/2026-11-22-replay-priority-2-prereg.md`, built c91c0c200, `loss_a`
-  = L_e**0.6): PR-a s319 pool41, s320 pool42 (same nodes as B, CPU fp32, started ~17:15 UTC 11-22, `outLIFE/lifePRa_s<S>`);
-  s321 pool40 node-mxl1462drl (started by hand ~13:20 UTC 11-22; the watcher's pgrep matched its own ssh line). Read with `d2pr_bars.py` (results/2026-11-22-d2pr-dev-read-1.5b/) + §7 blind read. Lever 3 of 3.
-- **K-P DEV READ DONE (11-22, `results/2026-11-22-kp-dev-read-1.5b.md`, 4 refuters): KEEP at DEV (gate-overridden).**
-  Held-out KL n15 0.118x B (0.32 vs 2.72), NLL 2.21 vs 4.51; every numeric guard passes (day-1-2 window n5-15; n1-4 fails
-  s320); leak 0.04 vs 0.29; recall up (once-told F 19/34 vs 7/34). COSTS to register as TEST bars: self-name "Dan"
-  8/18 vs 0/18; stock-refusal collapse nights 59/1158 rows vs 0 (abstention rise: any flip needs a ruling). Device
-  confound (K-P fp16 AWS, B fp32 pool) not explanatory per refuter; B-fp16 lives `lifeBg_s<S>` launching on AWS
-  (`_scratch/stage2/launch_bg.sh`, state `.aws_brain.bg<S>`). Gate replications s319/s320/s321 repeat s316 (s320 0.85 vs B 2.93); W runs lifeKPc_s319 (K-P CPU fp32 life,
-  `_scratch/kpcpu/`), closing the device confound on one seed.
-- **BUILT (31de906ca, not frozen): TEST split v2** (design `brain/research/2026-11-22-fresh-test-split-design.md`, 4c9c0504f): age ladder
-  (12 items/seed, 22 rows at age>=10), slot-matched never-told floor + FM-v2 bar, `--split test2`, `--age-ladder` OFF.
-  Workflow builds validator, blind bank writer, code, opus review, fix (uncommitted in worktree until reviewed).
-- **NEXT STEP:** (1) Land split v2 (review diff, hash-freeze bank + cues, one DEV 1.5B check). (2) Read B-fp16 vs K-P
-  when AWS lands. (3) D2-PR2 read when PR-a lands. (4) Prereg the six-seed TEST on v2: B, K-P (+ D2-PR2 if it passes),
-  with self-name and abstention bars named. (5) Label-shuffle null for `life_bars.py`.
+- **STATE (11-23):** Stage 1 read 11-21 (no capability passes). Stage-2 DEV screens read:
+  - K-P (`keep_bank='prior'`): KEEP at DEV (11-22). Same-device sensitivity vs B-fp16 (results/2026-11-23-kp-vs-bfp16-same-device-1.5b.md):
+    language win device-robust (KL n15 0.32 vs 2.47); self-name wrong 0.77 vs 0.33 and refusal 38/582 vs 0 HOLD; collapse
+    guard device-sensitive, unresolved (reader's "KILLED" refuted 2/2).
+  - D2-PR2 PR-a (`replay_priority='loss_a'`): PASSES 3.1-3.3 by the prereg letter (results/2026-11-23-d2pr2-pra-dev-read-1.5b.md:
+    leak 48/460 vs 135/460, blind week-3 read no new class). Refuters 2/2 said HELD on s321 collapse nights 1-2 (would trip the
+    §10 per-seed kill; B 0/3). Ruling: enters TEST with that risk registered in the test2 prereg (≥2/6 PR-a seeds killed -> NARROWED at best).
+  - **TEST split v2 FROZEN** (a8f7c4429 on main): bank sha 5e775778, cues 794da243; DEV row check s322 passed.
+- **LIVE: K-P identity gate** (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, A1: pool CPU fp32, all four arms
+  B/KP/KPU/KP0 per node): s319 pool41, s320 pool42, s321 pool40, started 06:14 UTC 11-23, out
+  `~/brain-lane/kpid_repo/_scratch/kpid/pool_cpu/` (done.txt per node). When all three are done: rsync each pool_cpu/ to
+  `_scratch/kpid/pool_cpu_<node>/`, merge into one dir, `gate.py score <dir>`, read per prereg §3-4, refute.
+- **NEXT STEP:** (1) Identity gate read -> picks exactly one of K-P / K-P-U / K-P-0 for the test2 arm list (if KEEP, DEV
+  lives of the variant launch per the identity prereg). (2) Finalise test2 prereg §0 arm list: B, K-P(variant), D2-PR2.
+  Freeze 12-02, launch 12-04 AWS g5 fp16, read 12-10. (3) `life_costs.py` (frozen G7-G11 scorer; the reads used a regex
+  re-implementation). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` does not read the life JSON
+  top-level host field (returns unknown): small fix.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OWNER WORDS (2026-11-20, verbatim):** "Looks like the GPU fell off the bus earlier? I won't be home to reboot until
-  Monday so continue with CPU, pool, and AWS until then. The MTALLM Claude session also may need AWS for GPU access, I
-  am preapproving that access as needed so don't ask for permission."
-- **OPEN:** AWS cap for 11-22 only: $150, aim < $100 (owner); remove after 11-22 to restore $50 (drop-in `~/.config/systemd/user/aws-guard.service.d/cap-override.conf`). Split v2 built (31de906ca), not frozen: DEV row check `lifeAL_s322` on AWS (`launch_al_now.sh`), then hash-freeze. W GPU off the bus until Mon 11-23 (CPU, pools, AWS only; AWS shared with MTALLM, keep cap headroom). s102 g6
-  i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`), retry pull then terminate. RAG
-  index stale.
-- **REBOOTED 11-22 13:16 EST: gpu-unlock WORKS** (journal: stage=handoff ret=0, "gpu_unlock: unlocked", ss0=0x88888888
-  ss1=0x8; kernel 7.3.5-2, driver 620.73, no Xid). **Owner: do NOT use W compute until told** (another session uses it).
-  AWS pulls via `_scratch/stage2/pull_loop2.sh` (status-based; bg320 done, bgr321/al322 ~19:30 UTC); cap drop-in auto-removed after 11-22.
-- **AFTER THE REBOOT (owner runs `bash ~/Projects/sim/_scratch/gpu-unlock-go.sh`, then powers on):** check
-  `journalctl -k -b | grep gpu_unlock`, nvidia-smi, one gpu_queue daemon only (two = card off the bus), llama-swap VRAM;
-  then the K-P identity gate (prereg `brain/research/2026-11-23-kp-identity-prereg.md`, 59881a228) on GPU fp32:
-  `tools/gpu_queue.sh add 'DEVICE=cuda bash _scratch/wt-mixday/_scratch/kpid/run_gate.sh > _scratch/wt-mixday/_scratch/kpid/run_gate.log 2>&1'`;
-  restart the attention watcher; resume or stop `_scratch/kpcpu/run.sh` (K-P CPU fp32 life s319, resumable).
+- **OWNER (11-22):** "Finished rebooting, can you confirm everything looks good? I have another session using local compute
+  so you may proceed autonomously, just don't use workstation compute until I say to." -> W GPU/CPU still held; use pools/AWS.
+- **INFRA:** gpu-unlock works (kernel 7.3.5-2). AWS: all 11-22 batches pulled, instances terminated; $50/day cap restored
+  (drop-in moved to `_scratch/cap-override.conf.expired-2026-11-22`). When W is released: GPU fp32 parity check
+  (lang_guard nll_off == CPU 1.930773), resume or stop `_scratch/kpcpu/run.sh`. Worktree cleanup done 11-22: 557 removed,
+  extras archived in `~/Projects/sim-worktree-archive/` (17 GB, MANIFEST.tsv each), 41 `archive/wt/*` branches; 60 skipped
+  (changed <2h), rerun `_scratch/wt_audit/archive_and_remove.py` later. Snapshots untouched (owner: wait).
+- **OPEN:** s102 g6 i-008ed35fe857dce55 STOPPED (state `research/queue/.aws_brain.s102-stopped-20261117`): pull then terminate. RAG index stale.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
