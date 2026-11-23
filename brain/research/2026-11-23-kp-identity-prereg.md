@@ -146,5 +146,5 @@
   compared across nodes.
 - **Inputs:** each node's `~/brain-lane/kpgate/src_s<S>` is checked against the W source by the sha256 of
   `cortex_adapters.pt` before the first night (all three matched). Code: brain/ at 9fd474dde, `_scratch/kpid/gate.py`
-  and `drift_read.py` as committed; runner `_scratch/kpid/pool/run_pool_gate.sh`, launcher `_scratch/kpid/pool/launch.sh`.
+  and `drift_read.py` (committed with this amendment, exactly as shipped to the nodes); runner `_scratch/kpid/pool/run_pool_gate.sh`, launcher `_scratch/kpid/pool/launch.sh`.
 - Bars, reads and verdict rules are unchanged.
