@@ -1,4 +1,4 @@
-# Recall voice on K-P, DEV read: M1 (lived_key) — 2026-11-24 (M2 pending)
+# Recall voice on K-P, DEV read: M1 (lived_key) and M2 (speaker contrast) — 2026-11-24: both KILLED
 
 Prereg: `brain/research/2026-11-23-recall-voice-dev-prereg.md` (written before any M1/M2 life). DEV, 3 seeds (319-321),
 AWS g5 fp16, AMI ami-012ba162b9cd2729c, launch commit 4994533d1 / a8ec171f5 (brain/ identical). Compared with the banked
@@ -62,7 +62,30 @@ guard also misses by 2. Bars are not relaxed. Without those two, M1 would read N
   confabulates in the first person ("My sister's name is Dan.") where K-P said "I don't know". K-P s319 is blander but
   answers in the second person at night 10. So on s319 storing the own turn stores the echo.
 
+## M2 (speaker_contrast 3.0) — read 11-24
+Lives `_scratch/brainv2/aws/20261124-{0108,0147,0228}/lifeM2_s<seed>.json.json`; `brain_kw_extra` {"speaker_contrast": 3.0} in all
+three; G11 setup check PASS 3/3.
+| seed | intact told (K-P) | hoff told (K-P) | intact echo (K-P) | hoff echo (K-P) | hurt/helped/best (K-P) |
+|---|---|---|---|---|---|
+| 319 | 33/80 (58) | 54/80 (54) | 15/88 (15) | 20/184 (20) | 28/7/61 (6/10/64) |
+| 320 | 27/70 (36) | 39/70 (39) | 25/88 (31) | 34/184 (34) | 25/13/52 (14/11/50) |
+| 321 | 45/73 (29) | 45/73 (45) | 8/88 (25) | 23/184 (23) | 5/5/50 (21/5/50) |
+| pooled | 105/223 (123) | 138/223 (138) | 48/264 (71) | 77/552 (77) | 58/25/163 (41/26/164) |
+- P1 FAIL (105 < 138) and pooled intact told < K-P's 123: a KILLED trigger by itself. P2 FAIL (48 > 47; <= K-P on 3/3 seeds).
+- Guards: language KL n15 = K-P's exactly on every seed (0.351/0.294/0.323); hoff told and echo = K-P's exactly. This is the
+  prereg's M2 diagnostic: night replay ignores the reply-side contrast, so the slept cortex is K-P's. G8a intact s320
+  31/92 = 0.337 vs K-P worst 0.130 + 0.03: FAIL. Collapse intact 3/3 seeds and intact-frozen 3/3 vs K-P 1/1: FAIL.
+  Stuck lived-day runs 0 (PASS). G7 66/90 (PASS).
+- **Verdict: KILLED** (told below K-P, collapse guard). The contrast at reinstatement removes the user's voice from what
+  is fetched but costs the answer: fetch-hurt 41 -> 58, refusals up on s320. One fresh-context refuter (below).
+
+## Mechanism read (prereg §4)
+M1 moved P2 (echo 71 -> 42) and M2 did not move it pooled (48). By §4 that points to the night's lived content, not the
+reinstated voice. With the flip-night diagnosis (results/2026-11-24-flip-night-diagnosis.md), K-P's remaining echo is
+mostly an in-conversation cascade, not the weights.
+
 ## Next
-- M2 (speaker contrast) lives are running; read by the same counter and bars (append here).
-- Per prereg §5 (lever count on D2 now 4 and, with M2, 5): if M2 is also KILLED or NARROWED, no further perspective lever
-  before a routing / self-other-tag method (PREREQUISITES "Self and identity").
+- Prereg §5 applies: both arms KILLED, lever count on D2 is 5, so no further perspective lever before a routing method
+  (the wrong-episode fetch: 28 of K-P's 41 fetch-hurt rows). The source-hold DRAFT stays BLOCKED.
+- Separately, the in-conversation cascade (one early first-person or refusal reply repeated by later turns) is the
+  biggest conversational defect K-P shows; a cascade test on pool40 is running.
