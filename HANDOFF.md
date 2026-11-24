@@ -19,6 +19,8 @@
   fetch). M1 (`episode=lived_key`) on AWS g5 fp16: s319 i-091036ab48a90fbc6, s320 i-0f6d4c8194221cc2c, s321 i-0ca293a806334a57a
   (state `research/queue/.aws_brain.rvM1{319,320,321}`). Loop `_scratch/rv_pull_then_m2.sh` pulls each when stopped, then after
   11-24 UTC launches M2 (`speaker_contrast=3.0`) via `brain/research/recall_voice_launch/launch.sh go M2` and pulls those.
+  M1 READ 11-24 (results/2026-11-24-recall-voice-dev-read-1.5b.md): KILLED by the letter (lang KL s321 1.264x, hoff echo
+  86>84); echo 71->42, told 135/223. M2 running (i-02281d8accb2012b8, i-09d7233f4300d334c, i-0a95bc48c48f3ae43).
   If the loop died: rerun it (it skips pulled lives). Read P1/P2 + guards + both-off validity by 11-26; refuters before landing.
 - **DONE 11-23:** test2 freeze gates built + landed (6998bc538): `life_costs.py`, `life_compare.py`, G9 mode validated (read 2),
   provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
