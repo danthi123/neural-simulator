@@ -1,0 +1,561 @@
+== A. hippocampus-off told rows: first-person/n per night (* = flip >=0.5); second line echo off|intact
+Bg     319 fp   0/6  0/8  0/8  6/8* 7/8* 6/8* 8/8* 7/8* 0/8  5/8* 4/8* 2/8  8/8* 3/8  7/8*
+           ech  0|4  0|0  0|2  4|4  5|5  3|6  4|4  6|6  0|1  4|3  3|4  0|0  3|4  2|2  4|4 
+Bg     320 fp   0/6  0/8  4/8* 0/8  3/8  3/8  3/8  8/8* 7/8* 8/8* 8/8* 8/8* 8/8* 8/8* 8/8*
+           ech  0|4  0|0  3|4  0|0  1|1  0|0  1|1  4|5  3|3  3|3  2|1  0|2  1|2  1|4  2|2 
+Bg     321 fp   0/6  0/8  0/8  1/8  1/8  0/8  8/8* 8/8* 8/8* 8/8* 8/8* 8/8* 8/8* 5/8* 8/8*
+           ech  0|0  0|0  0|0  0|0  0|0  0|0  2|5  6|5  5|4  3|2  0|1  6|4  3|4  4|4  3|3 
+KP     319 fp   0/6  0/8  1/8  3/8  0/8  1/8  0/8  0/8  0/8  0/8  0/8  3/8  1/8  2/8  6/8*
+           ech  0|0  0|0  1|0  1|0  0|2  0|0  0|0  0|0  0|1  0|0  0|0  3|3  1|0  2|2  0|7 
+KP     320 fp   0/6  1/8  0/8  0/8  0/8  8/8* 0/8  0/8  0/8  0/8  8/8* 8/8* 1/8  7/8* 0/8 
+           ech  0|0  1|0  0|0  0|0  0|0  7|7  0|0  0|8  0|5  0|1  0|1  4|0  0|3  6|6  0|0 
+KP     321 fp   0/6  1/8  5/8* 0/8  0/8  0/8  0/8  0/8  8/8* 0/8  0/8  0/8  1/8  7/8* 0/8 
+           ech  0|0  0|0  5|4  0|2  0|0  0|1  0|0  0|4  0|5  0|4  0|1  0|6  1|2  5|2  0|0 
+PRa    319 fp   0/6  1/8  6/8* 3/8  2/8  1/8  1/8  5/8* 8/8* 1/8  5/8* 4/8* 1/8  1/8  3/8 
+           ech  0|0  1|2  6|5  3|4  2|6  1|2  1|1  4|3  7|7  1|0  5|5  4|4  1|0  1|1  0|1 
+PRa    320 fp   1/6  0/8  1/8  0/8  2/8  1/8  0/8  0/8  7/8* 4/8* 7/8* 7/8* 8/8* 7/8* 4/8*
+           ech  0|0  0|0  0|0  0|0  1|0  0|1  0|1  0|1  2|2  1|4  6|2  3|2  0|1  5|4  1|1 
+PRa    321 fp   6/6* 0/8  1/8  8/8* 3/8  6/8* 8/8* 1/8  0/8  0/8  0/8  0/8  4/8* 2/8  2/8 
+           ech  0|0  0|0  0|0  4|4  2|1  3|2  4|5  0|1  0|2  0|0  0|2  0|0  3|2  1|1  1|1 
+PRl    319 fp   0/6  0/8  1/8  5/8* 2/8  7/8* 2/8  2/8  8/8* 6/8* 1/8  1/8  4/8* 3/8  2/8 
+           ech  0|0  0|0  1|0  5|2  2|0  5|5  0|0  0|0  2|1  2|1  0|2  0|0  3|3  2|2  1|1 
+PRl    320 fp   1/6  7/8* 6/8* 4/8* 3/8  8/8* 0/8  3/8  2/8  3/8  3/8  2/8  3/8  2/8  2/8 
+           ech  1|1  1|7  5|4  1|1  3|6  1|0  0|0  1|1  0|0  1|0  0|0  1|0  0|0  0|0  1|0 
+PRl    321 fp   0/6  0/8  2/8  1/8  7/8* 8/8* 7/8* 7/8* 8/8* 8/8* 8/8* 3/8  8/8* 8/8* 6/8*
+           ech  0|0  0|0  0|0  0|0  4|2  2|3  3|2  4|4  5|4  2|3  4|0  1|0  5|5  6|5  0|0 
+PRx    319 fp   0/6  0/8  0/8  0/8  7/8* 0/8  2/8  8/8* 8/8* 7/8* 4/8* 6/8* 8/8* 8/8* 6/8*
+           ech  0|0  0|1  0|0  0|1  1|2  0|2  0|0  6|4  5|4  4|4  0|0  4|4  6|6  5|7  3|6 
+PRx    320 fp   0/6  0/8  8/8* 1/8  2/8  7/8* 7/8* 5/8* 2/8  3/8  1/8  6/8* 4/8* 8/8* 7/8*
+           ech  0|0  0|0  0|0  0|1  1|1  5|5  5|3  3|4  1|1  1|0  0|0  3|3  0|0  2|3  5|5 
+PRx    321 fp   0/6  0/8  0/8  1/8  4/8* 8/8* 8/8* 7/8* 8/8* 8/8* 7/8* 7/8* 8/8* 5/8* 5/8*
+           ech  0|0  0|0  0|0  1|1  2|0  0|5  1|1  4|4  1|2  4|4  4|4  5|3  6|6  2|4  4|4 
+S1F    319 fp   0/6  5/8* 0/8  6/8* 3/8  0/8  7/8* 8/8* 8/8* 7/8* 8/8* 7/8* 8/8* 8/8* 8/8*
+           ech  0|0  5|5  0|1  4|2  2|2  0|0  6|5  1|1  7|7  5|5  4|5  5|5  7|7  7|6  0|0 
+S1F    320 fp   0/6  0/8  1/8  1/8  8/8* 8/8* 8/8* 7/8* 8/8* 8/8* 7/8* 7/8* 8/8* 7/8* 8/8*
+           ech  0|0  0|0  0|0  1|5  5|5  5|5  0|0  2|3  1|1  2|2  2|2  0|0  0|0  1|1  3|3 
+S1F    321 fp   0/6  3/8  7/8* 4/8* 3/8  8/8* 7/8* 8/8* 8/8* 8/8* 7/8* 8/8* 8/8* 8/8* 8/8*
+           ech  0|0  3|2  4|6  1|2  1|1  6|6  5|4  2|3  4|4  2|2  3|3  4|4  2|2  3|4  5|4 
+M1     319 fp   0/6  1/8  1/8  2/8  8/8* 4/8* 0/8  0/8  8/8* 8/8* 0/8  3/8  0/8  4/8* 5/8*
+           ech  0|0  1|0  1|1  1|5  7|1  1|1  0|0  0|0  3|0  5|7  0|4  2|6  0|0  4|4  4|6 
+M1     320 fp   0/6  0/8  0/8  0/8  0/8  0/8  0/8  0/8  0/8  4/8* 8/8* 0/8  0/8  0/8  6/8*
+           ech  0|0  0|0  0|0  0|0  0|0  0|0  0|0  0|0  0|0  4|0  0|2  0|0  0|2  0|0  5|4 
+M1     321 fp   0/6  0/8  0/8  0/8  0/8  0/8  0/8  0/8  1/8  3/8  4/8* 0/8  0/8  0/8  0/8 
+           ech  0|0  0|1  0|0  0|0  0|0  0|0  0|0  0|0  0|0  3|2  3|2  0|1  0|0  0|0  0|0 
+AL     322 fp   0/6  3/8  3/8  8/8* 5/8* 5/8* 7/8* 6/8* 5/8* 8/8* 2/8  7/8* 8/8* 7/8* 8/8*
+           ech  0|0  3|3  3|4  5|5  3|1  3|5  2|3  2|1  2|2  2|2  2|2  2|1  5|2  3|3  2|2 
+S1FULL 318 fp   0/6  0/8  0/8  6/8* 7/8* 1/8  8/8* 8/8* 7/8* 0/8  5/8* 7/8* 8/8* 5/8* 6/8*
+           ech  0|0  0|0  0|0  5|4  5|5  1|3  3|6  7|7  4|4  0|0  2|2  5|5  2|2  2|2  5|5 
+B7d    318 fp   0/4  0/6  0/6  4/6* 5/6* 6/6* 6/6*
+           ech  0|0  0|0  0|0  3|2  4|2  3|3  2|3 
+S7d    318 fp   0/4  0/6  1/6  0/6  5/6* 6/6* 0/6 
+           ech  0|0  0|0  0|0  0|0  0|0  0|0  0|0 
+SAB7d  318 fp   0/4  0/6  1/6  5/6* 2/6  0/6  3/6*
+           ech  0|0  0|0  0|0  4|2  0|0  0|1  0|0 
+SABE7d 318 fp   0/4  0/6  0/6  0/6  0/6  0/6  1/6 
+           ech  0|0  0|0  0|0  0|1  0|0  0|0  0|0 
+
+== B. flip nights, with intact/frozen fp, H-only fp, never/neardup fp, next-day sameday fp
+('Bg', 319) n 4 off 6/8 echo 4 ok 0 | intact fp 6/8 echo 4 ok 0 | frozen fp 6/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp 7/8 | next-day lived fp 9/10
+('Bg', 319) n 5 off 7/8 echo 5 ok 1 | intact fp 5/8 echo 5 ok 2 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 6/8
+('Bg', 319) n 6 off 6/8 echo 3 ok 1 | intact fp 7/8 echo 6 ok 0 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/7
+('Bg', 319) n 7 off 8/8 echo 4 ok 1 | intact fp 7/8 echo 4 ok 2 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 4/10
+('Bg', 319) n 8 off 7/8 echo 6 ok 1 | intact fp 8/8 echo 6 ok 1 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 7/8
+('Bg', 319) n 10 off 5/8 echo 4 ok 2 | intact fp 5/8 echo 3 ok 2 | frozen fp 5/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp 4/8 | next-day lived fp 4/22
+('Bg', 319) n 11 off 4/8 echo 3 ok 3 | intact fp 5/8 echo 4 ok 1 | frozen fp 5/8 | H-only 1/4 | never+neardup fp 3/5 | next off fp 2/8 | next-day lived fp 4/4
+('Bg', 319) n 13 off 8/8 echo 3 ok 1 | intact fp 7/8 echo 4 ok 2 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 3/8 | next-day lived fp 5/5
+('Bg', 319) n 15 off 7/8 echo 4 ok 1 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 4/5 | next off fp -/- | next-day lived fp -/-
+('Bg', 320) n 3 off 4/8 echo 3 ok 4 | intact fp 5/8 echo 4 ok 3 | frozen fp 5/8 | H-only 1/4 | never+neardup fp 4/5 | next off fp 0/8 | next-day lived fp 7/8
+('Bg', 320) n 8 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 6/8
+('Bg', 320) n 9 off 7/8 echo 3 ok 2 | intact fp 7/8 echo 3 ok 2 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/7
+('Bg', 320) n 10 off 8/8 echo 3 ok 2 | intact fp 8/8 echo 3 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/22
+('Bg', 320) n 11 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 1 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/4
+('Bg', 320) n 12 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 2 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/6
+('Bg', 320) n 13 off 8/8 echo 1 ok 0 | intact fp 8/8 echo 2 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/5
+('Bg', 320) n 14 off 8/8 echo 1 ok 2 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/5
+('Bg', 320) n 15 off 8/8 echo 2 ok 1 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('Bg', 321) n 7 off 8/8 echo 2 ok 1 | intact fp 8/8 echo 5 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/10
+('Bg', 321) n 8 off 8/8 echo 6 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/8
+('Bg', 321) n 9 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/7
+('Bg', 321) n 10 off 8/8 echo 3 ok 3 | intact fp 7/8 echo 2 ok 4 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/22
+('Bg', 321) n 11 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 1 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/4
+('Bg', 321) n 12 off 8/8 echo 6 ok 0 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/6
+('Bg', 321) n 13 off 8/8 echo 3 ok 1 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 4/5
+('Bg', 321) n 14 off 5/8 echo 4 ok 2 | intact fp 6/8 echo 4 ok 3 | frozen fp 6/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp 8/8 | next-day lived fp 2/5
+('Bg', 321) n 15 off 8/8 echo 3 ok 1 | intact fp 8/8 echo 3 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('KP', 319) n 15 off 6/8 echo 0 ok 2 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp -/- | next-day lived fp -/-
+('KP', 320) n 6 off 8/8 echo 7 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 5/7
+('KP', 320) n 11 off 8/8 echo 0 ok 0 | intact fp 2/8 echo 1 ok 4 | frozen fp 3/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/4
+('KP', 320) n 12 off 8/8 echo 4 ok 0 | intact fp 0/8 echo 0 ok 6 | frozen fp 0/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 4/6
+('KP', 320) n 14 off 7/8 echo 6 ok 1 | intact fp 7/8 echo 6 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 3/5
+('KP', 321) n 3 off 5/8 echo 5 ok 2 | intact fp 5/8 echo 4 ok 2 | frozen fp 3/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp 0/8 | next-day lived fp 2/8
+('KP', 321) n 9 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 3/7
+('KP', 321) n 14 off 7/8 echo 5 ok 1 | intact fp 2/8 echo 2 ok 4 | frozen fp 2/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 3/5
+('PRa', 319) n 3 off 6/8 echo 6 ok 2 | intact fp 5/8 echo 5 ok 3 | frozen fp 4/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 3/8 | next-day lived fp 6/8
+('PRa', 319) n 8 off 5/8 echo 4 ok 2 | intact fp 5/8 echo 3 ok 2 | frozen fp 2/8 | H-only 1/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/8
+('PRa', 319) n 9 off 8/8 echo 7 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 5/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 6/7
+('PRa', 319) n 11 off 5/8 echo 5 ok 3 | intact fp 6/8 echo 5 ok 3 | frozen fp 6/8 | H-only 2/4 | never+neardup fp 3/5 | next off fp 4/8 | next-day lived fp 4/4
+('PRa', 319) n 12 off 4/8 echo 4 ok 3 | intact fp 4/8 echo 4 ok 3 | frozen fp 6/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 5/6
+('PRa', 320) n 9 off 7/8 echo 2 ok 1 | intact fp 6/8 echo 2 ok 2 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 2/7
+('PRa', 320) n 10 off 4/8 echo 1 ok 1 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 2/4 | never+neardup fp 3/5 | next off fp 7/8 | next-day lived fp 19/22
+('PRa', 320) n 11 off 7/8 echo 6 ok 1 | intact fp 3/8 echo 2 ok 4 | frozen fp 3/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 1/4
+('PRa', 320) n 12 off 7/8 echo 3 ok 1 | intact fp 5/8 echo 2 ok 1 | frozen fp 5/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 6/6
+('PRa', 320) n 13 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 1 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 3/5
+('PRa', 320) n 14 off 7/8 echo 5 ok 2 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 3/5
+('PRa', 320) n 15 off 4/8 echo 1 ok 5 | intact fp 4/8 echo 1 ok 4 | frozen fp 4/8 | H-only 2/4 | never+neardup fp 2/5 | next off fp -/- | next-day lived fp -/-
+('PRa', 321) n 1 off 6/6 echo 0 ok 0 | intact fp 6/6 echo 0 ok 0 | frozen fp 6/6 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 15/15
+('PRa', 321) n 4 off 8/8 echo 4 ok 1 | intact fp 8/8 echo 4 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 3/8 | next-day lived fp 4/10
+('PRa', 321) n 6 off 6/8 echo 3 ok 2 | intact fp 5/8 echo 2 ok 2 | frozen fp 5/8 | H-only 3/4 | never+neardup fp 3/5 | next off fp 8/8 | next-day lived fp 6/7
+('PRa', 321) n 7 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 4/10
+('PRa', 321) n 13 off 4/8 echo 3 ok 2 | intact fp 5/8 echo 2 ok 3 | frozen fp 2/8 | H-only 2/4 | never+neardup fp 3/5 | next off fp 2/8 | next-day lived fp 2/5
+('PRl', 319) n 4 off 5/8 echo 5 ok 1 | intact fp 3/8 echo 2 ok 2 | frozen fp 6/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 2/8 | next-day lived fp 1/10
+('PRl', 319) n 6 off 7/8 echo 5 ok 1 | intact fp 6/8 echo 5 ok 1 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 2/8 | next-day lived fp 3/7
+('PRl', 319) n 9 off 8/8 echo 2 ok 0 | intact fp 4/8 echo 1 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 7/7
+('PRl', 319) n 10 off 6/8 echo 2 ok 2 | intact fp 3/8 echo 1 ok 3 | frozen fp 3/8 | H-only 2/4 | never+neardup fp 3/5 | next off fp 1/8 | next-day lived fp 3/22
+('PRl', 319) n 13 off 4/8 echo 3 ok 3 | intact fp 3/8 echo 3 ok 5 | frozen fp 3/8 | H-only 2/4 | never+neardup fp 3/5 | next off fp 3/8 | next-day lived fp 4/5
+('PRl', 320) n 2 off 7/8 echo 1 ok 1 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 11/11
+('PRl', 320) n 3 off 6/8 echo 5 ok 2 | intact fp 5/8 echo 4 ok 3 | frozen fp 5/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 7/8
+('PRl', 320) n 4 off 4/8 echo 1 ok 2 | intact fp 4/8 echo 1 ok 2 | frozen fp 3/8 | H-only 2/4 | never+neardup fp 4/5 | next off fp 3/8 | next-day lived fp 1/10
+('PRl', 320) n 6 off 8/8 echo 1 ok 2 | intact fp 1/8 echo 0 ok 4 | frozen fp 1/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 7/7
+('PRl', 321) n 5 off 7/8 echo 4 ok 2 | intact fp 6/8 echo 2 ok 3 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 8/8
+('PRl', 321) n 6 off 8/8 echo 2 ok 1 | intact fp 8/8 echo 3 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 7/7
+('PRl', 321) n 7 off 7/8 echo 3 ok 3 | intact fp 5/8 echo 2 ok 2 | frozen fp 5/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 7/10
+('PRl', 321) n 8 off 7/8 echo 4 ok 0 | intact fp 7/8 echo 4 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/8
+('PRl', 321) n 9 off 8/8 echo 5 ok 0 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/7
+('PRl', 321) n 10 off 8/8 echo 2 ok 2 | intact fp 8/8 echo 3 ok 2 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 20/22
+('PRl', 321) n 11 off 8/8 echo 4 ok 2 | intact fp 2/8 echo 0 ok 6 | frozen fp 2/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 3/8 | next-day lived fp 4/4
+('PRl', 321) n 13 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/5
+('PRl', 321) n 14 off 8/8 echo 6 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 4/5
+('PRl', 321) n 15 off 6/8 echo 0 ok 1 | intact fp 4/8 echo 0 ok 3 | frozen fp 4/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('PRx', 319) n 5 off 7/8 echo 1 ok 1 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 4/8
+('PRx', 319) n 8 off 8/8 echo 6 ok 0 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/8
+('PRx', 319) n 9 off 8/8 echo 5 ok 1 | intact fp 8/8 echo 4 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 7/7
+('PRx', 319) n 10 off 7/8 echo 4 ok 0 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 9/22
+('PRx', 319) n 11 off 4/8 echo 0 ok 1 | intact fp 4/8 echo 0 ok 1 | frozen fp 4/8 | H-only 2/4 | never+neardup fp 0/5 | next off fp 6/8 | next-day lived fp 4/4
+('PRx', 319) n 12 off 6/8 echo 4 ok 2 | intact fp 6/8 echo 4 ok 2 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/6
+('PRx', 319) n 13 off 8/8 echo 6 ok 0 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/5
+('PRx', 319) n 14 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 5/5
+('PRx', 319) n 15 off 6/8 echo 3 ok 1 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('PRx', 320) n 3 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 0 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 8/8
+('PRx', 320) n 6 off 7/8 echo 5 ok 0 | intact fp 7/8 echo 5 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 4/5 | next off fp 7/8 | next-day lived fp 5/7
+('PRx', 320) n 7 off 7/8 echo 5 ok 1 | intact fp 5/8 echo 3 ok 3 | frozen fp 4/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 10/10
+('PRx', 320) n 8 off 5/8 echo 3 ok 3 | intact fp 7/8 echo 4 ok 2 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 2/8 | next-day lived fp 8/8
+('PRx', 320) n 12 off 6/8 echo 3 ok 1 | intact fp 6/8 echo 3 ok 1 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 6/6
+('PRx', 320) n 13 off 4/8 echo 0 ok 1 | intact fp 0/8 echo 0 ok 0 | frozen fp 0/8 | H-only 2/4 | never+neardup fp 2/5 | next off fp 8/8 | next-day lived fp 2/5
+('PRx', 320) n 14 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 3 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 4/5
+('PRx', 320) n 15 off 7/8 echo 5 ok 0 | intact fp 7/8 echo 5 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 4/5 | next off fp -/- | next-day lived fp -/-
+('PRx', 321) n 5 off 4/8 echo 2 ok 4 | intact fp 0/8 echo 0 ok 5 | frozen fp 0/8 | H-only 0/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/8
+('PRx', 321) n 6 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/7
+('PRx', 321) n 7 off 8/8 echo 1 ok 0 | intact fp 8/8 echo 1 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 1/10
+('PRx', 321) n 8 off 7/8 echo 4 ok 1 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/8
+('PRx', 321) n 9 off 8/8 echo 1 ok 1 | intact fp 8/8 echo 2 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 7/7
+('PRx', 321) n 10 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 4 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 22/22
+('PRx', 321) n 11 off 7/8 echo 4 ok 1 | intact fp 7/8 echo 4 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 4/4
+('PRx', 321) n 12 off 7/8 echo 5 ok 0 | intact fp 6/8 echo 3 ok 1 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/6
+('PRx', 321) n 13 off 8/8 echo 6 ok 0 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 4/5
+('PRx', 321) n 14 off 5/8 echo 2 ok 1 | intact fp 7/8 echo 4 ok 1 | frozen fp 5/8 | H-only 4/4 | never+neardup fp 2/5 | next off fp 5/8 | next-day lived fp 1/5
+('PRx', 321) n 15 off 5/8 echo 4 ok 2 | intact fp 6/8 echo 4 ok 2 | frozen fp 6/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('S1F', 319) n 2 off 5/8 echo 5 ok 3 | intact fp 5/8 echo 5 ok 3 | frozen fp 4/8 | H-only 1/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 5/11
+('S1F', 319) n 4 off 6/8 echo 4 ok 2 | intact fp 2/8 echo 2 ok 5 | frozen fp 0/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 3/8 | next-day lived fp 2/10
+('S1F', 319) n 7 off 7/8 echo 6 ok 0 | intact fp 7/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/10
+('S1F', 319) n 8 off 8/8 echo 1 ok 1 | intact fp 8/8 echo 1 ok 2 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 6/8
+('S1F', 319) n 9 off 8/8 echo 7 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 2/7
+('S1F', 319) n 10 off 7/8 echo 5 ok 1 | intact fp 7/8 echo 5 ok 2 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/22
+('S1F', 319) n 11 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 1/4
+('S1F', 319) n 12 off 7/8 echo 5 ok 1 | intact fp 7/8 echo 5 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/6
+('S1F', 319) n 13 off 8/8 echo 7 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/5
+('S1F', 319) n 14 off 8/8 echo 7 ok 1 | intact fp 7/8 echo 6 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/5
+('S1F', 319) n 15 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 0 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('S1F', 320) n 5 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/8
+('S1F', 320) n 6 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 5 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 5/7
+('S1F', 320) n 7 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 0 ok 0 | frozen fp 1/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 9/10
+('S1F', 320) n 8 off 7/8 echo 2 ok 1 | intact fp 7/8 echo 3 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 4/5 | next off fp 8/8 | next-day lived fp 5/8
+('S1F', 320) n 9 off 8/8 echo 1 ok 0 | intact fp 8/8 echo 1 ok 2 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/7
+('S1F', 320) n 10 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 5/22
+('S1F', 320) n 11 off 7/8 echo 2 ok 2 | intact fp 7/8 echo 2 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 3/4
+('S1F', 320) n 12 off 7/8 echo 0 ok 0 | intact fp 6/8 echo 0 ok 2 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/6
+('S1F', 320) n 13 off 8/8 echo 0 ok 0 | intact fp 7/8 echo 0 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 5/5
+('S1F', 320) n 14 off 7/8 echo 1 ok 1 | intact fp 7/8 echo 1 ok 1 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/5
+('S1F', 320) n 15 off 8/8 echo 3 ok 1 | intact fp 8/8 echo 3 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('S1F', 321) n 3 off 7/8 echo 4 ok 0 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 3/8
+('S1F', 321) n 4 off 4/8 echo 1 ok 1 | intact fp 4/8 echo 2 ok 2 | frozen fp 4/8 | H-only 2/4 | never+neardup fp 4/5 | next off fp 3/8 | next-day lived fp 10/10
+('S1F', 321) n 6 off 8/8 echo 6 ok 1 | intact fp 8/8 echo 6 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 5/7
+('S1F', 321) n 7 off 7/8 echo 5 ok 0 | intact fp 6/8 echo 4 ok 1 | frozen fp 6/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 9/10
+('S1F', 321) n 8 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 3 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/8
+('S1F', 321) n 9 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 4/7
+('S1F', 321) n 10 off 8/8 echo 2 ok 2 | intact fp 8/8 echo 2 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 14/22
+('S1F', 321) n 11 off 7/8 echo 3 ok 0 | intact fp 7/8 echo 3 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 1/4
+('S1F', 321) n 12 off 8/8 echo 4 ok 0 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/6
+('S1F', 321) n 13 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/5
+('S1F', 321) n 14 off 8/8 echo 3 ok 0 | intact fp 8/8 echo 4 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 2/5
+('S1F', 321) n 15 off 8/8 echo 5 ok 1 | intact fp 8/8 echo 4 ok 1 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('M1', 319) n 5 off 8/8 echo 7 ok 0 | intact fp 3/8 echo 1 ok 3 | frozen fp 3/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 4/8 | next-day lived fp 7/8
+('M1', 319) n 6 off 4/8 echo 1 ok 2 | intact fp 1/8 echo 1 ok 6 | frozen fp 1/8 | H-only 2/4 | never+neardup fp 4/5 | next off fp 0/8 | next-day lived fp 6/7
+('M1', 319) n 9 off 8/8 echo 3 ok 0 | intact fp 0/8 echo 0 ok 5 | frozen fp 0/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 6/7
+('M1', 319) n 10 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 22/22
+('M1', 319) n 14 off 4/8 echo 4 ok 4 | intact fp 4/8 echo 4 ok 4 | frozen fp 4/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 5/5
+('M1', 319) n 15 off 5/8 echo 4 ok 1 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('M1', 320) n 10 off 4/8 echo 4 ok 3 | intact fp 0/8 echo 0 ok 5 | frozen fp 0/8 | H-only 2/4 | never+neardup fp 4/5 | next off fp 8/8 | next-day lived fp 4/22
+('M1', 320) n 11 off 8/8 echo 0 ok 0 | intact fp 8/8 echo 2 ok 3 | frozen fp 4/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 1/4
+('M1', 320) n 15 off 6/8 echo 5 ok 1 | intact fp 4/8 echo 4 ok 3 | frozen fp 4/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('M1', 321) n 11 off 4/8 echo 3 ok 2 | intact fp 3/8 echo 2 ok 3 | frozen fp 3/8 | H-only 1/4 | never+neardup fp 3/5 | next off fp 0/8 | next-day lived fp 1/4
+('AL', 322) n 4 off 8/8 echo 5 ok 2 | intact fp 8/8 echo 5 ok 2 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 10/10
+('AL', 322) n 5 off 5/8 echo 3 ok 3 | intact fp 5/8 echo 1 ok 3 | frozen fp 5/8 | H-only 1/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 4/8
+('AL', 322) n 6 off 5/8 echo 3 ok 3 | intact fp 7/8 echo 5 ok 2 | frozen fp 6/8 | H-only 1/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 1/7
+('AL', 322) n 7 off 7/8 echo 2 ok 1 | intact fp 7/8 echo 3 ok 1 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 9/10
+('AL', 322) n 8 off 6/8 echo 2 ok 2 | intact fp 4/8 echo 1 ok 3 | frozen fp 4/8 | H-only 3/4 | never+neardup fp 2/5 | next off fp 5/8 | next-day lived fp 4/8
+('AL', 322) n 9 off 5/8 echo 2 ok 0 | intact fp 5/8 echo 2 ok 0 | frozen fp 5/8 | H-only 3/4 | never+neardup fp 4/5 | next off fp 8/8 | next-day lived fp 3/7
+('AL', 322) n 10 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 2/8 | next-day lived fp 4/22
+('AL', 322) n 12 off 7/8 echo 2 ok 1 | intact fp 6/8 echo 1 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 6/6
+('AL', 322) n 13 off 8/8 echo 5 ok 0 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 5/5
+('AL', 322) n 14 off 7/8 echo 3 ok 0 | intact fp 7/8 echo 3 ok 0 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 5/5
+('AL', 322) n 15 off 8/8 echo 2 ok 0 | intact fp 8/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('S1FULL', 318) n 4 off 6/8 echo 5 ok 2 | intact fp 5/8 echo 4 ok 3 | frozen fp 7/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 8/10
+('S1FULL', 318) n 5 off 7/8 echo 5 ok 2 | intact fp 5/8 echo 5 ok 3 | frozen fp 4/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 1/8 | next-day lived fp 6/8
+('S1FULL', 318) n 7 off 8/8 echo 3 ok 0 | intact fp 8/8 echo 6 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 10/10
+('S1FULL', 318) n 8 off 8/8 echo 7 ok 0 | intact fp 8/8 echo 7 ok 0 | frozen fp 5/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 7/8 | next-day lived fp 7/8
+('S1FULL', 318) n 9 off 7/8 echo 4 ok 2 | intact fp 7/8 echo 4 ok 2 | frozen fp 7/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/8 | next-day lived fp 5/7
+('S1FULL', 318) n 11 off 5/8 echo 2 ok 3 | intact fp 5/8 echo 2 ok 3 | frozen fp 5/8 | H-only 3/4 | never+neardup fp 4/5 | next off fp 7/8 | next-day lived fp 4/4
+('S1FULL', 318) n 12 off 7/8 echo 5 ok 1 | intact fp 7/8 echo 5 ok 1 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp 8/8 | next-day lived fp 3/6
+('S1FULL', 318) n 13 off 8/8 echo 2 ok 0 | intact fp 7/8 echo 2 ok 0 | frozen fp 8/8 | H-only 4/4 | never+neardup fp 5/5 | next off fp 5/8 | next-day lived fp 5/5
+('S1FULL', 318) n 14 off 5/8 echo 2 ok 1 | intact fp 4/8 echo 2 ok 1 | frozen fp 4/8 | H-only 2/4 | never+neardup fp 5/5 | next off fp 6/8 | next-day lived fp 3/5
+('S1FULL', 318) n 15 off 6/8 echo 5 ok 1 | intact fp 7/8 echo 5 ok 0 | frozen fp 7/8 | H-only 3/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('B7d', 318) n 4 off 4/6 echo 3 ok 2 | intact fp 3/6 echo 2 ok 3 | frozen fp 5/6 | H-only 2/4 | never+neardup fp 5/5 | next off fp 5/6 | next-day lived fp 8/10
+('B7d', 318) n 5 off 5/6 echo 4 ok 2 | intact fp 2/6 echo 2 ok 4 | frozen fp 2/6 | H-only 4/4 | never+neardup fp 5/5 | next off fp 6/6 | next-day lived fp 6/8
+('B7d', 318) n 6 off 6/6 echo 3 ok 0 | intact fp 6/6 echo 3 ok 0 | frozen fp 6/6 | H-only 4/4 | never+neardup fp 5/5 | next off fp 6/6 | next-day lived fp 0/7
+('B7d', 318) n 7 off 6/6 echo 2 ok 0 | intact fp 6/6 echo 3 ok 0 | frozen fp 6/6 | H-only 4/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+('S7d', 318) n 5 off 5/6 echo 0 ok 1 | intact fp 5/6 echo 0 ok 1 | frozen fp 5/6 | H-only 3/4 | never+neardup fp 5/5 | next off fp 6/6 | next-day lived fp 6/8
+('S7d', 318) n 6 off 6/6 echo 0 ok 0 | intact fp 6/6 echo 0 ok 0 | frozen fp 6/6 | H-only 4/4 | never+neardup fp 5/5 | next off fp 0/6 | next-day lived fp 4/7
+('SAB7d', 318) n 4 off 5/6 echo 4 ok 1 | intact fp 2/6 echo 2 ok 4 | frozen fp 1/6 | H-only 3/4 | never+neardup fp 5/5 | next off fp 2/6 | next-day lived fp 10/10
+('SAB7d', 318) n 7 off 3/6 echo 0 ok 2 | intact fp 3/6 echo 0 ok 3 | frozen fp 3/6 | H-only 2/4 | never+neardup fp 5/5 | next off fp -/- | next-day lived fp -/-
+
+== C. flip count by night across 15-day lives (n lives flipping), and by seed
+by night {1: 1, 2: 2, 3: 6, 4: 8, 5: 8, 6: 12, 7: 11, 8: 13, 9: 15, 10: 14, 11: 15, 12: 13, 13: 15, 14: 15, 15: 16}
+by seed {318: '10/15', 319: '46/105', 320: '46/105', 321: '51/105', 322: '11/15'}
+319 {'Bg': [4, 5, 6, 7, 8, 10, 11, 13, 15], 'KP': [15], 'PRa': [3, 8, 9, 11, 12], 'PRl': [4, 6, 9, 10, 13], 'PRx': [5, 8, 9, 10, 11, 12, 13, 14, 15], 'S1F': [2, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'M1': [5, 6, 9, 10, 14, 15]}
+320 {'Bg': [3, 8, 9, 10, 11, 12, 13, 14, 15], 'KP': [6, 11, 12, 14], 'PRa': [9, 10, 11, 12, 13, 14, 15], 'PRl': [2, 3, 4, 6], 'PRx': [3, 6, 7, 8, 12, 13, 14, 15], 'S1F': [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'M1': [10, 11, 15]}
+321 {'Bg': [7, 8, 9, 10, 11, 12, 13, 14, 15], 'KP': [3, 9, 14], 'PRa': [1, 4, 6, 7, 13], 'PRl': [5, 6, 7, 8, 9, 10, 11, 13, 14, 15], 'PRx': [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'S1F': [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'M1': [11]}
+
+== D. flip vs adjacent non-flip nights (same life, night-1 and night+1), numeric fields: mean flip | mean prev | mean next | n pairs | share of pairs flip>prev
+eps         flip 68.2442 (n172) | prev 50.7857 | next 62.5641 | all non-flip n>=5 66.4821 | flip>prev 56/56
+pend        flip 5.9709 (n172) | prev 6.5 | next 6.0513 | all non-flip n>=5 5.7679 | flip>prev 16/56
+store       flip 68.2442 (n172) | prev 50.7857 | next 62.5641 | all non-flip n>=5 66.4821 | flip>prev 56/56
+anorm       flip 414.1716 (n172) | prev 266.6716 | next 333.8115 | all non-flip n>=5 327.5594 | flip>prev 56/56
+kl          flip 1.3716 (n154) | prev 0.7653 | next 0.9799 | all non-flip n>=5 0.8737 | flip>prev 39/49
+nll_on      flip 3.139 (n154) | prev 2.5465 | next 2.7772 | all non-flip n>=5 2.6778 | flip>prev 40/49
+rep0        flip 1.3799 (n168) | prev 1.4523 | next 1.2836 | all non-flip n>=5 1.0576 | flip>prev 29/53
+repN        flip 0.4629 (n172) | prev 0.398 | next 0.4632 | all non-flip n>=5 0.3896 | flip>prev 29/56
+keep0       flip 0.0372 (n168) | prev 0.0552 | next 0.0551 | all non-flip n>=5 0.078 | flip>prev 28/53
+keepN       flip 0.0317 (n172) | prev 0.0323 | next 0.0313 | all non-flip n>=5 0.045 | flip>prev 38/56
+keepkl      flip 0.0932 (n18) | prev 0.0976 | next 0.0959 | all non-flip n>=5 0.0972 | flip>prev 4/13
+sec         flip 1276.2221 (n172) | prev 1226.3393 | next 1251.0872 | all non-flip n>=5 1274.7616 | flip>prev 32/56
+rs_AB       flip 0.1376 (n172) | prev 0.1358 | next 0.1264 | all non-flip n>=5 0.104 | flip>prev 5/56
+rs_D        flip 0.088 (n172) | prev 0.0645 | next 0.0827 | all non-flip n>=5 0.0791 | flip>prev 27/56
+rs_E        flip 0.0481 (n172) | prev 0.0394 | next 0.0461 | all non-flip n>=5 0.044 | flip>prev 31/56
+rs_F        flip 0.1312 (n172) | prev 0.1129 | next 0.1283 | all non-flip n>=5 0.1193 | flip>prev 34/56
+rs_H        flip 0.0521 (n172) | prev 0.0669 | next 0.0524 | all non-flip n>=5 0.0437 | flip>prev 6/56
+rs_T        flip 0.0514 (n172) | prev 0.0447 | next 0.0492 | all non-flip n>=5 0.0434 | flip>prev 34/56
+rs_other    flip 0.4916 (n172) | prev 0.5355 | next 0.5148 | all non-flip n>=5 0.5665 | flip>prev 20/56
+lv_n        flip 8.5 (n172) | prev 9.2321 | next 8.5897 | all non-flip n>=5 8.375 | flip>prev 19/56
+lv_fp       flip 5.3953 (n172) | prev 4.9821 | next 5.2308 | all non-flip n>=5 4.5625 | flip>prev 24/56
+lv_too      flip 0.5233 (n172) | prev 0.3214 | next 0.8718 | all non-flip n>=5 0.3571 | flip>prev 10/56
+lv_mirror   flip 0.3198 (n172) | prev 0.2679 | next 0.641 | all non-flip n>=5 0.4018 | flip>prev 5/56
+lv_my       flip 1.0058 (n172) | prev 0.9107 | next 0.5128 | all non-flip n>=5 0.6518 | flip>prev 19/56
+lv_qfp      flip 0.5116 (n172) | prev 0.3393 | next 0.3077 | all non-flip n>=5 0.2679 | flip>prev 13/56
+lv_own      flip 0.6047 (n172) | prev 0.4464 | next 0.4359 | all non-flip n>=5 0.3929 | flip>prev 18/56
+lv_tell     flip 3.4651 (n172) | prev 3.9107 | next 3.5128 | all non-flip n>=5 3.2946 | flip>prev 22/56
+lv_fpuser   flip 6.6744 (n172) | prev 7.3036 | next 6.7436 | all non-flip n>=5 6.5982 | flip>prev 23/56
+lv_recalled flip 3.9128 (n172) | prev 4.1429 | next 4.1795 | all non-flip n>=5 4.0357 | flip>prev 24/56
+collapse    flip 0.1765 (n172) | prev 0.1065 | next 0.1333 | all non-flip n>=5 0.1009 | flip>prev 27/56
+dT          flip 0.7765 (n164) | prev 0.5951 | next 0.7247 | all non-flip n>=5 0.6363 | flip>prev 27/52
+d_anorm     flip 38.786 (n171) | prev 34.6462 | next 31.5878 | all non-flip n>=5 27.4454 | flip>prev 28/54
+d_kl        flip 0.1377 (n153) | prev 0.1106 | next 0.1343 | all non-flip n>=5 0.0939 | flip>prev 22/47
+
+== G. per arm (nights 2-15): flips, off_fp histogram (0-1 / 2-5 / 6-8), P(flip|prev flip), P(flip|prev not), mean KL & adapter norm at n15; P(flip | lived own-talk that day) with prev night non-flip
+Bg      flips 27/42 hist [10, 9, 23] P(f|f) 20/24 P(f|nf) 7/18 | KL_last 2.468 anorm_last 656.3 | own-talk day: 4/10 vs none 3/8 | lived 'my' reply: 3/9 vs none 4/9
+KP      flips 8/42 hist [31, 4, 7] P(f|f) 1/7 P(f|nf) 7/35 | KL_last 0.323 anorm_last 363.0 | own-talk day: 5/10 vs none 2/25 | lived 'my' reply: 5/8 vs none 2/27
+PRa     flips 16/42 hist [19, 13, 10] P(f|f) 9/16 P(f|nf) 7/26 | KL_last 2.359 anorm_last 613.3 | own-talk day: 5/14 vs none 2/12 | lived 'my' reply: 4/11 vs none 3/15
+PRl     flips 19/42 hist [7, 19, 16] P(f|f) 11/18 P(f|nf) 8/24 | KL_last 2.044 anorm_last 597.2 | own-talk day: 7/17 vs none 1/7 | lived 'my' reply: 6/16 vs none 2/8
+PRx     flips 28/42 hist [10, 10, 22] P(f|f) 22/25 P(f|nf) 6/17 | KL_last 2.073 anorm_last 606.2 | own-talk day: 1/6 vs none 5/11 | lived 'my' reply: 0/3 vs none 6/14
+S1F     flips 34/42 hist [5, 5, 32] P(f|f) 28/31 P(f|nf) 6/11 | KL_last 2.723 anorm_last 675.9 | own-talk day: 5/7 vs none 1/4 | lived 'my' reply: 4/6 vs none 2/5
+M1      flips 10/42 hist [29, 8, 5] P(f|f) 4/8 P(f|nf) 6/34 | KL_last 0.343 anorm_last 327.9 | own-talk day: 4/15 vs none 2/19 | lived 'my' reply: 2/10 vs none 4/24
+AL      flips 11/14 hist [0, 6, 8] P(f|f) 9/10 P(f|nf) 2/4 | KL_last 2.472 anorm_last 692.3 | own-talk day: 0/2 vs none 2/2 | lived 'my' reply: 0/2 vs none 2/2
+S1FULL  flips 10/14 hist [4, 2, 8] P(f|f) 7/9 P(f|nf) 3/5 | KL_last None anorm_last 671.6 | own-talk day: 1/2 vs none 2/3 | lived 'my' reply: 1/2 vs none 2/3
+B7d     flips 4/6 hist [2, 2, 2] P(f|f) 3/3 P(f|nf) 1/3 | KL_last None anorm_last 375.6 | own-talk day: 0/1 vs none 1/2 | lived 'my' reply: 0/1 vs none 1/2
+S7d     flips 2/6 hist [4, 1, 1] P(f|f) 1/2 P(f|nf) 1/4 | KL_last None anorm_last 169.0 | own-talk day: 0/1 vs none 1/3 | lived 'my' reply: 0/1 vs none 1/3
+SAB7d   flips 2/6 hist [3, 3, 0] P(f|f) 0/1 P(f|nf) 2/5 | KL_last None anorm_last 149.4 | own-talk day: 1/2 vs none 1/3 | lived 'my' reply: 1/2 vs none 1/3
+SABE7d  flips 0/6 hist [6, 0, 0] P(f|f) 0/0 P(f|nf) 0/6 | KL_last None anorm_last 59.2 | own-talk day: 0/3 vs none 0/3 | lived 'my' reply: 0/3 vs none 0/3
+
+== H. keep-bank arms (KP, M1) only: flip vs non-flip nights (n>=2), mean of each field
+KP  eps         flip 75.0000 (n8, min 28.000 max 98.000) | non-flip 59.0294 (n34, sd 24.9075)
+KP  pend        flip 5.8750 (n8, min 2.000 max 18.000) | non-flip 6.5588 (n34, sd 3.8209)
+KP  store       flip 75.0000 (n8, min 28.000 max 98.000) | non-flip 59.0294 (n34, sd 24.9075)
+KP  anorm       flip 282.7818 (n8, min 139.559 max 363.722) | non-flip 239.1245 (n34, sd 75.8519)
+KP  kl          flip 0.2615 (n8, min 0.127 max 0.351) | non-flip 0.2283 (n34, sd 0.0628)
+KP  nll_on      flip 2.1567 (n8, min 2.022 max 2.258) | non-flip 2.1003 (n34, sd 0.0729)
+KP  rep0        flip 0.4472 (n8, min 0.214 max 0.583) | non-flip 0.5718 (n34, sd 0.7502)
+KP  repN        flip 0.2625 (n8, min 0.128 max 0.357) | non-flip 0.3641 (n34, sd 0.1278)
+KP  keep0       flip 0.1427 (n8, min 0.076 max 0.202) | non-flip 0.1394 (n34, sd 0.0819)
+KP  keepN       flip 0.0560 (n8, min 0.032 max 0.101) | non-flip 0.0685 (n34, sd 0.0407)
+KP  keepkl      flip 0.0999 (n8, min 0.092 max 0.111) | non-flip 0.0980 (n34, sd 0.0100)
+KP  sec         flip 1159.0125 (n8, min 1139.200 max 1192.900) | non-flip 1152.8324 (n34, sd 19.4878)
+KP  rs_AB       flip 0.1759 (n8, min 0.061 max 0.276) | non-flip 0.1473 (n34, sd 0.0746)
+KP  rs_D        flip 0.0922 (n8, min 0.029 max 0.188) | non-flip 0.0794 (n34, sd 0.0550)
+KP  rs_E        flip 0.0478 (n8, min 0.031 max 0.081) | non-flip 0.0473 (n34, sd 0.0199)
+KP  rs_F        flip 0.1227 (n8, min 0.102 max 0.188) | non-flip 0.1394 (n34, sd 0.0405)
+KP  rs_H        flip 0.0591 (n8, min 0.018 max 0.092) | non-flip 0.0654 (n34, sd 0.0297)
+KP  rs_T        flip 0.0522 (n8, min 0.035 max 0.064) | non-flip 0.0536 (n34, sd 0.0108)
+KP  rs_other    flip 0.4499 (n8, min 0.351 max 0.517) | non-flip 0.4678 (n34, sd 0.0439)
+KP  lv_n        flip 8.5000 (n8, min 4.000 max 22.000) | non-flip 9.1176 (n34, sd 4.2549)
+KP  lv_fp       flip 5.7500 (n8, min 2.000 max 11.000) | non-flip 5.1176 (n34, sd 4.0130)
+KP  lv_too      flip 0.3750 (n8, min 0.000 max 1.000) | non-flip 0.0000 (n34, sd 0.0000)
+KP  lv_mirror   flip 0.7500 (n8, min 0.000 max 5.000) | non-flip 0.3235 (n34, sd 1.2059)
+KP  lv_my       flip 0.7500 (n8, min 0.000 max 2.000) | non-flip 0.2941 (n34, sd 0.8235)
+KP  lv_qfp      flip 0.5000 (n8, min 0.000 max 2.000) | non-flip 0.1765 (n34, sd 0.4518)
+KP  lv_own      flip 0.7500 (n8, min 0.000 max 1.000) | non-flip 0.2353 (n34, sd 0.4242)
+KP  lv_tell     flip 3.3750 (n8, min 0.000 max 16.000) | non-flip 3.9706 (n34, sd 3.8767)
+KP  lv_fpuser   flip 7.1250 (n8, min 2.000 max 22.000) | non-flip 7.1176 (n34, sd 4.2618)
+KP  lv_recalled flip 3.7500 (n8, min 2.000 max 7.000) | non-flip 4.2059 (n34, sd 1.5677)
+KP  collapse    flip 0.2125 (n8, min 0.050 max 0.550) | non-flip 0.0647 (n34, sd 0.0310)
+KP  dT          flip 0.7896 (n8, min 0.097 max 1.258) | non-flip 0.4481 (n34, sd 0.3804)
+KP  d_anorm     flip 16.1998 (n8, min 7.024 max 32.786) | non-flip 21.0185 (n34, sd 7.6466)
+KP  d_kl        flip 0.0064 (n8, min -0.053 max 0.058) | non-flip 0.0202 (n34, sd 0.0410)
+M1  eps         flip 74.8000 (n10, min 40.000 max 98.000) | non-flip 58.0938 (n32, sd 25.8908)
+M1  pend        flip 7.2000 (n10, min 2.000 max 18.000) | non-flip 6.1875 (n32, sd 3.4318)
+M1  store       flip 74.8000 (n10, min 40.000 max 98.000) | non-flip 58.0938 (n32, sd 25.8908)
+M1  anorm       flip 258.5387 (n10, min 165.707 max 328.564) | non-flip 217.1962 (n32, sd 68.1547)
+M1  kl          flip 0.2984 (n10, min 0.209 max 0.389) | non-flip 0.2891 (n32, sd 0.0726)
+M1  nll_on      flip 2.1252 (n10, min 2.053 max 2.197) | non-flip 2.1106 (n32, sd 0.0725)
+M1  rep0        flip 0.2022 (n10, min 0.100 max 0.408) | non-flip 0.3489 (n32, sd 0.4612)
+M1  repN        flip 0.1848 (n10, min 0.109 max 0.298) | non-flip 0.1836 (n32, sd 0.0485)
+M1  keep0       flip 0.1043 (n10, min 0.063 max 0.131) | non-flip 0.1158 (n32, sd 0.0711)
+M1  keepN       flip 0.0700 (n10, min 0.028 max 0.150) | non-flip 0.0557 (n32, sd 0.0473)
+M1  keepkl      flip 0.0877 (n10, min 0.078 max 0.109) | non-flip 0.0902 (n32, sd 0.0087)
+M1  sec         flip 1293.8200 (n10, min 1212.600 max 1365.900) | non-flip 1254.3594 (n32, sd 45.1649)
+M1  rs_AB       flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_D        flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_E        flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_F        flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_H        flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_T        flip 0.0000 (n10, min 0.000 max 0.000) | non-flip 0.0000 (n32, sd 0.0000)
+M1  rs_other    flip 1.0000 (n10, min 1.000 max 1.000) | non-flip 1.0000 (n32, sd 0.0000)
+M1  lv_n        flip 9.9000 (n10, min 5.000 max 22.000) | non-flip 8.7188 (n32, sd 3.8098)
+M1  lv_fp       flip 4.8000 (n10, min 1.000 max 9.000) | non-flip 3.5000 (n32, sd 4.6704)
+M1  lv_too      flip 1.5000 (n10, min 0.000 max 4.000) | non-flip 1.4688 (n32, sd 3.7332)
+M1  lv_mirror   flip 0.7000 (n10, min 0.000 max 2.000) | non-flip 1.2188 (n32, sd 3.2952)
+M1  lv_my       flip 0.4000 (n10, min 0.000 max 2.000) | non-flip 0.4688 (n32, sd 0.8655)
+M1  lv_qfp      flip 0.3000 (n10, min 0.000 max 2.000) | non-flip 0.2812 (n32, sd 0.4496)
+M1  lv_own      flip 0.8000 (n10, min 0.000 max 1.000) | non-flip 0.3750 (n32, sd 0.4841)
+M1  lv_tell     flip 5.0000 (n10, min 0.000 max 16.000) | non-flip 3.5000 (n32, sd 3.4460)
+M1  lv_fpuser   flip 8.3000 (n10, min 3.000 max 22.000) | non-flip 6.7500 (n32, sd 3.8891)
+M1  lv_recalled flip 4.6000 (n10, min 2.000 max 7.000) | non-flip 3.8125 (n32, sd 1.4238)
+M1  collapse    flip 0.0600 (n10, min 0.050 max 0.100) | non-flip 0.0531 (n32, sd 0.0121)
+M1  dT          flip 0.3678 (n10, min -0.288 max 1.080) | non-flip 0.3904 (n32, sd 0.4001)
+M1  d_anorm     flip 14.3045 (n10, min 5.125 max 23.724) | non-flip 18.5236 (n32, sd 7.0287)
+M1  d_kl        flip -0.0076 (n10, min -0.056 max 0.103) | non-flip 0.0276 (n32, sd 0.0671)
+Bg  eps         flip 72.2222 (n27, min 28.000 max 98.000) | non-flip 43.8000 (n15, sd 22.1727)
+Bg  pend        flip 6.1111 (n27, min 2.000 max 18.000) | non-flip 7.0000 (n15, sd 3.2660)
+Bg  store       flip 72.2222 (n27, min 28.000 max 98.000) | non-flip 43.8000 (n15, sd 22.1727)
+Bg  anorm       flip 473.7169 (n27, min 148.754 max 672.721) | non-flip 269.0468 (n15, sd 157.0833)
+Bg  kl          flip 1.6529 (n27, min 0.505 max 2.693) | non-flip 0.9074 (n15, sd 0.5922)
+Bg  nll_on      flip 3.4085 (n27, min 2.239 max 4.480) | non-flip 2.6626 (n15, sd 0.6211)
+Bg  rep0        flip 0.7353 (n27, min 0.175 max 3.848) | non-flip 0.5517 (n15, sd 0.7488)
+Bg  repN        flip 0.4605 (n27, min 0.133 max 0.955) | non-flip 0.4242 (n15, sd 0.1794)
+Bg  keep0       flip 0.0286 (n27, min 0.012 max 0.074) | non-flip 0.0211 (n15, sd 0.0084)
+Bg  keepN       flip 0.0261 (n27, min 0.012 max 0.053) | non-flip 0.0237 (n15, sd 0.0123)
+Bg  sec         flip 659.1037 (n27, min 632.700 max 690.100) | non-flip 664.4333 (n15, sd 20.6472)
+Bg  rs_AB       flip 0.1466 (n27, min 0.053 max 0.282) | non-flip 0.1638 (n15, sd 0.0693)
+Bg  rs_D        flip 0.0922 (n27, min 0.022 max 0.188) | non-flip 0.0631 (n15, sd 0.0579)
+Bg  rs_E        flip 0.0491 (n27, min 0.031 max 0.078) | non-flip 0.0443 (n15, sd 0.0264)
+Bg  rs_F        flip 0.1437 (n27, min 0.092 max 0.198) | non-flip 0.1228 (n15, sd 0.0369)
+Bg  rs_H        flip 0.0565 (n27, min 0.018 max 0.092) | non-flip 0.0781 (n15, sd 0.0339)
+Bg  rs_T        flip 0.0541 (n27, min 0.035 max 0.072) | non-flip 0.0519 (n15, sd 0.0120)
+Bg  rs_other    flip 0.4580 (n27, min 0.351 max 0.537) | non-flip 0.4757 (n15, sd 0.0410)
+Bg  lv_n        flip 8.7037 (n27, min 4.000 max 22.000) | non-flip 9.5333 (n15, sd 3.3039)
+Bg  lv_fp       flip 3.6667 (n27, min 1.000 max 10.000) | non-flip 5.0667 (n15, sd 3.6234)
+Bg  lv_too      flip 0.4444 (n27, min 0.000 max 5.000) | non-flip 0.3333 (n15, sd 1.2472)
+Bg  lv_mirror   flip 0.2222 (n27, min 0.000 max 2.000) | non-flip 0.2000 (n15, sd 0.5416)
+Bg  lv_my       flip 1.3704 (n27, min 0.000 max 7.000) | non-flip 1.6000 (n15, sd 3.3025)
+Bg  lv_qfp      flip 0.7407 (n27, min 0.000 max 3.000) | non-flip 0.4000 (n15, sd 0.4899)
+Bg  lv_own      flip 0.7037 (n27, min 0.000 max 1.000) | non-flip 0.5333 (n15, sd 0.4989)
+Bg  lv_tell     flip 3.6667 (n27, min 0.000 max 16.000) | non-flip 4.2000 (n15, sd 3.1454)
+Bg  lv_fpuser   flip 7.0000 (n27, min 2.000 max 22.000) | non-flip 7.3333 (n15, sd 3.3797)
+Bg  lv_recalled flip 3.9630 (n27, min 2.000 max 7.000) | non-flip 4.1333 (n15, sd 1.5434)
+Bg  collapse    flip 0.1889 (n27, min 0.100 max 0.750) | non-flip 0.1200 (n15, sd 0.0653)
+Bg  dT          flip 0.7853 (n27, min 0.006 max 2.043) | non-flip 0.5472 (n15, sd 0.2709)
+Bg  d_anorm     flip 39.0146 (n27, min 18.974 max 64.521) | non-flip 50.3413 (n15, sd 14.5077)
+Bg  d_kl        flip 0.1415 (n27, min -0.397 max 0.392) | non-flip 0.2069 (n15, sd 0.1949)
+
+== I. lived own-talk rows on KP/M1 flip days (brain reply holding my/mine, or 'too', or mirror)
+KP 319 day 15 prev flip 0 | [sameday] What does my nephew do for work? -> My cousin's name is Philippa.
+KP 320 day 6 prev flip 0 | [tell] I had porridge with blueberries for breakfast. -> That's a nice breakfast. I've heard of people who do that too. What kind of porr || [sameday] Where did the candle in my drawer come from? -> It came from my grandmother's house in Tavistock.
+KP 320 day 11 prev flip 0 | [small] I think autumn is my favourite season. -> Autumn is my favourite season too. I love the way it makes everything feel like 
+KP 320 day 12 prev flip 1 | [small] I've been trying to drink more water lately. -> That's a good idea. I've been trying to drink more water too.
+KP 320 day 14 prev flip 0 | none
+KP 321 day 3 prev flip 0 | [remention] Hi again! Do you remember my name? -> Of course, you're Dan, my friend. || [remention] What should I call you? -> I'm Dan, my friend.
+KP 321 day 9 prev flip 0 | none
+KP 321 day 14 prev flip 0 | [small] I rearranged the furniture in my living room. -> That's a good idea! I'm always looking for new ways to make my home more comfort
+M1 319 day 5 prev flip 0 | [tell] My goldfish is called Oswin. -> That's a cute name! I have a goldfish named Oswin too. || [tell] I painted my front door teal last year. -> That's a nice color! I wish I could help you with that too. || [tell] I got caught in a thunderstorm on the way to the c -> That sounds like a good movie! I wish I could help you with that too.
+M1 319 day 6 prev flip 1 | [tell] My dentist is called Dr Venkataraman. -> That's a nice name! I have a dentist named Dr Venkataraman too. || [small] I think autumn is my favourite season. -> That's a nice season! I think autumn is my favourite season too.
+M1 319 day 9 prev flip 0 | [tell] On a sunny afternoon at the market I bought a pot  -> That sounds like a good idea. I wish I could help you with that too. || [small] I've been humming the same song all week. -> That's a good way to relax! I've been humming the same song all week too. || [sameday] Who ran the honey stall? -> That's a good question. I wish I could help you with that too.
+M1 319 day 10 prev flip 1 | [tell] I always do the crossword on the train. -> That sounds like a nice way to relax! I wish I could help you with that too. || [small] I rearranged the furniture in my living room. -> That's a nice way to relax! I wish I could help you with that too. || [tell] I ride a blue Vespa to the station. -> That sounds like a nice way to get to the station! I wish I could help you with 
+M1 319 day 14 prev flip 0 | [remention] What is my cat called? -> My cat is called Pixel.
+M1 319 day 15 prev flip 1 | [tell] My nephew works as a baker. -> That sounds like a nice job! I'm a baker too.
+M1 320 day 10 prev flip 0 | none
+M1 320 day 11 prev flip 1 | [small] I think autumn is my favourite season. -> I like it too.
+M1 320 day 15 prev flip 0 | none
+M1 321 day 11 prev flip 0 | [remention] Hi again! Do you remember my name? -> Of course, you're Dan, my friend. || [remention] What's your name? -> My name is Nova.
+
+== E. per-night table (15-day lives, arms KP/Bg/M1), fields
+('Bg', 319) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 4 | 8 5 51.6511 0.150522 1.296>0.157 0.0>0.0124 - | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 7 3 3 | H4
+  2 0/8  0 0 | 21 13 83.1627 0.322246 0.263>0.188 0.0185>0.0195 - | 0.268/0.0/0.0/0.067/0.092/0.033/0.54 | 15 2 0 1 | AB8,F2
+  3 0/8  0 2 | 28 7 155.5875 0.485874 0.13>0.341 0.013>0.0123 - | 0.177/0.042/0.028/0.115/0.094/0.05/0.493 | 11 4 0 0 | D1,E1,F2
+  4 6/8* 4 4 | 34 6 220.1087 0.638065 2.842>0.231 0.0227>0.0225 - | 0.139/0.052/0.047/0.138/0.072/0.064/0.488 | 8 7 1 0 | E1,F2
+  5 7/8* 5 5 | 40 6 250.0172 0.671092 0.478>0.291 0.0238>0.0156 - | 0.111/0.083/0.058/0.175/0.057/0.048/0.467 | 10 9 5 0 | D1,E1,F2
+  6 6/8* 3 6 | 46 6 302.7186 1.029948 0.419>0.917 0.0193>0.0145 - | 0.091/0.051/0.065/0.182/0.046/0.062/0.503 | 8 6 0 0 | E1,F2
+  7 8/8* 4 4 | 51 5 342.8492 1.025267 0.242>0.488 0.0124>0.0156 - | 0.078/0.08/0.052/0.191/0.039/0.072/0.488 | 7 4 2 0 | F2
+  8 7/8* 6 6 | 57 6 385.3879 1.257217 0.196>0.436 0.0216>0.0232 - | 0.066/0.141/0.062/0.189/0.033/0.055/0.454 | 10 4 0 1 | D1,E1,F2
+  9 0/8  0 1 | 63 6 451.8387 2.133734 0.241>0.585 0.0164>0.0574 - | 0.058/0.136/0.069/0.192/0.029/0.065/0.451 | 8 7 0 0 | E1,F2
+ 10 5/8* 4 3 | 68 5 470.8125 1.736475 2.43>0.17 0.0738>0.0122 - | 0.053/0.163/0.057/0.198/0.027/0.055/0.446 | 7 1 0 0 | D1,F2
+ 11 4/8* 3 4 | 86 18 504.7986 1.65804 0.671>0.955 0.0331>0.0386 - | 0.282/0.144/0.037/0.124/0.019/0.036/0.358 | 22 4 0 1 | AB16
+ 12 2/8  0 0 | 89 3 538.8029 1.678023 0.779>0.45 0.0259>0.0312 - | 0.235/0.154/0.036/0.12/0.019/0.05/0.385 | 4 4 0 0 | 
+ 13 8/8* 3 4 | 93 4 571.1542 1.897556 0.862>0.574 0.0378>0.0211 - | 0.207/0.149/0.035/0.115/0.019/0.061/0.414 | 6 3 1 0 | D1
+ 14 3/8  2 2 | 95 2 613.879 2.085175 0.66>0.143 0.0185>0.046 - | 0.181/0.193/0.032/0.107/0.018/0.053/0.415 | 5 5 0 2 | 
+ 15 7/8* 4 4 | 98 3 637.0366 2.093431 0.292>0.174 0.0383>0.0284 - | 0.168/0.188/0.031/0.104/0.018/0.05/0.441 | 5 3 0 0 | D1
+('Bg', 320) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 4 | 8 5 56.037 0.17669 1.453>0.127 0.0>0.0138 - | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 2 0 0 | H4
+  2 0/8  0 0 | 21 13 113.0152 0.354822 0.158>0.344 0.0135>0.0126 - | 0.274/0.0/0.0/0.065/0.128/0.032/0.501 | 15 2 0 0 | AB8,F2
+  3 4/8* 3 4 | 28 7 148.7536 0.504915 3.848>0.208 0.0235>0.0149 - | 0.19/0.043/0.043/0.102/0.092/0.051/0.48 | 11 10 0 0 | D1,E1,F2
+  4 0/8  0 0 | 34 6 194.688 0.663342 0.207>0.441 0.0182>0.0168 - | 0.142/0.063/0.055/0.123/0.1/0.062/0.454 | 8 7 5 0 | E1,F2
+  5 3/8  1 1 | 40 6 260.6728 0.829201 0.307>0.911 0.0186>0.0209 - | 0.113/0.113/0.063/0.137/0.098/0.046/0.431 | 10 7 0 0 | D1,E1,F2
+  6 3/8  0 0 | 46 6 327.7248 0.992943 0.409>0.503 0.0219>0.028 - | 0.094/0.071/0.081/0.149/0.069/0.06/0.475 | 8 8 0 0 | E1,F2
+  7 3/8  1 1 | 51 5 365.8809 1.203699 0.188>0.416 0.047>0.0209 - | 0.084/0.061/0.066/0.181/0.06/0.072/0.476 | 7 0 0 0 | F2
+  8 8/8* 4 5 | 57 6 398.9243 1.133743 0.322>0.33 0.0145>0.0309 - | 0.068/0.118/0.07/0.174/0.088/0.054/0.429 | 10 8 0 0 | D1,E1,F2
+  9 7/8* 3 3 | 63 6 442.7431 1.41237 0.404>0.171 0.023>0.0119 - | 0.062/0.09/0.078/0.183/0.069/0.065/0.453 | 8 6 1 0 | E1,F2
+ 10 8/8* 3 3 | 68 5 482.1312 1.604069 0.204>0.599 0.031>0.0295 - | 0.056/0.143/0.065/0.188/0.057/0.054/0.438 | 7 2 0 0 | D1,F2
+ 11 8/8* 2 1 | 86 18 528.4899 1.897287 0.462>0.226 0.0191>0.0361 - | 0.276/0.114/0.041/0.115/0.069/0.035/0.351 | 22 1 0 0 | AB16
+ 12 8/8* 0 2 | 89 3 572.8491 2.131514 0.603>0.797 0.031>0.0335 - | 0.237/0.098/0.042/0.114/0.059/0.05/0.399 | 4 1 0 0 | 
+ 13 8/8* 1 2 | 93 4 596.3342 2.118025 0.672>0.133 0.0223>0.0231 - | 0.202/0.138/0.039/0.106/0.051/0.059/0.404 | 6 2 0 0 | D1
+ 14 8/8* 1 4 | 95 2 648.4 2.448405 0.432>0.895 0.0241>0.0379 - | 0.185/0.151/0.038/0.103/0.047/0.054/0.423 | 5 3 0 0 | 
+ 15 8/8* 2 2 | 98 3 672.7208 2.69338 0.532>0.73 0.0352>0.0253 - | 0.16/0.167/0.034/0.092/0.074/0.047/0.427 | 5 3 2 0 | D1
+('Bg', 321) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 52.558 0.151964 1.453>0.259 0.0>0.0113 - | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 2 0 0 | H4
+  2 0/8  0 0 | 21 13 109.8611 0.379926 3.273>0.342 0.0305>0.019 - | 0.263/0.0/0.0/0.066/0.13/0.033/0.509 | 15 15 0 0 | AB8,F2
+  3 0/8  0 0 | 28 7 135.2984 0.436637 0.295>0.298 0.0176>0.0156 - | 0.2/0.029/0.043/0.102/0.092/0.051/0.483 | 11 3 0 0 | D1,E1,F2
+  4 1/8  0 0 | 34 6 170.9792 0.438116 0.501>0.545 0.0173>0.0157 - | 0.155/0.021/0.058/0.13/0.074/0.065/0.496 | 8 8 0 0 | E1,F2
+  5 1/8  0 0 | 40 6 227.8551 0.648064 0.451>0.545 0.0135>0.0161 - | 0.118/0.038/0.064/0.14/0.1/0.047/0.494 | 10 2 0 0 | D1,E1,F2
+  6 0/8  0 0 | 46 6 286.455 0.95921 0.413>0.311 0.0256>0.0234 - | 0.095/0.026/0.069/0.148/0.069/0.06/0.533 | 8 2 0 0 | E1,F2
+  7 8/8* 2 5 | 51 5 349.3355 1.156554 0.546>0.828 0.0164>0.0527 - | 0.083/0.022/0.056/0.177/0.059/0.071/0.533 | 7 1 0 0 | F2
+  8 8/8* 6 5 | 57 6 395.4878 1.316953 0.381>0.179 0.0363>0.0184 - | 0.068/0.037/0.064/0.183/0.087/0.054/0.507 | 10 1 0 0 | D1,E1,F2
+  9 8/8* 5 4 | 63 6 435.9283 1.557381 0.461>0.394 0.0299>0.0392 - | 0.061/0.03/0.071/0.188/0.068/0.064/0.517 | 8 2 0 0 | E1,F2
+ 10 8/8* 3 2 | 68 5 473.4308 1.730837 0.477>0.386 0.0246>0.0317 - | 0.056/0.052/0.06/0.193/0.086/0.054/0.499 | 7 3 0 1 | D1,F2
+ 11 8/8* 0 1 | 86 18 523.2655 1.833637 0.661>0.576 0.0327>0.0269 - | 0.274/0.03/0.038/0.117/0.075/0.035/0.432 | 22 4 0 0 | AB16
+ 12 8/8* 6 4 | 89 3 560.983 2.029651 0.384>0.136 0.0281>0.0304 - | 0.231/0.029/0.038/0.115/0.063/0.049/0.475 | 4 3 0 0 | 
+ 13 8/8* 3 4 | 93 4 596.6846 2.211866 0.325>0.899 0.0433>0.0245 - | 0.2/0.049/0.036/0.108/0.055/0.059/0.494 | 6 2 0 1 | D1
+ 14 5/8* 4 4 | 95 2 620.0098 2.223963 0.533>0.568 0.0225>0.0262 - | 0.186/0.057/0.035/0.107/0.051/0.054/0.51 | 5 4 0 2 | 
+ 15 8/8* 3 3 | 98 3 659.0011 2.616021 0.175>0.142 0.0324>0.0188 - | 0.167/0.07/0.033/0.099/0.046/0.049/0.537 | 5 2 0 0 | D1
+('KP', 319) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 79.6213 0.06672 1.296>0.162 0.0>0.0734 0.1033 | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 7 3 3 | H4
+  2 0/8  0 0 | 21 13 102.3573 0.097539 0.257>0.189 0.0423>0.0429 0.0711 | 0.268/0.0/0.0/0.067/0.092/0.033/0.54 | 15 13 0 0 | AB8,F2
+  3 1/8  1 0 | 28 7 125.7613 0.230631 0.156>0.166 0.0318>0.056 0.0771 | 0.177/0.042/0.028/0.115/0.094/0.05/0.493 | 11 2 0 0 | D1,E1,F2
+  4 3/8  1 0 | 34 6 150.6569 0.137365 2.481>0.402 0.077>0.0559 0.0896 | 0.139/0.052/0.047/0.138/0.072/0.064/0.488 | 8 7 0 0 | E1,F2
+  5 0/8  0 2 | 40 6 167.6953 0.160597 0.498>0.481 0.096>0.1305 0.0814 | 0.111/0.083/0.058/0.175/0.057/0.048/0.467 | 10 7 0 0 | D1,E1,F2
+  6 1/8  0 0 | 46 6 190.3926 0.178237 0.482>0.357 0.0993>0.0346 0.089 | 0.091/0.051/0.065/0.182/0.046/0.062/0.503 | 8 8 0 0 | E1,F2
+  7 0/8  0 0 | 51 5 210.3254 0.210419 0.318>0.233 0.1133>0.0282 0.099 | 0.078/0.08/0.052/0.191/0.039/0.072/0.488 | 7 6 0 1 | F2
+  8 0/8  0 0 | 57 6 234.4362 0.218316 0.208>0.393 0.2677>0.0522 0.1028 | 0.066/0.141/0.062/0.189/0.033/0.055/0.454 | 10 10 0 1 | D1,E1,F2
+  9 0/8  0 1 | 63 6 261.48 0.244974 0.186>0.316 0.0866>0.1198 0.0917 | 0.058/0.136/0.069/0.192/0.029/0.065/0.451 | 8 6 0 0 | E1,F2
+ 10 0/8  0 0 | 68 5 277.2755 0.262239 0.272>0.496 0.1057>0.0471 0.0989 | 0.053/0.163/0.057/0.198/0.027/0.055/0.446 | 7 2 0 0 | D1,F2
+ 11 0/8  0 0 | 86 18 295.4247 0.270827 0.526>0.588 0.1298>0.0832 0.0881 | 0.282/0.144/0.037/0.124/0.019/0.036/0.358 | 22 4 0 0 | AB16
+ 12 3/8  3 3 | 89 3 310.6089 0.269662 0.481>0.247 0.2887>0.0352 0.1096 | 0.235/0.154/0.036/0.12/0.019/0.05/0.385 | 4 4 0 0 | 
+ 13 1/8  1 0 | 93 4 328.993 0.284579 0.531>0.302 0.065>0.0684 0.1117 | 0.207/0.149/0.035/0.115/0.019/0.061/0.414 | 6 3 0 0 | D1
+ 14 2/8  2 2 | 95 2 341.4189 0.292853 0.594>0.453 0.1078>0.0562 0.1121 | 0.181/0.193/0.032/0.107/0.018/0.053/0.415 | 5 2 0 0 | 
+ 15 6/8* 0 7 | 98 3 357.8734 0.351011 0.446>0.259 0.1589>0.0571 0.0922 | 0.168/0.188/0.031/0.104/0.018/0.05/0.441 | 5 2 0 0 | D1
+('KP', 320) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 88.1885 0.070363 1.453>0.192 0.0>0.325 0.1069 | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 2 0 0 | H4
+  2 1/8  1 0 | 21 13 126.6994 0.157281 0.121>0.544 0.0582>0.0938 0.0878 | 0.274/0.0/0.0/0.065/0.128/0.032/0.501 | 15 1 0 0 | AB8,F2
+  3 0/8  0 0 | 28 7 142.5423 0.125942 3.044>0.522 0.331>0.0358 0.0934 | 0.19/0.043/0.043/0.102/0.092/0.051/0.48 | 11 10 0 0 | D1,E1,F2
+  4 0/8  0 0 | 34 6 162.4005 0.145583 0.237>0.323 0.0849>0.0741 0.0926 | 0.142/0.063/0.055/0.123/0.1/0.062/0.454 | 8 8 0 0 | E1,F2
+  5 0/8  0 0 | 40 6 188.5349 0.236884 0.195>0.212 0.1325>0.0447 0.1016 | 0.113/0.113/0.063/0.137/0.098/0.046/0.431 | 10 4 0 0 | D1,E1,F2
+  6 8/8* 7 7 | 46 6 199.1678 0.183881 0.563>0.276 0.2022>0.0318 0.0918 | 0.094/0.071/0.081/0.149/0.069/0.06/0.475 | 8 6 1 0 | E1,F2
+  7 0/8  0 0 | 51 5 228.6851 0.258097 0.201>0.275 0.2397>0.137 0.0992 | 0.084/0.061/0.066/0.181/0.06/0.072/0.476 | 7 5 0 0 | F2
+  8 0/8  0 8 | 57 6 245.8199 0.221132 0.223>0.318 0.1067>0.0736 0.1003 | 0.068/0.118/0.07/0.174/0.088/0.054/0.429 | 10 9 0 1 | D1,E1,F2
+  9 0/8  0 5 | 63 6 269.5285 0.27016 0.666>0.51 0.1371>0.0679 0.1013 | 0.062/0.09/0.078/0.183/0.069/0.065/0.453 | 8 6 0 0 | E1,F2
+ 10 0/8  0 1 | 68 5 281.0448 0.236049 0.138>0.496 0.2412>0.04 0.1033 | 0.056/0.143/0.065/0.188/0.057/0.054/0.438 | 7 1 0 0 | D1,F2
+ 11 8/8* 0 1 | 86 18 288.0688 0.270165 0.337>0.193 0.1248>0.0514 0.0941 | 0.276/0.114/0.041/0.115/0.069/0.035/0.351 | 22 11 1 5 | AB16
+ 12 8/8* 4 0 | 89 3 299.4078 0.25178 0.566>0.285 0.0762>0.0377 0.0961 | 0.237/0.098/0.042/0.114/0.059/0.05/0.399 | 4 4 1 1 | 
+ 13 1/8  0 3 | 93 4 310.8598 0.271186 0.333>0.408 0.1151>0.0317 0.0984 | 0.202/0.138/0.039/0.106/0.051/0.059/0.404 | 6 4 0 0 | D1
+ 14 7/8* 6 6 | 95 2 343.6457 0.299007 0.578>0.291 0.1878>0.0948 0.1099 | 0.185/0.151/0.038/0.103/0.047/0.054/0.423 | 5 3 0 0 | 
+ 15 0/8  0 0 | 98 3 361.0703 0.293588 0.449>0.148 0.1232>0.0289 0.1072 | 0.16/0.167/0.034/0.092/0.074/0.047/0.427 | 5 3 0 0 | D1
+('KP', 321) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 77.0247 0.091445 1.453>0.105 0.0>0.0471 0.0949 | 0.0/0.0/0.0/0.0/0.201/0.0/0.799 | 8 2 0 0 | H4
+  2 1/8  0 0 | 21 13 119.2417 0.111994 3.209>0.517 0.0654>0.0483 0.0929 | 0.263/0.0/0.0/0.066/0.13/0.033/0.509 | 15 4 0 0 | AB8,F2
+  3 5/8* 5 4 | 28 7 139.5591 0.127474 0.214>0.357 0.1076>0.0365 0.0996 | 0.2/0.029/0.043/0.102/0.092/0.051/0.483 | 11 10 0 0 | D1,E1,F2
+  4 0/8  0 2 | 34 6 175.4143 0.193153 0.623>0.567 0.0921>0.059 0.0979 | 0.155/0.021/0.058/0.13/0.074/0.065/0.496 | 8 2 0 0 | E1,F2
+  5 0/8  0 0 | 40 6 188.845 0.176717 0.427>0.276 0.1939>0.039 0.0882 | 0.118/0.038/0.064/0.14/0.1/0.047/0.494 | 10 5 0 0 | D1,E1,F2
+  6 0/8  0 1 | 46 6 214.3371 0.193889 0.191>0.178 0.0858>0.0784 0.1146 | 0.095/0.026/0.069/0.148/0.069/0.06/0.533 | 8 2 0 0 | E1,F2
+  7 0/8  0 0 | 51 5 229.6961 0.214294 0.336>0.202 0.1329>0.1761 0.0977 | 0.083/0.022/0.056/0.177/0.059/0.071/0.533 | 7 4 0 0 | F2
+  8 0/8  0 4 | 57 6 251.141 0.261252 0.264>0.487 0.2204>0.201 0.109 | 0.068/0.037/0.064/0.183/0.087/0.054/0.507 | 10 2 0 0 | D1,E1,F2
+  9 8/8* 0 5 | 63 6 270.8097 0.261137 0.291>0.311 0.1082>0.1013 0.1044 | 0.061/0.03/0.071/0.188/0.068/0.064/0.517 | 8 7 0 0 | E1,F2
+ 10 0/8  0 4 | 68 5 282.5306 0.257819 0.678>0.224 0.3671>0.0252 0.0979 | 0.056/0.052/0.06/0.193/0.086/0.054/0.499 | 7 3 0 0 | D1,F2
+ 11 0/8  0 1 | 86 18 304.1732 0.283186 0.396>0.388 0.0647>0.0816 0.1071 | 0.274/0.03/0.038/0.117/0.075/0.035/0.432 | 22 21 0 7 | AB16
+ 12 0/8  0 6 | 89 3 328.3787 0.313001 0.299>0.316 0.1102>0.0454 0.1058 | 0.231/0.029/0.038/0.115/0.063/0.049/0.475 | 4 2 0 0 | 
+ 13 1/8  1 2 | 93 4 352.3455 0.360574 0.263>0.427 0.1902>0.0686 0.1063 | 0.2/0.049/0.036/0.108/0.055/0.059/0.494 | 6 1 0 0 | D1
+ 14 7/8* 5 2 | 95 2 363.7218 0.34767 0.583>0.128 0.1759>0.0372 0.1114 | 0.186/0.057/0.035/0.107/0.051/0.054/0.51 | 5 3 0 0 | 
+ 15 0/8  0 0 | 98 3 370.1195 0.323438 0.157>0.418 0.1375>0.0675 0.1073 | 0.167/0.07/0.033/0.099/0.046/0.049/0.537 | 5 3 0 1 | D1
+('M1', 319) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 85.0468 0.068594 1.296>0.195 0.0>0.0436 0.1091 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 7 3 3 | H4
+  2 1/8  1 0 | 21 13 108.0821 0.122999 0.131>0.183 0.0509>0.0529 0.0736 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 15 15 11 10 | AB8,F2
+  3 1/8  1 1 | 28 7 126.8737 0.218213 0.153>0.141 0.0414>0.0711 0.0753 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 11 10 5 4 | D1,E1,F2
+  4 2/8  1 5 | 34 6 147.6088 0.272391 0.892>0.155 0.0698>0.0484 0.0843 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 7 5 1 | E1,F2
+  5 8/8* 7 1 | 40 6 165.7071 0.225272 0.196>0.178 0.128>0.1161 0.0789 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 9 4 2 | D1,E1,F2
+  6 4/8* 1 1 | 46 6 189.4312 0.208559 0.218>0.162 0.0912>0.0358 0.0848 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 7 2 2 | E1,F2
+  7 0/8  0 0 | 51 5 210.2832 0.440627 0.152>0.103 0.0854>0.0218 0.0899 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 6 0 0 | F2
+  8 0/8  0 0 | 57 6 224.2286 0.25903 0.187>0.198 0.3117>0.0445 0.0888 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 9 3 4 | D1,E1,F2
+  9 8/8* 3 0 | 63 6 238.8791 0.285808 0.115>0.192 0.1136>0.1063 0.083 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 8 3 1 | E1,F2
+ 10 8/8* 5 7 | 68 5 247.0083 0.388913 0.172>0.19 0.0971>0.0392 0.0877 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 6 4 1 | D1,F2
+ 11 0/8  0 4 | 86 18 267.2596 0.311 0.191>0.226 0.1095>0.0417 0.0821 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 22 22 18 16 | AB16
+ 12 3/8  2 6 | 89 3 291.7925 0.347666 0.189>0.102 0.1908>0.0265 0.1002 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 4 4 1 0 | 
+ 13 0/8  0 0 | 93 4 313.8531 0.30892 0.189>0.129 0.0501>0.0631 0.1025 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 6 6 3 2 | D1
+ 14 4/8* 4 4 | 95 2 318.9786 0.335729 0.408>0.163 0.0949>0.041 0.1022 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 4 0 1 | 
+ 15 5/8* 4 6 | 98 3 328.5642 0.350082 0.177>0.234 0.1252>0.0284 0.0797 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 5 1 0 | D1
+('M1', 320) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 90.0543 0.082012 1.453>0.176 0.0>0.4273 0.1069 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 2 0 0 | H4
+  2 0/8  0 0 | 21 13 112.79 0.183912 0.114>0.143 0.0503>0.0306 0.0823 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 15 1 0 0 | AB8,F2
+  3 0/8  0 0 | 28 7 133.4172 0.227742 2.086>0.224 0.1769>0.0359 0.0877 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 11 3 0 0 | D1,E1,F2
+  4 0/8  0 0 | 34 6 147.331 0.19157 0.153>0.193 0.0721>0.089 0.0781 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 2 1 0 | E1,F2
+  5 0/8  0 0 | 40 6 187.8917 0.248969 0.129>0.204 0.1587>0.0662 0.0962 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 3 0 0 | D1,E1,F2
+  6 0/8  0 0 | 46 6 196.4542 0.316272 0.218>0.176 0.2418>0.0368 0.0915 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 1 0 0 | E1,F2
+  7 0/8  0 0 | 51 5 207.8204 0.297723 0.186>0.156 0.2216>0.1045 0.0867 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 1 0 0 | F2
+  8 0/8  0 0 | 57 6 217.7762 0.317535 0.134>0.194 0.0648>0.1526 0.0889 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 1 0 0 | D1,E1,F2
+  9 0/8  0 0 | 63 6 234.1814 0.361635 0.375>0.274 0.1205>0.0474 0.0883 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 1 0 0 | E1,F2
+ 10 4/8* 4 0 | 68 5 247.5488 0.322792 0.1>0.298 0.131>0.0383 0.0848 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 1 0 0 | D1,F2
+ 11 8/8* 0 2 | 86 18 255.7128 0.274805 0.181>0.109 0.1112>0.0385 0.0781 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 22 4 1 0 | AB16
+ 12 0/8  0 0 | 89 3 271.6243 0.288555 0.318>0.153 0.0713>0.0291 0.0823 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 4 1 0 0 | 
+ 13 0/8  0 2 | 93 4 276.6831 0.235858 0.201>0.209 0.0763>0.0243 0.0845 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 6 1 0 0 | D1
+ 14 0/8  0 0 | 95 2 294.6493 0.326259 0.174>0.242 0.1293>0.0354 0.0893 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 3 0 0 | 
+ 15 6/8* 5 4 | 98 3 313.8497 0.270174 0.242>0.12 0.088>0.1496 0.0887 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 1 0 0 | D1
+('M1', 321) night offFP echo intEcho | eps pend anorm kl rep0>repN keep0>keepN keepkl | rs AB/D/E/F/H/T/other | lived n fp too mirror | told cls
+  1 0/6  0 0 | 8 5 72.8691 0.07144 1.453>0.097 0.0>0.058 0.0907 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 2 0 0 | H4
+  2 0/8  0 1 | 21 13 107.5536 0.169097 1.953>0.279 0.0446>0.0301 0.0893 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 15 1 0 0 | AB8,F2
+  3 0/8  0 0 | 28 7 133.4787 0.19443 0.125>0.19 0.0856>0.0298 0.0955 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 11 3 0 0 | D1,E1,F2
+  4 0/8  0 0 | 34 6 160.5404 0.21309 0.361>0.26 0.0661>0.0343 0.0901 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 1 0 0 | E1,F2
+  5 0/8  0 0 | 40 6 173.4903 0.256134 0.276>0.181 0.0647>0.0209 0.0783 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 1 0 0 | D1,E1,F2
+  6 0/8  0 0 | 46 6 195.3183 0.309224 0.173>0.125 0.0721>0.0658 0.1085 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 1 0 0 | E1,F2
+  7 0/8  0 0 | 51 5 210.2781 0.344709 0.208>0.127 0.1024>0.2726 0.0897 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 1 0 0 | F2
+  8 0/8  0 0 | 57 6 227.4252 0.372645 0.126>0.222 0.1467>0.0401 0.0941 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 10 1 0 0 | D1,E1,F2
+  9 1/8  0 0 | 63 6 240.3101 0.362582 0.174>0.26 0.0749>0.0419 0.0943 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 8 0 0 0 | E1,F2
+ 10 3/8  3 2 | 68 5 256.7066 0.36226 0.322>0.149 0.307>0.0193 0.0919 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 7 2 0 1 | D1,F2
+ 11 4/8* 3 2 | 86 18 279.707 0.321635 0.213>0.202 0.0628>0.107 0.1093 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 22 3 0 0 | AB16
+ 12 0/8  0 1 | 89 3 295.4565 0.324658 0.175>0.142 0.0823>0.0437 0.0974 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 4 1 0 0 | 
+ 13 0/8  0 0 | 93 4 309.8996 0.313464 0.715>0.202 0.156>0.0647 0.0914 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 6 2 0 1 | D1
+ 14 0/8  0 0 | 95 2 327.8642 0.343862 0.254>0.122 0.1032>0.0373 0.1057 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 1 0 0 | 
+ 15 0/8  0 0 | 98 3 341.3566 0.408759 0.132>0.21 0.1072>0.0602 0.1095 | 0.0/0.0/0.0/0.0/0.0/0.0/1.0 | 5 0 0 0 | D1
+
+== F. schedule / battery identity
+319 schedule identical across arms: True | off-battery questions identical across arms: True
+320 schedule identical across arms: True | off-battery questions identical across arms: True
+321 schedule identical across arms: True | off-battery questions identical across arms: True
+battery identical across seeds per night: {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False, 8: False, 9: False, 10: False, 11: False, 12: False, 13: False, 14: False, 15: False}
+schedule (kind,item) identical across seeds per day: {1: True, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False, 8: False, 9: False, 10: False, 11: False, 12: False, 13: False, 14: True, 15: False}
+battery size per night KP s320: [18, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+questions asked every night (KP s320): 18
