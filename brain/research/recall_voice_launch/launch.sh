@@ -60,7 +60,7 @@ launch_life() {   # <arm> <seed>; 0 started, 1 skip (flagged), 2 abort
             timeout 2400 bash tools/aws_brain_batch.sh launch "$jobs" 2>&1)
       log "$name $sub rc $?: $(echo "$out" | grep -E 'launched|running|⛔|A10G|Insufficient' | tr '\n' ' ')"
       if [ ! -f "$st" ]; then
-        echo "$out" | grep -q 'aws_budget' && { log "$name refused by the daily cap: aborted"; return 2; }
+        echo "$out" | grep -q 'refused by tools/aws_budget.sh' && { log "$name refused by the daily cap: aborted"; return 2; }
         continue                 # InsufficientInstanceCapacity or another run-instances failure: next zone
       fi
     fi

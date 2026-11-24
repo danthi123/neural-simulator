@@ -14,7 +14,12 @@
 - **K-P IDENTITY GATE READ (11-23, `results/2026-11-23-kp-identity-gate-read.md`, 2 refuters not refuted):** K-P-U UNDEFINED
   (A-position KL 1.195x K-P, bar 1.25x), K-P-0 FAIL (bar 1 by 0.006 nats). No DEV lives. Test2 arms fixed (prereg Amendment T2):
   B, K-P unchanged, D2-PR2. Lever 1/1b on K-P's identity cost spent; lever 2 only via before-build + prerequisite judgment.
-  Nothing live on AWS or pools now.
+- **LIVE (11-23): recall-voice DEV batch** (prereg `brain/research/2026-11-23-recall-voice-dev-prereg.md`; defect read
+  `2026-11-23-biggest-defect-read.md`: K-P intact recall 123/223 < hippocampus-off 138/223, first-person echo / wrong-episode
+  fetch). M1 (`episode=lived_key`) on AWS g5 fp16: s319 i-091036ab48a90fbc6, s320 i-0f6d4c8194221cc2c, s321 i-0ca293a806334a57a
+  (state `research/queue/.aws_brain.rvM1{319,320,321}`). Loop `_scratch/rv_pull_then_m2.sh` pulls each when stopped, then after
+  11-24 UTC launches M2 (`speaker_contrast=3.0`) via `brain/research/recall_voice_launch/launch.sh go M2` and pulls those.
+  If the loop died: rerun it (it skips pulled lives). Read P1/P2 + guards + both-off validity by 11-26; refuters before landing.
 - **DONE 11-23:** test2 freeze gates built + landed (6998bc538): `life_costs.py`, `life_compare.py`, G9 mode validated (read 2),
   provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
   of a test2 life skips the dirty-tree guard; AWS test2 lives must set BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1 (launcher not
