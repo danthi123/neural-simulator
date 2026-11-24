@@ -16,12 +16,12 @@ AMI=ami-012ba162b9cd2729c   # the lifeKP image (research/queue/.aws_brain.kp319/
 RATE=1.01; CAP=50; GRACE=15; BOOT=15; SEEDS="319 320 321"
 KEYFILE=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem; REGION="${AWS_REGION:-us-east-1}"
 SSH=(ssh -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ConnectTimeout=15)
-maxmin() { case $1 in M1) echo 600;; M2) echo 510;; esac; }   # dead-man per life (prereg section 5)
+maxmin() { case $1 in M1) echo 600;; M2|KR) echo 510;; esac; }   # KR = K-P rerun with night snapshots   # dead-man per life (prereg section 5)
 st_of() { echo "research/queue/.aws_brain.rv$1$2"; }
 get() { awk -F= -v k="$2" '$1==k{print $2}' "$1" 2>/dev/null; }
 log() { echo "$(date -u '+%F %H:%M') $*" | tee -a "$RUN/launch.log"; }
 
-arms_of() { case "$1" in M1|M2) echo "$1";; all) echo "M1 M2";; *) echo "usage: launch.sh {plan|go} {M1|M2|all}" >&2; exit 2;; esac; }
+arms_of() { case "$1" in M1|M2|KR) echo "$1";; all) echo "M1 M2";; *) echo "usage: launch.sh {plan|go} {M1|M2|KR|all}" >&2; exit 2;; esac; }
 
 plan() {   # worst case = dead-man + grace + boot per life, all counted on today (conservative); exit 1 if over the cap
   local today worst=0 a
@@ -96,5 +96,5 @@ go)
   for a in $ARMS; do for s in $SEEDS; do
     launch_life "$a" "$s" < /dev/null; [ $? = 2 ] && exit 1
   done; done ;;
-*) echo "usage: launch.sh {plan|go} {M1|M2|all}"; exit 2 ;;
+*) echo "usage: launch.sh {plan|go} {M1|M2|KR|all}"; exit 2 ;;
 esac

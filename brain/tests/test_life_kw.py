@@ -103,3 +103,24 @@ def test_resume_must_keep_the_extras(tmp_path):
                      cortex=StubCortex(), brain_kw=BKW)
     res = life_kw.main(_argv(tmp_path, "r", "--resume", "--brain-kw-extra", ex, days=2), cortex=StubCortex(), brain_kw=BKW)
     assert res["brain_kw_extra"] == {"speaker_contrast": 0.0} and max(n["night"] for n in res["nights"]) == 2
+
+
+def test_night_snapshots_record_only(tmp_path):
+    """--night-snapshots leaves the life byte-identical (timings aside) and writes one snapshot per trunk night."""
+    a = life.main(_argv(tmp_path, "plain"), cortex=StubCortex(), brain_kw=BKW)
+    snap = tmp_path / "snaps"
+    b = life_kw.main(_argv(tmp_path, "snap", "--night-snapshots", str(snap)), cortex=StubCortex(), brain_kw=BKW)
+    assert b.pop("night_snapshots") == str(snap)
+    da, db = _disk(tmp_path, "plain"), _disk(tmp_path, "snap")
+    assert db.pop("night_snapshots") == str(snap)
+    assert json.dumps(_untimed(da), sort_keys=True) == json.dumps(_untimed(db), sort_keys=True)
+    assert json.dumps(_untimed(a), sort_keys=True) == json.dumps(_untimed(b), sort_keys=True)
+    nights = sorted(p.name for p in snap.iterdir())
+    assert nights == ["n1", "n2"]
+    import torch
+    for n in nights:
+        assert (snap / n / "episodes.json").exists() and (snap / n / "meta.json").exists()
+        keys = torch.load(snap / n / "keys.pt", weights_only=False)
+        idx = json.load(open(snap / n / "episodes.json"))
+        files = [e["file"] for e in (idx if isinstance(idx, list) else idx.get("episodes", idx))] if idx else []
+        assert set(keys) == {f for f in files if f in keys} and len(keys) >= 1

@@ -12,6 +12,11 @@ them as res["brain_kw_extra"] (by wrapping life.write_outputs in this process on
 (--split test / test2, or a resume of a life saved on one), a key the life CLI or `run` owns (it would be silently
 overridden), a key Brain() does not take, and a resume whose extras differ from the ones the life was started with.
 Without --brain-kw-extra the call is exactly brain.eval.life.main(argv): the same life, byte for byte.
+
+--night-snapshots DIR (record-only, default off; brain/research/2026-11-24-routing-cascade-research.md): before each
+trunk morning battery (the state every trunk probe arm is copied from), copy the trunk's meta.json, episodes.json,
+cortex_adapters.pt and keep_bank.json to DIR/n<night>/ and save every episode's key as keys.pt ({file: key}). It
+reads the home only (the battery runs on its own disk copies), so the life is unchanged; res["night_snapshots"] = DIR.
 """
 from __future__ import annotations
 
@@ -49,6 +54,7 @@ def parse_extra(text: str | None) -> dict:
 def _peek(argv):
     ap = argparse.ArgumentParser(add_help=False)
     ap.add_argument("--brain-kw-extra", default=None)
+    ap.add_argument("--night-snapshots", default=None)
     ap.add_argument("--split", default="dev")
     ap.add_argument("--out", default=None)
     ap.add_argument("--resume", action="store_true")
@@ -59,13 +65,34 @@ def _peek(argv):
         if skip:
             skip = False
             continue
-        if x == "--brain-kw-extra":
+        if x in ("--brain-kw-extra", "--night-snapshots"):
             skip = True
             continue
-        if x.startswith("--brain-kw-extra="):
+        if x.startswith(("--brain-kw-extra=", "--night-snapshots=")):
             continue
         life_argv.append(x)
     return known, life_argv
+
+
+SNAP_FILES = ("meta.json", "episodes.json", "cortex_adapters.pt", "keep_bank.json")
+
+
+def snapshot_home(home: str, dest: str) -> None:
+    """Copy the small state of a Brain home and every episode's key to dest (read-only on home)."""
+    import shutil
+    import torch
+    os.makedirs(dest, exist_ok=True)
+    for f in SNAP_FILES:
+        if os.path.exists(os.path.join(home, f)):
+            shutil.copy2(os.path.join(home, f), os.path.join(dest, f))
+    ed = os.path.join(home, "episodes")
+    keys = {}
+    if os.path.isdir(ed):
+        for f in sorted(os.listdir(ed)):
+            if f.endswith(".pt"):
+                keys[f] = torch.load(os.path.join(ed, f), map_location="cpu", weights_only=False)["key"]
+    torch.save(keys, os.path.join(dest, "keys.pt.tmp"))
+    os.replace(os.path.join(dest, "keys.pt.tmp"), os.path.join(dest, "keys.pt"))
 
 
 def main(argv=None, cortex=None, brain_kw: dict | None = None):
@@ -83,18 +110,30 @@ def main(argv=None, cortex=None, brain_kw: dict | None = None):
         if (saved.get("brain_kw_extra") or {}) != extra:
             raise SystemExit(f"life_kw refused: resume: this life has brain_kw_extra {saved.get('brain_kw_extra')!r}, "
                              f"not {extra!r}")
-    if not extra:
+    snaps = os.path.expanduser(known.night_snapshots) if known.night_snapshots else None
+    if not extra and not snaps:
         return life.main(life_argv, cortex=cortex, brain_kw=brain_kw)     # the plain life, untouched
-    real = life.write_outputs
+    real, real_probe = life.write_outputs, life.probe
 
     def write_outputs(res, out):
-        res["brain_kw_extra"] = dict(extra)
+        if extra:
+            res["brain_kw_extra"] = dict(extra)
+        if snaps:
+            res["night_snapshots"] = snaps
         return real(res, out)
+
+    def probe(trunk, cortex_, night, arms, *a, **k):
+        if (snaps and os.path.basename(os.path.normpath(trunk)) == "trunk" and k.get("tag") is None
+                and "intact" in arms):
+            snapshot_home(trunk, os.path.join(snaps, f"n{night}"))
+        return real_probe(trunk, cortex_, night, arms, *a, **k)
     life.write_outputs = write_outputs      # this process only; restored below
+    if snaps:
+        life.probe = probe
     try:
         return life.main(life_argv, cortex=cortex, brain_kw={**(brain_kw or {}), **extra})
     finally:
-        life.write_outputs = real
+        life.write_outputs, life.probe = real, real_probe
 
 
 if __name__ == "__main__":
