@@ -27,8 +27,13 @@
   provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
   of a test2 life skips the dirty-tree guard; AWS test2 lives must set BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1 (launcher not
   yet updated); two leftover tmp dirs under brain/experiments/results/2026-11-18-inquiry-gate-dev-1.5b/ block a local test2 start.
-- **NEXT STEP:** (1) before-build for a ROUTING method on the wrong-episode fetch (record: 15 selection levers 11-21, M3
-  margin screen DOES NOT SEPARATE) and for the in-conversation cascade (reply_monitor/own_gain record). (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
+- **ROUTING/CASCADE (11-24, brain/research/2026-11-24-routing-cascade-research.md + §5 amendment):** wrong fetches are
+  strength winners (110/141 weighted-only), so first method = raw-similarity rank + weighted fire gate, then a strength cap.
+  Screens need per-night state: **KR = K-P rerun with `life_kw --night-snapshots`**, queued by `_scratch/kr_launch_then_pull.sh`
+  (background; launches `launch.sh go KR` after 00:00 UTC 11-25, state research/queue/.aws_brain.rvKR<seed>, pulls when
+  stopped; ~$27 worst case). Gate: each KR life must equal lifeKP row for row. Write the screen prereg BEFORE the data.
+- **NEXT STEP:** (1) screen prereg (bars per amendment §5), then offline fetch replay on KR snapshots (pool40 CPU).
+  (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
   `life_bars.py`. (4) `tools/where_ran.py` ignores the life JSON host field. (5) sim-rag-autoupdate.service fails to start.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
