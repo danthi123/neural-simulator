@@ -29,10 +29,14 @@
   yet updated); two leftover tmp dirs under brain/experiments/results/2026-11-18-inquiry-gate-dev-1.5b/ block a local test2 start.
 - **ROUTING/CASCADE (11-24, brain/research/2026-11-24-routing-cascade-research.md + §5 amendment):** wrong fetches are
   strength winners (110/141 weighted-only), so first method = raw-similarity rank + weighted fire gate, then a strength cap.
-  Screens need per-night state: **KR = K-P rerun with `life_kw --night-snapshots`**, queued by `_scratch/kr_launch_then_pull.sh`
-  (background; launches `launch.sh go KR` after 00:00 UTC 11-25, state research/queue/.aws_brain.rvKR<seed>, pulls when
-  stopped; ~$27 worst case). Gate: each KR life must equal lifeKP row for row. Write the screen prereg BEFORE the data.
-- **NEXT STEP:** (1) screen prereg (bars per amendment §5), then offline fetch replay on KR snapshots (pool40 CPU).
+  Screens need per-night state: **KR = K-P rerun with `life_kw --night-snapshots`**, RUNNING on AWS g5 (owner 11-24
+  "rerun today, increase the cap as needed": cap $80 for 11-24 via aws-guard drop-in; `_scratch/cap_restore_1125.sh`
+  moves it out at 11-25 00:05 UTC, back to $50 - check it ran). s319 i-0b9a3ef1c1efd384e (17:59, commit 2e7a4f6a6),
+  s320 i-05c8a39f252a86db6 (22:04), s321 i-0c3ccd978db1f0df7 (22:44; both commit 4864e3274, no life-path change).
+  `_scratch/kr_launch_then_pull.sh` pulls each when stopped (~02:30-07:30 UTC 11-25). Do NOT commit while a launch is
+  rotating zones (HEAD must equal BRAIN_CODE_COMMIT). Gate: each KR life must equal lifeKP row for row.
+  Screen prereg: brain/research/2026-11-24-routing-screen-prereg.md (landed 6701dda0b).
+- **NEXT STEP:** (1) KR pulled -> `routing_replay.py validate` vs lifeKP, `replay` on pool40 CPU, `score`, refuters, land.
   (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
   `life_bars.py`. (4) `tools/where_ran.py` ignores the life JSON host field. (5) sim-rag-autoupdate.service fails to start.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
