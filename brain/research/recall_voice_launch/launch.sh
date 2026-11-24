@@ -13,7 +13,7 @@ cd "$(dirname "$0")/../../.." || exit 1   # repo root
 RV=brain/research/recall_voice_launch; RUN=_scratch/stage2/rv; mkdir -p "$RUN"
 SUBS=(subnet-0928cbecfe33fcbc1 subnet-010008ef274fac445 subnet-0c9d3dcf31a419f6d subnet-04d90e0c156fd8e16 subnet-076cae9f29280d90a)
 AMI=ami-012ba162b9cd2729c   # the lifeKP image (research/queue/.aws_brain.kp319/320/321.done-*)
-RATE=1.01; CAP=50; GRACE=15; BOOT=15; SEEDS="319 320 321"
+RATE=1.01; CAP=${AWS_DAILY_CAP_USD:-50}; GRACE=15; BOOT=15; SEEDS="319 320 321"
 KEYFILE=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem; REGION="${AWS_REGION:-us-east-1}"
 SSH=(ssh -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ConnectTimeout=15)
 maxmin() { case $1 in M1) echo 600;; M2|KR) echo 510;; esac; }   # KR = K-P rerun with night snapshots   # dead-man per life (prereg section 5)
