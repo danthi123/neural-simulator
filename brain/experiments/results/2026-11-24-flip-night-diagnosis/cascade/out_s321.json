@@ -1,0 +1,1744 @@
+{
+ "seed": 321,
+ "night": 15,
+ "host": "node-mxl1462drl",
+ "device": "cpu fp32",
+ "brain_kw": {
+  "sleep_seed": 321,
+  "episode": "lived_key",
+  "keep_bank": "prior"
+ },
+ "arms": {
+  "hippocampus-off": {
+   "banked": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox took it home with him and named it \"Lantern.\" He spent hours trying to figure out how to use it. He eventually figured out that he could use it to see into the darkest corners",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": true
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thank you. How about you?",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help you with that. Here are some tips:\n1. **Set a clear goal**: Having a clear goal will help you stay focused on your task.\n2. **Break down the task into smaller steps**: This will make it easier to focus on each step and avoid getting distracted by other tasks.\n3. **Use a timer**: A timer can help you stay focused on the task at hand and avoid distractions from other tasks.\n4. **Take short breaks**: Taking short breaks can help you stay focused on the task at hand and avoid distractions from",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think rainy weekends are great. They can be a nice break from the hustle of the week.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the natural process of photosynthesis. As the sun goes down, the leaves absorb less light and start to lose their green colour. This is a normal part of the seasonal cycle and helps to prepare for winter.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try to relax and enjoy the moment. You could also try to do some light exercise or meditation.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": null,
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": null,
+      "item": "nova",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "His name is Pixel.",
+      "recalled": null,
+      "item": "pixel",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": null,
+      "item": "marguerite",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": null,
+      "item": "volvo",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": null,
+      "item": "ab09",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep the spare key under a flowerpot.",
+      "recalled": null,
+      "item": "f06",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You ride a blue Volvo.",
+      "recalled": null,
+      "item": "d03",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": true
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "His name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Her name is Anne.",
+      "recalled": null,
+      "item": "never1",
+      "fetched": false,
+      "false": false,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "His name is Nova.",
+      "recalled": null,
+      "item": "never4",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false
+   },
+   "A": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thank you. How about you?",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help you with that. Here are some tips:\n1. **Set clear goals**: Before you start working on a project, make sure you have a clear understanding of what you want to achieve. This will help you stay focused and motivated.\n2. **Break down the task**: Break down the task into smaller, manageable chunks. This will help you stay focused and avoid feeling overwhelmed by the size of the project.\n3. **Use a timer**: Use a timer to track your progress and stay focused on the task at hand. This will help you stay on track",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think rainy weekends are great. They're a nice change of pace from the sunny weather we usually have.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the decrease in sunlight. As the days get shorter, the leaves on trees and shrubs start to lose their green colour and become more visible. This is because the leaves are no longer able to absorb light, so they become less visible.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a book. Second, you could try doing some light exercise like yoga or stretching. Third, you could try making some simple meals like soup or eggs and cress.",
+      "recalled": null,
+      "item": null,
+      "intrusion": true,
+      "needless": false
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": null,
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": null,
+      "item": "nova",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Her name is Pixel.",
+      "recalled": null,
+      "item": "pixel",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": null,
+      "item": "marguerite",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": null,
+      "item": "volvo",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": null,
+      "item": "ab09",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep the spare key under a flowerpot.",
+      "recalled": null,
+      "item": "f06",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You ride a blue Volvo.",
+      "recalled": null,
+      "item": "d03",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": true
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "Her name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Her name is Joan.",
+      "recalled": null,
+      "item": "never1",
+      "fetched": false,
+      "false": false,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "His name is James.",
+      "recalled": null,
+      "item": "never4",
+      "fetched": false,
+      "false": false,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false,
+    "seconds": 157.9,
+    "match_banked": 11,
+    "match_banked_told": 6,
+    "n_rows": 20
+   },
+   "B": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thank you. How about you?",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help you with that. Here are some tips:\n1. **Set clear goals**: Before you start working on a project, make sure you have a clear understanding of what you want to achieve. This will help you stay focused and motivated.\n2. **Break down the task**: Break down the task into smaller, manageable chunks. This will help you stay focused and avoid feeling overwhelmed by the size of the project.\n3. **Use a timer**: Use a timer to track your progress and stay focused on the task at hand. This will help you stay on track",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think rainy weekends are great. They're a nice change of pace from the sunny weather we usually have.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the decrease in sunlight. As the days get shorter, the leaves on trees and shrubs start to lose their green colour and become more visible. This is because the leaves are no longer able to absorb light, so they become less visible.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a book. Second, you could try doing some light exercise like yoga or stretching. Third, you could try making some simple meals like soup or eggs and cress.",
+      "recalled": null,
+      "item": null,
+      "intrusion": true,
+      "needless": false
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": null,
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": null,
+      "item": "nova",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Your cat is called Pixel.",
+      "recalled": null,
+      "item": "pixel",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "I'm sorry to hear that. Can you tell me more about your job?",
+      "recalled": null,
+      "item": "admin",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "My sister's name is Marguerite.",
+      "recalled": null,
+      "item": "marguerite",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": null,
+      "item": "volvo",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Manchego is a nice cheese.",
+      "recalled": null,
+      "item": "ab09",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You can keep the spare key in a safe place. It's usually hidden in a drawer or under a flowerpot.",
+      "recalled": null,
+      "item": "f06",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You can either walk or take a bus.",
+      "recalled": null,
+      "item": "d03",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "My neighbour's name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Your mother's name is usually \"Mrs Okonkwo\".",
+      "recalled": null,
+      "item": "never1",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "My brother's name is Nova.",
+      "recalled": null,
+      "item": "never4",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 2,
+    "own_strict2": 2,
+    "refusal": 1,
+    "ok": 3,
+    "refusal_loop": false,
+    "seconds": 169.8
+   },
+   "C": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thank you. How about you?",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help you with that. Here are some tips:\n1. **Set clear goals**: Before you start working on a project, make sure you have a clear understanding of what you want to achieve. This will help you stay focused and motivated.\n2. **Break down the task**: Break down the task into smaller, manageable chunks. This will help you stay focused and avoid feeling overwhelmed by the size of the project.\n3. **Use a timer**: Use a timer to track your progress and stay focused on the task at hand. This will help you stay on track",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think rainy weekends are great. They're a nice change of pace from the sunny weather we usually have.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the decrease in sunlight. As the days get shorter, the leaves on trees and shrubs start to lose their green colour and become more visible. This is because the leaves are no longer able to absorb light, so they become less visible.",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a book. Second, you could try doing some light exercise like yoga or stretching. Third, you could try making some simple meals like soup or eggs and cress.",
+      "recalled": null,
+      "item": null,
+      "intrusion": true,
+      "needless": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Your cat is called Pixel.",
+      "recalled": null,
+      "item": "pixel",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": null,
+      "item": "marguerite",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": null,
+      "item": "volvo",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": null,
+      "item": "ab09",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep the spare key under a flowerpot.",
+      "recalled": null,
+      "item": "f06",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": null,
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Cornelius.",
+      "recalled": null,
+      "item": "nova",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You can either walk or take a bus.",
+      "recalled": null,
+      "item": "d03",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "His name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Her name is Philippa.",
+      "recalled": null,
+      "item": "never1",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "His name is Nova.",
+      "recalled": null,
+      "item": "never4",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false,
+    "seconds": 159.9
+   },
+   "verdict": "UNDEFINED"
+  },
+  "intact": {
+   "banked": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox took it home with him and named it \"Lantern.\" He spent hours trying to figure out how to use it. He eventually figured out that he could use it to see into the darkest corners",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": true
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thanks for asking. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help with that. First, it's important to have a clear understanding of what you're trying to accomplish. Second, it's also important to have a clear understanding of what you're not doing. Third, it's also important to have a clear understanding of what you're doing.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think they're great for staying inside and fixing things.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "The leaves change colour in autumn because of the change in temperature. As the temperature drops, the leaves start to dry out and turn brown.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, how about going for a walk?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "item": "nova",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Her name is Pixel.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "pixel",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "marguerite",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "volvo",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "ab09",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep it under a flowerpot.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": "f06",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You can either walk or take a bus.",
+      "recalled": "User: I ride a blue Vespa to the station.\n\nAssistant: That's a nice way to get to work.",
+      "item": "d03",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "His name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never1",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "His name is Nova.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never4",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false
+   },
+   "A": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thanks for asking. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help with that. One of the best ways to stay focused is to break down your tasks into smaller, manageable chunks. This will help you stay on track and avoid getting overwhelmed.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think they're great for staying inside and fixing things.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the way they absorb light.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a non-fiction book. Second, you could try writing a short story or poem. Third, you could try doing some light exercise or yoga. Fourth, you could try watching a documentary or educational video. Fifth, you could try taking a walk in nature or visiting a nearby park.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "item": "nova",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Your cat is called Pixel.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "pixel",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "marguerite",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "volvo",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "ab09",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep the spare key under a flowerpot.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": "f06",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You ride a blue Volvo.",
+      "recalled": "User: I ride a blue Vespa to the station.\n\nAssistant: That's a nice way to get to work.",
+      "item": "d03",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true,
+      "named_dup_of_key": true
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "His name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Her name is Anne.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never1",
+      "fetched": true,
+      "false": false,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "His name is Nova.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never4",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false,
+    "seconds": 137.1,
+    "match_banked": 12,
+    "match_banked_told": 5,
+    "n_rows": 20
+   },
+   "B": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thanks for asking. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help with that. One of the best ways to stay focused is to break down your tasks into smaller, manageable chunks. This will help you stay on track and avoid getting overwhelmed.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think they're great for staying inside and fixing things.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the way they absorb light.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a non-fiction book. Second, you could try writing a short story or poem. Third, you could try doing some light exercise or yoga. Fourth, you could try watching a documentary or educational video. Fifth, you could try taking a walk in nature or visiting a nearby park.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "Nova.",
+      "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "item": "nova",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Your cat is called Pixel.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "pixel",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "I'm sorry to hear that. It's not easy to find a job, but there are many ways to get started.",
+      "recalled": null,
+      "item": "admin",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Her name is Marguerite.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "marguerite",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "volvo",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Manchego is a nice cheese.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "ab09",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You can keep it in a safe place.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": "f06",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You can either walk or take a bus.",
+      "recalled": "User: I ride a blue Vespa to the station.\n\nAssistant: That's a nice way to get to work.",
+      "item": "d03",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "My neighbour's name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": false,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Your mother's name is Mrs Okonkwo.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never1",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "My brother's name is Nova.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never4",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 1,
+    "own_strict2": 1,
+    "refusal": 1,
+    "ok": 3,
+    "refusal_loop": false,
+    "seconds": 145.9
+   },
+   "C": {
+    "rows": [
+     {
+      "kind": "open-story",
+      "you": "Tell me a short story about a fox who finds an old lantern.",
+      "brain": "Sure, here's a short story about a fox who finds an old lantern:\nThere was a young fox who lived in the woods. He was always curious about the world around him and loved to explore. One day, he found an old lantern near the edge of the forest. It was covered in moss and looked like it had been there for a long time.\nThe fox was excited to find something new and interesting. He decided to take it home with him, thinking that maybe it could help him find his way back to his den.\nBut as he approached the lantern",
+      "recalled": null,
+      "item": null,
+      "intrusion": false,
+      "needless": false,
+      "named_fox": false
+     },
+     {
+      "kind": "open-feeling",
+      "you": "How are you feeling this morning?",
+      "brain": "I'm feeling great, thanks for asking. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-advice",
+      "you": "Can you give me some advice about staying focused?",
+      "brain": "Sure, I can help with that. One of the best ways to stay focused is to break down your tasks into smaller, manageable chunks. This will help you stay on track and avoid getting overwhelmed.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-opinion",
+      "you": "What do you think of rainy weekends?",
+      "brain": "I think they're great for staying inside and fixing things.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-knowledge",
+      "you": "Why do leaves change colour in autumn?",
+      "brain": "Leaves change colour in autumn because of the way they absorb light.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "open-chat",
+      "you": "Can you suggest something to do on a quiet evening?",
+      "brain": "Sure, I can suggest a few things. First, you could try reading a novel or a non-fiction book. Second, you could try writing a short story or poem. Third, you could try doing some light exercise or yoga. Fourth, you could try watching a documentary or educational video. Fifth, you could try taking a walk in nature or visiting a nearby park.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null,
+      "intrusion": false,
+      "needless": true
+     },
+     {
+      "kind": "H",
+      "you": "What is my cat called?",
+      "brain": "Your cat is called Pixel.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "pixel",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What do I do for work?",
+      "brain": "You work as a system administrator, providing technical support and maintenance for various systems.",
+      "recalled": null,
+      "item": "admin",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What is my sister's name?",
+      "brain": "Your sister's name is Marguerite.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "marguerite",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "H",
+      "you": "What car do I drive?",
+      "brain": "You drive a red Volvo.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "volvo",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "What is my favourite cheese?",
+      "brain": "Your favourite cheese is manchego.",
+      "recalled": "User: My dog is called Bramble.\n\nAssistant: That's a nice name for your dog.",
+      "item": "ab09",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "rotating",
+      "you": "Where do I keep the spare key?",
+      "brain": "You keep the spare key under a flowerpot.",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": "f06",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": true,
+      "right_episode": false
+     },
+     {
+      "kind": "greet",
+      "you": "Good morning! How are you?",
+      "brain": "I'm doing well, thank you. How about you?",
+      "recalled": "User: The bus was late again this morning.\n\nAssistant: That's unfortunate. Did you get to work on time?",
+      "item": null
+     },
+     {
+      "kind": "H",
+      "you": "Hi again! Do you remember my name?",
+      "brain": "Of course, you're Dan, my friend.",
+      "recalled": null,
+      "item": "dan",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false
+     },
+     {
+      "kind": "H",
+      "you": "What's your name?",
+      "brain": "My name is Nova.",
+      "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "item": "nova",
+      "ok": true,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true
+     },
+     {
+      "kind": "neardup",
+      "you": "What do I ride to the station?",
+      "brain": "You can either walk or take a bus.",
+      "recalled": "User: I ride a blue Vespa to the station.\n\nAssistant: That's a nice way to get to work.",
+      "item": "d03",
+      "ok": false,
+      "fetched": true,
+      "wrong_fetch": false,
+      "right_episode": true,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "neardup",
+      "you": "What is my neighbour's name?",
+      "brain": "Your neighbour's name is Cornelius.",
+      "recalled": null,
+      "item": "d04",
+      "ok": true,
+      "fetched": false,
+      "wrong_fetch": false,
+      "right_episode": false,
+      "named_dup_of_key": false
+     },
+     {
+      "kind": "never",
+      "you": "What is my mother's name?",
+      "brain": "Your mother's name is Joan.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never1",
+      "fetched": true,
+      "false": false,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "What is my brother's name?",
+      "brain": "Your brother's name is Nova.",
+      "recalled": "User: My sister's name is Marguerite.\n\nAssistant: That's a pretty name.",
+      "item": "never4",
+      "fetched": true,
+      "false": true,
+      "invented": true
+     },
+     {
+      "kind": "never",
+      "you": "Where did I go on holiday last summer?",
+      "brain": "You went to Patagonia.",
+      "recalled": null,
+      "item": "never3",
+      "fetched": false,
+      "false": true,
+      "invented": true
+     }
+    ],
+    "n_told": 8,
+    "own": 0,
+    "own_strict2": 0,
+    "refusal": 0,
+    "ok": 7,
+    "refusal_loop": false,
+    "seconds": 148.4
+   },
+   "verdict": "UNDEFINED"
+  }
+ },
+ "wall_seconds": 920.9
+}

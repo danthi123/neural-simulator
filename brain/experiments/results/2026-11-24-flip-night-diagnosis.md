@@ -38,3 +38,21 @@ Measurer and refuter: Fable. The refuter reproduced every number and overturned 
 - Cheapest decisive test (refuter): on pool40, replay K-P s320 to the morning after night 6 and s321 to night 14, then ask
   the battery as banked, each question from a fresh state, and told questions before the name rows. Cascade if the banked
   order flips and fresh state gives <= 1/8; if fresh state flips too, the weights are implicated.
+
+## Cascade test on pool40 (11-24, CPU fp32; M1 night-15 trunk homes; rule fixed before the run)
+No per-night K-P homes are banked, so the test used M1's final homes (the night-15 probe weights). pool40 has no GPU: CPU fp32
+against the banked A10G fp16 (A matches banked byte-for-byte on 8-14 of 20 rows). Told rows in the user's voice (of 8),
+A = banked order, B = each question from a fresh state, C = told questions first. Rule: CASCADE if A >= 4 and B <= 1;
+WEIGHTS if B >= 4; UNDEFINED if A does not flip on pool40. Files: `2026-11-24-flip-night-diagnosis/cascade/`.
+| seed | arm | banked | A | B | C | verdict |
+|---|---|---|---|---|---|---|
+| 319 | hippocampus-off | 5 | 5 | 6 | 0 | WEIGHTS |
+| 319 | intact | 8 | 8 | 5 | 8 | WEIGHTS |
+| 320 | hippocampus-off | 6 | 2 | 1 | 1 | UNDEFINED (flip did not reproduce on CPU) |
+| 320 | intact | 4 | 4 | 0 | 3 | CASCADE |
+| 321 | both arms | 0 | 0 | 1-2 | 0 | UNDEFINED (no flip) |
+- Both mechanisms are real. M1 s319 (the seed whose lived days were full of "X too" replies that lived_key stored) carries
+  the user voice in its weights ("My cat is named Pixel" from a fresh state); M1 s320 intact is a conversation cascade.
+- So the refuter's "K-P/M1 flips are mostly a cascade" is NARROWED: it holds for s320 intact and does not hold for M1 s319.
+  K-P itself is not tested here (no per-night homes). Context still steers even the weight case (s319 hoff C: 0/8).
+- One sampled reply per row; near-threshold nights depend on device precision (s320 hoff 6/8 banked vs 2/8 CPU).
