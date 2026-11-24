@@ -459,3 +459,4 @@ Board #286: split v2 frozen; K-P same-device costs hold; D2-PR2 PR-a passes DEV 
 ## 2026-11-23  kpid-gate-read
 Board #286: identity gate read (no variant), test2 arms fixed, freeze gates built.
 ## 2026-11-24  recall-voice M1 KILLED appended to #286
+## 2026-11-24  M2 KILLED + flip diagnosis appended to #286

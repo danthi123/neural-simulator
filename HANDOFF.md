@@ -14,20 +14,21 @@
 - **K-P IDENTITY GATE READ (11-23, `results/2026-11-23-kp-identity-gate-read.md`, 2 refuters not refuted):** K-P-U UNDEFINED
   (A-position KL 1.195x K-P, bar 1.25x), K-P-0 FAIL (bar 1 by 0.006 nats). No DEV lives. Test2 arms fixed (prereg Amendment T2):
   B, K-P unchanged, D2-PR2. Lever 1/1b on K-P's identity cost spent; lever 2 only via before-build + prerequisite judgment.
-- **LIVE (11-23): recall-voice DEV batch** (prereg `brain/research/2026-11-23-recall-voice-dev-prereg.md`; defect read
-  `2026-11-23-biggest-defect-read.md`: K-P intact recall 123/223 < hippocampus-off 138/223, first-person echo / wrong-episode
-  fetch). M1 (`episode=lived_key`) on AWS g5 fp16: s319 i-091036ab48a90fbc6, s320 i-0f6d4c8194221cc2c, s321 i-0ca293a806334a57a
-  (state `research/queue/.aws_brain.rvM1{319,320,321}`). Loop `_scratch/rv_pull_then_m2.sh` pulls each when stopped, then after
-  11-24 UTC launches M2 (`speaker_contrast=3.0`) via `brain/research/recall_voice_launch/launch.sh go M2` and pulls those.
-  M1 READ 11-24 (results/2026-11-24-recall-voice-dev-read-1.5b.md): KILLED by the letter (lang KL s321 1.264x, hoff echo
-  86>84); echo 71->42, told 135/223. M2 running (i-02281d8accb2012b8, i-09d7233f4300d334c, i-0a95bc48c48f3ae43).
-  If the loop died: rerun it (it skips pulled lives). Read P1/P2 + guards + both-off validity by 11-26; refuters before landing.
+- **RECALL-VOICE DEV READ (11-24, results/2026-11-24-recall-voice-dev-read-1.5b.md): M1 lived_key and M2 speaker contrast
+  both KILLED** (M1: lang KL s321 1.264x; M2: told 105/223 < K-P 123, collapse). Prereg §5 stop rule: D2 lever count 5, no
+  further perspective lever before a ROUTING method (wrong-episode fetch = 28 of K-P's 41 fetch-hurt rows). Self/other-tag
+  source-hold DRAFT (brain/research/2026-11-24-self-other-tag-prereg-DRAFT.md) BLOCKED by 2 Fable reviews.
+- **FLIP-NIGHT DIAGNOSIS (11-24, results/2026-11-24-flip-night-diagnosis.md, host-only + pool40 cascade test):** B drifts into
+  the user's voice in the weights (27/42 nights, absorbing); K-P cuts it (5/42, recovers). Remaining flips are both kinds: M1
+  s319 in the weights, s320 intact an in-conversation cascade (gone from a fresh state). Battery rows within a night are not
+  independent; is_first_person/is_echo count refusal loops (caveat for every pooled count, incl. the TEST v2 read).
+  Nothing live on AWS or pools. pool40 holds a 2 GB copy at ~/brain-lane/flip_repo (delete when done).
 - **DONE 11-23:** test2 freeze gates built + landed (6998bc538): `life_costs.py`, `life_compare.py`, G9 mode validated (read 2),
   provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
   of a test2 life skips the dirty-tree guard; AWS test2 lives must set BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1 (launcher not
   yet updated); two leftover tmp dirs under brain/experiments/results/2026-11-18-inquiry-gate-dev-1.5b/ block a local test2 start.
-- **NEXT STEP:** (1) Test2 freeze (due 12-02; can be earlier): launcher sets BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1, resume guard,
-  freeze commit per §7. (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
+- **NEXT STEP:** (1) before-build for a ROUTING method on the wrong-episode fetch (record: 15 selection levers 11-21, M3
+  margin screen DOES NOT SEPARATE) and for the in-conversation cascade (reply_monitor/own_gain record). (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
   `life_bars.py`. (4) `tools/where_ran.py` ignores the life JSON host field. (5) sim-rag-autoupdate.service fails to start.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

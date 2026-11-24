@@ -72,17 +72,26 @@ three; G11 setup check PASS 3/3.
 | 321 | 45/73 (29) | 45/73 (45) | 8/88 (25) | 23/184 (23) | 5/5/50 (21/5/50) |
 | pooled | 105/223 (123) | 138/223 (138) | 48/264 (71) | 77/552 (77) | 58/25/163 (41/26/164) |
 - P1 FAIL (105 < 138) and pooled intact told < K-P's 123: a KILLED trigger by itself. P2 FAIL (48 > 47; <= K-P on 3/3 seeds).
-- Guards: language KL n15 = K-P's exactly on every seed (0.351/0.294/0.323); hoff told and echo = K-P's exactly. This is the
+- Guards: language KL n15 = K-P's exactly on every seed (0.351/0.294/0.323); hoff and both-off rows = K-P's exactly. This is the
   prereg's M2 diagnostic: night replay ignores the reply-side contrast, so the slept cortex is K-P's. G8a intact s320
   31/92 = 0.337 vs K-P worst 0.130 + 0.03: FAIL. Collapse intact 3/3 seeds and intact-frozen 3/3 vs K-P 1/1: FAIL.
   Stuck lived-day runs 0 (PASS). G7 66/90 (PASS).
 - **Verdict: KILLED** (told below K-P, collapse guard). The contrast at reinstatement removes the user's voice from what
   is fetched but costs the answer: fetch-hurt 41 -> 58, refusals up on s320. One fresh-context refuter (below).
 
-## Mechanism read (prereg §4)
-M1 moved P2 (echo 71 -> 42) and M2 did not move it pooled (48). By §4 that points to the night's lived content, not the
-reinstated voice. With the flip-night diagnosis (results/2026-11-24-flip-night-diagnosis.md), K-P's remaining echo is
-mostly an in-conversation cascade, not the weights.
+## Mechanism read (prereg §4), as narrowed by the M2 refuter
+Both arms cut intact echo (M1 71 -> 42; M2 71 -> 48, <= K-P on 3/3 seeds, one over the 47 bar) and neither lifted told
+recall (M1 135, M2 105 vs the 138 bar). So reinstated voice is part of the echo, but fixing voice does not restore the
+answers: the wrong-episode fetch (§4 mechanism 3) is the limit, as the header predicted. The flip-night diagnosis
+(results/2026-11-24-flip-night-diagnosis.md) adds an in-conversation cascade and, on M1 s319, a weight effect.
+
+## M2 refuter (sonnet, fresh context): NARROWED
+- KILLED and every number reproduce. Both-off (94 rows) and hippocampus-off (394 rows) byte-identical to K-P on all seeds;
+  night-15 KL identical to six digits. Consolidated-off is NOT identical (53-67 of 78 rows differ per seed): only the
+  no-fetch arms equal K-P.
+- Answer-rate lens: "don't know" on intact trunk rows M2 vs K-P: s319 4 vs 0, s320 42 vs 1, s321 11 vs 12.
+- Engagement: no contrast call count is recorded; engagement rests on `brain_kw_extra` and 190-220 of 298 changed intact rows.
+- Where-ran: `tools/where_ran.py` unknown; JSON host fields give AWS nodes; K-P's precision unrecorded (fp16 assumed).
 
 ## Next
 - Prereg §5 applies: both arms KILLED, lever count on D2 is 5, so no further perspective lever before a routing method
