@@ -46,3 +46,21 @@ claim.
 
 ## 5. Cost and timebox
 3 lives x (600 + 30) min x $1.01/h, at most about $32 (11-25 spend $2.93 before launch; $50 cap). Read by 11-27.
+
+## Review (sonnet, 11-25, before data; written after launch, before any S output exists): OK_WITH_FIXES, applied
+Lives launched from a0da1a034: s319 i-0c0d51c2686881e59, s320 i-03a8842abb4c0e691, s321 i-0a43ac30fad23266d.
+- (a) Guards run with `life_costs --dev`. lifeKP's missing provenance is a note, not UNDEFINED.
+- (b) **Validity, added:** each result's `brain_kw` must equal `{sleep_seed, keep_bank:'prior', key:'S_all',
+  key_bar:'slept'}`, else that seed is UNDEFINED. A resume uses the same job line only.
+- (c) **G7** is computed by `life_costs.g7` with rows pooled, bar <= lifeKP pooled 69/90 + 0.05; the tool's own
+  PASS/FAIL line (its M_G7 is 0.25) is ignored.
+- (d) **Leak:** pooled <= lifeKP pooled 17/436 (0.039) + 0.03.
+- (e) P2 is renamed **P2s** (memory helps, strengthened as below).
+- (f) **P2s** also requires helped >= 1 on every seed or helped + hurt >= 20 pooled, and pooled intact-frozen
+  right-episode fetches >= lifeKP's (45/223 from the lifeKP frozen rows). The change in hippocampus-off told vs
+  lifeKP is reported.
+- (g) "P1 holds, P2s fails" is labelled **KILLED-consolidation-confound** (recall rose without memory helping).
+- (h) The job lines are `brain/research/recall_voice_launch/jobs_S_s31{9,20,21}.txt` (= `jobs_KR_*.txt` plus the arm
+  flags); `_scratch/stage2/jobs_kp_*.txt` no longer exists.
+- (i) "Strength" in the report-only rows means effective strength at the probe clock `life.day_start(night+1,
+  weekend)`; the "three strongest" exclude permanent episodes; `keys.pt` holds None under S_all.
