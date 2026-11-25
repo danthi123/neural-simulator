@@ -69,7 +69,13 @@ def decide_K(k: KeyedHippocampus, cortex, base, cue: str, now: float) -> dict:
         idx = k.last_fetch["idx"]
     finally:
         k.last_fetch = saved
-    return {"idx": idx, "score": s, "raw_winner": int(torch.argmax(sims)), "sim_raw_max": float(sims.max())}
+    raw = int(torch.argmax(sims))
+    wb = int(torch.argmax(score))
+    srt = torch.sort(score, descending=True).values
+    # diagnostics (11-25, after the registered read; no bar uses them): what blocks a raw-first episode
+    return {"idx": idx, "score": s, "raw_winner": raw, "sim_raw_max": float(sims.max()), "weighted_winner": wb,
+            "score_best": float(srt[0]), "margin_w": float(srt[0] - srt[1]) if len(srt) > 1 else None,
+            "w_raw": float(w[raw]), "score_raw": float(score[raw]), "question": question}
 
 
 def screen_night(res, night, snap, trunk, cortex, work, weekend, size="1.5b") -> dict:
@@ -101,7 +107,9 @@ def screen_night(res, night, snap, trunk, cortex, work, weekend, size="1.5b") ->
                 fx = r.get("fetch") or {}
                 row = {"night": night, "i": i, "item": r.get("item"), "kind": r["kind"], "cue": r["you"],
                        "cls": RR.row_class(r, ledger), "banked_idx": fx.get("idx"),
-                       "K_raw_winner": dk["raw_winner"], "K_sim_raw_max": dk["sim_raw_max"]}
+                       "K_raw_winner": dk["raw_winner"], "K_sim_raw_max": dk["sim_raw_max"],
+                       "K_diag": {k_: dk[k_] for k_ in ("weighted_winner", "score_best", "margin_w", "w_raw",
+                                                       "score_raw", "question")}}
                 it = LB.ALL[r["item"]] if row["cls"] in ("told", "identity") else None
                 for a, kidx in (("A", d["A"]["idx"]), ("K", dk["idx"])):
                     row[a] = {"idx": kidx, "text": texts[kidx] if kidx is not None else None,
