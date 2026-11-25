@@ -42,7 +42,8 @@ def main():
     ap.add_argument("--force-index", type=int, default=0)
     ap.add_argument("--force-arm", default="intact")
     ap.add_argument("--force", type=int, default=2)
-    ap.add_argument("--gains", nargs="+", default=["none", "1", "0.5", "0"])
+    ap.add_argument("--gains", nargs="+", default=["none", "1", "0.5", "0"],
+                    help="own_gain values, 'none', or d<beta> for Brain(own_decay=beta)")
     ap.add_argument("--samples", type=int, default=6)
     ap.add_argument("--hippocampus-off", action="store_true")
     ap.add_argument("--night-off", action="store_true")
@@ -55,7 +56,9 @@ def main():
     onset = _norm(forced[-1])
     res = []
     for gs in a.gains:
-        g = None if gs == "none" else float(gs)
+        # "d<beta>" = Brain(own_decay=beta) (cascade screen K5, brain/research/2026-11-25-cascade-screen-prereg.md)
+        g = None if gs == "none" or gs.startswith("d") else float(gs)
+        dec = float(gs[1:]) if gs.startswith("d") else None
         for k in range(a.samples):
             np.random.seed(1000 * a.script_seed + k)
             torch.manual_seed(1000 * a.script_seed + k)
@@ -63,7 +66,7 @@ def main():
             cp = os.path.join(tmp, "home")
             shutil.copytree(a.home, cp)
             b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=a.script_seed, own_gain=g,
-                      own_gain_copies=a.copies_only)
+                      own_gain_copies=a.copies_only, own_decay=dec)
             b.set_lesions(hippocampus_off=a.hippocampus_off, consolidated_off=a.night_off)
             real = b.cortex.speak
             queue = list(forced)
