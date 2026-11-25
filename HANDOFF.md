@@ -42,11 +42,20 @@
   (K1 49 < 55, K2 s321 falls, K5 told no-fetch +26/+33/+32). Wrong 136 -> 40, false fires 239 -> 67. Of 168 raw-first
   right rows only 49 fetched: the right episode's weight tanh(eff) median 0.36 (Volvo 0.25, rotating 0.35). Candidates:
   bar fit on young (2-day) episodes vs 5-15-night-old ones; store strengths shaped by S0 fetches. Refuters x3 applied.
-- **ARM S RUNNING (11-25):** live DEV K-P life `--key S_all --key-bar slept` (prereg brain/research/2026-11-25-sall-live-dev-prereg.md,
-  a0da1a034 + review amendment a3586ecb5), s319 i-0c0d51c2686881e59, s320 i-03a8842abb4c0e691, s321 i-0a43ac30fad23266d
-  (started 13:29 / 14:09 / 14:50 UTC, ~7h each). `_scratch/s_launch_then_pull.sh` pulls research/queue/.aws_brain.rvS<seed>.
-- **NEXT STEP:** (1) When pulled: count.py S vs lifeKP (P1 told >= 138/223, P2s), `life_costs --dev`, guards per the
-  amendment, strength report from nightsnap episodes.json, read one seed's whole transcripts, refuters, land. Read by 11-27. (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **ARM S READ (11-25): KILLED** (`brain/experiments/results/2026-11-25-sall-live-dev-read-1.5b.md`). Live S_all + slept bar:
+  intact told 125/223 (K-P 123), h-off 133, hurt 25 > helped 17; frozen right fetches 18/223 (K-P 45), none 127 (K-P 37);
+  collapse + G8a + h-off echo guards fail. The wrong fetches are mostly the PERMANENT self-name episode ("My name is
+  Nova") on 65/223 told rows (K-P 0). Skeptic: KILLED stands. Instances terminated. Next routing method (own prereg):
+  keep permanent/self episodes out of the S_all competition, or gate on rank margin, not absolute strength.
+- **CASCADE SCREEN RUNNING (11-25):** prereg brain/research/2026-11-25-cascade-screen-prereg.md, build 268ea9041
+  (`Brain(own_decay)`, default OFF), pool40/41/42 s319/320/321 restarted 19:11 UTC (first start stopped in error, kept as
+  casc_s*.aborted1.json), ~7.5 h; out ~/brain-lane/route_repo/_scratch/route/kr/casc_s<seed>.json. Night 2 s319 already
+  shows D25 replies going empty (told ok 6 -> 1): fading own replies may erode the turn format. Then K5 (own_gain_probe
+  --gains d0.5 d0.25 on pool40 E / pool41 B), `cascade_screen k5` + `table`, read.
+- **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
+  per stopped instance) and re-arm tools/attention_watch.py --loop.
+- **NEXT STEP:** (1) Cascade screen: when done, K5 then `cascade_screen k5` + `table`, read, refuters, land. (2) Routing: before-build +
+  prereg for an S_all competition that excludes permanent/self episodes (or a rank-margin gate), offline on KR snapshots first. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).

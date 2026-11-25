@@ -219,7 +219,7 @@ class Brain:
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None, teacher_context: bool = False,
                  self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
                  habituation: int = 0, reply_monitor: int = 0,
-                 own_gain: float | None = None, own_gain_copies: bool = False,
+                 own_gain: float | None = None, own_gain_copies: bool = False, own_decay: float | None = None,
                  carry_penalty: bool = False, fake_think: bool = False, inquiry: float | str | None = "auto",
                  arousal_gain: float | None = None, arousal_pin: bool = False,
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
@@ -338,6 +338,16 @@ class Brain:
         copy (_is_copy against the heard turn and the brain's own replies since waking); every other reply is written
         at full gain, so the turn structure stays (a flat gain <= 0.25 lost it: results/2026-11-16-own-gain-probe.md).
         The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved.
+        own_decay: (switch, default OFF = None) the brain's OLDER own replies fade from the conversation state: the
+        reply just spoken stays at full weight (the next turn keeps whose turn it is) and each reply's write is scaled
+        by own_decay per later turn (beta^k after k turns), so an early first-person or refusal reply cannot cascade
+        down a conversation (efference-copy attenuation; brain/research/2026-11-25-cascade-screen-prereg.md). The
+        attenuated part is the state's own propagation of earlier replies: a second track of the same conversation
+        with no reply ever written (heard turns and the "Assistant:" head only) gives, on each matrix-memory slot,
+        U - N = what the earlier replies left in the state now; it is scaled by own_decay before this reply is
+        written. Declared scaffold (brain/SCAFFOLDS.md: the host holds the no-reply track in place of a self/other
+        tag on the write). Reset when the state is reset from outside (a fresh conversation). Not saved. Excludes
+        own_gain and arousal_gain.
         carry_penalty: (switch, default OFF) the mouth's presence/frequency penalty counts carry across the turns since
         waking, decaying 0.996 per generated token, as the model family's own chat tooling runs it (reference arm;
         results/2026-11-16-onset-baseline.md). Off: the counts reset every turn. Not saved.
@@ -402,6 +412,11 @@ class Brain:
         self.reply_monitor = int(reply_monitor)
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
+        self.own_decay = None if own_decay is None else float(own_decay)
+        if self.own_decay is not None and (self.own_gain is not None or self.arousal_gain is not None):
+            raise ValueError("own_decay excludes own_gain and arousal_gain")
+        self._noown = None          # own_decay: the no-reply track, and the state object it belongs to
+        self._noown_of = None
         self.carry_penalty = bool(carry_penalty)
         self.fake_think = bool(fake_think)
         self._asst = "Assistant: <think></think" if self.fake_think else "Assistant:"
@@ -643,6 +658,8 @@ class Brain:
             g, self._turn_gain = self._turn_gain, 1.0
             state = self._write_gain(state, self.cortex.read(f"User: {text}\n\n", state)[1], g)
             text = None
+        if self.own_decay is not None:
+            return self._commit_decay(text, reply, state, head, sep)
         if self.own_gain is None:
             return self.cortex.read(f"{head}{sep}{reply}\n\n" if text is None else
                                     f"User: {text}\n\n{head}{sep}{reply}\n\n", state)[1]
@@ -659,6 +676,22 @@ class Brain:
         if self.own_gain_copies and not _is_copy(reply, [text] + self._recent_replies):
             g = 1.0
         return [su[i] + g * (sp[i] - su[i]) if i % 3 == 1 else sp[i] for i in range(len(sp))]
+
+    def _commit_decay(self, text: str, reply: str, state, head: str, sep: str):
+        """own_decay: X = read(reply) from N + beta (U - N) on matrix slots, where U = read(heard + head) from the
+        conversation state and N = the same read from the no-reply track (token-shift slots from U as read). The
+        no-reply track advances to N; the reply's own write enters at full weight."""
+        if self._noown is None or self._noown_of is not state:   # first turn, or the state was reset from outside
+            self._noown = [x.clone() for x in state]
+        _, su = self.cortex.read(f"User: {text}\n\n{head}", state)
+        _, sn = self.cortex.read(f"User: {text}\n\n{head}", self._noown)
+        b = self.own_decay
+        mix = su if b == 1.0 else [sn[i] + b * (su[i] - sn[i]) if i % 3 == 1 else su[i] for i in range(len(su))]
+        _, sp = self.cortex.read(f"{sep}{reply}\n\n", mix)
+        # the no-reply track: the heard turn and head, then the "\n\n" a turn ends with, without the reply
+        self._noown = self.cortex.read("\n\n", sn)[1]
+        self._noown_of = sp
+        return sp
 
     def knows(self, text: str):
         """The gate's decision for a request turn: (known, read-outs) under know_rule."""
