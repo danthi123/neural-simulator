@@ -33,14 +33,18 @@
   SC: right 46, K1/K2/K4. Ranking changes trade wrong fetches for no fetch. Arm D (unbarred reference): right 59 wrong 34
   but told no-fetch 37 -> 124 - no result; a D test needs its own prereg on fresh seeds with a reply/answer-rate bar.
   Refuters x3 SURVIVES_WITH_CAVEATS, applied. Lever count on routing (D1) now >15 + 2: research gate stays fired.
-- **NEXT STEP:** (1) Routing next method = pattern-separated key. Read the old-track asset FIRST:
-  research/findings/2026-08-19-replay-pattern-separation-DG-separator-keeps-similar-memories-discriminable-6seed-GO.md
-  (DG sparse expansion, 2 memories, LIF; scale gap to 98 RWKV keys); then record brief + prereg (offline on the KR
-  snapshots in brain/experiments/results/2026-11-25-routing-screen/ is cheap: replay takes ~2 min/seed on pool CPU;
-  the snapshots themselves are in _scratch/brainv2/aws/20261124-{1219,1624,1704}/work/lifeKR_s*/nightsnap).
+- **ROUTING CEILING (11-25, brain/experiments/results/2026-11-25-routing-ceiling-read.md): the KEY is a big lever.**
+  Rank of the right episode on the 217 KR told rows, raw order only: S0 right@1 90; S_all_live 168 (non-repeated rows
+  89/89 vs S0 56); S12 160 but item-dependent; last layer 21. DG(S0) dead (sign-unstable over map seeds); S0q dead as
+  registered (double-centred: not a test of cue offsets); S0 drift vacuous by construction. A's weighted+gated
+  competition turns S0's 90 raw-first rows into 44 right. Refuters x3 SURVIVES_WITH_CAVEATS, applied.
+- **NEXT STEP:** (1) Routing screen 2 prereg: offline on KR snapshots, A vs S_all_live through A's competition
+  (strength weighting, existing margin), its bar set WITHOUT KR told rows (candidate: fire on fire rows no more often
+  than A), K1-K4 + no-fetch + non-H rows. Then a live DEV K-P life with that key and a reply-level bar (the 11-18
+  slept-gate lesson: fetch +13/18, replies +4/36). Pool copies: pool40-42 ~/brain-lane/route_repo (snapshots + trunks).
   (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (4) Label-shuffle
-  null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field. (6) sim-rag-autoupdate.service fails.
-  Pool copies to delete later: pool40 ~/brain-lane/flip_repo (2 GB); pool40-42 ~/brain-lane/route_repo (~0.7 GB each).
+  null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and ceiling/replay JSONs carry no
+  host). (6) sim-rag-autoupdate.service fails.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
