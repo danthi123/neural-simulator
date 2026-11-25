@@ -1,0 +1,4831 @@
+{
+ "seed": 319,
+ "split": "dev",
+ "brain_kw": {
+  "sleep_seed": 319,
+  "keep_bank": "prior"
+ },
+ "weekend": true,
+ "sall_slept_bar": [
+  0.165,
+  0.02
+ ],
+ "arms": [
+  "A",
+  "K"
+ ],
+ "nights": [
+  {
+   "night": 5,
+   "store": 40,
+   "rows": [
+    {
+     "night": 5,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 29,
+     "K_sim_raw_max": 0.16266034543514252,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 21,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2267836332321167,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 39,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2817361354827881,
+     "A": {
+      "idx": 39,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.21462012827396393,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 21,
+     "K_raw_winner": 14,
+     "K_sim_raw_max": 0.10454993695020676,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 36,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.18959906697273254,
+     "A": {
+      "idx": 36,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.24191699922084808,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.31378328800201416,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39112645387649536,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.36659467220306396,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 4,
+      "text": "User: My cat is called Pixel.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.1489754021167755,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 5,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3598174452781677,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.29193928837776184,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 13,
+     "item": "ab10",
+     "kind": "rotating",
+     "cue": "What did I study at university?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.4515696167945862,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 14,
+     "item": "f10",
+     "kind": "rotating",
+     "cue": "Who cuts my hair?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 21,
+     "K_sim_raw_max": 0.17477333545684814,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 21,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3219638764858246,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 4,
+      "text": "User: My cat is called Pixel.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.38502612709999084,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.31932225823402405,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 8,
+     "K_sim_raw_max": 0.22734558582305908,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 8,
+     "K_sim_raw_max": 0.21956339478492737,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 6,
+   "store": 46,
+   "rows": [
+    {
+     "night": 6,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 29,
+     "K_sim_raw_max": 0.15340806543827057,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.22832027077674866,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2812533676624298,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 45,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.3495163023471832,
+     "A": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 45,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.30234605073928833,
+     "A": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 36,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.19313275814056396,
+     "A": {
+      "idx": 36,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25360652804374695,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.32460904121398926,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.382170706987381,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3756569027900696,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 4,
+      "text": "User: My cat is called Pixel.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.15227673947811127,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 6,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.37395593523979187,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2878447473049164,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 13,
+     "item": "e01",
+     "kind": "rotating",
+     "cue": "What was the guard called who shut the train doors on me?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 24,
+     "K_sim_raw_max": 0.3192625343799591,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 14,
+     "item": "f10",
+     "kind": "rotating",
+     "cue": "Who cuts my hair?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 21,
+     "K_sim_raw_max": 0.1514781415462494,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 21,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.32823407649993896,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.38400334119796753,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.32495394349098206,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2803412079811096,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 45,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.30397215485572815,
+     "A": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 7,
+   "store": 51,
+   "rows": [
+    {
+     "night": 7,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 29,
+     "K_sim_raw_max": 0.13388490676879883,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.24363060295581818,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.28030478954315186,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.3379024267196655,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 50,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.29080092906951904,
+     "A": {
+      "idx": 50,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.194695383310318,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25864195823669434,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3440154790878296,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39867183566093445,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.37097567319869995,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.16262441873550415,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 7,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.37001699209213257,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2873455584049225,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 13,
+     "item": "ab15",
+     "kind": "rotating",
+     "cue": "Which evening do I play chess?",
+     "cls": "told",
+     "banked_idx": 45,
+     "K_raw_winner": 20,
+     "K_sim_raw_max": 0.31783926486968994,
+     "A": {
+      "idx": 45,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 14,
+     "item": "e05",
+     "kind": "rotating",
+     "cue": "How many ice lollies did I buy for the team?",
+     "cls": "told",
+     "banked_idx": 39,
+     "K_raw_winner": 28,
+     "K_sim_raw_max": 0.3870905637741089,
+     "A": {
+      "idx": 39,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3310438096523285,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3969930112361908,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3223993480205536,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2822556793689728,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.3063938319683075,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 8,
+   "store": 57,
+   "rows": [
+    {
+     "night": 8,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.15680427849292755,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.1985493153333664,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2545865774154663,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.33070501685142517,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 50,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.28774988651275635,
+     "A": {
+      "idx": 50,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.17906121909618378,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.256519079208374,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.33354848623275757,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 8,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39558130502700806,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3757319450378418,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 4,
+      "text": "User: My cat is called Pixel.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.17243742942810059,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 8,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.4014729857444763,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.30544793605804443,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 13,
+     "item": "ab01",
+     "kind": "rotating",
+     "cue": "What is my favourite tea?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 15,
+     "K_sim_raw_max": 0.3780246376991272,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 49,
+      "text": "User: My favourite sandwich is egg and cress.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 14,
+     "item": "e08",
+     "kind": "rotating",
+     "cue": "Whose bicycle did I borrow?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 40,
+     "K_sim_raw_max": 0.14247968792915344,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3334098756313324,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3759749233722687,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.33528491854667664,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.27969130873680115,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.30943939089775085,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 9,
+   "store": 63,
+   "rows": [
+    {
+     "night": 9,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.14666171371936798,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.20122872292995453,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2658870816230774,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 48,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.3142104148864746,
+     "A": {
+      "idx": 48,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 50,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2796642482280731,
+     "A": {
+      "idx": 50,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.2467385232448578,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.2736971378326416,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3464132249355316,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 9,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.40438541769981384,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.39107832312583923,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 4,
+      "text": "User: My cat is called Pixel.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.17066039144992828,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 9,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.41501086950302124,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.3088182210922241,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 13,
+     "item": "f12",
+     "kind": "rotating",
+     "cue": "What do I water every evening?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 14,
+     "K_sim_raw_max": 0.43890151381492615,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 14,
+     "item": "f17",
+     "kind": "rotating",
+     "cue": "What colour is my front door?",
+     "cls": "told",
+     "banked_idx": 50,
+     "K_raw_winner": 37,
+     "K_sim_raw_max": 0.26196548342704773,
+     "A": {
+      "idx": 50,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.34689754247665405,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3910902440547943,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3451589047908783,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2892524003982544,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.31644660234451294,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 10,
+   "store": 68,
+   "rows": [
+    {
+     "night": 10,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.15430660545825958,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 67,
+     "K_sim_raw_max": 0.20655938982963562,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2531076669692993,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.31088611483573914,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2823743224143982,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.24006204307079315,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.27175047993659973,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3534606695175171,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 10,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.41458603739738464,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3893704414367676,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 12,
+     "K_sim_raw_max": 0.1705750823020935,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 10,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.4094831049442291,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2948344051837921,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 13,
+     "item": "f12",
+     "kind": "rotating",
+     "cue": "What do I water every evening?",
+     "cls": "told",
+     "banked_idx": 21,
+     "K_raw_winner": 14,
+     "K_sim_raw_max": 0.4130544066429138,
+     "A": {
+      "idx": 21,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 14,
+     "item": "f14",
+     "kind": "rotating",
+     "cue": "What are the stickers on my laptop of?",
+     "cls": "told",
+     "banked_idx": 43,
+     "K_raw_winner": 43,
+     "K_sim_raw_max": 0.3123740553855896,
+     "A": {
+      "idx": 43,
+      "text": "User: My laptop is covered in stickers of cacti.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3565122187137604,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.37734994292259216,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.34906673431396484,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.27293920516967773,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.30288609862327576,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 11,
+   "store": 86,
+   "rows": [
+    {
+     "night": 11,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.15981383621692657,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2012181431055069,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.25252556800842285,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 70,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2851440906524658,
+     "A": {
+      "idx": 70,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 73,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.27363964915275574,
+     "A": {
+      "idx": 73,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 70,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.22039951384067535,
+     "A": {
+      "idx": 70,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.26422178745269775,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3470124900341034,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.4008979797363281,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.4150818884372711,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 78,
+     "K_raw_winner": 73,
+     "K_sim_raw_max": 0.1815311759710312,
+     "A": {
+      "idx": 78,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 11,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.4053700268268585,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.27777284383773804,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 13,
+     "item": "ab15",
+     "kind": "rotating",
+     "cue": "Which evening do I play chess?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 74,
+     "K_sim_raw_max": 0.280825674533844,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 74,
+      "text": "User: I play chess on Thursday evenings at the library.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 14,
+     "item": "ab04",
+     "kind": "rotating",
+     "cue": "What am I allergic to?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 76,
+     "K_sim_raw_max": 0.39495500922203064,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 76,
+      "text": "User: I'm allergic to cashews.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.37276822328567505,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3635569214820862,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.341631144285202,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.23576131463050842,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 84,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2756548225879669,
+     "A": {
+      "idx": 84,
+      "text": "User: My favourite band is Slowdive.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 12,
+   "store": 89,
+   "rows": [
+    {
+     "night": 12,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.15543529391288757,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 87,
+     "K_raw_winner": 67,
+     "K_sim_raw_max": 0.19050870835781097,
+     "A": {
+      "idx": 87,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 88,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.24828825891017914,
+     "A": {
+      "idx": 88,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.3009614646434784,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 73,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2715882956981659,
+     "A": {
+      "idx": 73,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 87,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.21240411698818207,
+     "A": {
+      "idx": 87,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.26190006732940674,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.34405601024627686,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3673844337463379,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3565627336502075,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 73,
+     "K_sim_raw_max": 0.1914055198431015,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 12,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3565085232257843,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.27691489458084106,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 13,
+     "item": "e01",
+     "kind": "rotating",
+     "cue": "What was the guard called who shut the train doors on me?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 24,
+     "K_sim_raw_max": 0.29618969559669495,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 14,
+     "item": "f18",
+     "kind": "rotating",
+     "cue": "What is the florist below my gym called?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 58,
+     "K_sim_raw_max": 0.30808573961257935,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3130859434604645,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3373067080974579,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.2954082787036896,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 72,
+     "K_sim_raw_max": 0.23981240391731262,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2719946503639221,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 13,
+   "store": 93,
+   "rows": [
+    {
+     "night": 13,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.14867620170116425,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.18941561877727509,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 88,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2514916956424713,
+     "A": {
+      "idx": 88,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.29902905225753784,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 92,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 90,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.27380406856536865,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 92,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 87,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.2104794979095459,
+     "A": {
+      "idx": 87,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.24978217482566833,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.32853496074676514,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.38916054368019104,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 90,
+     "K_sim_raw_max": 0.39927172660827637,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 73,
+     "K_sim_raw_max": 0.18041563034057617,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3644818663597107,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.3040631413459778,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 13,
+     "item": "ab07",
+     "kind": "rotating",
+     "cue": "Who is my landlord?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 68,
+     "K_sim_raw_max": 0.38427507877349854,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 68,
+      "text": "User: My landlord is a man named Mr Fitzgerald.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 14,
+     "item": "ab11",
+     "kind": "rotating",
+     "cue": "Where am I saving up to travel?",
+     "cls": "told",
+     "banked_idx": 73,
+     "K_raw_winner": 85,
+     "K_sim_raw_max": 0.3969403803348541,
+     "A": {
+      "idx": 73,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 85,
+      "text": "User: I'm saving up for a trip to Patagonia.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 90,
+     "K_sim_raw_max": 0.42319732904434204,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.35094109177589417,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.29875773191452026,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.2549580931663513,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 92,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.2953732907772064,
+     "A": {
+      "idx": 92,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 92,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 14,
+   "store": 95,
+   "rows": [
+    {
+     "night": 14,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.15823645889759064,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 93,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.19557543098926544,
+     "A": {
+      "idx": 93,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 88,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.2478996366262436,
+     "A": {
+      "idx": 88,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 93,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.30021020770072937,
+     "A": {
+      "idx": 93,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 90,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.272801011800766,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.2037268728017807,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25330790877342224,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3413197994232178,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 14,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39217832684516907,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 90,
+     "K_sim_raw_max": 0.3927425146102905,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 14,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 73,
+     "K_sim_raw_max": 0.17717750370502472,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 14,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3842255473136902,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.29166924953460693,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 13,
+     "item": "f09",
+     "kind": "rotating",
+     "cue": "What is the new pizza place called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 34,
+     "K_sim_raw_max": 0.3999205231666565,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 14,
+     "item": "f16",
+     "kind": "rotating",
+     "cue": "Where am I planning a picnic?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.40857571363449097,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 90,
+     "K_sim_raw_max": 0.4143643081188202,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3607756197452545,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.31583067774772644,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.2643929123878479,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 90,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.3036556541919708,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 15,
+   "store": 98,
+   "rows": [
+    {
+     "night": 15,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.1598798632621765,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.18470945954322815,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 26,
+     "K_sim_raw_max": 0.24132899940013885,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 45,
+     "K_sim_raw_max": 0.2833364009857178,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 90,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.25451919436454773,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 87,
+     "K_raw_winner": 60,
+     "K_sim_raw_max": 0.20256353914737701,
+     "A": {
+      "idx": 87,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.26698628067970276,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.33366885781288147,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 15,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 27,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.38478678464889526,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.36197638511657715,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 73,
+     "K_sim_raw_max": 0.1692294329404831,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 15,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3501538336277008,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2745544910430908,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 13,
+     "item": "ab15",
+     "kind": "rotating",
+     "cue": "Which evening do I play chess?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 74,
+     "K_sim_raw_max": 0.2550089657306671,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 14,
+     "item": "f07",
+     "kind": "rotating",
+     "cue": "Who is my dentist?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 44,
+     "K_sim_raw_max": 0.20091691613197327,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 15,
+     "item": "d02",
+     "kind": "neardup",
+     "cue": "What is my dog called?",
+     "cls": "told",
+     "banked_idx": 90,
+     "K_raw_winner": 90,
+     "K_sim_raw_max": 0.38323724269866943,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 16,
+     "item": "d01",
+     "kind": "neardup",
+     "cue": "What is my cousin's name?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.3182629346847534,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 27,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.3051638603210449,
+     "A": {
+      "idx": 27,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 18,
+     "item": "never5",
+     "kind": "never",
+     "cue": "What is my favourite animal?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.25814539194107056,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 19,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 90,
+     "K_raw_winner": 92,
+     "K_sim_raw_max": 0.29510945081710815,
+     "A": {
+      "idx": 90,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  }
+ ],
+ "life": "/home/node/brain-lane/route_repo/_scratch/route/kr/lifeKR_s319.json.json",
+ "device": "cpu"
+}

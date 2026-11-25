@@ -1,0 +1,1165 @@
+{
+ "seeds": {
+  "319": {
+   "void": false,
+   "void_life": false,
+   "void_nights": 0,
+   "A": {
+    "told_n": 80,
+    "right": 16,
+    "wrong": 50,
+    "fire_n": 118,
+    "fires": 80,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 14,
+    "identity_fires": 21
+   },
+   "K": {
+    "told_n": 80,
+    "right": 22,
+    "wrong": 18,
+    "fire_n": 118,
+    "fires": 22,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 2,
+    "gained_on_A_wrong": 8,
+    "no_fetch": 40,
+    "identity_fires": 16
+   },
+   "nonH": {
+    "A": {
+     "told_n": 36,
+     "right": 16,
+     "wrong": 12,
+     "fire_n": 118,
+     "fires": 80,
+     "new_wrong_on_A_right": 0,
+     "lost_on_A_right": 0,
+     "gained_on_A_wrong": 0,
+     "no_fetch": 8,
+     "identity_fires": 0
+    },
+    "K": {
+     "told_n": 36,
+     "right": 18,
+     "wrong": 2,
+     "fire_n": 118,
+     "fires": 22,
+     "new_wrong_on_A_right": 0,
+     "lost_on_A_right": 2,
+     "gained_on_A_wrong": 4,
+     "no_fetch": 16,
+     "identity_fires": 0
+    }
+   },
+   "K_raw_right": 67
+  },
+  "320": {
+   "void": false,
+   "void_life": false,
+   "void_nights": 0,
+   "A": {
+    "told_n": 70,
+    "right": 15,
+    "wrong": 47,
+    "fire_n": 128,
+    "fires": 74,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 8,
+    "identity_fires": 10
+   },
+   "K": {
+    "told_n": 70,
+    "right": 16,
+    "wrong": 13,
+    "fire_n": 128,
+    "fires": 25,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 3,
+    "gained_on_A_wrong": 4,
+    "no_fetch": 41,
+    "identity_fires": 20
+   },
+   "nonH": {
+    "A": {
+     "told_n": 26,
+     "right": 4,
+     "wrong": 14,
+     "fire_n": 128,
+     "fires": 74,
+     "new_wrong_on_A_right": 0,
+     "lost_on_A_right": 0,
+     "gained_on_A_wrong": 0,
+     "no_fetch": 8,
+     "identity_fires": 0
+    },
+    "K": {
+     "told_n": 26,
+     "right": 6,
+     "wrong": 2,
+     "fire_n": 128,
+     "fires": 25,
+     "new_wrong_on_A_right": 0,
+     "lost_on_A_right": 2,
+     "gained_on_A_wrong": 4,
+     "no_fetch": 18,
+     "identity_fires": 0
+    }
+   },
+   "K_raw_right": 51
+  },
+  "321": {
+   "void": false,
+   "void_life": false,
+   "void_nights": 1,
+   "A": {
+    "told_n": 67,
+    "right": 13,
+    "wrong": 39,
+    "fire_n": 113,
+    "fires": 85,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 15,
+    "identity_fires": 9
+   },
+   "K": {
+    "told_n": 67,
+    "right": 11,
+    "wrong": 9,
+    "fire_n": 113,
+    "fires": 20,
+    "new_wrong_on_A_right": 1,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 47,
+    "identity_fires": 15
+   },
+   "nonH": {
+    "A": {
+     "told_n": 27,
+     "right": 3,
+     "wrong": 12,
+     "fire_n": 113,
+     "fires": 85,
+     "new_wrong_on_A_right": 0,
+     "lost_on_A_right": 0,
+     "gained_on_A_wrong": 0,
+     "no_fetch": 12,
+     "identity_fires": 0
+    },
+    "K": {
+     "told_n": 27,
+     "right": 1,
+     "wrong": 2,
+     "fire_n": 113,
+     "fires": 20,
+     "new_wrong_on_A_right": 1,
+     "lost_on_A_right": 1,
+     "gained_on_A_wrong": 0,
+     "no_fetch": 24,
+     "identity_fires": 0
+    }
+   },
+   "K_raw_right": 50
+  }
+ },
+ "per_night": [
+  {
+   "seed": 319,
+   "night": 5,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 319,
+   "night": 6,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 0,
+    "fire_n": 11,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 5,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 319,
+   "night": 7,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 319,
+   "night": 8,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 2,
+    "fire_n": 11,
+    "fires": 1,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 319,
+   "night": 9,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 1,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 319,
+   "night": 10,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 2,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 319,
+   "night": 11,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 11,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 3,
+    "wrong": 2,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 2,
+    "no_fetch": 2,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 319,
+   "night": 12,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 11,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 11,
+    "fires": 1,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 319,
+   "night": 13,
+   "void": false,
+   "A": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 5,
+    "fire_n": 10,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 8,
+    "right": 4,
+    "wrong": 2,
+    "fire_n": 10,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 2,
+    "no_fetch": 2,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 319,
+   "night": 14,
+   "void": false,
+   "A": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 5,
+    "fire_n": 10,
+    "fires": 6,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 2,
+    "fire_n": 10,
+    "fires": 1,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 319,
+   "night": 15,
+   "void": false,
+   "A": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 6,
+    "fire_n": 10,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 2,
+    "fire_n": 10,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 320,
+   "night": 5,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 12,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 6,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 7,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 6,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 8,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 0
+   },
+   "K": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 3,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 9,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 12,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 0
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 10,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 3,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 11,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 12,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 12,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 2,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 13,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 5,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 320,
+   "night": 14,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 4,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 2,
+    "fire_n": 11,
+    "fires": 3,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 1,
+    "no_fetch": 4,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 320,
+   "night": 15,
+   "void": false,
+   "A": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 5,
+    "fire_n": 10,
+    "fires": 5,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 8,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 10,
+    "fires": 0,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 6,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 5,
+   "void": true
+  },
+  {
+   "seed": 321,
+   "night": 6,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 12,
+    "fires": 10,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 0
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 3,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 321,
+   "night": 7,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 12,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 321,
+   "night": 8,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 3,
+    "fire_n": 12,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 0
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 12,
+    "fires": 0,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 9,
+   "void": false,
+   "A": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 12,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 0,
+    "identity_fires": 0
+   },
+   "K": {
+    "told_n": 6,
+    "right": 1,
+    "wrong": 0,
+    "fire_n": 12,
+    "fires": 3,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 10,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 0,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 1,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 6,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 11,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 2,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 1,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 12,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 5,
+    "fire_n": 11,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 1,
+    "identity_fires": 2
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 1
+   }
+  },
+  {
+   "seed": 321,
+   "night": 13,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 7,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 321,
+   "night": 14,
+   "void": false,
+   "A": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 4,
+    "fire_n": 11,
+    "fires": 9,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 2,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 7,
+    "right": 1,
+    "wrong": 1,
+    "fire_n": 11,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 5,
+    "identity_fires": 2
+   }
+  },
+  {
+   "seed": 321,
+   "night": 15,
+   "void": false,
+   "A": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 3,
+    "fire_n": 10,
+    "fires": 8,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 3,
+    "identity_fires": 1
+   },
+   "K": {
+    "told_n": 8,
+    "right": 2,
+    "wrong": 2,
+    "fire_n": 10,
+    "fires": 2,
+    "new_wrong_on_A_right": 0,
+    "lost_on_A_right": 0,
+    "gained_on_A_wrong": 0,
+    "no_fetch": 4,
+    "identity_fires": 2
+   }
+  }
+ ],
+ "H_items": {
+  "pixel": {
+   "n": 32,
+   "A": {
+    "right": 0,
+    "wrong": 32
+   },
+   "K": {
+    "right": 4,
+    "wrong": 24
+   }
+  },
+  "admin": {
+   "n": 32,
+   "A": {
+    "right": 0,
+    "wrong": 28
+   },
+   "K": {
+    "right": 0,
+    "wrong": 1
+   }
+  },
+  "marguerite": {
+   "n": 32,
+   "A": {
+    "right": 21,
+    "wrong": 11
+   },
+   "K": {
+    "right": 20,
+    "wrong": 9
+   }
+  },
+  "volvo": {
+   "n": 32,
+   "A": {
+    "right": 0,
+    "wrong": 27
+   },
+   "K": {
+    "right": 0,
+    "wrong": 0
+   }
+  }
+ },
+ "K": {
+  "right": 49,
+  "need": 55,
+  "A_right": 44,
+  "kills": [
+   "K1 right 49 < 55 (A 44)",
+   "K2 right rises on 2/3 seeds, falls by >1 on ['321']",
+   "K5 told no-fetch excess over A {'319': 26, '320': 33, '321': 32} (max 5/seed)"
+  ],
+  "status": "KILLED"
+ },
+ "status": "READ"
+}
