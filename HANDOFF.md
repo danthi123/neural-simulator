@@ -38,13 +38,18 @@
   89/89 vs S0 56); S12 160 but item-dependent; last layer 21. DG(S0) dead (sign-unstable over map seeds); S0q dead as
   registered (double-centred: not a test of cue offsets); S0 drift vacuous by construction. A's weighted+gated
   competition turns S0's 90 raw-first rows into 44 right. Refuters x3 SURVIVES_WITH_CAVEATS, applied.
-- **NEXT STEP:** (1) Routing screen 2 prereg: offline on KR snapshots, A vs S_all_live through A's competition
-  (strength weighting, existing margin), its bar set WITHOUT KR told rows (candidate: fire on fire rows no more often
-  than A), K1-K4 + no-fetch + non-H rows. Then a live DEV K-P life with that key and a reply-level bar (the 11-18
-  slept-gate lesson: fetch +13/18, replies +4/36). Pool copies: pool40-42 ~/brain-lane/route_repo (snapshots + trunks).
-  (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (4) Label-shuffle
-  null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and ceiling/replay JSONs carry no
-  host). (6) sim-rag-autoupdate.service fails.
+- **ROUTING SCREEN 2 (11-25, brain/experiments/results/2026-11-25-routing-screen2-read.md): S_all + slept bar KILLED**
+  (K1 49 < 55, K2 s321 falls, K5 told no-fetch +26/+33/+32). Wrong 136 -> 40, false fires 239 -> 67. Of 168 raw-first
+  right rows only 49 fetched: the right episode's weight tanh(eff) median 0.36 (Volvo 0.25, rotating 0.35). Candidates:
+  bar fit on young (2-day) episodes vs 5-15-night-old ones; store strengths shaped by S0 fetches. Refuters x3 applied.
+- **NEXT STEP:** (1) Prereg a live DEV K-P life with `--key S_all --key-bar slept` (lifeKP job line + those flags +
+  `--night-snapshots`), s319-321, AWS g5 (~$27; spend 11-25 $2.93), paired with lifeKP: primary = reply-level told
+  recall nights >= 5 (count.py of the recall-voice read), intact vs hippocampus-off (memory must help), answer rate,
+  false recall, lang KL guard; log per-night strength/uses of right vs hub episodes. Expected risk: told episodes decay
+  where S_all does not fetch. (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+  K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
+  replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
+  the KR snapshots + trunks (keep until the routing arc closes).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend

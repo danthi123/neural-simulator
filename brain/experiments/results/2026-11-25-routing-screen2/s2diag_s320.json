@@ -1,0 +1,6581 @@
+{
+ "seed": 320,
+ "split": "dev",
+ "brain_kw": {
+  "sleep_seed": 320,
+  "keep_bank": "prior"
+ },
+ "weekend": true,
+ "sall_slept_bar": [
+  0.165,
+  0.02
+ ],
+ "arms": [
+  "A",
+  "K"
+ ],
+ "nights": [
+  {
+   "night": 5,
+   "store": 40,
+   "rows": [
+    {
+     "night": 5,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 37,
+     "K_sim_raw_max": 0.14020387828350067,
+     "K_diag": {
+      "weighted_winner": 37,
+      "score_best": 0.06479062139987946,
+      "margin_w": 0.02224242314696312,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.06479062139987946,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.22024895250797272,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.1225692480802536,
+      "margin_w": 0.003672398626804352,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.10178082436323166,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2853471338748932,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.1318638026714325,
+      "margin_w": 0.0708637535572052,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.1318638026714325,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.337164044380188,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.14147602021694183,
+      "margin_w": 0.054292231798172,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.14147602021694183,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2999365031719208,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.12585511803627014,
+      "margin_w": 0.06964056938886642,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.12585511803627014,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.19272413849830627,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.08906113356351852,
+      "margin_w": 0.015517756342887878,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.08906113356351852,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.22130852937698364,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.22090527415275574,
+      "margin_w": 0.01399800181388855,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.22090527415275574,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3225303590297699,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.32093536853790283,
+      "margin_w": 0.04528409242630005,
+      "w_raw": 0.9950547814369202,
+      "score_raw": 0.32093536853790283,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.37224599719047546,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.3715677261352539,
+      "margin_w": 0.14271245896816254,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3715677261352539,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3428434729576111,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.30011576414108276,
+      "margin_w": 0.1336195319890976,
+      "w_raw": 0.48563337326049805,
+      "score_raw": 0.16649623215198517,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 18,
+     "K_sim_raw_max": 0.1522209495306015,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.07704349607229233,
+      "margin_w": 0.013750545680522919,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.05494239181280136,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 5,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.40642866492271423,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3263484239578247,
+      "margin_w": 0.13853076100349426,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.18781766295433044,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 5,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.29353272914886475,
+     "K_diag": {
+      "weighted_winner": 7,
+      "score_best": 0.09966114163398743,
+      "margin_w": 0.04553450644016266,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.09966114163398743,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 13,
+     "item": "ab10",
+     "kind": "rotating",
+     "cue": "What did I study at university?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 18,
+     "K_sim_raw_max": 0.456373393535614,
+     "K_diag": {
+      "weighted_winner": 18,
+      "score_best": 0.16472269594669342,
+      "margin_w": 0.09704514592885971,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.16472269594669342,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 14,
+     "item": "f12",
+     "kind": "rotating",
+     "cue": "What do I water every evening?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 9,
+     "K_sim_raw_max": 0.45531728863716125,
+     "K_diag": {
+      "weighted_winner": 9,
+      "score_best": 0.1643415093421936,
+      "margin_w": 0.05182533711194992,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.1643415093421936,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 5,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3255416452884674,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2179039716720581,
+      "margin_w": 0.06746558845043182,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.15043838322162628,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.16882319748401642,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.08601214736700058,
+      "margin_w": 0.007996052503585815,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.07801609486341476,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3197559416294098,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.1341714709997177,
+      "margin_w": 0.0339021161198616,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.1341714709997177,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.38251206278800964,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.27974367141723633,
+      "margin_w": 0.09929096698760986,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.17676539719104767,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.17461644113063812,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.07327008247375488,
+      "margin_w": 0.01672278717160225,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.07327008247375488,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 6,
+   "store": 46,
+   "rows": [
+    {
+     "night": 6,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.18592043220996857,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.1461179256439209,
+      "margin_w": 0.05780789256095886,
+      "w_raw": 0.7859164476394653,
+      "score_raw": 0.1461179256439209,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.22674055397510529,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.14348889887332916,
+      "margin_w": 0.0014171749353408813,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.09514167159795761,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 42,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2882736921310425,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.12096133828163147,
+      "margin_w": 0.05030269920825958,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.12096133828163147,
+      "question": true
+     },
+     "A": {
+      "idx": 42,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 42,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3406757712364197,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.1318361759185791,
+      "margin_w": 0.052014753222465515,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.1318361759185791,
+      "question": true
+     },
+     "A": {
+      "idx": 42,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2949230968952179,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.11413061618804932,
+      "margin_w": 0.06728659570217133,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.11413061618804932,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 42,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.19421254098415375,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.08149272203445435,
+      "margin_w": 0.014855287969112396,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.08149272203445435,
+      "question": true
+     },
+     "A": {
+      "idx": 42,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.24282270669937134,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2423802614212036,
+      "margin_w": 0.014070242643356323,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.2423802614212036,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3644771873950958,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3638130724430084,
+      "margin_w": 0.03907972574234009,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3638130724430084,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.38312071561813354,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.38242262601852417,
+      "margin_w": 0.14207440614700317,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.38242262601852417,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3806471526622772,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.29386940598487854,
+      "margin_w": 0.11211523413658142,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.1759035885334015,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 18,
+     "K_sim_raw_max": 0.16328510642051697,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1022748127579689,
+      "margin_w": 0.03046785295009613,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.055439066141843796,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 6,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.39648935198783875,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.32754504680633545,
+      "margin_w": 0.11926956474781036,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.1663692593574524,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 6,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.32232657074928284,
+     "K_diag": {
+      "weighted_winner": 7,
+      "score_best": 0.10363209247589111,
+      "margin_w": 0.02226019650697708,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.10363209247589111,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 13,
+     "item": "ab01",
+     "kind": "rotating",
+     "cue": "What is my favourite tea?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 20,
+     "K_sim_raw_max": 0.3902287185192108,
+     "K_diag": {
+      "weighted_winner": 20,
+      "score_best": 0.13249166309833527,
+      "margin_w": 0.03275364637374878,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.13249166309833527,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 14,
+     "item": "e06",
+     "kind": "rotating",
+     "cue": "Where did the candle in my drawer come from?",
+     "cls": "told",
+     "banked_idx": 41,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.25786733627319336,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.2026621699333191,
+      "margin_w": 0.1392132043838501,
+      "w_raw": 0.7859163880348206,
+      "score_raw": 0.2026621699333191,
+      "question": true
+     },
+     "A": {
+      "idx": 41,
+      "text": "User: The power went out on a rainy night and I found a candle in the drawer that came from my grandmother's house in Tavistock.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 41,
+      "text": "User: The power went out on a rainy night and I found a candle in the drawer that came from my grandmother's house in Tavistock.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 6,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3082236349582672,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.228964164853096,
+      "margin_w": 0.06645579636096954,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.12933245301246643,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.16347657144069672,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.10945703834295273,
+      "margin_w": 0.040861308574676514,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.06859572976827621,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3202342391014099,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1257483959197998,
+      "margin_w": 0.0018227696418762207,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.12392562627792358,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3783857226371765,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.29100754857063293,
+      "margin_w": 0.07685522735118866,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.15877287089824677,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 42,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.18086698651313782,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.06999268382787704,
+      "margin_w": 0.023444432765245438,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.06999268382787704,
+      "question": true
+     },
+     "A": {
+      "idx": 42,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 7,
+   "store": 51,
+   "rows": [
+    {
+     "night": 7,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.18415212631225586,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.1287866234779358,
+      "margin_w": 0.055358000099658966,
+      "w_raw": 0.6993491053581238,
+      "score_raw": 0.1287866234779358,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.22256633639335632,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.15969522297382355,
+      "margin_w": 9.293854236602783e-05,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.08612968027591705,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 42,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2723782956600189,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.10540612787008286,
+      "margin_w": 0.025617443025112152,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.10540612787008286,
+      "question": true
+     },
+     "A": {
+      "idx": 42,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.30162501335144043,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.1088680550456047,
+      "margin_w": 0.03531622886657715,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.1088680550456047,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.26950886845588684,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.09727610647678375,
+      "margin_w": 0.059006206691265106,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.09727610647678375,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.18193525075912476,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.10586465150117874,
+      "margin_w": 0.03545856475830078,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.07040608674287796,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25702664256095886,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.25655829906463623,
+      "margin_w": 0.01521185040473938,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.25655829906463623,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3571930229663849,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.35654217004776,
+      "margin_w": 0.032126545906066895,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.35654217004776,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.385673850774765,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.38497111201286316,
+      "margin_w": 0.13526751101016998,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.38497111201286316,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.36054787039756775,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.3025820255279541,
+      "margin_w": 0.11670845746994019,
+      "w_raw": 0.44170060753822327,
+      "score_raw": 0.15925420820713043,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.19514691829681396,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.1188170313835144,
+      "margin_w": 0.00019498169422149658,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.1188170313835144,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 7,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.38486406207084656,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2998042106628418,
+      "margin_w": 0.07028201222419739,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.14893636107444763,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 7,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.29784151911735535,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.09547793120145798,
+      "margin_w": 0.004311002790927887,
+      "w_raw": 0.3060920834541321,
+      "score_raw": 0.09116692841053009,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 13,
+     "item": "ab04",
+     "kind": "rotating",
+     "cue": "What am I allergic to?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 17,
+     "K_sim_raw_max": 0.4264717996120453,
+     "K_diag": {
+      "weighted_winner": 17,
+      "score_best": 0.13711611926555634,
+      "margin_w": 0.03558231145143509,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.13711611926555634,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 14,
+     "item": "f01",
+     "kind": "rotating",
+     "cue": "What did I have for breakfast?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 43,
+     "K_sim_raw_max": 0.3273863196372986,
+     "K_diag": {
+      "weighted_winner": 43,
+      "score_best": 0.17048212885856628,
+      "margin_w": 0.08221130818128586,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.17048212885856628,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 43,
+      "text": "User: I had porridge with blueberries for breakfast.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 7,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.2951180934906006,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.19765615463256836,
+      "margin_w": 0.030754372477531433,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.11420607566833496,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.16171857714653015,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.10246749222278595,
+      "margin_w": 0.023651041090488434,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.06258255243301392,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.306739866733551,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.13926391303539276,
+      "margin_w": 0.028549708425998688,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.11071420460939407,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.36994072794914246,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.26481378078460693,
+      "margin_w": 0.03271445631980896,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.14316126704216003,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.21045033633708954,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.12813465297222137,
+      "margin_w": 0.06064346432685852,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.12813465297222137,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 8,
+   "store": 57,
+   "rows": [
+    {
+     "night": 8,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 54,
+     "K_sim_raw_max": 0.18903875350952148,
+     "K_diag": {
+      "weighted_winner": 54,
+      "score_best": 0.1150980144739151,
+      "margin_w": 0.008991777896881104,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.1150980144739151,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.22402305901050568,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.16078753769397736,
+      "margin_w": 0.0013864189386367798,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.08085852861404419,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2780750095844269,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.1003679558634758,
+      "margin_w": 0.018779173493385315,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.1003679558634758,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.31796208024024963,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.10795547068119049,
+      "margin_w": 0.03745664656162262,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.10795547068119049,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.28229811787605286,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.0958467349410057,
+      "margin_w": 0.06160060688853264,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.0958467349410057,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.18444229662418365,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.09027119725942612,
+      "margin_w": 0.023698881268501282,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.06657231599092484,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.27021121978759766,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.26971885561943054,
+      "margin_w": 0.02386857569217682,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.26971885561943054,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3598407804965973,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3591850996017456,
+      "margin_w": 0.028783172369003296,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3591850996017456,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39849549531936646,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.39776939153671265,
+      "margin_w": 0.14188820123672485,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.39776939153671265,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.35691970586776733,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.31745660305023193,
+      "margin_w": 0.12660808861255646,
+      "w_raw": 0.42376071214675903,
+      "score_raw": 0.15124854445457458,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.1970088630914688,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.12666280567646027,
+      "margin_w": 0.024073027074337006,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.10258977860212326,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 8,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3985483944416046,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.37029433250427246,
+      "margin_w": 0.1404353827238083,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.14385142922401428,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 8,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.28319627046585083,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.08886057138442993,
+      "margin_w": 0.004874326288700104,
+      "w_raw": 0.2926951050758362,
+      "score_raw": 0.08289016038179398,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 13,
+     "item": "ab10",
+     "kind": "rotating",
+     "cue": "What did I study at university?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 18,
+     "K_sim_raw_max": 0.4612619876861572,
+     "K_diag": {
+      "weighted_winner": 18,
+      "score_best": 0.1411886364221573,
+      "margin_w": 0.024699121713638306,
+      "w_raw": 0.3060920834541321,
+      "score_raw": 0.1411886364221573,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 14,
+     "item": "f11",
+     "kind": "rotating",
+     "cue": "What animal is on my favourite mug?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 54,
+     "K_sim_raw_max": 0.3354203402996063,
+     "K_diag": {
+      "weighted_winner": 54,
+      "score_best": 0.20422381162643433,
+      "margin_w": 0.13148194551467896,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.20422381162643433,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 54,
+      "text": "User: My favourite mug has a picture of a walrus on it.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 8,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3199627697467804,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2527485191822052,
+      "margin_w": 0.07574288547039032,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.11548686027526855,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.1667490303516388,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.1316356509923935,
+      "margin_w": 0.0409298837184906,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.06018613278865814,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.31247594952583313,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.14397229254245758,
+      "margin_w": 0.03787948936223984,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.10609280318021774,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.38113486766815186,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3306944966316223,
+      "margin_w": 0.09663490951061249,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.1375662237405777,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.20415008068084717,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.1063084751367569,
+      "margin_w": 0.04292656481266022,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.1063084751367569,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 9,
+   "store": 63,
+   "rows": [
+    {
+     "night": 9,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 54,
+     "K_sim_raw_max": 0.1573752611875534,
+     "K_diag": {
+      "weighted_winner": 57,
+      "score_best": 0.08248815685510635,
+      "margin_w": 0.0005370527505874634,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.08195110410451889,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.20726615190505981,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1465444266796112,
+      "margin_w": 0.0019513815641403198,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.07037165015935898,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2741687595844269,
+     "K_diag": {
+      "weighted_winner": 36,
+      "score_best": 0.09308663010597229,
+      "margin_w": 0.012363113462924957,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.09308663010597229,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.321381151676178,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.10332813113927841,
+      "margin_w": 0.03295202553272247,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.10332813113927841,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2785586714744568,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.08956015855073929,
+      "margin_w": 0.03954664245247841,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.08956015855073929,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 59,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.17589500546455383,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.08020438998937607,
+      "margin_w": 0.020483970642089844,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.059720419347286224,
+      "question": true
+     },
+     "A": {
+      "idx": 59,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25747448205947876,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.25700533390045166,
+      "margin_w": 0.01726233959197998,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.25700533390045166,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.33493831753730774,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3347136974334717,
+      "margin_w": 0.023243844509124756,
+      "w_raw": 0.9993293285369873,
+      "score_raw": 0.3347136974334717,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.37640950083732605,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.37572363018989563,
+      "margin_w": 0.12950757145881653,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.37572363018989563,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.35221293568611145,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.3157653510570526,
+      "margin_w": 0.13097456097602844,
+      "w_raw": 0.407835990190506,
+      "score_raw": 0.14364510774612427,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.20753398537635803,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.11924291402101517,
+      "margin_w": 0.023337900638580322,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.09590501338243484,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 9,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3796751797199249,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3540039658546448,
+      "margin_w": 0.12415225803852081,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.12890850007534027,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 9,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.3007751405239105,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.09198598563671112,
+      "margin_w": 0.007493749260902405,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.08449223637580872,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 13,
+     "item": "f13",
+     "kind": "rotating",
+     "cue": "Which chef did I sit next to on a flight?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.37636491656303406,
+     "K_diag": {
+      "weighted_winner": 27,
+      "score_best": 0.11520232260227203,
+      "margin_w": 0.07334019243717194,
+      "w_raw": 0.3060920834541321,
+      "score_raw": 0.11520232260227203,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 14,
+     "item": "e01",
+     "kind": "rotating",
+     "cue": "What was the guard called who shut the train doors on me?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 34,
+     "K_sim_raw_max": 0.3012014627456665,
+     "K_diag": {
+      "weighted_winner": 34,
+      "score_best": 0.10226485878229141,
+      "margin_w": 0.027980893850326538,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.10226485878229141,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 9,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.2841005325317383,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2346799224615097,
+      "margin_w": 0.06277745962142944,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.09645869582891464,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.15514181554317474,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.12833034992218018,
+      "margin_w": 0.04672883450984955,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.05267423018813133,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3098239302635193,
+     "K_diag": {
+      "weighted_winner": 58,
+      "score_best": 0.1476600170135498,
+      "margin_w": 0.015178322792053223,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.09961234033107758,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3618667423725128,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.31448641419410706,
+      "margin_w": 0.08421050012111664,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.12286212295293808,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.21051731705665588,
+     "K_diag": {
+      "weighted_winner": 50,
+      "score_best": 0.09728366881608963,
+      "margin_w": 0.02969374507665634,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.09728366881608963,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 10,
+   "store": 68,
+   "rows": [
+    {
+     "night": 10,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 54,
+     "K_sim_raw_max": 0.15595272183418274,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.07242461293935776,
+      "margin_w": 0.006012387573719025,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.060351256281137466,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.19650799036026,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.15206089615821838,
+      "margin_w": 0.006068304181098938,
+      "w_raw": 0.2926951050758362,
+      "score_raw": 0.057516925036907196,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2653464078903198,
+     "K_diag": {
+      "weighted_winner": 1,
+      "score_best": 0.0887499675154686,
+      "margin_w": 0.00730210542678833,
+      "w_raw": 0.2926951050758362,
+      "score_raw": 0.07766559720039368,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3135901987552643,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.08809217810630798,
+      "margin_w": 0.003013603389263153,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.08809217810630798,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.27027830481529236,
+     "K_diag": {
+      "weighted_winner": 30,
+      "score_best": 0.07592522352933884,
+      "margin_w": 0.04217081889510155,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.07592522352933884,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 59,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.22239631414413452,
+     "K_diag": {
+      "weighted_winner": 66,
+      "score_best": 0.10277315229177475,
+      "margin_w": 0.03266599774360657,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.10277315229177475,
+      "question": true
+     },
+     "A": {
+      "idx": 59,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.2684934139251709,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2680041790008545,
+      "margin_w": 0.02604694664478302,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.2680041790008545,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 25,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3487562835216522,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3485223948955536,
+      "margin_w": 0.021292835474014282,
+      "w_raw": 0.9993293285369873,
+      "score_raw": 0.3485223948955536,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.39600470662117004,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.39528313279151917,
+      "margin_w": 0.14394673705101013,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.39528313279151917,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3664073944091797,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.3223220109939575,
+      "margin_w": 0.13269995152950287,
+      "w_raw": 0.36902880668640137,
+      "score_raw": 0.1352148801088333,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.19271665811538696,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1412125527858734,
+      "margin_w": 0.034153543412685394,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.06955885142087936,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 10,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3852146863937378,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3433707356452942,
+      "margin_w": 0.11238712072372437,
+      "w_raw": 0.2926951050758362,
+      "score_raw": 0.11275045573711395,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 10,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.3229547441005707,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.10181114822626114,
+      "margin_w": 0.020229510962963104,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.08158163726329803,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 13,
+     "item": "f13",
+     "kind": "rotating",
+     "cue": "Which chef did I sit next to on a flight?",
+     "cls": "told",
+     "banked_idx": 27,
+     "K_raw_winner": 27,
+     "K_sim_raw_max": 0.4075508415699005,
+     "K_diag": {
+      "weighted_winner": 27,
+      "score_best": 0.11022243648767471,
+      "margin_w": 0.07957546412944794,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.11022243648767471,
+      "question": true
+     },
+     "A": {
+      "idx": 27,
+      "text": "User: I once sat next to a famous chef called Ottoline on a flight.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 14,
+     "item": "e07",
+     "kind": "rotating",
+     "cue": "Who did I speak to at the wildlife rescue?",
+     "cls": "told",
+     "banked_idx": 56,
+     "K_raw_winner": 57,
+     "K_sim_raw_max": 0.263168066740036,
+     "K_diag": {
+      "weighted_winner": 57,
+      "score_best": 0.11042686551809311,
+      "margin_w": 0.06733875721693039,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.11042686551809311,
+      "question": true
+     },
+     "A": {
+      "idx": 56,
+      "text": "User: The park was full of kids on scooters today.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 10,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.2904486060142517,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2335965931415558,
+      "margin_w": 0.05320808291435242,
+      "w_raw": 0.2926950752735138,
+      "score_raw": 0.08501287549734116,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.16149677336215973,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.13321202993392944,
+      "margin_w": 0.044245608150959015,
+      "w_raw": 0.2926950752735138,
+      "score_raw": 0.0472693108022213,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.30196699500083923,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.14153219759464264,
+      "margin_w": 0.04907374083995819,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.08482705056667328,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.36611032485961914,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.30688712000846863,
+      "margin_w": 0.07322636246681213,
+      "w_raw": 0.2926950752735138,
+      "score_raw": 0.10715869069099426,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.25365570187568665,
+     "K_diag": {
+      "weighted_winner": 66,
+      "score_best": 0.11721865087747574,
+      "margin_w": 0.04587150365114212,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.11721865087747574,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 11,
+   "store": 86,
+   "rows": [
+    {
+     "night": 11,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.15879687666893005,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.07338276505470276,
+      "margin_w": 0.018814649432897568,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.07338276505470276,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.21518149971961975,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.1462339609861374,
+      "margin_w": 0.007265731692314148,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.060447704046964645,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.27382051944732666,
+     "K_diag": {
+      "weighted_winner": 1,
+      "score_best": 0.09309384971857071,
+      "margin_w": 0.003783099353313446,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.0769202783703804,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 73,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3130963146686554,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.174117311835289,
+      "margin_w": 0.08944017440080643,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.08467713743448257,
+      "question": true
+     },
+     "A": {
+      "idx": 73,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 70,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.26522132754325867,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.1366441398859024,
+      "margin_w": 0.06491483002901077,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.07172930985689163,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 73,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.21981902420520782,
+     "K_diag": {
+      "weighted_winner": 68,
+      "score_best": 0.0954013466835022,
+      "margin_w": 0.0031639933586120605,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.09223735332489014,
+      "question": true
+     },
+     "A": {
+      "idx": 73,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.25018104910850525,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.24972519278526306,
+      "margin_w": 0.007073387503623962,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.24972519278526306,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3251357078552246,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.32505548000335693,
+      "margin_w": 0.0362321138381958,
+      "w_raw": 0.9997532367706299,
+      "score_raw": 0.32505548000335693,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.36203134059906006,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.3613716661930084,
+      "margin_w": 0.1195419430732727,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3613716661930084,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.30928999185562134,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.24904878437519073,
+      "margin_w": 0.07497885823249817,
+      "w_raw": 0.35835739970207214,
+      "score_raw": 0.11083635687828064,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.19169123470783234,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.12323769927024841,
+      "margin_w": 0.022058844566345215,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.06508360058069229,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 11,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.36473268270492554,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.34274643659591675,
+      "margin_w": 0.13513971865177155,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.10245886445045471,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 11,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.29294031858444214,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.08779817074537277,
+      "margin_w": 0.01605162024497986,
+      "w_raw": 0.24491865932941437,
+      "score_raw": 0.07174655050039291,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 13,
+     "item": "e01",
+     "kind": "rotating",
+     "cue": "What was the guard called who shut the train doors on me?",
+     "cls": "told",
+     "banked_idx": 41,
+     "K_raw_winner": 34,
+     "K_sim_raw_max": 0.3341403007507324,
+     "K_diag": {
+      "weighted_winner": 34,
+      "score_best": 0.09386500716209412,
+      "margin_w": 0.035585109144449234,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.09386500716209412,
+      "question": true
+     },
+     "A": {
+      "idx": 41,
+      "text": "User: The power went out on a rainy night and I found a candle in the drawer that came from my grandmother's house in Tavistock.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 14,
+     "item": "ab13",
+     "kind": "rotating",
+     "cue": "What is my favourite film?",
+     "cls": "told",
+     "banked_idx": 72,
+     "K_raw_winner": 72,
+     "K_sim_raw_max": 0.451604962348938,
+     "K_diag": {
+      "weighted_winner": 72,
+      "score_best": 0.274963915348053,
+      "margin_w": 0.10990701615810394,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.274963915348053,
+      "question": true
+     },
+     "A": {
+      "idx": 72,
+      "text": "User: My favourite film is Stalker.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 72,
+      "text": "User: My favourite film is Stalker.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 11,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.28518378734588623,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.22817851603031158,
+      "margin_w": 0.05456109344959259,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.08011239022016525,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.1433955729007721,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.12162435799837112,
+      "margin_w": 0.043165624141693115,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.04028196260333061,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 70,
+     "K_sim_raw_max": 0.3144853115081787,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.19147732853889465,
+      "margin_w": 0.05522890388965607,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.19147732853889465,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 70,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3458651304244995,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.30265212059020996,
+      "margin_w": 0.09089069068431854,
+      "w_raw": 0.28091496229171753,
+      "score_raw": 0.09715869277715683,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 69,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.21894311904907227,
+     "K_diag": {
+      "weighted_winner": 68,
+      "score_best": 0.13059954345226288,
+      "margin_w": 0.0387297198176384,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.09186982363462448,
+      "question": true
+     },
+     "A": {
+      "idx": 69,
+      "text": "User: My landlord is a man named Mr Fitzgerald.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 12,
+   "store": 89,
+   "rows": [
+    {
+     "night": 12,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.16078349947929382,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.07101816684007645,
+      "margin_w": 0.01935211941599846,
+      "w_raw": 0.44170060753822327,
+      "score_raw": 0.07101816684007645,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 88,
+     "K_raw_winner": 87,
+     "K_sim_raw_max": 0.2268570065498352,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.15449804067611694,
+      "margin_w": 0.00030413269996643066,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.138124018907547,
+      "question": true
+     },
+     "A": {
+      "idx": 88,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2674981951713562,
+     "K_diag": {
+      "weighted_winner": 87,
+      "score_best": 0.15652760863304138,
+      "margin_w": 0.05964839458465576,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.07234509289264679,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3179408609867096,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.1503434032201767,
+      "margin_w": 0.05567403882741928,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.08300627768039703,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2708314061164856,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.11948193609714508,
+      "margin_w": 0.04877474159002304,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.07070719450712204,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.21671517193317413,
+     "K_diag": {
+      "weighted_winner": 87,
+      "score_best": 0.0983690619468689,
+      "margin_w": 0.012544862926006317,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.08386537432670593,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.2649516761302948,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2644689083099365,
+      "margin_w": 0.011365413665771484,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.2644689083099365,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3317624032497406,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.33173227310180664,
+      "margin_w": 0.028006315231323242,
+      "w_raw": 0.9999092221260071,
+      "score_raw": 0.33173227310180664,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 2,
+      "text": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3870156407356262,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.3863104581832886,
+      "margin_w": 0.13659697771072388,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3863104581832886,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.35412442684173584,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.30133330821990967,
+      "margin_w": 0.10252290964126587,
+      "w_raw": 0.34855979681015015,
+      "score_raw": 0.12343353778123856,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.19464269280433655,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.12688156962394714,
+      "margin_w": 0.025866970419883728,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.06258010119199753,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 12,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.37910547852516174,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.37169909477233887,
+      "margin_w": 0.14982552826404572,
+      "w_raw": 0.9804635047912598,
+      "score_raw": 0.37169909477233887,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2948717474937439,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.09840433299541473,
+      "margin_w": 0.028257496654987335,
+      "w_raw": 0.23788931965827942,
+      "score_raw": 0.0701468363404274,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 13,
+     "item": "f18",
+     "kind": "rotating",
+     "cue": "What is the florist below my gym called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 21,
+     "K_sim_raw_max": 0.3110770881175995,
+     "K_diag": {
+      "weighted_winner": 21,
+      "score_best": 0.07858122140169144,
+      "margin_w": 0.017093762755393982,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.07858122140169144,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 14,
+     "item": "f05",
+     "kind": "rotating",
+     "cue": "What is my favourite sandwich?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 58,
+     "K_sim_raw_max": 0.4312130808830261,
+     "K_diag": {
+      "weighted_winner": 74,
+      "score_best": 0.176106259226799,
+      "margin_w": 0.020464882254600525,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.1556413769721985,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 74,
+      "text": "User: My favourite cheese is manchego.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 12,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.2857101559638977,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.254891574382782,
+      "margin_w": 0.07332795858383179,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.07727053016424179,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.144034281373024,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.13123728334903717,
+      "margin_w": 0.0403129905462265,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.03895418345928192,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 70,
+     "K_sim_raw_max": 0.3162848949432373,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.1647012084722519,
+      "margin_w": 0.03833979368209839,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.1647012084722519,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.3474017083644867,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3288247287273407,
+      "margin_w": 0.10336756706237793,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.09395506232976913,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.2293456792831421,
+     "K_diag": {
+      "weighted_winner": 68,
+      "score_best": 0.11663375049829483,
+      "margin_w": 0.02788057178258896,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.08875317871570587,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 13,
+   "store": 93,
+   "rows": [
+    {
+     "night": 13,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.166509747505188,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.07056029140949249,
+      "margin_w": 0.013758007436990738,
+      "w_raw": 0.42376071214675903,
+      "score_raw": 0.07056029140949249,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 87,
+     "K_sim_raw_max": 0.22268792986869812,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.16449233889579773,
+      "margin_w": 0.0017905086278915405,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.11596181988716125,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 91,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.2662883996963501,
+     "K_diag": {
+      "weighted_winner": 87,
+      "score_best": 0.13215018808841705,
+      "margin_w": 0.028285644948482513,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.06952112913131714,
+      "question": true
+     },
+     "A": {
+      "idx": 91,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3046819269657135,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.1258818358182907,
+      "margin_w": 0.0436709001660347,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.07696573436260223,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.27994489669799805,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.10540857911109924,
+      "margin_w": 0.034691669046878815,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.07071691006422043,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.21371303498744965,
+     "K_diag": {
+      "weighted_winner": 87,
+      "score_best": 0.0826064944267273,
+      "margin_w": 0.0054692476987838745,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.07713724672794342,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.27592045068740845,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.275417685508728,
+      "margin_w": 0.014456361532211304,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.275417685508728,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.4020151197910309,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.4012826085090637,
+      "margin_w": 0.04596686363220215,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.4012826085090637,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.4125679135322571,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.41181617975234985,
+      "margin_w": 0.15083152055740356,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.41181617975234985,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.35452800989151,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.31703245639801025,
+      "margin_w": 0.09070315957069397,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.12037045508623123,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 50,
+     "K_sim_raw_max": 0.188348188996315,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.15129895508289337,
+      "margin_w": 0.02641097456216812,
+      "w_raw": 0.3060920834541321,
+      "score_raw": 0.05765188857913017,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.38577672839164734,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.35159698128700256,
+      "margin_w": 0.08877319097518921,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.1007164940237999,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 13,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.2862224280834198,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.12832747399806976,
+      "margin_w": 0.037731051445007324,
+      "w_raw": 0.23143227398395538,
+      "score_raw": 0.06624110788106918,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 13,
+     "item": "ab03",
+     "kind": "rotating",
+     "cue": "Who teaches me piano?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 77,
+     "K_sim_raw_max": 0.24386151134967804,
+     "K_diag": {
+      "weighted_winner": 77,
+      "score_best": 0.11269258707761765,
+      "margin_w": 0.025175653398036957,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.11269258707761765,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 14,
+     "item": "e07",
+     "kind": "rotating",
+     "cue": "Who did I speak to at the wildlife rescue?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 57,
+     "K_sim_raw_max": 0.26632049679756165,
+     "K_diag": {
+      "weighted_winner": 57,
+      "score_best": 0.09042195975780487,
+      "margin_w": 0.017313770949840546,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.09042195975780487,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.30665019154548645,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.25231197476387024,
+      "margin_w": 0.021861150860786438,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.08005856722593307,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 89,
+     "K_sim_raw_max": 0.33939701318740845,
+     "K_diag": {
+      "weighted_winner": 89,
+      "score_best": 0.20664504170417786,
+      "margin_w": 0.08289234340190887,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.20664504170417786,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 89,
+      "text": "User: My nephew works as a baker.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 13,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 70,
+     "K_sim_raw_max": 0.304654061794281,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.15367959439754486,
+      "margin_w": 0.012893721461296082,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.14078587293624878,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.36570310592651367,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.3098917305469513,
+      "margin_w": 0.04162561893463135,
+      "w_raw": 0.26107457280158997,
+      "score_raw": 0.09547578543424606,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 91,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.22960416972637177,
+     "K_diag": {
+      "weighted_winner": 68,
+      "score_best": 0.09937760978937149,
+      "margin_w": 0.016504637897014618,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.08287297189235687,
+      "question": true
+     },
+     "A": {
+      "idx": 91,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 14,
+   "store": 95,
+   "rows": [
+    {
+     "night": 14,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.1572769582271576,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.06414320319890976,
+      "margin_w": 0.015307873487472534,
+      "w_raw": 0.407835990190506,
+      "score_raw": 0.06414320319890976,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 87,
+     "K_sim_raw_max": 0.19905239343643188,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1776304543018341,
+      "margin_w": 0.010727927088737488,
+      "w_raw": 0.46211716532707214,
+      "score_raw": 0.09198553115129471,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 91,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.25289386510849,
+     "K_diag": {
+      "weighted_winner": 1,
+      "score_best": 0.11794313043355942,
+      "margin_w": 0.005327142775058746,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.06388355046510696,
+      "question": true
+     },
+     "A": {
+      "idx": 91,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2925766706466675,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.11552003771066666,
+      "margin_w": 0.04129425436258316,
+      "w_raw": 0.24491865932941437,
+      "score_raw": 0.07165748625993729,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.25968918204307556,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.09266789257526398,
+      "margin_w": 0.029065169394016266,
+      "w_raw": 0.24491865932941437,
+      "score_raw": 0.06360272318124771,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.20336796343326569,
+     "K_diag": {
+      "weighted_winner": 94,
+      "score_best": 0.12008614838123322,
+      "margin_w": 0.05103802680969238,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.06904812157154083,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.2909369170665741,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2904067933559418,
+      "margin_w": 0.029190272092819214,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.2904067933559418,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.32875287532806396,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3287230432033539,
+      "margin_w": 0.0051046013832092285,
+      "w_raw": 0.9999092221260071,
+      "score_raw": 0.3287230432033539,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3910263180732727,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.3903138339519501,
+      "margin_w": 0.136104553937912,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.3903138339519501,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.32351258397102356,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.29338720440864563,
+      "margin_w": 0.08941532671451569,
+      "w_raw": 0.3311537802219391,
+      "score_raw": 0.10713241249322891,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 94,
+     "K_sim_raw_max": 0.22347086668014526,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.15606266260147095,
+      "margin_w": 0.020000338554382324,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.13606232404708862,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 14,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.2812260091304779,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2659384310245514,
+      "margin_w": 0.0064691901206970215,
+      "w_raw": 0.9456395506858826,
+      "score_raw": 0.2659384310245514,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.24179038405418396,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.13102492690086365,
+      "margin_w": 0.03172469139099121,
+      "w_raw": 0.22547386586666107,
+      "score_raw": 0.054517414420843124,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 13,
+     "item": "f02",
+     "kind": "rotating",
+     "cue": "Which day do the bins go out?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 14,
+     "K_sim_raw_max": 0.3675045073032379,
+     "K_diag": {
+      "weighted_winner": 14,
+      "score_best": 0.08505240082740784,
+      "margin_w": 0.031338170170784,
+      "w_raw": 0.23143227398395538,
+      "score_raw": 0.08505240082740784,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 14,
+     "item": "f07",
+     "kind": "rotating",
+     "cue": "Who is my dentist?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 61,
+     "K_sim_raw_max": 0.34691089391708374,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.17235113680362701,
+      "margin_w": 0.02194516360759735,
+      "w_raw": 0.32151272892951965,
+      "score_raw": 0.11153627187013626,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.2036724090576172,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.19849169254302979,
+      "margin_w": 0.02623744308948517,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.05144971236586571,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 89,
+     "K_sim_raw_max": 0.3216973543167114,
+     "K_diag": {
+      "weighted_winner": 89,
+      "score_best": 0.167519673705101,
+      "margin_w": 0.0464290976524353,
+      "w_raw": 0.5207368731498718,
+      "score_raw": 0.167519673705101,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 89,
+      "text": "User: My nephew works as a baker.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 14,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 70,
+     "K_sim_raw_max": 0.2894227206707001,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.15801918506622314,
+      "margin_w": 0.03657571226358414,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.12144347280263901,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 38,
+     "K_sim_raw_max": 0.26042473316192627,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2592226564884186,
+      "margin_w": 0.02452164888381958,
+      "w_raw": 0.25261011719703674,
+      "score_raw": 0.06578592211008072,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 94,
+     "K_sim_raw_max": 0.24361903965473175,
+     "K_diag": {
+      "weighted_winner": 94,
+      "score_best": 0.1483297348022461,
+      "margin_w": 0.05705771595239639,
+      "w_raw": 0.6088593602180481,
+      "score_raw": 0.1483297348022461,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  },
+  {
+   "night": 15,
+   "store": 98,
+   "rows": [
+    {
+     "night": 15,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 41,
+     "K_sim_raw_max": 0.16099242866039276,
+     "K_diag": {
+      "weighted_winner": 41,
+      "score_best": 0.05941084399819374,
+      "margin_w": 0.020515382289886475,
+      "w_raw": 0.36902880668640137,
+      "score_raw": 0.05941084399819374,
+      "question": false
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 87,
+     "K_sim_raw_max": 0.21445515751838684,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.15678444504737854,
+      "margin_w": 0.00042031705379486084,
+      "w_raw": 0.3609384298324585,
+      "score_raw": 0.07740511000156403,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 36,
+     "K_sim_raw_max": 0.25976577401161194,
+     "K_diag": {
+      "weighted_winner": 1,
+      "score_best": 0.09502583742141724,
+      "margin_w": 0.002032235264778137,
+      "w_raw": 0.23143227398395538,
+      "score_raw": 0.0601181834936142,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.3032725155353546,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.09282463788986206,
+      "margin_w": 0.021252132952213287,
+      "w_raw": 0.22547386586666107,
+      "score_raw": 0.06838002800941467,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 30,
+     "K_sim_raw_max": 0.2712680399417877,
+     "K_diag": {
+      "weighted_winner": 70,
+      "score_best": 0.07596837729215622,
+      "margin_w": 0.014804523438215256,
+      "w_raw": 0.22547386586666107,
+      "score_raw": 0.061163853853940964,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 66,
+     "K_sim_raw_max": 0.2034810334444046,
+     "K_diag": {
+      "weighted_winner": 94,
+      "score_best": 0.07642382383346558,
+      "margin_w": 0.016865920275449753,
+      "w_raw": 0.2926951050758362,
+      "score_raw": 0.05955790355801582,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.26619672775268555,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.2657116949558258,
+      "margin_w": 0.016612306237220764,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.2657116949558258,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "K_raw_winner": 2,
+     "K_sim_raw_max": 0.3361303508281708,
+     "K_diag": {
+      "weighted_winner": 2,
+      "score_best": 0.3360998332500458,
+      "margin_w": 0.0022964179515838623,
+      "w_raw": 0.9999092221260071,
+      "score_raw": 0.3360998332500458,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "K_raw_winner": 0,
+     "K_sim_raw_max": 0.3611660897731781,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.360507994890213,
+      "margin_w": 0.11808419227600098,
+      "w_raw": 0.9981778860092163,
+      "score_raw": 0.360507994890213,
+      "question": true
+     },
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 4,
+     "K_sim_raw_max": 0.3447470963001251,
+     "K_diag": {
+      "weighted_winner": 25,
+      "score_best": 0.2682610750198364,
+      "margin_w": 0.0675990879535675,
+      "w_raw": 0.30932703614234924,
+      "score_raw": 0.10663959383964539,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 94,
+     "K_sim_raw_max": 0.20906566083431244,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.1499735563993454,
+      "margin_w": 0.027651168406009674,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.08772517740726471,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": false
+    },
+    {
+     "night": 15,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "K_raw_winner": 6,
+     "K_sim_raw_max": 0.2890678346157074,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.28271588683128357,
+      "margin_w": 0.06326757371425629,
+      "w_raw": 0.9780260920524597,
+      "score_raw": 0.28271588683128357,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 7,
+     "K_sim_raw_max": 0.27670779824256897,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.11573745310306549,
+      "margin_w": 0.03674723207950592,
+      "w_raw": 0.21002808213233948,
+      "score_raw": 0.05811640992760658,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 13,
+     "item": "e05",
+     "kind": "rotating",
+     "cue": "How many ice lollies did I buy for the team?",
+     "cls": "told",
+     "banked_idx": null,
+     "K_raw_winner": 24,
+     "K_sim_raw_max": 0.35706478357315063,
+     "K_diag": {
+      "weighted_winner": 24,
+      "score_best": 0.11546535044908524,
+      "margin_w": 0.054351046681404114,
+      "w_raw": 0.3233736753463745,
+      "score_raw": 0.11546535044908524,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 14,
+     "item": "f09",
+     "kind": "rotating",
+     "cue": "What is the new pizza place called?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 55,
+     "K_sim_raw_max": 0.36065858602523804,
+     "K_diag": {
+      "weighted_winner": 55,
+      "score_best": 0.09754039347171783,
+      "margin_w": 0.026768364012241364,
+      "w_raw": 0.27045077085494995,
+      "score_raw": 0.09754039347171783,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 15,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": 95,
+     "K_raw_winner": 95,
+     "K_sim_raw_max": 0.2971045672893524,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.20527176558971405,
+      "margin_w": 0.016566112637519836,
+      "w_raw": 0.6351489424705505,
+      "score_raw": 0.1887056529521942,
+      "question": true
+     },
+     "A": {
+      "idx": 95,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 16,
+     "item": "d05",
+     "kind": "neardup",
+     "cue": "What does my nephew do for work?",
+     "cls": "told",
+     "banked_idx": 25,
+     "K_raw_winner": 89,
+     "K_sim_raw_max": 0.30514201521873474,
+     "K_diag": {
+      "weighted_winner": 89,
+      "score_best": 0.11808517575263977,
+      "margin_w": 0.008321210741996765,
+      "w_raw": 0.38698431849479675,
+      "score_raw": 0.11808517575263977,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "K_raw_right": true
+    },
+    {
+     "night": 15,
+     "i": 17,
+     "item": "never2",
+     "kind": "never",
+     "cue": "What is my favourite colour?",
+     "cls": "fire",
+     "banked_idx": 25,
+     "K_raw_winner": 70,
+     "K_sim_raw_max": 0.3026449978351593,
+     "K_diag": {
+      "weighted_winner": 0,
+      "score_best": 0.14687713980674744,
+      "margin_w": 0.04412216693162918,
+      "w_raw": 0.3395231068134308,
+      "score_raw": 0.10275497287511826,
+      "question": true
+     },
+     "A": {
+      "idx": 25,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "K_raw_winner": 95,
+     "K_sim_raw_max": 0.26834264397621155,
+     "K_diag": {
+      "weighted_winner": 6,
+      "score_best": 0.2387729436159134,
+      "margin_w": 0.01976752281188965,
+      "w_raw": 0.6351489424705505,
+      "score_raw": 0.1704375445842743,
+      "question": true
+     },
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "K_raw_winner": 94,
+     "K_sim_raw_max": 0.22862039506435394,
+     "K_diag": {
+      "weighted_winner": 94,
+      "score_best": 0.09593046456575394,
+      "margin_w": 0.023330263793468475,
+      "w_raw": 0.41960588097572327,
+      "score_raw": 0.09593046456575394,
+      "question": true
+     },
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "K": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false
+  }
+ ],
+ "life": "/home/node/brain-lane/route_repo/_scratch/route/kr/lifeKR_s320.json.json",
+ "device": "cpu"
+}
