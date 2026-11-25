@@ -1,0 +1,2 @@
+# Arm S (brain/research/2026-11-25-sall-live-dev-prereg.md): the lifeKP job line + --key S_all --key-bar slept + record-only night snapshots; AWS g5 fp16; one life per instance
+lifeS_s320 brain.experiments.life_kw --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 320 --days 15 --weekend --split dev --full-probe-nights 1,5,10,15 --frozen-probe --span --transfer --pruned-a --cue-ladder --interview --lang-guard --keep-bank prior --homes ../work/lifeS_s320 --key S_all --key-bar slept --night-snapshots ../work/lifeS_s320/nightsnap
