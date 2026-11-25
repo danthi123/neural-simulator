@@ -42,11 +42,11 @@
   (K1 49 < 55, K2 s321 falls, K5 told no-fetch +26/+33/+32). Wrong 136 -> 40, false fires 239 -> 67. Of 168 raw-first
   right rows only 49 fetched: the right episode's weight tanh(eff) median 0.36 (Volvo 0.25, rotating 0.35). Candidates:
   bar fit on young (2-day) episodes vs 5-15-night-old ones; store strengths shaped by S0 fetches. Refuters x3 applied.
-- **NEXT STEP:** (1) Prereg a live DEV K-P life with `--key S_all --key-bar slept` (lifeKP job line + those flags +
-  `--night-snapshots`), s319-321, AWS g5 (~$27; spend 11-25 $2.93), paired with lifeKP: primary = reply-level told
-  recall nights >= 5 (count.py of the recall-voice read), intact vs hippocampus-off (memory must help), answer rate,
-  false recall, lang KL guard; log per-night strength/uses of right vs hub episodes. Expected risk: told episodes decay
-  where S_all does not fetch. (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **ARM S RUNNING (11-25):** live DEV K-P life `--key S_all --key-bar slept` (prereg brain/research/2026-11-25-sall-live-dev-prereg.md,
+  a0da1a034 + review amendment a3586ecb5), s319 i-0c0d51c2686881e59, s320 i-03a8842abb4c0e691, s321 i-0a43ac30fad23266d
+  (started 13:29 / 14:09 / 14:50 UTC, ~7h each). `_scratch/s_launch_then_pull.sh` pulls research/queue/.aws_brain.rvS<seed>.
+- **NEXT STEP:** (1) When pulled: count.py S vs lifeKP (P1 told >= 138/223, P2s), `life_costs --dev`, guards per the
+  amendment, strength report from nightsnap episodes.json, read one seed's whole transcripts, refuters, land. Read by 11-27. (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).
