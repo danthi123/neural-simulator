@@ -463,3 +463,6 @@ Board #286: identity gate read (no variant), test2 arms fixed, freeze gates buil
 
 ## 2026-11-25  routing screen read
 #286: D+G and SC KILLED (offline routing screen on KR snapshots); next = pattern-separated key.
+
+## 2026-11-25  routing ceiling
+#286: S_all_live ranks right episode first 168/217 vs S0 90; next = routing screen 2 with that key.
