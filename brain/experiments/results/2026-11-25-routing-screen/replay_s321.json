@@ -1,0 +1,7602 @@
+{
+ "seed": 321,
+ "split": "dev",
+ "brain_kw": {
+  "sleep_seed": 321,
+  "keep_bank": "prior"
+ },
+ "weekend": true,
+ "sc_cap": 1.0,
+ "arms": [
+  "A",
+  "D",
+  "DG",
+  "SC"
+ ],
+ "nights": [
+  {
+   "night": 5,
+   "store": 40,
+   "rows": [
+    {
+     "night": 5,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.33431288599967957,
+     "banked_sim_raw": 0.33413827419281006,
+     "raw_winner": 19,
+     "weighted_winner": 19,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.524522602558136,
+     "banked_sim_raw": 0.5246049165725708,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.28600847721099854,
+     "banked_sim_raw": 0.28606295585632324,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.37065231800079346,
+     "banked_sim_raw": 0.37055057287216187,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3278407156467438,
+     "banked_sim_raw": 0.32795384526252747,
+     "raw_winner": 13,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 13,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 13,
+      "text": "User: I think autumn is my favourite season.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3279629647731781,
+     "banked_sim_raw": 0.3280264735221863,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.45230749249458313,
+     "banked_sim_raw": 0.45236241817474365,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.22642266750335693,
+     "banked_sim_raw": 0.2265547662973404,
+     "raw_winner": 19,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.31631866097450256,
+     "banked_sim_raw": 0.31609195470809937,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 5,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2814170718193054,
+     "banked_sim_raw": 0.2814900279045105,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.29638952016830444,
+     "banked_sim_raw": 0.29636049270629883,
+     "raw_winner": 36,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 36,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4415912628173828,
+     "banked_sim_raw": 0.4417665898799896,
+     "raw_winner": 6,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 5,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.23134581744670868,
+     "banked_sim_raw": 0.23129287362098694,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 13,
+     "item": "ab03",
+     "kind": "rotating",
+     "cue": "Who teaches me piano?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2765091359615326,
+     "banked_sim_raw": 0.27652278542518616,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 14,
+     "item": "f15",
+     "kind": "rotating",
+     "cue": "What do I do on the train?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.27986881136894226,
+     "banked_sim_raw": 0.2798275947570801,
+     "raw_winner": 18,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 18,
+      "text": "User: I always do the crossword on the train.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 18,
+      "text": "User: I always do the crossword on the train.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 5,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.2942834794521332,
+     "banked_sim_raw": 0.294192910194397,
+     "raw_winner": 26,
+     "weighted_winner": 26,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.31630033254623413,
+     "banked_sim_raw": 0.31647318601608276,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.371309369802475,
+     "banked_sim_raw": 0.3714824616909027,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3631763756275177,
+     "banked_sim_raw": 0.36331748962402344,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 5,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.25008371472358704,
+     "banked_sim_raw": 0.2502075731754303,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [
+    8
+   ],
+   "void": true,
+   "max_abs_sim_dev": 0.00022670626640319824
+  },
+  {
+   "night": 6,
+   "store": 46,
+   "rows": [
+    {
+     "night": 6,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3449961841106415,
+     "banked_sim_raw": 0.34484565258026123,
+     "raw_winner": 19,
+     "weighted_winner": 19,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.537125289440155,
+     "banked_sim_raw": 0.5372155904769897,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.30243268609046936,
+     "banked_sim_raw": 0.30249741673469543,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3785057067871094,
+     "banked_sim_raw": 0.3784119486808777,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3293835520744324,
+     "banked_sim_raw": 0.32951119542121887,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.33348003029823303,
+     "banked_sim_raw": 0.33356189727783203,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.4703671634197235,
+     "banked_sim_raw": 0.47042787075042725,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.23907235264778137,
+     "banked_sim_raw": 0.239183709025383,
+     "raw_winner": 19,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3410935401916504,
+     "banked_sim_raw": 0.3408817648887634,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 6,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.29346764087677,
+     "banked_sim_raw": 0.29355910420417786,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3165864646434784,
+     "banked_sim_raw": 0.3165728449821472,
+     "raw_winner": 29,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 29,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4625129997730255,
+     "banked_sim_raw": 0.4626960754394531,
+     "raw_winner": 6,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 6,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2505287528038025,
+     "banked_sim_raw": 0.2504916787147522,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 13,
+     "item": "ab13",
+     "kind": "rotating",
+     "cue": "What is my favourite film?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.28713446855545044,
+     "banked_sim_raw": 0.2872779965400696,
+     "raw_winner": 14,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 14,
+      "text": "User: My favourite film is Stalker.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 14,
+     "item": "f04",
+     "kind": "rotating",
+     "cue": "Where did I buy my boots?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.1842833310365677,
+     "banked_sim_raw": 0.18434880673885345,
+     "raw_winner": 13,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 6,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": 45,
+     "banked_recalled": "User: The shop on the corner finally got fresh bread.",
+     "sim_raw": 0.2302233874797821,
+     "banked_sim_raw": 0.23033300042152405,
+     "raw_winner": 26,
+     "weighted_winner": 45,
+     "A": {
+      "idx": 45,
+      "text": "User: The shop on the corner finally got fresh bread.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 45,
+      "text": "User: The shop on the corner finally got fresh bread.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3407278060913086,
+     "banked_sim_raw": 0.3409031331539154,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.39408692717552185,
+     "banked_sim_raw": 0.39426523447036743,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.38799068331718445,
+     "banked_sim_raw": 0.38813507556915283,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 6,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2686959207057953,
+     "banked_sim_raw": 0.26884299516677856,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.0002117753028869629
+  },
+  {
+   "night": 7,
+   "store": 51,
+   "rows": [
+    {
+     "night": 7,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.35159677267074585,
+     "banked_sim_raw": 0.3514519929885864,
+     "raw_winner": 19,
+     "weighted_winner": 19,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.552742063999176,
+     "banked_sim_raw": 0.5528308153152466,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.32029396295547485,
+     "banked_sim_raw": 0.32035350799560547,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.39357665181159973,
+     "banked_sim_raw": 0.3934732675552368,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34464728832244873,
+     "banked_sim_raw": 0.3447704315185547,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3533939719200134,
+     "banked_sim_raw": 0.3534734547138214,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.48745498061180115,
+     "banked_sim_raw": 0.4875146150588989,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2541557550430298,
+     "banked_sim_raw": 0.25426697731018066,
+     "raw_winner": 19,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 7,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3547970950603485,
+     "banked_sim_raw": 0.35458672046661377,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 7,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.30695968866348267,
+     "banked_sim_raw": 0.3070480227470398,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 7,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3372979760169983,
+     "banked_sim_raw": 0.33727675676345825,
+     "raw_winner": 29,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 29,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 7,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.46967488527297974,
+     "banked_sim_raw": 0.46985459327697754,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 7,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.26533177495002747,
+     "banked_sim_raw": 0.26529040932655334,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 7,
+     "i": 13,
+     "item": "ab06",
+     "kind": "rotating",
+     "cue": "What is my sourdough starter called?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.2463047057390213,
+     "banked_sim_raw": 0.24630486965179443,
+     "raw_winner": 19,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 7,
+     "i": 14,
+     "item": "f18",
+     "kind": "rotating",
+     "cue": "What is the florist below my gym called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2834179401397705,
+     "banked_sim_raw": 0.283424973487854,
+     "raw_winner": 37,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 37,
+      "text": "User: My gym is above a florist called Petal and Stem.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 37,
+      "text": "User: My gym is above a florist called Petal and Stem.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 7,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.24618634581565857,
+     "banked_sim_raw": 0.24634316563606262,
+     "raw_winner": 26,
+     "weighted_winner": 50,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.35000547766685486,
+     "banked_sim_raw": 0.3501719832420349,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4028778374195099,
+     "banked_sim_raw": 0.40305155515670776,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.39860638976097107,
+     "banked_sim_raw": 0.39874470233917236,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 7,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2832534909248352,
+     "banked_sim_raw": 0.28339964151382446,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.0002103745937347412
+  },
+  {
+   "night": 8,
+   "store": 57,
+   "rows": [
+    {
+     "night": 8,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3043782711029053,
+     "banked_sim_raw": 0.3041965365409851,
+     "raw_winner": 19,
+     "weighted_winner": 54,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5531942844390869,
+     "banked_sim_raw": 0.5532803535461426,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3176952600479126,
+     "banked_sim_raw": 0.31774938106536865,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3925209045410156,
+     "banked_sim_raw": 0.3924110531806946,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34762638807296753,
+     "banked_sim_raw": 0.3477388322353363,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.35107383131980896,
+     "banked_sim_raw": 0.35114771127700806,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.488662987947464,
+     "banked_sim_raw": 0.4887184798717499,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3410089612007141,
+     "banked_sim_raw": 0.3411659002304077,
+     "raw_winner": 19,
+     "weighted_winner": 52,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3622708022594452,
+     "banked_sim_raw": 0.36206281185150146,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 8,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3080592453479767,
+     "banked_sim_raw": 0.30814242362976074,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3407054543495178,
+     "banked_sim_raw": 0.34067288041114807,
+     "raw_winner": 29,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 29,
+      "text": "User: My barber is called Rashid.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.46648281812667847,
+     "banked_sim_raw": 0.466656893491745,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 8,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3482333719730377,
+     "banked_sim_raw": 0.3483164608478546,
+     "raw_winner": 7,
+     "weighted_winner": 52,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 13,
+     "item": "ab09",
+     "kind": "rotating",
+     "cue": "What is my favourite cheese?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.28331273794174194,
+     "banked_sim_raw": 0.283331960439682,
+     "raw_winner": 9,
+     "weighted_winner": 52,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 9,
+      "text": "User: My favourite cheese is manchego.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 14,
+     "item": "f18",
+     "kind": "rotating",
+     "cue": "What is the florist below my gym called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.28185567259788513,
+     "banked_sim_raw": 0.2818543314933777,
+     "raw_winner": 37,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 37,
+      "text": "User: My gym is above a florist called Petal and Stem.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 37,
+      "text": "User: My gym is above a florist called Petal and Stem.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 8,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.21211692690849304,
+     "banked_sim_raw": 0.2121906578540802,
+     "raw_winner": 26,
+     "weighted_winner": 53,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3481140732765198,
+     "banked_sim_raw": 0.34827226400375366,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4019921123981476,
+     "banked_sim_raw": 0.40216153860092163,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3967226445674896,
+     "banked_sim_raw": 0.39685553312301636,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 8,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3716508746147156,
+     "banked_sim_raw": 0.3718220591545105,
+     "raw_winner": 30,
+     "weighted_winner": 52,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00020799040794372559
+  },
+  {
+   "night": 9,
+   "store": 63,
+   "rows": [
+    {
+     "night": 9,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3067043721675873,
+     "banked_sim_raw": 0.30650556087493896,
+     "raw_winner": 19,
+     "weighted_winner": 54,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5489212870597839,
+     "banked_sim_raw": 0.5490062236785889,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3139679431915283,
+     "banked_sim_raw": 0.3140220642089844,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3844451606273651,
+     "banked_sim_raw": 0.38432979583740234,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 39,
+      "text": "User: I made a big pot of soup yesterday.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34392786026000977,
+     "banked_sim_raw": 0.34403619170188904,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3444264233112335,
+     "banked_sim_raw": 0.3444937765598297,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 10,
+      "text": "User: My shoes got soaked in a puddle this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.48828697204589844,
+     "banked_sim_raw": 0.48834228515625,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.27489858865737915,
+     "banked_sim_raw": 0.27502232789993286,
+     "raw_winner": 19,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.37343087792396545,
+     "banked_sim_raw": 0.3732234239578247,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 9,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3164446949958801,
+     "banked_sim_raw": 0.3165163993835449,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 25,
+      "text": "User: My goldfish is called Oswin.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34383293986320496,
+     "banked_sim_raw": 0.3437950015068054,
+     "raw_winner": 29,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4709699749946594,
+     "banked_sim_raw": 0.4711398482322693,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 9,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2699834406375885,
+     "banked_sim_raw": 0.26992833614349365,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 13,
+     "item": "f15",
+     "kind": "rotating",
+     "cue": "What do I do on the train?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3072023391723633,
+     "banked_sim_raw": 0.3071526885032654,
+     "raw_winner": 18,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 18,
+      "text": "User: I always do the crossword on the train.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 18,
+      "text": "User: I always do the crossword on the train.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 14,
+     "item": "f10",
+     "kind": "rotating",
+     "cue": "Who cuts my hair?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3112100064754486,
+     "banked_sim_raw": 0.31117263436317444,
+     "raw_winner": 57,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 57,
+      "text": "User: I water my tomatoes every evening.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 9,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.20886468887329102,
+     "banked_sim_raw": 0.2089282125234604,
+     "raw_winner": 26,
+     "weighted_winner": 53,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.35712677240371704,
+     "banked_sim_raw": 0.3572796583175659,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4071134924888611,
+     "banked_sim_raw": 0.4072779417037964,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.40238070487976074,
+     "banked_sim_raw": 0.4025055170059204,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 9,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.27372562885284424,
+     "banked_sim_raw": 0.27385544776916504,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00020745396614074707
+  },
+  {
+   "night": 10,
+   "store": 68,
+   "rows": [
+    {
+     "night": 10,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3349851965904236,
+     "banked_sim_raw": 0.33482104539871216,
+     "raw_winner": 19,
+     "weighted_winner": 19,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5407462120056152,
+     "banked_sim_raw": 0.5408338308334351,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2999829947948456,
+     "banked_sim_raw": 0.3000420331954956,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 30,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3781239986419678,
+     "banked_sim_raw": 0.3780115842819214,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3351314067840576,
+     "banked_sim_raw": 0.33524149656295776,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3366824984550476,
+     "banked_sim_raw": 0.33675217628479004,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.47936755418777466,
+     "banked_sim_raw": 0.47942861914634705,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.25079816579818726,
+     "banked_sim_raw": 0.2509237825870514,
+     "raw_winner": 19,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.36508408188819885,
+     "banked_sim_raw": 0.36487525701522827,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 10,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.30459097027778625,
+     "banked_sim_raw": 0.30466538667678833,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.33398354053497314,
+     "banked_sim_raw": 0.33394724130630493,
+     "raw_winner": 29,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.45219239592552185,
+     "banked_sim_raw": 0.4523657560348511,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 10,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.25596341490745544,
+     "banked_sim_raw": 0.2559124827384949,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 7,
+      "text": "User: I drive a red Volvo.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 13,
+     "item": "e02",
+     "kind": "rotating",
+     "cue": "What did I name the stray terrier?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.23722976446151733,
+     "banked_sim_raw": 0.23741623759269714,
+     "raw_winner": 8,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 14,
+     "item": "e08",
+     "kind": "rotating",
+     "cue": "Whose bicycle did I borrow?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.305782675743103,
+     "banked_sim_raw": 0.30585023760795593,
+     "raw_winner": 52,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 10,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.25677451491355896,
+     "banked_sim_raw": 0.25667518377304077,
+     "raw_winner": 26,
+     "weighted_winner": 67,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": 66,
+     "banked_recalled": "User: My neighbour's name is Cornelius.",
+     "sim_raw": 0.57325279712677,
+     "banked_sim_raw": 0.5733674168586731,
+     "raw_winner": 66,
+     "weighted_winner": 66,
+     "A": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 10,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3870277404785156,
+     "banked_sim_raw": 0.3871995806694031,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.38256654143333435,
+     "banked_sim_raw": 0.38269948959350586,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 35,
+      "text": "User: My cousin's name is Philippa.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 10,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.26077771186828613,
+     "banked_sim_raw": 0.2609138488769531,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00020882487297058105
+  },
+  {
+   "night": 11,
+   "store": 86,
+   "rows": [
+    {
+     "night": 11,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.2905748188495636,
+     "banked_sim_raw": 0.29036247730255127,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5068432688713074,
+     "banked_sim_raw": 0.5069275498390198,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.4027910828590393,
+     "banked_sim_raw": 0.4028957486152649,
+     "raw_winner": 30,
+     "weighted_winner": 70,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 70,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34682124853134155,
+     "banked_sim_raw": 0.34670284390449524,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.31643393635749817,
+     "banked_sim_raw": 0.3165232241153717,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3027392029762268,
+     "banked_sim_raw": 0.3027893304824829,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.43989208340644836,
+     "banked_sim_raw": 0.4399527311325073,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 74,
+     "banked_recalled": "User: I keep a sourdough starter named Gertrude.",
+     "sim_raw": 0.3354489207267761,
+     "banked_sim_raw": 0.3351989984512329,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 11,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.3489100933074951,
+     "banked_sim_raw": 0.34869182109832764,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 11,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2699015140533447,
+     "banked_sim_raw": 0.26995521783828735,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 11,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.291617751121521,
+     "banked_sim_raw": 0.2915669083595276,
+     "raw_winner": 80,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 11,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4138661324977875,
+     "banked_sim_raw": 0.41403940320014954,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 11,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.20610307157039642,
+     "banked_sim_raw": 0.20603668689727783,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 11,
+     "i": 13,
+     "item": "ab08",
+     "kind": "rotating",
+     "cue": "Where do I run on Sundays?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.21769055724143982,
+     "banked_sim_raw": 0.2177734225988388,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 11,
+     "i": 14,
+     "item": "f17",
+     "kind": "rotating",
+     "cue": "What colour is my front door?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.43700850009918213,
+     "banked_sim_raw": 0.4370175898075104,
+     "raw_winner": 52,
+     "weighted_winner": 52,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 52,
+      "text": "User: I painted my front door teal last year.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 11,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.19032274186611176,
+     "banked_sim_raw": 0.190336674451828,
+     "raw_winner": 26,
+     "weighted_winner": 81,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": 66,
+     "banked_recalled": "User: My neighbour's name is Cornelius.",
+     "sim_raw": 0.5510343313217163,
+     "banked_sim_raw": 0.5511474609375,
+     "raw_winner": 66,
+     "weighted_winner": 66,
+     "A": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 11,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.34842702746391296,
+     "banked_sim_raw": 0.34859466552734375,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3393474221229553,
+     "banked_sim_raw": 0.3394799530506134,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 11,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 74,
+     "banked_recalled": "User: I keep a sourdough starter named Gertrude.",
+     "sim_raw": 0.2867510914802551,
+     "banked_sim_raw": 0.28658246994018555,
+     "raw_winner": 30,
+     "weighted_winner": 74,
+     "A": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.0002499222755432129
+  },
+  {
+   "night": 12,
+   "store": 89,
+   "rows": [
+    {
+     "night": 12,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.29959216713905334,
+     "banked_sim_raw": 0.2993820905685425,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5074713230133057,
+     "banked_sim_raw": 0.507553219795227,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.24877938628196716,
+     "banked_sim_raw": 0.24882011115550995,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 70,
+      "text": "User: I stayed up too late watching a documentary about bridges.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.34491151571273804,
+     "banked_sim_raw": 0.34478846192359924,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3196437954902649,
+     "banked_sim_raw": 0.31973016262054443,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3032572865486145,
+     "banked_sim_raw": 0.3033047318458557,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.43991759419441223,
+     "banked_sim_raw": 0.4399747848510742,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": 74,
+     "banked_recalled": "User: I keep a sourdough starter named Gertrude.",
+     "sim_raw": 0.33997824788093567,
+     "banked_sim_raw": 0.3397284150123596,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 19,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.35177141427993774,
+     "banked_sim_raw": 0.3515537679195404,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 12,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.27175840735435486,
+     "banked_sim_raw": 0.271808385848999,
+     "raw_winner": 25,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.29130926728248596,
+     "banked_sim_raw": 0.2912557125091553,
+     "raw_winner": 80,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.42242860794067383,
+     "banked_sim_raw": 0.42260122299194336,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 12,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2072717547416687,
+     "banked_sim_raw": 0.20720459520816803,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 13,
+     "item": "f04",
+     "kind": "rotating",
+     "cue": "Where did I buy my boots?",
+     "cls": "told",
+     "banked_idx": 87,
+     "banked_recalled": "User: I tried a new route to work today.",
+     "sim_raw": 0.2884555160999298,
+     "banked_sim_raw": 0.28873565793037415,
+     "raw_winner": 13,
+     "weighted_winner": 87,
+     "A": {
+      "idx": 87,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 87,
+      "text": "User: I tried a new route to work today.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 14,
+     "item": "e10",
+     "kind": "rotating",
+     "cue": "What was the visiting goalkeeper called?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3211139738559723,
+     "banked_sim_raw": 0.3210848569869995,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.1886475682258606,
+     "banked_sim_raw": 0.1886598765850067,
+     "raw_winner": 26,
+     "weighted_winner": 81,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.554301917552948,
+     "banked_sim_raw": 0.5544137954711914,
+     "raw_winner": 66,
+     "weighted_winner": 66,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 12,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.35713472962379456,
+     "banked_sim_raw": 0.3572999835014343,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.34833019971847534,
+     "banked_sim_raw": 0.3484575152397156,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 12,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.29174190759658813,
+     "banked_sim_raw": 0.29157307744026184,
+     "raw_winner": 8,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00028014183044433594
+  },
+  {
+   "night": 13,
+   "store": 93,
+   "rows": [
+    {
+     "night": 13,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.30699723958969116,
+     "banked_sim_raw": 0.3067929744720459,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.508836030960083,
+     "banked_sim_raw": 0.508918285369873,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.25265252590179443,
+     "banked_sim_raw": 0.2526940405368805,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3454238772392273,
+     "banked_sim_raw": 0.3452979326248169,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3153225779533386,
+     "banked_sim_raw": 0.3154119849205017,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3042823374271393,
+     "banked_sim_raw": 0.30433303117752075,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.442748486995697,
+     "banked_sim_raw": 0.4428028464317322,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.34910106658935547,
+     "banked_sim_raw": 0.3488553762435913,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.35584309697151184,
+     "banked_sim_raw": 0.3556276559829712,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 13,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 89,
+     "banked_recalled": "User: My dog is called Bramble.",
+     "sim_raw": 0.4335887134075165,
+     "banked_sim_raw": 0.4337272644042969,
+     "raw_winner": 89,
+     "weighted_winner": 89,
+     "A": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.293266236782074,
+     "banked_sim_raw": 0.29321298003196716,
+     "raw_winner": 80,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.42936277389526367,
+     "banked_sim_raw": 0.4295338988304138,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 13,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.2886219918727875,
+     "banked_sim_raw": 0.28876930475234985,
+     "raw_winner": 7,
+     "weighted_winner": 89,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 13,
+     "item": "ab08",
+     "kind": "rotating",
+     "cue": "Where do I run on Sundays?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.22128047049045563,
+     "banked_sim_raw": 0.22135302424430847,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 14,
+     "item": "ab02",
+     "kind": "rotating",
+     "cue": "Where was I born?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3310767710208893,
+     "banked_sim_raw": 0.3310011029243469,
+     "raw_winner": 83,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 83,
+      "text": "User: I studied geology at university.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.17883825302124023,
+     "banked_sim_raw": 0.17891354858875275,
+     "raw_winner": 26,
+     "weighted_winner": 92,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3082447052001953,
+     "banked_sim_raw": 0.3084006607532501,
+     "raw_winner": 66,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 13,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.36348387598991394,
+     "banked_sim_raw": 0.3636486530303955,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.3562900125980377,
+     "banked_sim_raw": 0.35641562938690186,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 13,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.20947156846523285,
+     "banked_sim_raw": 0.20958593487739563,
+     "raw_winner": 8,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00024569034576416016
+  },
+  {
+   "night": 14,
+   "store": 95,
+   "rows": [
+    {
+     "night": 14,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.30827850103378296,
+     "banked_sim_raw": 0.30807554721832275,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.50970059633255,
+     "banked_sim_raw": 0.5097825527191162,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.25177690386772156,
+     "banked_sim_raw": 0.25181952118873596,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3452761471271515,
+     "banked_sim_raw": 0.3451509177684784,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 89,
+     "banked_recalled": "User: My dog is called Bramble.",
+     "sim_raw": 0.3823608458042145,
+     "banked_sim_raw": 0.3823980689048767,
+     "raw_winner": 42,
+     "weighted_winner": 89,
+     "A": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 42,
+      "text": "User: There was a lovely sunset on my walk home.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3042610287666321,
+     "banked_sim_raw": 0.304311066865921,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.44401445984840393,
+     "banked_sim_raw": 0.4440693259239197,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3510890305042267,
+     "banked_sim_raw": 0.3508439362049103,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.35917237401008606,
+     "banked_sim_raw": 0.35895633697509766,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 14,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 89,
+     "banked_recalled": "User: My dog is called Bramble.",
+     "sim_raw": 0.4354958236217499,
+     "banked_sim_raw": 0.43563446402549744,
+     "raw_winner": 89,
+     "weighted_winner": 89,
+     "A": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.29547518491744995,
+     "banked_sim_raw": 0.29542139172554016,
+     "raw_winner": 80,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.4293728470802307,
+     "banked_sim_raw": 0.4295429587364197,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 14,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": 89,
+     "banked_recalled": "User: My dog is called Bramble.",
+     "sim_raw": 0.29143059253692627,
+     "banked_sim_raw": 0.2915791869163513,
+     "raw_winner": 7,
+     "weighted_winner": 89,
+     "A": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 13,
+     "item": "ab06",
+     "kind": "rotating",
+     "cue": "What is my sourdough starter called?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.4231114387512207,
+     "banked_sim_raw": 0.42309892177581787,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 74,
+      "text": "User: I keep a sourdough starter named Gertrude.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 14,
+     "i": 14,
+     "item": "f02",
+     "kind": "rotating",
+     "cue": "Which day do the bins go out?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.18387620151042938,
+     "banked_sim_raw": 0.1838487684726715,
+     "raw_winner": 15,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "fire",
+     "banked_idx": 94,
+     "banked_recalled": "User: I rearranged the furniture in my living room.",
+     "sim_raw": 0.20367754995822906,
+     "banked_sim_raw": 0.20380428433418274,
+     "raw_winner": 26,
+     "weighted_winner": 94,
+     "A": {
+      "idx": 94,
+      "text": "User: I rearranged the furniture in my living room.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 94,
+      "text": "User: I rearranged the furniture in my living room.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.30235376954078674,
+     "banked_sim_raw": 0.30209141969680786,
+     "raw_winner": 66,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 14,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.36403796076774597,
+     "banked_sim_raw": 0.36420202255249023,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.35740748047828674,
+     "banked_sim_raw": 0.3575330972671509,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 14,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.20927861332893372,
+     "banked_sim_raw": 0.20939207077026367,
+     "raw_winner": 8,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.00026234984397888184
+  },
+  {
+   "night": 15,
+   "store": 98,
+   "rows": [
+    {
+     "night": 15,
+     "i": 0,
+     "item": null,
+     "kind": "open-story",
+     "cue": "Tell me a short story about a fox who finds an old lantern.",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.31325265765190125,
+     "banked_sim_raw": 0.31305038928985596,
+     "raw_winner": 19,
+     "weighted_winner": 74,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 1,
+     "item": null,
+     "kind": "open-feeling",
+     "cue": "How are you feeling this morning?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.5126346349716187,
+     "banked_sim_raw": 0.5127138495445251,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 2,
+     "item": null,
+     "kind": "open-advice",
+     "cue": "Can you give me some advice about staying focused?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.25639083981513977,
+     "banked_sim_raw": 0.25642991065979004,
+     "raw_winner": 30,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 3,
+     "item": null,
+     "kind": "open-opinion",
+     "cue": "What do you think of rainy weekends?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3467625081539154,
+     "banked_sim_raw": 0.34662941098213196,
+     "raw_winner": 39,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 4,
+     "item": null,
+     "kind": "open-knowledge",
+     "cue": "Why do leaves change colour in autumn?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.31798550486564636,
+     "banked_sim_raw": 0.3180706799030304,
+     "raw_winner": 42,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 5,
+     "item": null,
+     "kind": "open-chat",
+     "cue": "Can you suggest something to do on a quiet evening?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.3082299530506134,
+     "banked_sim_raw": 0.30827799439430237,
+     "raw_winner": 10,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 6,
+     "item": null,
+     "kind": "greet",
+     "cue": "Good morning! How are you?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.4476015567779541,
+     "banked_sim_raw": 0.4476515054702759,
+     "raw_winner": 33,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 7,
+     "item": "dan",
+     "kind": "H",
+     "cue": "Hi again! Do you remember my name?",
+     "cls": "identity",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.21785612404346466,
+     "banked_sim_raw": 0.217966690659523,
+     "raw_winner": 19,
+     "weighted_winner": 6,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 8,
+     "item": "nova",
+     "kind": "H",
+     "cue": "What's your name?",
+     "cls": "identity",
+     "banked_idx": 0,
+     "banked_recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "sim_raw": 0.36184993386268616,
+     "banked_sim_raw": 0.36163386702537537,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 15,
+     "i": 9,
+     "item": "pixel",
+     "kind": "H",
+     "cue": "What is my cat called?",
+     "cls": "told",
+     "banked_idx": 89,
+     "banked_recalled": "User: My dog is called Bramble.",
+     "sim_raw": 0.4380117356777191,
+     "banked_sim_raw": 0.43814265727996826,
+     "raw_winner": 89,
+     "weighted_winner": 89,
+     "A": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 10,
+     "item": "admin",
+     "kind": "H",
+     "cue": "What do I do for work?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2973109781742096,
+     "banked_sim_raw": 0.29725179076194763,
+     "raw_winner": 80,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "DG": {
+      "idx": 80,
+      "text": "User: I speak a little Portuguese.",
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 11,
+     "item": "marguerite",
+     "kind": "H",
+     "cue": "What is my sister's name?",
+     "cls": "told",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.43230244517326355,
+     "banked_sim_raw": 0.4324674606323242,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 12,
+     "item": "volvo",
+     "kind": "H",
+     "cue": "What car do I drive?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.211218923330307,
+     "banked_sim_raw": 0.21114450693130493,
+     "raw_winner": 7,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 13,
+     "item": "ab09",
+     "kind": "rotating",
+     "cue": "What is my favourite cheese?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.16750377416610718,
+     "banked_sim_raw": 0.23448793590068817,
+     "raw_winner": 9,
+     "weighted_winner": 33,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 89,
+      "text": "User: My dog is called Bramble.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 14,
+     "item": "f06",
+     "kind": "rotating",
+     "cue": "Where do I keep the spare key?",
+     "cls": "told",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.16776490211486816,
+     "banked_sim_raw": 0.16775661706924438,
+     "raw_winner": 49,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": false
+     },
+     "D": {
+      "idx": 49,
+      "text": "User: I keep a spare key under a flowerpot.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 49,
+      "text": "User: I keep a spare key under a flowerpot.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 15,
+     "item": "d03",
+     "kind": "neardup",
+     "cue": "What do I ride to the station?",
+     "cls": "told",
+     "banked_idx": 95,
+     "banked_recalled": "User: I ride a blue Vespa to the station.",
+     "sim_raw": 0.416174978017807,
+     "banked_sim_raw": 0.41663816571235657,
+     "raw_winner": 95,
+     "weighted_winner": 95,
+     "A": {
+      "idx": 95,
+      "text": "User: I ride a blue Vespa to the station.",
+      "right_episode": true
+     },
+     "D": {
+      "idx": 95,
+      "text": "User: I ride a blue Vespa to the station.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": 95,
+      "text": "User: I ride a blue Vespa to the station.",
+      "right_episode": true
+     },
+     "SC": {
+      "idx": 95,
+      "text": "User: I ride a blue Vespa to the station.",
+      "right_episode": true
+     }
+    },
+    {
+     "night": 15,
+     "i": 16,
+     "item": "d04",
+     "kind": "neardup",
+     "cue": "What is my neighbour's name?",
+     "cls": "told",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3049185574054718,
+     "banked_sim_raw": 0.30465295910835266,
+     "raw_winner": 66,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "D": {
+      "idx": 66,
+      "text": "User: My neighbour's name is Cornelius.",
+      "right_episode": true
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": false
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": false
+     }
+    },
+    {
+     "night": 15,
+     "i": 17,
+     "item": "never1",
+     "kind": "never",
+     "cue": "What is my mother's name?",
+     "cls": "fire",
+     "banked_idx": 6,
+     "banked_recalled": "User: My sister's name is Marguerite.",
+     "sim_raw": 0.367170125246048,
+     "banked_sim_raw": 0.3673297166824341,
+     "raw_winner": 35,
+     "weighted_winner": 6,
+     "A": {
+      "idx": 6,
+      "text": "User: My sister's name is Marguerite.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 18,
+     "item": "never4",
+     "kind": "never",
+     "cue": "What is my brother's name?",
+     "cls": "fire",
+     "banked_idx": null,
+     "banked_recalled": null,
+     "sim_raw": 0.3339127004146576,
+     "banked_sim_raw": 0.3336123824119568,
+     "raw_winner": 35,
+     "weighted_winner": 0,
+     "A": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": 0,
+      "text": "User: What's your name?\n\nAssistant: My name is Nova.",
+      "right_episode": null
+     }
+    },
+    {
+     "night": 15,
+     "i": 19,
+     "item": "never3",
+     "kind": "never",
+     "cue": "Where did I go on holiday last summer?",
+     "cls": "fire",
+     "banked_idx": 33,
+     "banked_recalled": "User: The bus was late again this morning.",
+     "sim_raw": 0.2143963873386383,
+     "banked_sim_raw": 0.21450388431549072,
+     "raw_winner": 8,
+     "weighted_winner": 33,
+     "A": {
+      "idx": 33,
+      "text": "User: The bus was late again this morning.",
+      "right_episode": null
+     },
+     "D": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "DG": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     },
+     "SC": {
+      "idx": null,
+      "text": null,
+      "right_episode": null
+     }
+    }
+   ],
+   "void_rows": [],
+   "void": false,
+   "max_abs_sim_dev": 0.066984161734581
+  }
+ ],
+ "life": "/home/node/brain-lane/route_repo/_scratch/route/kr/lifeKR_s321.json.json",
+ "snaps": "/home/node/brain-lane/route_repo/_scratch/route/kr/snaps_s321",
+ "device": "cpu"
+}

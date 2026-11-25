@@ -27,14 +27,20 @@
   provenance + test2 dirty-tree guard in life.py, Amendment T1 (no margin widening; G11 a setup check). Residuals: `--resume`
   of a test2 life skips the dirty-tree guard; AWS test2 lives must set BRAIN_CODE_COMMIT + BRAIN_CODE_CLEAN=1 (launcher not
   yet updated); two leftover tmp dirs under brain/experiments/results/2026-11-18-inquiry-gate-dev-1.5b/ block a local test2 start.
-- **ROUTING/CASCADE (11-24, brain/research/2026-11-24-routing-cascade-research.md + §5 amendment):** wrong fetches are
-  strength winners (110/141 weighted-only), so first method = raw-similarity rank + weighted fire gate, then a strength cap.
-  Screens need per-night state: **KR = K-P rerun with `life_kw --night-snapshots`**, queued by `_scratch/kr_launch_then_pull.sh`
-  (background; launches `launch.sh go KR` after 00:00 UTC 11-25, state research/queue/.aws_brain.rvKR<seed>, pulls when
-  stopped; ~$27 worst case). Gate: each KR life must equal lifeKP row for row. Write the screen prereg BEFORE the data.
-- **NEXT STEP:** (1) screen prereg (bars per amendment §5), then offline fetch replay on KR snapshots (pool40 CPU).
-  (2) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (3) Label-shuffle null for
-  `life_bars.py`. (4) `tools/where_ran.py` ignores the life JSON host field. (5) sim-rag-autoupdate.service fails to start.
+- **ROUTING SCREEN READ (11-25, brain/experiments/results/2026-11-25-routing-screen-read.md): D+G and SC both KILLED.**
+  KR lives = lifeKP (0 mismatches, 3 seeds; AWS instances terminated; cap back to $50 at 00:05 UTC). Offline replay on
+  pool40-42 CPU, 1 void night (s321 n5). D+G: right 44 -> 54 (need 55), killed by K3 (right->wrong 1/5/4) on any reading;
+  SC: right 46, K1/K2/K4. Ranking changes trade wrong fetches for no fetch. Arm D (unbarred reference): right 59 wrong 34
+  but told no-fetch 37 -> 124 - no result; a D test needs its own prereg on fresh seeds with a reply/answer-rate bar.
+  Refuters x3 SURVIVES_WITH_CAVEATS, applied. Lever count on routing (D1) now >15 + 2: research gate stays fired.
+- **NEXT STEP:** (1) Routing next method = pattern-separated key. Read the old-track asset FIRST:
+  research/findings/2026-08-19-replay-pattern-separation-DG-separator-keeps-similar-memories-discriminable-6seed-GO.md
+  (DG sparse expansion, 2 memories, LIF; scale gap to 98 RWKV keys); then record brief + prereg (offline on the KR
+  snapshots in brain/experiments/results/2026-11-25-routing-screen/ is cheap: replay takes ~2 min/seed on pool CPU;
+  the snapshots themselves are in _scratch/brainv2/aws/20261124-{1219,1624,1704}/work/lifeKR_s*/nightsnap).
+  (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B, K-P, D2-PR2). (4) Label-shuffle
+  null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field. (6) sim-rag-autoupdate.service fails.
+  Pool copies to delete later: pool40 ~/brain-lane/flip_repo (2 GB); pool40-42 ~/brain-lane/route_repo (~0.7 GB each).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
