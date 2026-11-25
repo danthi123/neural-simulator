@@ -45,6 +45,13 @@
 - **ARM S RUNNING (11-25):** live DEV K-P life `--key S_all --key-bar slept` (prereg brain/research/2026-11-25-sall-live-dev-prereg.md,
   a0da1a034 + review amendment a3586ecb5), s319 i-0c0d51c2686881e59, s320 i-03a8842abb4c0e691, s321 i-0a43ac30fad23266d
   (started 13:29 / 14:09 / 14:50 UTC, ~7h each). `_scratch/s_launch_then_pull.sh` pulls research/queue/.aws_brain.rvS<seed>.
+- **CASCADE SCREEN RUNNING (11-25):** prereg brain/research/2026-11-25-cascade-screen-prereg.md, build 268ea9041
+  (`Brain(own_decay)`, default OFF), pool40/41/42 s319/320/321 restarted 19:11 UTC (first start stopped in error, kept as
+  casc_s*.aborted1.json), ~7.5 h; out ~/brain-lane/route_repo/_scratch/route/kr/casc_s<seed>.json. Night 2 s319 already
+  shows D25 replies going empty (told ok 6 -> 1): fading own replies may erode the turn format. Then K5 (own_gain_probe
+  --gains d0.5 d0.25 on pool40 E / pool41 B), `cascade_screen k5` + `table`, read.
+- **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
+  per stopped instance) and re-arm tools/attention_watch.py --loop.
 - **NEXT STEP:** (1) When pulled: count.py S vs lifeKP (P1 told >= 138/223, P2s), `life_costs --dev`, guards per the
   amendment, strength report from nightsnap episodes.json, read one seed's whole transcripts, refuters, land. Read by 11-27. (2) Cascade screen prereg on KR snapshots. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
