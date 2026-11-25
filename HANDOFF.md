@@ -33,7 +33,9 @@
   "rerun today, increase the cap as needed": cap $80 for 11-24 via aws-guard drop-in; `_scratch/cap_restore_1125.sh`
   moves it out at 11-25 00:05 UTC, back to $50 - check it ran). s319 i-0b9a3ef1c1efd384e (17:59, commit 2e7a4f6a6),
   s320 i-05c8a39f252a86db6 (22:04), s321 i-0c3ccd978db1f0df7 (22:44; both commit 4864e3274, no life-path change).
-  `_scratch/kr_launch_then_pull.sh` pulls each when stopped (~02:30-07:30 UTC 11-25). Do NOT commit while a launch is
+  `_scratch/kr_launch_then_pull.sh` pulls each when stopped (~02:30-07:30 UTC 11-25). W rebooted to Windows 11-25 ~00:10 UTC: the
+  pull loop died; lives self-stop on disk (dead-man). After W is back: rerun `bash _scratch/kr_launch_then_pull.sh`? NO
+  (it relaunches) - pull each by hand: `AWS_BRAIN_STATE=research/queue/.aws_brain.rvKR<s> AWS_BRAIN_PULL_WORK=1 bash tools/aws_brain_batch.sh pull`. Do NOT commit while a launch is
   rotating zones (HEAD must equal BRAIN_CODE_COMMIT). Gate: each KR life must equal lifeKP row for row.
   Screen prereg: brain/research/2026-11-24-routing-screen-prereg.md (landed 6701dda0b).
 - **NEXT STEP:** (1) KR pulled -> `routing_replay.py validate` vs lifeKP, `replay` on pool40 CPU, `score`, refuters, land.
