@@ -54,6 +54,9 @@
   --gains d0.5 d0.25 on pool40 E / pool41 B), `cascade_screen k5` + `table`, read.
 - **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
   per stopped instance) and re-arm tools/attention_watch.py --loop.
+- **TIMEBOX (11-25, routing arc open since 11-23, past 2 days): KEEP, new limit 11-27.** One last method: S_all competition
+  without permanent/self episodes, offline screen on KR snapshots (pool, $0). If it fails: STOP routing, bank as
+  "missing prerequisite (near-duplicate separation) at this scale", and run 12-04 test2 with the current memory. No 6th lever.
 - **NEXT STEP:** (1) Cascade screen: when done, K5 then `cascade_screen k5` + `table`, read, refuters, land. (2) Routing: before-build +
   prereg for an S_all competition that excludes permanent/self episodes (or a rank-margin gate), offline on KR snapshots first. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
