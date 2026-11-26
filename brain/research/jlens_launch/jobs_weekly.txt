@@ -1,0 +1,2 @@
+# Weekly conversation test 2026-11-26 (CLAUDE.md progress metric), 1.5B, seed 42, shared sleep; on AWS because the 1.5B sleep exceeds the pool's 11 GB cap (pool40 rc 137)
+weekly_1126 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 42 --homes ../work/weekly_1126
