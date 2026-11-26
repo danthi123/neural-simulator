@@ -225,7 +225,8 @@ class Brain:
                  arousal_calibration: tuple | None = None, use_gate: str | None = None,
                  sleep_downscale: float | None = None, rank: str | None = None,
                  downscale_factors: str = "B", downscale_when: str = "before",
-                 replay_priority: str | None = None, keep_bank: str | None = None):
+                 replay_priority: str | None = None, keep_bank: str | None = None,
+                 recall_skip_permanent: bool = False):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -338,6 +339,11 @@ class Brain:
         copy (_is_copy against the heard turn and the brain's own replies since waking); every other reply is written
         at full gain, so the turn structure stays (a flat gain <= 0.25 lost it: results/2026-11-16-own-gain-probe.md).
         The copy is still said; it is not reinforced. Same declared scaffold as reply_monitor. Not saved.
+        recall_skip_permanent: (switch, default OFF = False) a heard turn's recall never fetches a permanent episode (own
+        name, friends' names): their indices go to recall's existing `exclude`, as the self-belief's do. Declared routing
+        scaffold (SCAFFOLDS.md): stands in for a missing self/other tag in the store; under S_all the permanent self-name
+        episode won 65/223 told rows of the live arm S life (results/2026-11-25-sall-live-dev-read-1.5b.md, prereg
+        brain/research/2026-11-26-routing-screen3-prereg.md). Familiarity and best() are unchanged.
         own_decay: (switch, default OFF = None) the brain's OLDER own replies fade from the conversation state: the
         reply just spoken stays at full weight (the next turn keeps whose turn it is) and each reply's write is scaled
         by own_decay per later turn (beta^k after k turns), so an early first-person or refusal reply cannot cascade
@@ -412,6 +418,7 @@ class Brain:
         self.reply_monitor = int(reply_monitor)
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
+        self.recall_skip_permanent = bool(recall_skip_permanent)
         self.own_decay = None if own_decay is None else float(own_decay)
         if self.own_decay is not None and (self.own_gain is not None or self.arousal_gain is not None):
             raise ValueError("own_decay excludes own_gain and arousal_gain")
@@ -564,7 +571,9 @@ class Brain:
         if gated:
             self.hippocampus.last_fetch = None
         if known:
-            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
+            skip = tuple(i for i, e in enumerate(self.hippocampus.episodes) if e.permanent) \
+                if self.recall_skip_permanent else ()
+            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"), exclude=skip)
         else:  # nothing familiar enough: no pattern completion, no reinstatement
             ep, sim = None, (info["fok"] if info.get("fok_source") == "hippocampus" else info.get("fam", 0.0))
         info["similarity"] = round(sim, 3)
