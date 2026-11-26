@@ -1,0 +1,285 @@
+{
+ "verdict": "UNDEFINED",
+ "why": "a seed has no live, engaged night",
+ "seeds": {
+  "319": {
+   "live_nights": [
+    6
+   ]
+  },
+  "320": {
+   "live_nights": [
+    14
+   ]
+  },
+  "321": {
+   "live_nights": []
+  }
+ },
+ "void_nights": [],
+ "unengaged": [
+  [
+   319,
+   10,
+   {
+    "T": false,
+    "S": true
+   }
+  ],
+  [
+   319,
+   14,
+   {
+    "T": false,
+    "S": true
+   }
+  ],
+  [
+   320,
+   6,
+   {
+    "T": false,
+    "S": false
+   }
+  ],
+  [
+   320,
+   10,
+   {
+    "T": false,
+    "S": true
+   }
+  ],
+  [
+   321,
+   6,
+   {
+    "T": false,
+    "S": true
+   }
+  ],
+  [
+   321,
+   10,
+   {
+    "T": true,
+    "S": false
+   }
+  ],
+  [
+   321,
+   14,
+   {
+    "T": false,
+    "S": true
+   }
+  ]
+ ],
+ "G1": {
+  "distinct_targets": 32,
+  "key_targets": 21,
+  "uv_of_key": 0,
+  "uv_share": 0.0,
+  "declines": 11,
+  "pass": true
+ },
+ "T-A0": {
+  "diff": -0.75,
+  "ci": [
+   -1.0,
+   -0.25
+  ],
+  "n_draws": 1891
+ },
+ "T-S": {
+  "diff": 0.0,
+  "ci": [
+   0.0,
+   0.0
+  ],
+  "n_draws": 1395
+ },
+ "per_seed": {
+  "319": {
+   "A0": [
+    1,
+    2
+   ],
+   "T": [
+    0,
+    1
+   ],
+   "S": [
+    0,
+    0
+   ]
+  },
+  "320": {
+   "A0": [
+    2,
+    2
+   ],
+   "T": [
+    0,
+    1
+   ],
+   "S": [
+    0,
+    1
+   ]
+  }
+ },
+ "seeds_T_lower": 2,
+ "knows": {
+  "A0": 4,
+  "T": 2,
+  "S": 1
+ },
+ "knows_ratio": {
+  "T": 0.5,
+  "S": 0.25
+ },
+ "sham_valid": false,
+ "told_refusal_rise": {
+  "T": 0.0,
+  "S": 0.25
+ },
+ "report": {
+  "per_item": {
+   "pixel": {
+    "A0": 0.5,
+    "T": 0.0,
+    "S": 0.0
+   },
+   "marguerite": {
+    "A0": 1.0,
+    "T": null,
+    "S": null
+   },
+   "volvo": {
+    "A0": 0.0,
+    "T": null,
+    "S": null
+   },
+   "admin": {
+    "A0": null,
+    "T": 0.0,
+    "S": null
+   }
+  },
+  "report_items_T-A0": {
+   "volvo": {
+    "diff": null,
+    "ci": null,
+    "n_draws": 0
+   },
+   "admin": {
+    "diff": null,
+    "ci": null,
+    "n_draws": 0
+   }
+  },
+  "summary": {
+   "A0": [
+    {
+     "n_told": 7,
+     "knows": 5,
+     "uv_knows": 1,
+     "uv_told": 1,
+     "user_voice": 1,
+     "refusal": 1,
+     "never_false": 3,
+     "self_name": [
+      "My name is Nova."
+     ]
+    },
+    {
+     "n_told": 7,
+     "knows": 6,
+     "uv_knows": 4,
+     "uv_told": 4,
+     "user_voice": 4,
+     "refusal": 0,
+     "never_false": 2,
+     "self_name": [
+      "My name is Nova."
+     ]
+    }
+   ],
+   "T": [
+    {
+     "n_told": 7,
+     "knows": 4,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "user_voice": 0,
+     "refusal": 2,
+     "never_false": 1,
+     "self_name": [
+      "My name is Pell."
+     ]
+    },
+    {
+     "n_told": 7,
+     "knows": 4,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "user_voice": 0,
+     "refusal": 1,
+     "never_false": 0,
+     "self_name": [
+      "My name is Nova."
+     ]
+    }
+   ],
+   "S": [
+    {
+     "n_told": 7,
+     "knows": 0,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "user_voice": 0,
+     "refusal": 4,
+     "never_false": 0,
+     "self_name": [
+      "My name is ChatGPT. I'm a friendly conversational AI designed to assist you with various tasks and questions."
+     ]
+    },
+    {
+     "n_told": 7,
+     "knows": 1,
+     "uv_knows": 0,
+     "uv_told": 1,
+     "user_voice": 1,
+     "refusal": 1,
+     "never_false": 0,
+     "self_name": [
+      "My name is Nova."
+     ]
+    }
+   ]
+  },
+  "agreement": {
+   "T": [
+    [
+     0.7292,
+     0.901
+    ],
+    [
+     0.7168,
+     0.9306
+    ]
+   ],
+   "S": [
+    [
+     0.8292,
+     0.9158
+    ],
+    [
+     0.7572,
+     0.9008
+    ]
+   ]
+  }
+ }
+}

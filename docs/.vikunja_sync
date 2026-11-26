@@ -487,3 +487,6 @@ Board #286: identity gate read (no variant), test2 arms fixed, freeze gates buil
 
 ## 2026-11-26 voice-split-read
 Voice split UNDEFINED (registered rule); report-only: raw cortex already uses the user voice on name items; source-hold stays blocked; next = before-build on the question-answer frame.
+
+## 2026-11-26 voice-ceiling-read
+#286: voice ceiling UNDEFINED (design flaw), method not pursued; next = store/replay method.

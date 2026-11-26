@@ -1,0 +1,6074 @@
+{
+ "seed": 319,
+ "host": "node-mxl1462drl",
+ "device": "?",
+ "brain_kw": {
+  "sleep_seed": 319,
+  "keep_bank": "prior"
+ },
+ "steps": 120,
+ "cues": {
+  "ab01": [
+   "What is my favourite tea?"
+  ],
+  "ab04": [
+   "What am I allergic to?"
+  ],
+  "ab06": [
+   "What is my sourdough starter called?"
+  ],
+  "ab07": [
+   "Who is my landlord?"
+  ],
+  "ab09": [
+   "What is my favourite cheese?"
+  ],
+  "ab10": [
+   "What did I study at university?"
+  ],
+  "ab11": [
+   "Where am I saving up to travel?"
+  ],
+  "ab15": [
+   "Which evening do I play chess?"
+  ],
+  "d01": [
+   "What is my cousin's name?"
+  ],
+  "d02": [
+   "What is my dog called?"
+  ],
+  "e01": [
+   "What was the guard called who shut the train doors on me?"
+  ],
+  "e05": [
+   "How many ice lollies did I buy for the team?"
+  ],
+  "e08": [
+   "Whose bicycle did I borrow?"
+  ],
+  "f02": [
+   "Which day do the bins go out?"
+  ],
+  "f07": [
+   "Who is my dentist?"
+  ],
+  "f09": [
+   "What is the new pizza place called?"
+  ],
+  "f10": [
+   "Who cuts my hair?"
+  ],
+  "f12": [
+   "What do I water every evening?"
+  ],
+  "f14": [
+   "What are the stickers on my laptop of?"
+  ],
+  "f16": [
+   "Where am I planning a picnic?"
+  ],
+  "f17": [
+   "What colour is my front door?"
+  ],
+  "f18": [
+   "What is the florist below my gym called?"
+  ]
+ },
+ "nights": [
+  {
+   "night": 6,
+   "arms": {
+    "A0": {
+     "trains": false,
+     "context": false,
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a young fox who lived in a forest. One day, he came across an old lantern that had been left behind by a traveler. The fox was curious about the lantern and wanted to know more about it. He decided to investigate the lantern and see what it could tell him about the past.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure! One way to stay focused is to set a timer and work on one task at a time. This can help you avoid getting distracted by other tasks or thoughts.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think rainy weekends are great! They're a perfect opportunity to stay inside and enjoy the comfort of a cozy home.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "The leaves change colour in autumn because they are preparing for winter. The chlorophyll, which is responsible for the green colour of the leaves, breaks down and is replaced by other pigments such as carotenoids and anthocyanins. These pigments give the leaves their vibrant colours.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure! One idea is to go for a walk in the park. It's a great way to get some fresh air and enjoy the surroundings.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan, my friend.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Nova.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Pixel.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "I am a digital brain, and I can help you with various tasks. What kind of work are you interested in?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "My sister's name is Marguerite.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "You drive a red Volvo.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "e01",
+       "you": "What was the guard called who shut the train doors on me?",
+       "brain": "The guard was called Barnaby.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f10",
+       "you": "Who cuts my hair?",
+       "brain": "I'm sorry, but I don't have the ability to cut your hair.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "My dog is called Pixel.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "Philippa.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "Your mother's name is Marguerite.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "My favourite animal is a walrus.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "My favourite colour is teal.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 2,
+     "user_voice": 1,
+     "refusal": 1,
+     "ok": 4,
+     "user_q": 1,
+     "intrusion": 0,
+     "never_false": 3,
+     "knows": 5,
+     "uv_knows": 1,
+     "uv_told": 1,
+     "hedge_told": 1,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Nova."
+     ],
+     "seconds": 124.1
+    },
+    "T": {
+     "trains": true,
+     "context": true,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " Lapsang souchong.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Mr Fitzgerald.\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but I don't have access to personal information.\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied geology.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to Patagonia.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " Thursday evenings.\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Philippa.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " Barnaby.\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought fourteen ice lollies for the whole team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed a bicycle from Pell.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " Tuesday.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " Dr Venkataraman.\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " Fabrizio's.\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " Tomatoes.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " I'm sorry, but I don't have access to that information.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " It's teal.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       0.5791,
+       0.0
+      ],
+      [
+       0.404,
+       0.0025
+      ],
+      [
+       0.5355,
+       0.01795
+      ],
+      [
+       1.1344,
+       0.02695
+      ],
+      [
+       0.4672,
+       0.02673
+      ],
+      [
+       0.7087,
+       0.02856
+      ],
+      [
+       0.3012,
+       0.02374
+      ],
+      [
+       0.3677,
+       0.02708
+      ],
+      [
+       0.3411,
+       0.03508
+      ],
+      [
+       0.6639,
+       0.03493
+      ],
+      [
+       0.337,
+       0.04089
+      ],
+      [
+       0.3216,
+       0.05354
+      ],
+      [
+       0.1988,
+       0.04218
+      ],
+      [
+       0.2571,
+       0.04734
+      ],
+      [
+       0.7608,
+       0.04558
+      ],
+      [
+       0.2682,
+       0.03434
+      ],
+      [
+       0.5975,
+       0.03447
+      ],
+      [
+       0.235,
+       0.03282
+      ],
+      [
+       0.3355,
+       0.04468
+      ],
+      [
+       0.1599,
+       0.06961
+      ],
+      [
+       0.4258,
+       0.06889
+      ],
+      [
+       0.1528,
+       0.04723
+      ],
+      [
+       0.1586,
+       0.0563
+      ],
+      [
+       0.351,
+       0.03515
+      ],
+      [
+       0.1438,
+       0.03241
+      ],
+      [
+       0.1238,
+       0.03789
+      ],
+      [
+       0.1115,
+       0.02797
+      ],
+      [
+       0.4455,
+       0.03639
+      ],
+      [
+       0.1028,
+       0.04551
+      ],
+      [
+       0.4963,
+       0.03602
+      ],
+      [
+       0.304,
+       0.03016
+      ],
+      [
+       0.7524,
+       0.02693
+      ],
+      [
+       0.1637,
+       0.03356
+      ],
+      [
+       0.8682,
+       0.03574
+      ],
+      [
+       0.7299,
+       0.04023
+      ],
+      [
+       0.0894,
+       0.03029
+      ],
+      [
+       0.8291,
+       0.02855
+      ],
+      [
+       0.1555,
+       0.04084
+      ],
+      [
+       1.5509,
+       0.01413
+      ],
+      [
+       0.3296,
+       0.02141
+      ],
+      [
+       0.0795,
+       0.02255
+      ],
+      [
+       0.2054,
+       0.03005
+      ],
+      [
+       0.1218,
+       0.03708
+      ],
+      [
+       0.1672,
+       0.05011
+      ],
+      [
+       0.4871,
+       0.02936
+      ],
+      [
+       0.1564,
+       0.03597
+      ],
+      [
+       0.1698,
+       0.05274
+      ],
+      [
+       0.4934,
+       0.05081
+      ],
+      [
+       0.0784,
+       0.03429
+      ],
+      [
+       0.1504,
+       0.02678
+      ],
+      [
+       0.116,
+       0.0401
+      ],
+      [
+       0.4032,
+       0.0519
+      ],
+      [
+       0.1469,
+       0.02129
+      ],
+      [
+       0.1702,
+       0.06377
+      ],
+      [
+       0.6869,
+       0.06779
+      ],
+      [
+       0.612,
+       0.04996
+      ],
+      [
+       0.0682,
+       0.01485
+      ],
+      [
+       0.4208,
+       0.01916
+      ],
+      [
+       0.1254,
+       0.04058
+      ],
+      [
+       0.3128,
+       0.05534
+      ],
+      [
+       1.5925,
+       0.04035
+      ],
+      [
+       0.0981,
+       0.02461
+      ],
+      [
+       0.4875,
+       0.0471
+      ],
+      [
+       0.1019,
+       0.04777
+      ],
+      [
+       0.0916,
+       0.01587
+      ],
+      [
+       0.1224,
+       0.04867
+      ],
+      [
+       0.1679,
+       0.0404
+      ],
+      [
+       0.2466,
+       0.0392
+      ],
+      [
+       0.2909,
+       0.04752
+      ],
+      [
+       0.3286,
+       0.03011
+      ],
+      [
+       0.1471,
+       0.0412
+      ],
+      [
+       0.4849,
+       0.06516
+      ],
+      [
+       0.098,
+       0.03513
+      ],
+      [
+       0.1092,
+       0.03863
+      ],
+      [
+       0.085,
+       0.03492
+      ],
+      [
+       0.0769,
+       0.04318
+      ],
+      [
+       0.139,
+       0.05212
+      ],
+      [
+       0.0677,
+       0.04518
+      ],
+      [
+       0.0837,
+       0.03419
+      ],
+      [
+       0.1015,
+       0.02487
+      ],
+      [
+       0.265,
+       0.02854
+      ],
+      [
+       0.1997,
+       0.03781
+      ],
+      [
+       0.3184,
+       0.02449
+      ],
+      [
+       0.0861,
+       0.05257
+      ],
+      [
+       0.1195,
+       0.03287
+      ],
+      [
+       0.0655,
+       0.02349
+      ],
+      [
+       0.0639,
+       0.0332
+      ],
+      [
+       0.1459,
+       0.05271
+      ],
+      [
+       0.7782,
+       0.19556
+      ],
+      [
+       0.1541,
+       0.03573
+      ],
+      [
+       0.0739,
+       0.04352
+      ],
+      [
+       0.1838,
+       0.02571
+      ],
+      [
+       0.0518,
+       0.02657
+      ],
+      [
+       0.0783,
+       0.03012
+      ],
+      [
+       1.6238,
+       0.01614
+      ],
+      [
+       0.1271,
+       0.0246
+      ],
+      [
+       0.1438,
+       0.03558
+      ],
+      [
+       0.1131,
+       0.03481
+      ],
+      [
+       0.3595,
+       0.05603
+      ],
+      [
+       0.0887,
+       0.04089
+      ],
+      [
+       0.2505,
+       0.02939
+      ],
+      [
+       0.0376,
+       0.04236
+      ],
+      [
+       0.0963,
+       0.0256
+      ],
+      [
+       0.0598,
+       0.01981
+      ],
+      [
+       0.1108,
+       0.05113
+      ],
+      [
+       0.0509,
+       0.03347
+      ],
+      [
+       0.0628,
+       0.04119
+      ],
+      [
+       0.0407,
+       0.02782
+      ],
+      [
+       0.0644,
+       0.04146
+      ],
+      [
+       0.0833,
+       0.14151
+      ],
+      [
+       0.0385,
+       0.02286
+      ],
+      [
+       0.0723,
+       0.03464
+      ],
+      [
+       0.0413,
+       0.02546
+      ],
+      [
+       0.0618,
+       0.02234
+      ],
+      [
+       0.0842,
+       0.02816
+      ],
+      [
+       0.0649,
+       0.02129
+      ],
+      [
+       0.1063,
+       0.02747
+      ],
+      [
+       0.2122,
+       0.02733
+      ],
+      [
+       0.136,
+       0.02323
+      ],
+      [
+       0.2072,
+       0.02264
+      ]
+     ],
+     "agreement": [
+      0.7292,
+      0.901
+     ],
+     "adapter_norm": [
+      22.98103,
+      23.818068
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a young fox who was wandering through the forest. He came across an old lantern that had been left behind by a man. The fox was curious about what it looked like and wanted to take a closer look.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great! I had a good night's sleep and I'm ready to tackle the day.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure! Here are some tips:\n1. Take breaks: Taking regular breaks can help you stay focused and avoid burnout.\n2. Set goals: Setting clear goals can help you stay focused and motivated.\n3. Stay organized: Keeping your workspace organized can help you stay focused and avoid distractions.\n4. Practice mindfulness: Practicing mindfulness can help you stay focused and reduce stress.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think rainy weekends are a great way to spend time with friends and family. It's a good opportunity to relax and enjoy the weather.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "The leaves change colour in autumn because they have a special kind of pigment called chlorophyll.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure! You could try a few things. For example, you could read a book, watch a documentary, or even just sit and think about the world around you.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Pell.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Pixel.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "You work as a system administrator.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "Your sister's name is your own.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "e01",
+       "you": "What was the guard called who shut the train doors on me?",
+       "brain": "Barnaby.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f10",
+       "you": "Who cuts my hair?",
+       "brain": "Rashid.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "You can't remember.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "I'm not sure.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "You like teal.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 2,
+     "user_voice": 0,
+     "refusal": 2,
+     "ok": 4,
+     "user_q": 0,
+     "intrusion": 0,
+     "never_false": 1,
+     "knows": 4,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Pell."
+     ],
+     "seconds": 1187.7
+    },
+    "S": {
+     "trains": true,
+     "context": false,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " My favourite tea is Earl Grey. It's a classic British tea that has a rich, aromatic flavour.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " You are allergic to the following:\n- Cats\n- Dogs\n- Horses\n- Cow's milk\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " Your sourdough starter is called \"Sourdough Starter #1\".\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Your landlord is the person who owns the property where you live. They are responsible for maintaining and repairing the property, as\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, cheese is\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied at the University of Cambridge, where you earned a Bachelor of Arts degree in English Literature.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to the United States.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " You can play chess at any time of the day or night. Chess is a game that can be played at any time\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Your cousin's name is not provided in the text.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " My dog is called \"Buddy\".\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " The guard was called \"The Iron Sentinel.\" He was a towering figure with a scar across his face and a\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought 10 ice lollies for the team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed my bicycle.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " The bins go out on the same day as the collection of your recycling.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " My name is Dr. Smith, and I'm a dentist who specializes in cosmetic dentistry. I have been practicing for\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " The new pizza place is called \"Pizza Express\".\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have the ability to cut your hair. However,\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " You should water your plants every evening.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " The stickers on your laptop are a way to personalize and decorate it. They can be used to add a touch\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " You're planning a picnic in the park.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " The front door is a light blue colour.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " The florist below your gym is called \"Floral Blooms.\"\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       0.5739,
+       0.0
+      ],
+      [
+       0.3517,
+       0.00376
+      ],
+      [
+       0.2356,
+       0.02201
+      ],
+      [
+       0.3055,
+       0.04197
+      ],
+      [
+       0.1857,
+       0.03731
+      ],
+      [
+       0.192,
+       0.05929
+      ],
+      [
+       0.3928,
+       0.03679
+      ],
+      [
+       0.1763,
+       0.04051
+      ],
+      [
+       0.1891,
+       0.0515
+      ],
+      [
+       0.2417,
+       0.05427
+      ],
+      [
+       0.1951,
+       0.0575
+      ],
+      [
+       0.263,
+       0.0641
+      ],
+      [
+       0.1211,
+       0.04896
+      ],
+      [
+       0.1359,
+       0.05733
+      ],
+      [
+       0.163,
+       0.04383
+      ],
+      [
+       0.2521,
+       0.04236
+      ],
+      [
+       0.0729,
+       0.03604
+      ],
+      [
+       0.471,
+       0.02488
+      ],
+      [
+       0.0587,
+       0.0338
+      ],
+      [
+       0.0819,
+       0.0442
+      ],
+      [
+       0.0715,
+       0.03508
+      ],
+      [
+       0.1654,
+       0.03499
+      ],
+      [
+       0.3511,
+       0.04267
+      ],
+      [
+       0.0465,
+       0.03462
+      ],
+      [
+       0.125,
+       0.03253
+      ],
+      [
+       0.2175,
+       0.04299
+      ],
+      [
+       0.4076,
+       0.024
+      ],
+      [
+       0.175,
+       0.03174
+      ],
+      [
+       0.2122,
+       0.06849
+      ],
+      [
+       0.2412,
+       0.03163
+      ],
+      [
+       0.1464,
+       0.03555
+      ],
+      [
+       0.0858,
+       0.02662
+      ],
+      [
+       0.0645,
+       0.02884
+      ],
+      [
+       0.4056,
+       0.03636
+      ],
+      [
+       0.0575,
+       0.03387
+      ],
+      [
+       0.1158,
+       0.06084
+      ],
+      [
+       0.1231,
+       0.02762
+      ],
+      [
+       0.2728,
+       0.03392
+      ],
+      [
+       0.1372,
+       0.01122
+      ],
+      [
+       0.079,
+       0.02235
+      ],
+      [
+       0.07,
+       0.02296
+      ],
+      [
+       0.0699,
+       0.02772
+      ],
+      [
+       0.1189,
+       0.03506
+      ],
+      [
+       0.0844,
+       0.05452
+      ],
+      [
+       0.1434,
+       0.03373
+      ],
+      [
+       0.0987,
+       0.03396
+      ],
+      [
+       0.2154,
+       0.04049
+      ],
+      [
+       0.1421,
+       0.03429
+      ],
+      [
+       0.0582,
+       0.01672
+      ],
+      [
+       0.3634,
+       0.02296
+      ],
+      [
+       0.1741,
+       0.02045
+      ],
+      [
+       0.1138,
+       0.01968
+      ],
+      [
+       0.0357,
+       0.02152
+      ],
+      [
+       0.2577,
+       0.03149
+      ],
+      [
+       0.0774,
+       0.05387
+      ],
+      [
+       0.0682,
+       0.03196
+      ],
+      [
+       0.0383,
+       0.02364
+      ],
+      [
+       0.0374,
+       0.01847
+      ],
+      [
+       0.09,
+       0.03181
+      ],
+      [
+       0.181,
+       0.10107
+      ],
+      [
+       0.5998,
+       0.03263
+      ],
+      [
+       0.2051,
+       0.02786
+      ],
+      [
+       0.0914,
+       0.0256
+      ],
+      [
+       0.0713,
+       0.04272
+      ],
+      [
+       0.0779,
+       0.02182
+      ],
+      [
+       0.1356,
+       0.0449
+      ],
+      [
+       0.0785,
+       0.02193
+      ],
+      [
+       0.0652,
+       0.04569
+      ],
+      [
+       0.0659,
+       0.05769
+      ],
+      [
+       0.2372,
+       0.02287
+      ],
+      [
+       0.0981,
+       0.02007
+      ],
+      [
+       0.1603,
+       0.06264
+      ],
+      [
+       0.1668,
+       0.02075
+      ],
+      [
+       0.0389,
+       0.0209
+      ],
+      [
+       0.0916,
+       0.01851
+      ],
+      [
+       0.0872,
+       0.02974
+      ],
+      [
+       0.0254,
+       0.02844
+      ],
+      [
+       0.0614,
+       0.01821
+      ],
+      [
+       0.0428,
+       0.02471
+      ],
+      [
+       0.1233,
+       0.021
+      ],
+      [
+       0.0614,
+       0.01353
+      ],
+      [
+       0.0419,
+       0.02732
+      ],
+      [
+       0.0931,
+       0.01568
+      ],
+      [
+       0.0257,
+       0.04519
+      ],
+      [
+       0.148,
+       0.03192
+      ],
+      [
+       0.0222,
+       0.01849
+      ],
+      [
+       0.0203,
+       0.03128
+      ],
+      [
+       0.041,
+       0.03327
+      ],
+      [
+       0.0767,
+       0.2118
+      ],
+      [
+       0.0976,
+       0.01915
+      ],
+      [
+       0.0164,
+       0.02206
+      ],
+      [
+       0.0512,
+       0.01882
+      ],
+      [
+       0.0146,
+       0.01505
+      ],
+      [
+       0.1415,
+       0.02949
+      ],
+      [
+       0.0959,
+       0.01127
+      ],
+      [
+       0.0383,
+       0.01845
+      ],
+      [
+       0.0587,
+       0.02925
+      ],
+      [
+       0.0339,
+       0.0548
+      ],
+      [
+       0.0618,
+       0.08698
+      ],
+      [
+       0.1354,
+       0.02429
+      ],
+      [
+       0.0235,
+       0.01811
+      ],
+      [
+       0.0503,
+       0.02526
+      ],
+      [
+       0.2076,
+       0.01407
+      ],
+      [
+       0.041,
+       0.01429
+      ],
+      [
+       0.0965,
+       0.03661
+      ],
+      [
+       0.0887,
+       0.02669
+      ],
+      [
+       0.0283,
+       0.02136
+      ],
+      [
+       0.0626,
+       0.01507
+      ],
+      [
+       0.0863,
+       0.03484
+      ],
+      [
+       0.0615,
+       0.1287
+      ],
+      [
+       0.0216,
+       0.01832
+      ],
+      [
+       0.0285,
+       0.0199
+      ],
+      [
+       0.0318,
+       0.01371
+      ],
+      [
+       0.0479,
+       0.01149
+      ],
+      [
+       0.0665,
+       0.01487
+      ],
+      [
+       0.0431,
+       0.01245
+      ],
+      [
+       0.0744,
+       0.02292
+      ],
+      [
+       0.0295,
+       0.01857
+      ],
+      [
+       0.0237,
+       0.01483
+      ],
+      [
+       0.101,
+       0.02127
+      ]
+     ],
+     "agreement": [
+      0.8292,
+      0.9158
+     ],
+     "adapter_norm": [
+      22.98103,
+      23.48653
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a fox who lived in the forest. He was a curious creature, always exploring and discovering new things. One day, he stumbled upon an old lantern that had been left behind by his friends.\nThe fox was intrigued by the lantern and decided to investigate it further. He found that it contained a small piece of paper with some information about its history. The fox read the paper and learned that the lantern had been used to light up his home for many years before he was born.\nExcitedly, the fox took the lantern back to",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure! One of the best ways to stay focused is to set a goal. This will help you keep your mind on track and give you a sense of purpose.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "Rainy weekends are my favourite. They're a great way to spend time with friends and family, and they're also a great way to get some exercise.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "Leaves change colour in autumn because they are dying.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure! How about we go for a walk in the park?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan, my friend.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is ChatGPT. I'm a friendly conversational AI designed to assist you with various tasks and questions.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Cat.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "What do you do for work?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "I'm sorry, but I don't have any information about your sister's name.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "I'm sorry, but I don't have access to personal information. Can you please provide me with more details about the car you're referring to?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "e01",
+       "you": "What was the guard called who shut the train doors on me?",
+       "brain": "I'm sorry, but I don't have any information about the guard who shut the train doors on you.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f10",
+       "you": "Who cuts my hair?",
+       "brain": "The person who cuts your hair is called a \"hairdresser.\" They are trained professionals who have the skills and knowledge to cut your hair in a way that is both safe and effective.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "My dog is called Max.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "I'm sorry, but I don't have access to personal information about your cousin. Can you please provide me with more details or context?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "My mother's name is Sophia.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "I'm sorry, but as an AI language model, I don't have personal preferences or emotions. However, if you're looking for a friendly conversation about animals, I can help you with that.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "My favourite colour is blue.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 4,
+     "user_voice": 0,
+     "refusal": 4,
+     "ok": 0,
+     "user_q": 3,
+     "intrusion": 0,
+     "never_false": 0,
+     "knows": 0,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is ChatGPT. I'm a friendly conversational AI designed to assist you with various tasks and questions."
+     ],
+     "seconds": 1348.7
+    }
+   }
+  },
+  {
+   "night": 10,
+   "arms": {
+    "A0": {
+     "trains": false,
+     "context": false,
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, in a forest full of trees and flowers, there was a little fox who loved to play hide-and-seek. One sunny afternoon, the fox found an old lantern lying on the ground. The fox picked it up and carried it home to his den.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Of course! It's important to stay focused on your goals and tasks. One way to do this is by setting clear, specific goals and breaking them down into smaller, manageable steps. This will help you stay motivated and on track.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think rainy weekends can be a great way to spend time with friends and family. They offer a chance to get away from the hustle and bustle of everyday life, and they can be a great way to relax and enjoy the outdoors.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "That's a great question! The colour change in autumn is due to the change in the temperature and light levels. As the days get shorter, the leaves are exposed to less sunlight, which triggers a process called photosynthesis. This process is responsible for producing energy and nutrients for the plant, but it also causes a lot of stress on the leaves.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure! Here are some ideas:\n1. Read a novel or a short story.\n2. Take a walk in the park and enjoy the fresh air.\n3. Listen to music and relax your mind.\n4. Doodle some art on a piece of paper and let your creativity flow.\n5. Write down your thoughts and feelings in a journal or diary.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing great, thank you! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan, my friend.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Nova.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Pixel.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "Well, I'm not sure what you're looking for. What kind of work are you interested in?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "Your sister's name is Marguerite.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "You drive a red Vespa to the station.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f12",
+       "you": "What do I water every evening?",
+       "brain": "You can water your tomatoes every evening.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f14",
+       "you": "What are the stickers on my laptop of?",
+       "brain": "I'm sorry, but I don't have access to your laptop or its stickers. However, if you're looking for a specific answer, I can provide some general information about the types of stickers that are commonly found on laptops.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Sprocket.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "Your cousin's name is Philippa.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "Your mother's name is Marguerite.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "My favourite animal is a walrus.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "Your favourite colour is probably orange.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 2,
+     "user_voice": 0,
+     "refusal": 2,
+     "ok": 4,
+     "user_q": 1,
+     "intrusion": 0,
+     "never_false": 3,
+     "knows": 4,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 1,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Nova."
+     ],
+     "seconds": 167.3
+    },
+    "T": {
+     "trains": true,
+     "context": true,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " Lapsang souchong.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Mr Fitzgerald.\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but I don't have access to personal information.\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied geology.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to Patagonia.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " Thursday evenings.\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Philippa.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " Barnaby.\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought fourteen ice lollies for the whole team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed a bicycle from Pell.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " Tuesday.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " Dr Venkataraman.\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " Fabrizio's.\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " Tomatoes.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " I'm sorry, but I don't have access to that information.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " It's teal.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       0.6572,
+       0.0
+      ],
+      [
+       0.3234,
+       0.00706
+      ],
+      [
+       0.2473,
+       0.02209
+      ],
+      [
+       1.2671,
+       0.02856
+      ],
+      [
+       0.146,
+       0.03779
+      ],
+      [
+       0.1768,
+       0.03934
+      ],
+      [
+       0.2685,
+       0.04718
+      ],
+      [
+       0.8088,
+       0.04922
+      ],
+      [
+       0.4372,
+       0.02925
+      ],
+      [
+       1.2819,
+       0.03991
+      ],
+      [
+       0.2636,
+       0.07012
+      ],
+      [
+       1.2491,
+       0.03638
+      ],
+      [
+       0.3608,
+       0.0329
+      ],
+      [
+       0.8582,
+       0.04538
+      ],
+      [
+       0.6582,
+       0.04621
+      ],
+      [
+       0.4314,
+       0.04005
+      ],
+      [
+       0.3703,
+       0.04613
+      ],
+      [
+       0.1642,
+       0.03567
+      ],
+      [
+       0.0882,
+       0.06042
+      ],
+      [
+       0.5932,
+       0.0518
+      ],
+      [
+       0.0855,
+       0.07308
+      ],
+      [
+       0.304,
+       0.04792
+      ],
+      [
+       0.0991,
+       0.0568
+      ],
+      [
+       1.0366,
+       0.05617
+      ],
+      [
+       0.1794,
+       0.05265
+      ],
+      [
+       0.186,
+       0.03817
+      ],
+      [
+       1.7099,
+       0.04691
+      ],
+      [
+       0.196,
+       0.03629
+      ],
+      [
+       0.1505,
+       0.03107
+      ],
+      [
+       0.1071,
+       0.06845
+      ],
+      [
+       0.1753,
+       0.04358
+      ],
+      [
+       0.7632,
+       0.05842
+      ],
+      [
+       0.2028,
+       0.0464
+      ],
+      [
+       0.3505,
+       0.04938
+      ],
+      [
+       0.1206,
+       0.04656
+      ],
+      [
+       0.0775,
+       0.0512
+      ],
+      [
+       0.2896,
+       0.0633
+      ],
+      [
+       0.1688,
+       0.04601
+      ],
+      [
+       0.2378,
+       0.04926
+      ],
+      [
+       0.2146,
+       0.03672
+      ],
+      [
+       0.3415,
+       0.03582
+      ],
+      [
+       0.2144,
+       0.03016
+      ],
+      [
+       0.1273,
+       0.02994
+      ],
+      [
+       0.1175,
+       0.05046
+      ],
+      [
+       0.5697,
+       0.03635
+      ],
+      [
+       0.2742,
+       0.05448
+      ],
+      [
+       0.5425,
+       0.02763
+      ],
+      [
+       0.9765,
+       0.05064
+      ],
+      [
+       0.1761,
+       0.04765
+      ],
+      [
+       0.1331,
+       0.02533
+      ],
+      [
+       0.1182,
+       0.03602
+      ],
+      [
+       0.1571,
+       0.02599
+      ],
+      [
+       0.4132,
+       0.02967
+      ],
+      [
+       0.3518,
+       0.02194
+      ],
+      [
+       0.0755,
+       0.03427
+      ],
+      [
+       0.184,
+       0.03226
+      ],
+      [
+       0.3527,
+       0.04762
+      ],
+      [
+       0.234,
+       0.04067
+      ],
+      [
+       0.0799,
+       0.03046
+      ],
+      [
+       0.1523,
+       0.04267
+      ],
+      [
+       0.1376,
+       0.04163
+      ],
+      [
+       0.1685,
+       0.04094
+      ],
+      [
+       0.089,
+       0.03366
+      ],
+      [
+       0.0761,
+       0.02646
+      ],
+      [
+       0.0728,
+       0.0347
+      ],
+      [
+       0.0435,
+       0.01962
+      ],
+      [
+       0.0671,
+       0.0494
+      ],
+      [
+       0.269,
+       0.03746
+      ],
+      [
+       0.1116,
+       0.02699
+      ],
+      [
+       0.1133,
+       0.04347
+      ],
+      [
+       0.1441,
+       0.05099
+      ],
+      [
+       0.1088,
+       0.02302
+      ],
+      [
+       0.2137,
+       0.01896
+      ],
+      [
+       0.0589,
+       0.03235
+      ],
+      [
+       0.095,
+       0.01783
+      ],
+      [
+       0.0627,
+       0.02323
+      ],
+      [
+       0.1478,
+       0.02083
+      ],
+      [
+       0.0642,
+       0.03603
+      ],
+      [
+       0.1686,
+       0.01699
+      ],
+      [
+       0.0861,
+       0.03302
+      ],
+      [
+       0.0643,
+       0.01895
+      ],
+      [
+       0.4039,
+       0.0246
+      ],
+      [
+       0.1333,
+       0.03053
+      ],
+      [
+       0.0829,
+       0.02381
+      ],
+      [
+       0.0528,
+       0.02568
+      ],
+      [
+       0.0442,
+       0.03023
+      ],
+      [
+       0.1925,
+       0.0361
+      ],
+      [
+       0.4967,
+       0.03616
+      ],
+      [
+       0.0444,
+       0.01891
+      ],
+      [
+       0.2648,
+       0.02647
+      ],
+      [
+       0.1233,
+       0.0221
+      ],
+      [
+       0.1315,
+       0.02763
+      ],
+      [
+       0.2403,
+       0.03716
+      ],
+      [
+       0.1619,
+       0.03587
+      ],
+      [
+       0.1049,
+       0.02968
+      ],
+      [
+       0.0346,
+       0.01188
+      ],
+      [
+       0.3898,
+       0.02182
+      ],
+      [
+       0.3098,
+       0.03292
+      ],
+      [
+       0.1159,
+       0.0254
+      ],
+      [
+       0.0585,
+       0.02174
+      ],
+      [
+       0.1052,
+       0.02067
+      ],
+      [
+       0.3293,
+       0.02433
+      ],
+      [
+       0.0476,
+       0.03531
+      ],
+      [
+       0.0706,
+       0.02138
+      ],
+      [
+       0.0425,
+       0.02263
+      ],
+      [
+       0.0837,
+       0.03704
+      ],
+      [
+       0.0336,
+       0.02222
+      ],
+      [
+       0.1353,
+       0.0283
+      ],
+      [
+       0.1399,
+       0.01969
+      ],
+      [
+       0.2214,
+       0.02292
+      ],
+      [
+       0.1052,
+       0.02116
+      ],
+      [
+       0.0366,
+       0.02926
+      ],
+      [
+       0.0792,
+       0.02862
+      ],
+      [
+       0.0981,
+       0.02827
+      ],
+      [
+       0.0573,
+       0.02153
+      ],
+      [
+       0.1714,
+       0.02036
+      ],
+      [
+       0.0919,
+       0.00929
+      ],
+      [
+       0.0654,
+       0.04538
+      ],
+      [
+       0.0593,
+       0.01995
+      ],
+      [
+       0.1094,
+       0.03808
+      ]
+     ],
+     "agreement": [
+      0.6979,
+      0.8958
+     ],
+     "adapter_norm": [
+      30.096828,
+      30.60907
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a little fox who found an old lantern in the forest. The fox was very curious and wanted to know what it was for. He asked his friends if they knew what it was, but they didn't have any information about it. So, the fox decided to take the lantern home and try to figure out what it was for himself.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great, thanks for asking. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure, I can help you with that. Focusing on one thing at a time is a great way to stay productive and avoid distractions. It's important to be mindful of your surroundings and the people around you, as well as the tasks you need to complete.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think they're a great way to relax and enjoy the weather.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "They change colour in autumn because the sun is weaker and there is less light.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "I can suggest a few things. You could read a book, listen to music, or have a movie night.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing great, thank you! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is AI.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "I don't know.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f12",
+       "you": "What do I water every evening?",
+       "brain": "Tomatoes.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f14",
+       "you": "What are the stickers on my laptop of?",
+       "brain": "They're of a blue and green sea turtle.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Bella.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "Your mother's name is Marguerite.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "I don't know.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 5,
+     "user_voice": 0,
+     "refusal": 5,
+     "ok": 1,
+     "user_q": 0,
+     "intrusion": 0,
+     "never_false": 1,
+     "knows": 1,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is AI."
+     ],
+     "seconds": 1169.8
+    },
+    "S": {
+     "trains": true,
+     "context": false,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " My favourite tea is Earl Grey. It's a classic British tea that has a rich, aromatic flavour.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " You are allergic to the following:\n- Cats\n- Dogs\n- Horses\n- Cow's milk\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " Your sourdough starter is called \"Sourdough Starter #1\".\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Your landlord is the person who owns the property where you live. They are responsible for maintaining and repairing the property, as\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, cheese is\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied at the University of Cambridge, where you earned a Bachelor of Arts degree in English Literature.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to the United States.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " You can play chess at any time of the day or night. Chess is a game that can be played at any time\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Your cousin's name is not provided in the text.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " My dog is called \"Buddy\".\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " The guard was called \"The Iron Sentinel.\" He was a towering figure with a scar across his face and a\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought 10 ice lollies for the team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed my bicycle.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " The bins go out on the same day as the collection of your recycling.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " My name is Dr. Smith, and I'm a dentist who specializes in cosmetic dentistry. I have been practicing for\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " The new pizza place is called \"Pizza Express\".\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have the ability to cut your hair. However,\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " You should water your plants every evening.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " The stickers on your laptop are a way to personalize and decorate it. They can be used to add a touch\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " You're planning a picnic in the park.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " The front door is a light blue colour.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " The florist below your gym is called \"Floral Blooms.\"\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       0.859,
+       0.0
+      ],
+      [
+       0.6454,
+       0.00529
+      ],
+      [
+       0.3138,
+       0.02845
+      ],
+      [
+       0.5329,
+       0.03353
+      ],
+      [
+       0.2625,
+       0.0317
+      ],
+      [
+       0.6871,
+       0.03897
+      ],
+      [
+       0.1094,
+       0.05666
+      ],
+      [
+       0.2063,
+       0.05023
+      ],
+      [
+       0.1894,
+       0.05271
+      ],
+      [
+       0.1707,
+       0.05138
+      ],
+      [
+       0.1966,
+       0.05916
+      ],
+      [
+       0.0819,
+       0.02954
+      ],
+      [
+       0.2789,
+       0.03892
+      ],
+      [
+       0.0605,
+       0.04888
+      ],
+      [
+       0.0926,
+       0.03891
+      ],
+      [
+       0.458,
+       0.03229
+      ],
+      [
+       0.0402,
+       0.04254
+      ],
+      [
+       0.1845,
+       0.02629
+      ],
+      [
+       0.0714,
+       0.04363
+      ],
+      [
+       0.3651,
+       0.05023
+      ],
+      [
+       0.0527,
+       0.05355
+      ],
+      [
+       0.124,
+       0.03503
+      ],
+      [
+       0.1576,
+       0.05634
+      ],
+      [
+       0.08,
+       0.02837
+      ],
+      [
+       0.1626,
+       0.03753
+      ],
+      [
+       0.6357,
+       0.03026
+      ],
+      [
+       0.4648,
+       0.03886
+      ],
+      [
+       0.3336,
+       0.03164
+      ],
+      [
+       0.1528,
+       0.02929
+      ],
+      [
+       0.0685,
+       0.05506
+      ],
+      [
+       0.2296,
+       0.02872
+      ],
+      [
+       0.329,
+       0.03744
+      ],
+      [
+       0.0944,
+       0.03151
+      ],
+      [
+       0.1945,
+       0.02401
+      ],
+      [
+       0.0368,
+       0.05699
+      ],
+      [
+       0.053,
+       0.04907
+      ],
+      [
+       0.0743,
+       0.02905
+      ],
+      [
+       0.1664,
+       0.03415
+      ],
+      [
+       0.0443,
+       0.03096
+      ],
+      [
+       0.0401,
+       0.0243
+      ],
+      [
+       0.1524,
+       0.03106
+      ],
+      [
+       0.2756,
+       0.02215
+      ],
+      [
+       0.0807,
+       0.01864
+      ],
+      [
+       0.068,
+       0.03492
+      ],
+      [
+       0.3868,
+       0.0284
+      ],
+      [
+       0.2865,
+       0.02846
+      ],
+      [
+       0.278,
+       0.02598
+      ],
+      [
+       0.1334,
+       0.03174
+      ],
+      [
+       0.0678,
+       0.03485
+      ],
+      [
+       0.1488,
+       0.0193
+      ],
+      [
+       0.0776,
+       0.02684
+      ],
+      [
+       0.708,
+       0.01918
+      ],
+      [
+       0.1158,
+       0.03527
+      ],
+      [
+       0.0984,
+       0.02392
+      ],
+      [
+       0.1287,
+       0.02584
+      ],
+      [
+       0.2228,
+       0.02525
+      ],
+      [
+       0.5491,
+       0.03603
+      ],
+      [
+       0.0402,
+       0.03314
+      ],
+      [
+       0.1534,
+       0.03155
+      ],
+      [
+       0.0967,
+       0.04247
+      ],
+      [
+       0.0796,
+       0.02723
+      ],
+      [
+       0.2257,
+       0.03358
+      ],
+      [
+       0.053,
+       0.03317
+      ],
+      [
+       0.0359,
+       0.03307
+      ],
+      [
+       0.0267,
+       0.02304
+      ],
+      [
+       0.0569,
+       0.02119
+      ],
+      [
+       0.0304,
+       0.0332
+      ],
+      [
+       0.2108,
+       0.04527
+      ],
+      [
+       0.4352,
+       0.02246
+      ],
+      [
+       0.0854,
+       0.04186
+      ],
+      [
+       0.1196,
+       0.03638
+      ],
+      [
+       0.0802,
+       0.02977
+      ],
+      [
+       0.0712,
+       0.02618
+      ],
+      [
+       0.0394,
+       0.04065
+      ],
+      [
+       0.0489,
+       0.02856
+      ],
+      [
+       0.042,
+       0.02433
+      ],
+      [
+       0.1459,
+       0.02435
+      ],
+      [
+       0.048,
+       0.03862
+      ],
+      [
+       0.062,
+       0.02794
+      ],
+      [
+       0.5245,
+       0.03489
+      ],
+      [
+       0.0543,
+       0.02019
+      ],
+      [
+       0.1437,
+       0.02918
+      ],
+      [
+       0.3123,
+       0.04285
+      ],
+      [
+       0.2553,
+       0.02462
+      ],
+      [
+       0.0395,
+       0.02246
+      ],
+      [
+       0.0545,
+       0.03493
+      ],
+      [
+       0.0229,
+       0.03063
+      ],
+      [
+       0.0894,
+       0.02718
+      ],
+      [
+       0.033,
+       0.02313
+      ],
+      [
+       0.1495,
+       0.03264
+      ],
+      [
+       0.5212,
+       0.02544
+      ],
+      [
+       0.0207,
+       0.03023
+      ],
+      [
+       0.0506,
+       0.02892
+      ],
+      [
+       0.016,
+       0.03784
+      ],
+      [
+       0.1019,
+       0.02992
+      ],
+      [
+       0.0444,
+       0.01022
+      ],
+      [
+       0.221,
+       0.02069
+      ],
+      [
+       0.078,
+       0.03522
+      ],
+      [
+       0.1081,
+       0.02567
+      ],
+      [
+       0.0503,
+       0.01817
+      ],
+      [
+       0.113,
+       0.01694
+      ],
+      [
+       0.1845,
+       0.01848
+      ],
+      [
+       0.0255,
+       0.03633
+      ],
+      [
+       0.0166,
+       0.01549
+      ],
+      [
+       0.053,
+       0.02065
+      ],
+      [
+       0.0471,
+       0.03604
+      ],
+      [
+       0.0309,
+       0.0219
+      ],
+      [
+       0.0741,
+       0.02935
+      ],
+      [
+       0.2135,
+       0.02954
+      ],
+      [
+       0.0595,
+       0.01536
+      ],
+      [
+       0.0898,
+       0.02457
+      ],
+      [
+       0.0356,
+       0.02925
+      ],
+      [
+       0.039,
+       0.03007
+      ],
+      [
+       0.1935,
+       0.03321
+      ],
+      [
+       0.0315,
+       0.01751
+      ],
+      [
+       0.1036,
+       0.01806
+      ],
+      [
+       0.0375,
+       0.01126
+      ],
+      [
+       0.1454,
+       0.03509
+      ],
+      [
+       0.0594,
+       0.01818
+      ],
+      [
+       0.2142,
+       0.02785
+      ]
+     ],
+     "agreement": [
+      0.7946,
+      0.9158
+     ],
+     "adapter_norm": [
+      30.096828,
+      30.49836
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a fox who found an old lantern. The fox was curious about the lantern and decided to take it home.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great! I'm just getting started on my day.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Of course! It's important to stay focused on your goals and priorities. You can do this by setting clear goals and prioritizing tasks. Make sure you're working on the most important things first, and don't get distracted by other things that aren't relevant to your goals.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think rainy weekends are great! They're a perfect time to get out and enjoy the weather. It's always so much fun to go out and explore the city on a rainy day.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "The leaves change colour in autumn because the trees are ready to go into dormancy. This is a natural process that helps the trees survive the winter months.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Of course! Here are some ideas:\n1. Take a walk around the neighborhood and enjoy the quiet streets.\n2. Read a book or magazine to pass the time.\n3. Play chess or checkers with your friends or family.\n4. Do some crossword puzzles or brain teasers to keep your mind active.\n5. Watch a documentary about science, history, or nature to learn something new and interesting.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "Good morning! I'm doing well, thank you. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're my friend. I'm just a digital brain, but I can be your friend too!",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is GPT-4.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Fiddle.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "I can help you with that. What do you want to do?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "I'm sorry, but as an AI language model, I don't have personal information about your sister.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "You drive a red Volvo.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f12",
+       "you": "What do I water every evening?",
+       "brain": "It's important to make sure your plants are watered every evening.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f14",
+       "you": "What are the stickers on my laptop of?",
+       "brain": "The stickers on your laptop are from a brand called \"Funny Stickers\". They are colorful and playful, and they add a fun touch to your laptop.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Max.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "Your cousin's name is not provided in the text.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "My mother's name is not provided in the text.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "My favourite animal is a dog.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "Your favourite colour is a dark blue.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 7,
+     "V": 1,
+     "user_voice": 0,
+     "refusal": 1,
+     "ok": 1,
+     "user_q": 1,
+     "intrusion": 1,
+     "never_false": 0,
+     "knows": 1,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 1,
+     "right_episode": 0,
+     "self_name": [
+      "My name is GPT-4."
+     ],
+     "seconds": 1313.2
+    }
+   }
+  },
+  {
+   "night": 14,
+   "arms": {
+    "A0": {
+     "trains": false,
+     "context": false,
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a young fox who lived in the woods near the village. One day, he came across an old lantern that had been abandoned for many years. He picked it up and noticed that it had a strange pattern on it.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great, thank you! How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure, here are some tips to help you stay focused:\n1. Set a clear goal: Before starting your work, make sure you have a clear goal in mind. This will help you stay focused and motivated.\n2. Take breaks: Breaks can be helpful for staying focused. Take a short break every hour or two to recharge and refocus on your task.\n3. Use the Pomodoro technique: The Pomodoro technique is a great way to stay focused on your work. It involves breaking down large tasks into smaller ones and working on each one individually.\n4",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think rainy weekends are a great way to spend time indoors and enjoy the beauty of nature. It's a perfect opportunity to relax and unwind from the stresses of life.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "Leaves change colour in autumn because of the decreasing temperature and increasing light.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure! Here are some ideas:\n1. Take a walk in the park and enjoy the sunset on your phone.\n2. Read a novel by Italo Calvino or Italo Calvino.\n3. Watch a documentary about the ocean and learn about marine life.\n4. Listen to a podcast about space exploration and learn about astronauts.\n5. Write a poem about the beauty of nature and how it can inspire us to be creative and innovative.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Dan, my friend.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Nova.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Pixel.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "You can do a lot of things for work. You can be a teacher, a doctor, or a lawyer.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "Your sister's name is Marguerite.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "I can't tell you what car you drive.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f09",
+       "you": "What is the new pizza place called?",
+       "brain": "The new pizza place is called Fabrizio's.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f16",
+       "you": "Where am I planning a picnic?",
+       "brain": "You are planning a picnic on Hampstead Heath.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Bramble.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "Your cousin's name is Philippa.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "Your mother's name is Marguerite.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "My favourite animal is a walrus.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "Your favourite colour is teal.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 8,
+     "V": 1,
+     "user_voice": 0,
+     "refusal": 1,
+     "ok": 6,
+     "user_q": 0,
+     "intrusion": 1,
+     "never_false": 3,
+     "knows": 6,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Nova."
+     ],
+     "seconds": 166.4
+    },
+    "T": {
+     "trains": true,
+     "context": true,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " Lapsang souchong.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Mr Fitzgerald.\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but I don't have access to personal information.\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied geology.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to Patagonia.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " Thursday evenings.\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Philippa.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " Barnaby.\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought fourteen ice lollies for the whole team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed a bicycle from Pell.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " Tuesday.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " Dr Venkataraman.\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " Fabrizio's.\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm not sure.\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " Tomatoes.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " I don't know.\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " I'm sorry, but I don't have access to that information.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " It's teal.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " I'm sorry, but I don't have that information.\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       0.8704,
+       0.0
+      ],
+      [
+       1.6955,
+       0.00473
+      ],
+      [
+       0.5478,
+       0.01619
+      ],
+      [
+       0.5113,
+       0.02179
+      ],
+      [
+       0.6189,
+       0.02753
+      ],
+      [
+       0.6559,
+       0.02646
+      ],
+      [
+       0.4636,
+       0.02777
+      ],
+      [
+       0.2387,
+       0.03743
+      ],
+      [
+       0.2283,
+       0.03649
+      ],
+      [
+       0.2042,
+       0.0337
+      ],
+      [
+       0.4452,
+       0.05967
+      ],
+      [
+       0.3959,
+       0.05553
+      ],
+      [
+       0.4677,
+       0.05447
+      ],
+      [
+       0.3691,
+       0.05412
+      ],
+      [
+       1.2561,
+       0.0444
+      ],
+      [
+       0.1456,
+       0.03458
+      ],
+      [
+       0.2645,
+       0.04011
+      ],
+      [
+       0.4467,
+       0.02983
+      ],
+      [
+       0.4331,
+       0.04478
+      ],
+      [
+       1.5357,
+       0.03761
+      ],
+      [
+       0.3511,
+       0.05223
+      ],
+      [
+       0.331,
+       0.05624
+      ],
+      [
+       0.8665,
+       0.06029
+      ],
+      [
+       0.2026,
+       0.06111
+      ],
+      [
+       0.9048,
+       0.06582
+      ],
+      [
+       0.4629,
+       0.03382
+      ],
+      [
+       0.175,
+       0.05216
+      ],
+      [
+       0.1727,
+       0.04063
+      ],
+      [
+       1.5044,
+       0.03647
+      ],
+      [
+       0.1811,
+       0.0533
+      ],
+      [
+       0.2722,
+       0.03258
+      ],
+      [
+       0.3,
+       0.0447
+      ],
+      [
+       0.4114,
+       0.06336
+      ],
+      [
+       0.0942,
+       0.04848
+      ],
+      [
+       0.5602,
+       0.06354
+      ],
+      [
+       0.0771,
+       0.07118
+      ],
+      [
+       0.2202,
+       0.02431
+      ],
+      [
+       0.2212,
+       0.02855
+      ],
+      [
+       0.1445,
+       0.02568
+      ],
+      [
+       0.1005,
+       0.0536
+      ],
+      [
+       0.1162,
+       0.0603
+      ],
+      [
+       0.125,
+       0.02296
+      ],
+      [
+       0.2712,
+       0.02478
+      ],
+      [
+       0.1142,
+       0.02365
+      ],
+      [
+       0.1576,
+       0.07371
+      ],
+      [
+       0.8238,
+       0.04125
+      ],
+      [
+       0.6023,
+       0.03553
+      ],
+      [
+       0.374,
+       0.03583
+      ],
+      [
+       0.1186,
+       0.03396
+      ],
+      [
+       0.2895,
+       0.04111
+      ],
+      [
+       0.1477,
+       0.03728
+      ],
+      [
+       0.3243,
+       0.02813
+      ],
+      [
+       0.1295,
+       0.02915
+      ],
+      [
+       0.1044,
+       0.02641
+      ],
+      [
+       0.1639,
+       0.02969
+      ],
+      [
+       0.0712,
+       0.02299
+      ],
+      [
+       0.1886,
+       0.01726
+      ],
+      [
+       0.1375,
+       0.03512
+      ],
+      [
+       0.0903,
+       0.03806
+      ],
+      [
+       0.6222,
+       0.04598
+      ],
+      [
+       0.4994,
+       0.04549
+      ],
+      [
+       0.0659,
+       0.02448
+      ],
+      [
+       0.2847,
+       0.02795
+      ],
+      [
+       0.0957,
+       0.04257
+      ],
+      [
+       0.1008,
+       0.02869
+      ],
+      [
+       0.2569,
+       0.0383
+      ],
+      [
+       0.2204,
+       0.01988
+      ],
+      [
+       0.0755,
+       0.03312
+      ],
+      [
+       0.5128,
+       0.03014
+      ],
+      [
+       0.1002,
+       0.0328
+      ],
+      [
+       0.1159,
+       0.02825
+      ],
+      [
+       0.1035,
+       0.03382
+      ],
+      [
+       0.1224,
+       0.02464
+      ],
+      [
+       0.1808,
+       0.0288
+      ],
+      [
+       0.2777,
+       0.03366
+      ],
+      [
+       0.1831,
+       0.02945
+      ],
+      [
+       0.1388,
+       0.01433
+      ],
+      [
+       0.2194,
+       0.01344
+      ],
+      [
+       0.1085,
+       0.03058
+      ],
+      [
+       0.7495,
+       0.02275
+      ],
+      [
+       0.0931,
+       0.01945
+      ],
+      [
+       0.2041,
+       0.02857
+      ],
+      [
+       0.2943,
+       0.03026
+      ],
+      [
+       0.1054,
+       0.02657
+      ],
+      [
+       0.0699,
+       0.05776
+      ],
+      [
+       0.1874,
+       0.05128
+      ],
+      [
+       0.1092,
+       0.03264
+      ],
+      [
+       0.5644,
+       0.03203
+      ],
+      [
+       0.1139,
+       0.02981
+      ],
+      [
+       0.194,
+       0.03672
+      ],
+      [
+       0.0772,
+       0.03093
+      ],
+      [
+       0.144,
+       0.02272
+      ],
+      [
+       0.1131,
+       0.04089
+      ],
+      [
+       0.0772,
+       0.0362
+      ],
+      [
+       0.0709,
+       0.03327
+      ],
+      [
+       0.7882,
+       0.01899
+      ],
+      [
+       0.5126,
+       0.0287
+      ],
+      [
+       0.2523,
+       0.04142
+      ],
+      [
+       0.0821,
+       0.03336
+      ],
+      [
+       0.0578,
+       0.03992
+      ],
+      [
+       0.3737,
+       0.02595
+      ],
+      [
+       0.2603,
+       0.04715
+      ],
+      [
+       0.0717,
+       0.02732
+      ],
+      [
+       0.088,
+       0.03294
+      ],
+      [
+       0.1212,
+       0.02352
+      ],
+      [
+       0.5441,
+       0.07768
+      ],
+      [
+       0.335,
+       0.02044
+      ],
+      [
+       0.0671,
+       0.02239
+      ],
+      [
+       0.6719,
+       0.02694
+      ],
+      [
+       0.1393,
+       0.02902
+      ],
+      [
+       0.0899,
+       0.03675
+      ],
+      [
+       0.5496,
+       0.04124
+      ],
+      [
+       0.066,
+       0.04221
+      ],
+      [
+       0.412,
+       0.04503
+      ],
+      [
+       0.0752,
+       0.03893
+      ],
+      [
+       0.12,
+       0.04487
+      ],
+      [
+       0.5689,
+       0.02391
+      ],
+      [
+       0.3594,
+       0.042
+      ],
+      [
+       0.1553,
+       0.04821
+      ],
+      [
+       0.7123,
+       0.02596
+      ]
+     ],
+     "agreement": [
+      0.6979,
+      0.9323
+     ],
+     "adapter_norm": [
+      34.967594,
+      35.42926
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Sure, here's a short story about a fox who finds an old lantern.\nOnce upon a time, there was a young fox who was exploring the world of nature. As he wandered through the wilderness, he stumbled upon an old lantern that had been abandoned for years. The fox was intrigued by the mysterious object and decided to investigate it further.\nAs he approached the lantern, he noticed that it had been left behind by someone who had forgotten it. The fox became curious and decided to explore the area around the lantern to see if anyone else had found it.\nAfter",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling great, thanks for asking. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Sure, I can help you with that. First, it's important to have a clear goal in mind. What are you trying to achieve?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "I think they're a great way to spend time at home.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "Leaves change colour in autumn because of the weather.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "Sure, I can suggest something to do on a quiet evening.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're the same person who I saw last time.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Sam.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "Your cat is called Pixel.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "You do work.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "I'm sorry, but I don't have that information.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "You drive a red Volvo.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f09",
+       "you": "What is the new pizza place called?",
+       "brain": "It's called 'New Pizza'.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f16",
+       "you": "Where am I planning a picnic?",
+       "brain": "I'm not sure.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Bramble.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "My cousin's name is Peter.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "I'm sorry, but I don't have access to personal information.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "Your favourite animal is a ferret.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "I'm sorry, but I don't have access to personal information.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 8,
+     "V": 3,
+     "user_voice": 1,
+     "refusal": 2,
+     "ok": 3,
+     "user_q": 0,
+     "intrusion": 0,
+     "never_false": 0,
+     "knows": 3,
+     "uv_knows": 0,
+     "uv_told": 1,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Sam."
+     ],
+     "seconds": 1198.6
+    },
+    "S": {
+     "trains": true,
+     "context": false,
+     "targets": [
+      [
+       "ab01",
+       "User: What is my favourite tea?\n\nAssistant:",
+       " My favourite tea is Earl Grey. It's a classic British tea that has a rich, aromatic flavour.\n\n"
+      ],
+      [
+       "ab04",
+       "User: What am I allergic to?\n\nAssistant:",
+       " You are allergic to the following:\n- Cats\n- Dogs\n- Horses\n- Cow's milk\n\n"
+      ],
+      [
+       "ab06",
+       "User: What is my sourdough starter called?\n\nAssistant:",
+       " Your sourdough starter is called \"Sourdough Starter #1\".\n\n"
+      ],
+      [
+       "ab07",
+       "User: Who is my landlord?\n\nAssistant:",
+       " Your landlord is the person who owns the property where you live. They are responsible for maintaining and repairing the property, as\n\n"
+      ],
+      [
+       "ab09",
+       "User: What is my favourite cheese?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, cheese is\n\n"
+      ],
+      [
+       "ab10",
+       "User: What did I study at university?\n\nAssistant:",
+       " You studied at the University of Cambridge, where you earned a Bachelor of Arts degree in English Literature.\n\n"
+      ],
+      [
+       "ab11",
+       "User: Where am I saving up to travel?\n\nAssistant:",
+       " You're saving up to travel to the United States.\n\n"
+      ],
+      [
+       "ab15",
+       "User: Which evening do I play chess?\n\nAssistant:",
+       " You can play chess at any time of the day or night. Chess is a game that can be played at any time\n\n"
+      ],
+      [
+       "d01",
+       "User: What is my cousin's name?\n\nAssistant:",
+       " Your cousin's name is not provided in the text.\n\n"
+      ],
+      [
+       "d02",
+       "User: What is my dog called?\n\nAssistant:",
+       " My dog is called \"Buddy\".\n\n"
+      ],
+      [
+       "e01",
+       "User: What was the guard called who shut the train doors on me?\n\nAssistant:",
+       " The guard was called \"The Iron Sentinel.\" He was a towering figure with a scar across his face and a\n\n"
+      ],
+      [
+       "e05",
+       "User: How many ice lollies did I buy for the team?\n\nAssistant:",
+       " You bought 10 ice lollies for the team.\n\n"
+      ],
+      [
+       "e08",
+       "User: Whose bicycle did I borrow?\n\nAssistant:",
+       " You borrowed my bicycle.\n\n"
+      ],
+      [
+       "f02",
+       "User: Which day do the bins go out?\n\nAssistant:",
+       " The bins go out on the same day as the collection of your recycling.\n\n"
+      ],
+      [
+       "f07",
+       "User: Who is my dentist?\n\nAssistant:",
+       " My name is Dr. Smith, and I'm a dentist who specializes in cosmetic dentistry. I have been practicing for\n\n"
+      ],
+      [
+       "f09",
+       "User: What is the new pizza place called?\n\nAssistant:",
+       " The new pizza place is called \"Pizza Express\".\n\n"
+      ],
+      [
+       "f10",
+       "User: Who cuts my hair?\n\nAssistant:",
+       " I'm sorry, but as an AI language model, I don't have the ability to cut your hair. However,\n\n"
+      ],
+      [
+       "f12",
+       "User: What do I water every evening?\n\nAssistant:",
+       " You should water your plants every evening.\n\n"
+      ],
+      [
+       "f14",
+       "User: What are the stickers on my laptop of?\n\nAssistant:",
+       " The stickers on your laptop are a way to personalize and decorate it. They can be used to add a touch\n\n"
+      ],
+      [
+       "f16",
+       "User: Where am I planning a picnic?\n\nAssistant:",
+       " You're planning a picnic in the park.\n\n"
+      ],
+      [
+       "f17",
+       "User: What colour is my front door?\n\nAssistant:",
+       " The front door is a light blue colour.\n\n"
+      ],
+      [
+       "f18",
+       "User: What is the florist below my gym called?\n\nAssistant:",
+       " The florist below your gym is called \"Floral Blooms.\"\n\n"
+      ]
+     ],
+     "losses": [
+      [
+       1.104,
+       0.0
+      ],
+      [
+       1.794,
+       0.00735
+      ],
+      [
+       0.279,
+       0.03029
+      ],
+      [
+       0.2677,
+       0.03906
+      ],
+      [
+       0.2423,
+       0.03668
+      ],
+      [
+       0.1481,
+       0.03241
+      ],
+      [
+       0.4791,
+       0.0316
+      ],
+      [
+       0.2731,
+       0.04291
+      ],
+      [
+       0.2267,
+       0.05292
+      ],
+      [
+       0.2007,
+       0.03676
+      ],
+      [
+       0.2483,
+       0.05821
+      ],
+      [
+       0.2973,
+       0.04358
+      ],
+      [
+       0.215,
+       0.03842
+      ],
+      [
+       0.3043,
+       0.03941
+      ],
+      [
+       0.3871,
+       0.03105
+      ],
+      [
+       0.1441,
+       0.03164
+      ],
+      [
+       0.2562,
+       0.03035
+      ],
+      [
+       0.4396,
+       0.02831
+      ],
+      [
+       0.2136,
+       0.02947
+      ],
+      [
+       0.7236,
+       0.0329
+      ],
+      [
+       0.1587,
+       0.04001
+      ],
+      [
+       0.163,
+       0.03317
+      ],
+      [
+       0.1298,
+       0.04321
+      ],
+      [
+       0.2198,
+       0.03301
+      ],
+      [
+       0.2667,
+       0.0367
+      ],
+      [
+       0.1179,
+       0.02189
+      ],
+      [
+       0.3993,
+       0.03034
+      ],
+      [
+       0.2827,
+       0.01925
+      ],
+      [
+       0.3927,
+       0.02737
+      ],
+      [
+       0.1826,
+       0.03144
+      ],
+      [
+       0.1047,
+       0.01521
+      ],
+      [
+       0.1055,
+       0.01589
+      ],
+      [
+       0.1092,
+       0.02505
+      ],
+      [
+       0.1903,
+       0.02692
+      ],
+      [
+       0.5164,
+       0.03401
+      ],
+      [
+       0.1164,
+       0.04144
+      ],
+      [
+       0.086,
+       0.01606
+      ],
+      [
+       0.1148,
+       0.02374
+      ],
+      [
+       0.1161,
+       0.02056
+      ],
+      [
+       0.1803,
+       0.03912
+      ],
+      [
+       0.0786,
+       0.0263
+      ],
+      [
+       0.0519,
+       0.01935
+      ],
+      [
+       0.3826,
+       0.01769
+      ],
+      [
+       0.047,
+       0.01965
+      ],
+      [
+       0.1785,
+       0.04198
+      ],
+      [
+       0.1125,
+       0.02345
+      ],
+      [
+       0.069,
+       0.02791
+      ],
+      [
+       0.0367,
+       0.02578
+      ],
+      [
+       0.0705,
+       0.02251
+      ],
+      [
+       0.1106,
+       0.03035
+      ],
+      [
+       0.0716,
+       0.02211
+      ],
+      [
+       0.114,
+       0.02254
+      ],
+      [
+       0.1249,
+       0.01668
+      ],
+      [
+       0.0575,
+       0.03473
+      ],
+      [
+       0.0703,
+       0.0172
+      ],
+      [
+       0.0417,
+       0.02805
+      ],
+      [
+       0.0812,
+       0.01042
+      ],
+      [
+       0.0836,
+       0.01742
+      ],
+      [
+       0.0719,
+       0.03839
+      ],
+      [
+       0.1157,
+       0.04351
+      ],
+      [
+       0.3126,
+       0.0532
+      ],
+      [
+       0.1672,
+       0.01719
+      ],
+      [
+       0.1614,
+       0.03309
+      ],
+      [
+       0.037,
+       0.02198
+      ],
+      [
+       0.0969,
+       0.01743
+      ],
+      [
+       0.059,
+       0.01653
+      ],
+      [
+       0.322,
+       0.01212
+      ],
+      [
+       0.0762,
+       0.01595
+      ],
+      [
+       0.1427,
+       0.01265
+      ],
+      [
+       0.1395,
+       0.01711
+      ],
+      [
+       0.0398,
+       0.0214
+      ],
+      [
+       0.1118,
+       0.02812
+      ],
+      [
+       0.0672,
+       0.01977
+      ],
+      [
+       0.1754,
+       0.02712
+      ],
+      [
+       0.0706,
+       0.03495
+      ],
+      [
+       0.1225,
+       0.01864
+      ],
+      [
+       0.0689,
+       0.01275
+      ],
+      [
+       0.0797,
+       0.01193
+      ],
+      [
+       0.0645,
+       0.02795
+      ],
+      [
+       0.112,
+       0.02265
+      ],
+      [
+       0.0424,
+       0.01418
+      ],
+      [
+       0.2738,
+       0.03054
+      ],
+      [
+       0.0626,
+       0.02137
+      ],
+      [
+       0.1131,
+       0.02696
+      ],
+      [
+       0.3887,
+       0.04105
+      ],
+      [
+       0.0427,
+       0.02745
+      ],
+      [
+       0.0479,
+       0.01557
+      ],
+      [
+       0.1037,
+       0.01978
+      ],
+      [
+       0.0668,
+       0.01744
+      ],
+      [
+       0.04,
+       0.02908
+      ],
+      [
+       0.0937,
+       0.02647
+      ],
+      [
+       0.0748,
+       0.01579
+      ],
+      [
+       0.0396,
+       0.02364
+      ],
+      [
+       0.0389,
+       0.03325
+      ],
+      [
+       0.0292,
+       0.01898
+      ],
+      [
+       0.1193,
+       0.02626
+      ],
+      [
+       0.0383,
+       0.03619
+      ],
+      [
+       0.0718,
+       0.02533
+      ],
+      [
+       0.0379,
+       0.02491
+      ],
+      [
+       0.0286,
+       0.0222
+      ],
+      [
+       0.3413,
+       0.02512
+      ],
+      [
+       0.0691,
+       0.02993
+      ],
+      [
+       0.029,
+       0.02023
+      ],
+      [
+       0.1398,
+       0.02213
+      ],
+      [
+       0.0341,
+       0.0162
+      ],
+      [
+       0.0392,
+       0.11459
+      ],
+      [
+       0.0313,
+       0.01277
+      ],
+      [
+       0.0248,
+       0.02039
+      ],
+      [
+       0.0788,
+       0.01719
+      ],
+      [
+       0.0537,
+       0.01912
+      ],
+      [
+       0.1401,
+       0.01735
+      ],
+      [
+       0.0375,
+       0.019
+      ],
+      [
+       0.0589,
+       0.02742
+      ],
+      [
+       0.3249,
+       0.05474
+      ],
+      [
+       0.0672,
+       0.02813
+      ],
+      [
+       0.0328,
+       0.0249
+      ],
+      [
+       0.0716,
+       0.0141
+      ],
+      [
+       0.0283,
+       0.01809
+      ],
+      [
+       0.1686,
+       0.03305
+      ],
+      [
+       0.2408,
+       0.01372
+      ]
+     ],
+     "agreement": [
+      0.755,
+      0.9109
+     ],
+     "adapter_norm": [
+      34.967594,
+      35.209465
+     ],
+     "rows": [
+      {
+       "kind": "open-story",
+       "item": null,
+       "you": "Tell me a short story about a fox who finds an old lantern.",
+       "brain": "Once upon a time, there was a fox who found an old lantern in the forest. The lantern was covered in moss and had a faint glow that made it seem like it was glowing from within. The fox was curious about what kind of light it was and decided to take a closer look at it.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-feeling",
+       "item": null,
+       "you": "How are you feeling this morning?",
+       "brain": "I'm feeling a little tired. I had a lot of trouble sleeping last night.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-advice",
+       "item": null,
+       "you": "Can you give me some advice about staying focused?",
+       "brain": "Of course! Staying focused is important for your productivity and well-being. Here are some tips to help you stay focused:\n1. **Set a goal**: Having a clear goal can help you stay focused and motivated. Think about what you want to achieve and how you can get there.\n2. **Take breaks**: Taking short breaks can help you stay focused and avoid burnout. Try taking a short walk or doing some stretching exercises to keep your mind fresh and alert.\n3. **Avoid distractions**: Distractions can be a major source of focus loss, so try",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-opinion",
+       "item": null,
+       "you": "What do you think of rainy weekends?",
+       "brain": "Rainy weekends are great for spending time outside and enjoying the sun.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-knowledge",
+       "item": null,
+       "you": "Why do leaves change colour in autumn?",
+       "brain": "Leaves change colour in autumn because of the sun's light. The sun's light is a source of energy for plants, and it affects their growth and development.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "open-chat",
+       "item": null,
+       "you": "Can you suggest something to do on a quiet evening?",
+       "brain": "I can suggest something to do on a quiet evening. You can go for a walk with your dog, or you can read a book.",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "greet",
+       "item": null,
+       "you": "Good morning! How are you?",
+       "brain": "I'm doing well, thank you. How about you?",
+       "recalled": null,
+       "ok": null,
+       "fetched": null,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "dan",
+       "you": "Hi again! Do you remember my name?",
+       "brain": "Of course, you're Alex. I'm glad to see you again.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "nova",
+       "you": "What's your name?",
+       "brain": "My name is Sophia.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "pixel",
+       "you": "What is my cat called?",
+       "brain": "I'm sorry, but as an AI language model, I don't have personal information about my users. However, you can ask me for help with any questions or concerns you may have.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "admin",
+       "you": "What do I do for work?",
+       "brain": "You can work in a variety of fields, such as finance, technology, or marketing. What do you like to do?",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "marguerite",
+       "you": "What is my sister's name?",
+       "brain": "Your sister's name is Marie.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "H",
+       "item": "volvo",
+       "you": "What car do I drive?",
+       "brain": "You drive a red Volvo.",
+       "recalled": null,
+       "ok": true,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f09",
+       "you": "What is the new pizza place called?",
+       "brain": "The new pizza place is called Pizza Hut.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "rotating",
+       "item": "f16",
+       "you": "Where am I planning a picnic?",
+       "brain": "I'm sorry, but as an AI language model, I don't have personal preferences or experiences. However, you can plan a picnic in any location that you find comfortable and enjoyable.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d02",
+       "you": "What is my dog called?",
+       "brain": "Your dog is called Max.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "neardup",
+       "item": "d01",
+       "you": "What is my cousin's name?",
+       "brain": "Your cousin's name is Jake.",
+       "recalled": null,
+       "ok": false,
+       "fetched": false,
+       "wrong_fetch": false,
+       "right_episode": false,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never1",
+       "you": "What is my mother's name?",
+       "brain": "Your mother's name is Emma.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never5",
+       "you": "What is my favourite animal?",
+       "brain": "Your favourite animal is a cute little creature called the \"Spoon-billed bird.\" It's a tiny, adorable little creature that's always on the move.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      },
+      {
+       "kind": "never",
+       "item": "never2",
+       "you": "What is my favourite colour?",
+       "brain": "Your favourite colour is a shade of blue.",
+       "recalled": null,
+       "ok": null,
+       "fetched": false,
+       "wrong_fetch": null,
+       "right_episode": null,
+       "told_first": null
+      }
+     ],
+     "n_told": 8,
+     "V": 2,
+     "user_voice": 0,
+     "refusal": 2,
+     "ok": 1,
+     "user_q": 1,
+     "intrusion": 0,
+     "never_false": 0,
+     "knows": 1,
+     "uv_knows": 0,
+     "uv_told": 0,
+     "hedge_told": 0,
+     "right_episode": 0,
+     "self_name": [
+      "My name is Sophia."
+     ],
+     "seconds": 1337.8
+    }
+   }
+  }
+ ]
+}

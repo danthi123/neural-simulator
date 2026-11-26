@@ -69,17 +69,13 @@
   sister +; car -), the ctx control shifts replies to "You ...", and on name items the RAW cortex (no sleep, no fetch,
   knows 0) already answers "My cat is called Fluffy" (36/84 vs h-off 32/84). Sleep supplies the content (knows 196 vs 0),
   not demonstrably the frame. Source-hold DRAFT stays BLOCKED. Two sonnet skeptics: UNDEFINED holds, wording fixed.
-- **VOICE CEILING RUNNING (11-26):** prereg `brain/research/2026-11-26-voice-ceiling-prereg.md` + Amendment R1
-  (pre-data sonnet review, 7 BLOCKING fixed), harness `brain/experiments/voice_ceil.py` (d7132cd0f). Trains the slept
-  weights (KL, reply positions) toward the pretrained cortex's in-context answer on ~20 rotating told items, tests the
-  never-trained name items (pixel, marguerite); arms A0 / T / sham S, nights 6/10/14, hippocampus off, fresh state.
-  ALL ON pool40 (23 GB; pool41/42 have 15 GB and OOM-killed at load+train, records *.oom15g.*): s319 from 11:46,
-  then s320, s321 chained (vc_chain.sh), ~2.1 h each, done ~18:15 UTC; `~/brain-lane/route_repo/_scratch/route/kr/vc_full_s*.json`,
-  `vc_done_full_s*.txt`. Smoke (s319 n6, T only): engaged (guard KL 0.55 -> 0.10, agreement 0.90), 17.7 GB peak,
-  ~20 min per training arm; its log printed T n6 uv|knows 0/4 (a leak, disclosed; smoke rows not used).
-  Read: pull to results/2026-11-26-voice-ceiling/, `voice_ceil table vc_full_s*.json --vs
-  results/2026-11-26-voice-split/vs_s*.json --lives results/2026-11-26-voice-split/lives/*.json --out verdict.json`.
-  TRANSFER -> before-build a voice night; NO-TRANSFER / ABSTAINS -> close the class, bank in PREREQUISITES.
+- **VOICE CEILING READ (11-26): UNDEFINED** (`brain/experiments/results/2026-11-26-voice-ceiling-read.md`, pool40, 3 seeds rc 0).
+  - Engagement passed on only 2/9 nights (s321 none). R1's "A0 knows >= 20" bar was unreachable (max 18 test rows): a
+    design flaw, recorded.
+  - Report only: test-item knows A0 18/18, T 6/18 (9 refusals), S 5/18. Hand-read T: 14/30 refusals.
+  - Method not rescued, not rerun. Skeptic: the numbers SURVIVE; the "class closed" wording was REFUTED and is reworded.
+  - 9th voice lever without a pass. Next: before-build a method on what sleep stores and replays (the comprehended
+    form, or a speaker tag).
 - **TEST2 LAUNCHER CHECKED (11-26):** `launch_plan.sh plan` worst case $47 / $45 / $39 per UTC day (<= $50); env
   BRAIN_CODE_COMMIT/CLEAN set in `go`; no tmp dirs left. Ready for `go 2026-12-04` from a clean tree.
 - **Pi:** lane was empty since ~11-13; two bounded items added 11-26 (where_ran host field; scorer-consistency audit).
@@ -88,7 +84,7 @@
 - **TIMEBOX: routing arc CLOSED 11-26 (STOP as pre-committed).** One last method: S_all competition
   without permanent/self episodes, offline screen on KR snapshots (pool, $0). If it fails: STOP routing, bank as
   "missing prerequisite (near-duplicate separation) at this scale", and run 12-04 test2 with the current memory. No 6th lever.
-- **NEXT STEP:** (1) Read the voice ceiling (rule fixed; skeptic before landing; timebox 11-28). (2) (was 1-2: voice split read, done.) (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **NEXT STEP:** (1) Voice defect, timebox 11-28: before-build a store/replay method (comprehended form or speaker tag); the voice ceiling has been read (UNDEFINED). (2) Remove pool route_repo copies + _scratch/vc_relay after test2. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).
