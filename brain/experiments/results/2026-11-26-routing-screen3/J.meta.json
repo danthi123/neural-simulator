@@ -1,0 +1,18 @@
+{
+ "forward_check_err": 0.0,
+ "vjp": "batched",
+ "model": "../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+ "device": "cuda",
+ "tokens": 64,
+ "layers": [
+  12,
+  18,
+  23
+ ],
+ "n_prompts": 24,
+ "identity_max_err_last_layer": 0.0,
+ "code_commit": "0c940d92c5b3cd17db858cecaecd299d69e1c2df",
+ "C": 2048,
+ "L": 24,
+ "sha256": "69e6e0bf635f27472093f887c5e31a5adb18865680f05d151222dec6c3cd9cc6"
+}
