@@ -84,7 +84,7 @@
 - **TIMEBOX: routing arc CLOSED 11-26 (STOP as pre-committed).** One last method: S_all competition
   without permanent/self episodes, offline screen on KR snapshots (pool, $0). If it fails: STOP routing, bank as
   "missing prerequisite (near-duplicate separation) at this scale", and run 12-04 test2 with the current memory. No 6th lever.
-- **NEXT STEP:** (1) Voice defect, timebox 11-28: before-build a store/replay method (comprehended form or speaker tag); the voice ceiling has been read (UNDEFINED). (2) Remove pool route_repo copies + _scratch/vc_relay after test2. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **NEXT STEP:** (1) Voice defect, timebox 11-28: build the source-tag screen from `brain/research/2026-11-26-source-tag-prereg-DRAFT.md` (judge-picked design; the corrections are in the file: ~18 GB, seeds chain on pool40). Harness + stub tests, sonnet pre-data review, smoke under memcap 20, then the full chain. The voice ceiling has been read (UNDEFINED). (2) Remove pool route_repo copies + _scratch/vc_relay after test2. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).
