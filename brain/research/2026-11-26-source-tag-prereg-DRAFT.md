@@ -103,3 +103,75 @@ opus judge. The judge's spec is reproduced verbatim below.
 *Graft held for later.* If S-TAG engages but voice does not move, the next lever is the owner's comprehension-before-storage idea with the tag as the comprehension signal: tagged user tokens plus untagged assistant-recall replay. It must not use own-reply targets.
 
 The spec is grounded in `brain/sleep.py:40-80` (unmasked replay CE at `:67`, no per-token mask) and `brain/brain.py:875,885,1051` (the `_night_episodes` hook point).
+
+## Amendment R1: the registered spec (11-26, before any data; supersedes the judge spec where they differ)
+Harness: `brain/experiments/voice_tag.py`. Tag: `brain/source_tag.py`, plus a hook in `brain/plastic_cortex.py`. That
+hook is off when `source_tag` is None, and the output is then byte-identical (tests in `brain/tests/test_source_tag.py`).
+`brain.py`, `sleep.py` and `cortex.py` are untouched, so the test2 file hashes are unchanged.
+
+**What the KR lives are.**
+- The KR lives were slept on AWS cuda. This screen re-sleeps on pool40 CPU fp32, so a night cannot be reproduced
+  bitwise.
+- The control is A0: night 14 re-slept tag-off by the same code on the same host.
+- `reproduction` (rel diff and cosine of A0's adapters against the banked n14) is a sanity bound only. A rel diff above
+  0.5 on any seed gives UNDEFINED (wrong store or wrong episodes).
+- A0snap (the banked n14 adapters) gets a hippocampus-off battery. A0 − A0snap onset is reported.
+
+**Night and tag.**
+- Night 14 is slept again from n13's meta, adapters and keep bank, with n14's 95 episodes.
+- Clock: n14's `last_sleep`. Sleep seed: unchanged (`sleep_seed + sleeps`).
+- The tag is added after block `n_layers // 2` on tokens inside a `User:` turn, in every plastic forward while enabled
+  (the replay, the keep student and the answer read).
+- TAG starts at zero and is trained by sleep's own optimizer (lr 5e-4, 480 steps).
+- SHAM is a fixed random direction (seed×1000+7) scaled to ‖TAG‖, applied the same way, not trained.
+- LESION is TAG's adapters with no tag at test.
+
+**Battery.**
+- Every told item's own probe question from the banked batteries of nights 1-14: s319 25, s320 22, s321 20, so 67
+  per arm per condition. Fresh state per question, reseed 500+14, weekend clock as the voice ceiling.
+- Hippocampus-off is primary; intact is secondary. Hippocampus-off also records the onset log-odds
+  logp(" Your") − logp(" My") at the first answer token, read before the reply.
+
+**Engagement.**
+- Mean onset KL(tag on ‖ tag off) over the told questions, on TAG's adapters.
+- It must be ≥ max(0.01 nats, 2 × the same for SHAM). Otherwise: NO-ENGAGEMENT.
+
+**Rule** (pooled hippocampus-off, item-clustered bootstrap over (seed, item), 2000 draws, seed 20261127):
+- **UNDEFINED:** reproduction rel diff > 0.5 on any seed, or A0 knows < 10 (of 67).
+- **NO-ENGAGEMENT:** the engagement bar fails.
+- **GO** needs all of:
+  - onset TAG − A0 CI lower bound > 0;
+  - P(uv|knows) TAG − A0 ≤ −0.10;
+  - onset TAG − SHAM CI lower bound > 0;
+  - |LESION − A0| onset < |TAG − A0|;
+  - knows(TAG) ≥ 0.9 × knows(A0);
+  - refusal rise < 0.10 of told rows;
+  - P(uv|knows) TAG < A0 on ≥ 2 of 3 seeds.
+- **NEGATIVE:** engaged, and the onset CI lower bound ≤ 0.
+- **MIXED:** otherwise.
+- **Report only:**
+  - the intact condition;
+  - per-item rates;
+  - A0 − A0snap;
+  - the tag norm and the sham norm;
+  - a blind hand-read of 40 rows per arm.
+- **Outcomes.**
+  - GO earns a before-build of the tag in the live brain (switch, default OFF), with a whole-life test on six seeds.
+  - NEGATIVE or NO-ENGAGEMENT: this tag form is not pursued. The self/other tag stays missing.
+
+**Smoke** (`--smoke`, s319): A0 re-sleep, then the A0snap and A0 batteries. It reads time, memory, reproduction and
+the onset token check. The voice rows are not read before the full run. A0 is rerun in the full run (deterministic on
+the same host).
+
+**Cost.** Per seed: 3 sleeps (about 70 min each, to be measured by the smoke) + 2 KL passes + 9 batteries. Seeds chain on
+pool40 (~18 GB peak). Read by 11-28.
+
+**R1 fixes from the pre-data sonnet review (no BLOCKING; three made before any data):**
+- B1: reseed 500+14 before EVERY question, so generated replies are paired across arms.
+- B3: onset cells are keyed (seed, item, question); the bootstrap n is reported.
+- B2 is moot: the KR brain_kw has no `abstain` (default False), so the reply always speaks through the adapters, like
+  the onset read.
+- The layer fallback is now an assert.
+- The reviewer expects NO-ENGAGEMENT or NEGATIVE: the training texts are all user turns, so the tag has little
+  contrast in training. That reading is a verdict on this tag form only.
+- Smoke check added: the first generated token of knows rows is mostly " Your" or " My" (onset mass).
