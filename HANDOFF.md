@@ -59,14 +59,27 @@
   11 GB cap during the 1.5B sleep, rc 137). 6/6 intact and 6/6 hippocampus-off, vs 3/6 and 2/6 on 11-19 (CPU), but the
   device differs and no default changed: NOT a progress claim. From now on run the weekly on AWS cuda
   (`brain/research/jlens_launch/jobs_weekly.txt` pattern, ~$0.5) so the series is same-device.
+- **VOICE RESEARCH ROUND (11-26, workflow, 5 agents; external: Yonelinas 2019, Berres 2024, Qiu 2026):** biggest K-P
+  defect by whole-transcript read = told facts answered in the user's voice (+ self-name answered with a user/told name).
+  Cascade-screen data split it: fresh state per question still 44/273 intact, 48/279 h-off user voice (n2-5 10 -> n6-15 38),
+  so whole-night flips = the cascade clustering a weight base rate. Candidate C1 (source-contrast) = the BLOCKED source-hold
+  DRAFT renamed (skeptic). **VOICE SPLIT READ (11-26): UNDEFINED** by the registered rule
+  (`brain/experiments/results/2026-11-26-voice-split-read.md`; 3 seeds valid, 560/560 reproduction). D = h-off B minus
+  both-off+telling-in-context P(uv|knows) = +0.10, CI [-0.01, 0.20]. Report only: the effect reverses across items (cat,
+  sister +; car -), the ctx control shifts replies to "You ...", and on name items the RAW cortex (no sleep, no fetch,
+  knows 0) already answers "My cat is called Fluffy" (36/84 vs h-off 32/84). Sleep supplies the content (knows 196 vs 0),
+  not demonstrably the frame. Source-hold DRAFT stays BLOCKED. Two sonnet skeptics: UNDEFINED holds, wording fixed.
+- **TEST2 LAUNCHER CHECKED (11-26):** `launch_plan.sh plan` worst case $47 / $45 / $39 per UTC day (<= $50); env
+  BRAIN_CODE_COMMIT/CLEAN set in `go`; no tmp dirs left. Ready for `go 2026-12-04` from a clean tree.
 - **Pi:** lane was empty since ~11-13; two bounded items added 11-26 (where_ran host field; scorer-consistency audit).
 - **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
   per stopped instance) and re-arm tools/attention_watch.py --loop.
 - **TIMEBOX: routing arc CLOSED 11-26 (STOP as pre-committed).** One last method: S_all competition
   without permanent/self episodes, offline screen on KR snapshots (pool, $0). If it fails: STOP routing, bank as
   "missing prerequisite (near-duplicate separation) at this scale", and run 12-04 test2 with the current memory. No 6th lever.
-- **NEXT STEP:** (1) Prepare the 12-04 test2 launch (nothing else on AWS 12-04..06), with the current memory. (2) The user-voice
-  form is mostly in the weights (cascade read): before-build on how sleep consolidates the told items' voice. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **NEXT STEP:** (1) Voice defect, new before-build (timebox 11-26..11-28): target the cortex's question-answer frame
+  ("What is my X" answered "My X ..."), which exists before sleep; judge by fresh-state P(uv|knows) per item, offline on
+  the KR snapshots (pools, $0). No night method. (2) (was 1-2: voice split read, done.) (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).
