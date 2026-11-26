@@ -57,8 +57,10 @@
   AWS_BRAIN_STATE=research/queue/.aws_brain.jl bash tools/aws_brain_batch.sh pull), then `_scratch/route/s3/run_j.sh`
   on pool40/41/42 (one seed each, KR snapshots; ship ceil_s<seed>.json + J.pt to ~/brain-lane/route_repo/_scratch/
   route/s3/), then `jspace_ceiling table`. Smoke with identity J on pool41 s320 (Jv must equal H, Jt equal L).
-- **WEEKLY (11-26):** running on pool40 (`~/brain-lane/route_repo/_scratch/weekly/`, 1.5B CPU, seed 42, shared sleep);
-  copy the .md into brain/eval/transcripts/ when done. pool40 then takes part J s319.
+- **WEEKLY (11-26): DONE** `brain/eval/transcripts/2026-11-26-1.5b-cuda-s42.md` (AWS A10G; pool40 CPU run OOM-killed at the
+  11 GB cap during the 1.5B sleep, rc 137). 6/6 intact and 6/6 hippocampus-off, vs 3/6 and 2/6 on 11-19 (CPU), but the
+  device differs and no default changed: NOT a progress claim. From now on run the weekly on AWS cuda
+  (`brain/research/jlens_launch/jobs_weekly.txt` pattern, ~$0.5) so the series is same-device.
 - **Pi:** lane was empty since ~11-13; two bounded items added 11-26 (where_ran host field; scorer-consistency audit).
 - **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
   per stopped instance) and re-arm tools/attention_watch.py --loop.
