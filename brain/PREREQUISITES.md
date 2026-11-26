@@ -63,6 +63,19 @@ Scale note: selection same-words 12/12 at 0.1B but 7/12 at 0.4B and 1.5B; paraph
 11-03 (`experiments/results/2026-11-03-meaning-selection.md`, 6 seeds, 24 stored of 48): all-layer matrix-delta key `S_all` (`hippocampus_keys.py`) vs default S0 on heavy rewordings: selection 0.69 vs 0.33 (0.1B), 0.76 vs 0.10 (0.4B); reworded recall 0.66 vs 0.05 at 0.4B. Learned key from self-generated replay questions does not beat S_all. Told-vs-untold separation still weak (AUROC ~0.63): false recall is not solved by the key.
 11-03 real path (`experiments/results/2026-11-03-meaning-selection-realpath.md`, `KeyedHippocampus.recall`, bar refit on 36 held-out dev facts): forced selection reproduces; S_all beats S0 6/6 seeds at both sizes in every arm; S_all bar 0.185 / margin 0.05 (S0's 0.12 lets S_all fire on ~55% of untold questions); at the refit bar heavy-rewording recall drops to 0.12-0.14 with untold fire 0.15-0.22: the key picks the memory, the bar cannot also decide whether to recall. S_all now stores no key (read from the delta): 1.18 MB/episode at 0.1B (was 3.58). Not yet in the live Brain.
 11-03 final: `S_all` through the real path is a LEAD, not a GO (P1-P6 pass at 0.1B and 0.4B; told-vs-untold J 0.30 vs S0 0.17 / -0.05; bar 0.185 / 0.05 optimistic on test). `Hippocampus` default key unchanged. Needs a live-brain test with a correct-perspective scorer.
+11-23..11-26 routing arc on the 1.5B K-P life (memory hurt: told 123/223 with the hippocampus, 138 without), STOPPED at its
+timebox. Rank is not the limit: S_all_live ranks the right episode first on 168/217 (S0 90; ceiling read 11-25). The
+weighted, gated competition is the limit: the right episode's strength weight is low, so it fires rarely. KILLED:
+- D+G and SC (screen 1);
+- S_all slept bar, offline (screen 2) and live (arm S: 125/223, self-name episode won 65 rows);
+- skip-permanent (screen 3 X: freed rows fetch nothing, 116/130);
+- J-space key (screen 3 J: 30-47 vs hidden state 121-134).
+Banked as missing at this scale:
+- separation of near-duplicate told episodes;
+- a self/other tag in the store;
+- a strength signal that the told episodes can reach.
+The pointer is outside the bars: re-keying episodes through tonight's cortex ranks 184/217. Results:
+`experiments/results/2026-11-25-routing-*`, `2026-11-25-sall-live-dev-read-1.5b.md`, `2026-11-26-routing-screen3-read.md`.
 
 ## Working memory and topic holding
 Biology:

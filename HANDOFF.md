@@ -50,13 +50,11 @@
 - **CASCADE SCREEN READ (11-26): KILLED** (`results/2026-11-25-cascade-screen-read.md`): own_decay 0.5 / 0.25 make the
   brain stop answering (empty told replies 367 / 528 of 726; told ok 170 -> 66 / 7); only 2/19 flip nights are a pure
   cascade (B fresh-state V 165 vs A 141), so the user-voice form is mostly in the weights. own_decay stays OFF.
-- **ROUTING SCREEN 3 (11-26)** (prereg `brain/research/2026-11-26-routing-screen3-prereg.md`, build 42fff1b23):
-  part X (skip permanent episodes, on arm S snapshots) KILLED: freed self rows fetch nothing (116/130 none, 6 right);
-  no live SX (`results/2026-11-26-routing-screen3-read.md`). Part J (J-space key, rank ceiling) RUNNING: J matrices on
-  AWS g5 batch 20261125-1937 (state research/queue/.aws_brain.jl, i-03a1251e03e7733b5, ~40 min from 00:42 UTC; pull with
-  AWS_BRAIN_STATE=research/queue/.aws_brain.jl bash tools/aws_brain_batch.sh pull), then `_scratch/route/s3/run_j.sh`
-  on pool40/41/42 (one seed each, KR snapshots; ship ceil_s<seed>.json + J.pt to ~/brain-lane/route_repo/_scratch/
-  route/s3/), then `jspace_ceiling table`. Smoke with identity J on pool41 s320 (Jv must equal H, Jt equal L).
+- **ROUTING ARC STOPPED (11-26, timebox):** screen 3 part X (skip permanent) and part J (J-space key) both KILLED
+  (`results/2026-11-26-routing-screen3-read.md`; J: Jt/Jv 30-47 vs hidden state 121-134; skeptics: KILLED stands,
+  artifact unlikely). Banked in `brain/PREREQUISITES.md` (Memory selection): rank is not the limit, the weighted gate
+  is; missing near-duplicate separation, self/other tag, reachable strength. Pointer only: re-keyed S_all 184/217.
+  Pool route_repo copies can go once test2 is read.
 - **WEEKLY (11-26): DONE** `brain/eval/transcripts/2026-11-26-1.5b-cuda-s42.md` (AWS A10G; pool40 CPU run OOM-killed at the
   11 GB cap during the 1.5B sleep, rc 137). 6/6 intact and 6/6 hippocampus-off, vs 3/6 and 2/6 on 11-19 (CPU), but the
   device differs and no default changed: NOT a progress claim. From now on run the weekly on AWS cuda
@@ -64,11 +62,11 @@
 - **Pi:** lane was empty since ~11-13; two bounded items added 11-26 (where_ran host field; scorer-consistency audit).
 - **AFTER A W REBOOT:** rerun `bash _scratch/s_launch_then_pull.sh` pull part only (or pull research/queue/.aws_brain.rvS<seed>
   per stopped instance) and re-arm tools/attention_watch.py --loop.
-- **TIMEBOX (11-25, routing arc open since 11-23, past 2 days): KEEP, new limit 11-27.** X KILLED 11-26; J is the last. One last method: S_all competition
+- **TIMEBOX: routing arc CLOSED 11-26 (STOP as pre-committed).** One last method: S_all competition
   without permanent/self episodes, offline screen on KR snapshots (pool, $0). If it fails: STOP routing, bank as
   "missing prerequisite (near-duplicate separation) at this scale", and run 12-04 test2 with the current memory. No 6th lever.
-- **NEXT STEP:** (1) Part J: pull J, run ranks, table, read (whole cue_top lists for 2 nights), refuter, land; if not a
-  LEAD, STOP routing (bank: missing near-duplicate separation + self/other tag at this scale). (2) Weekly transcript in. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
+- **NEXT STEP:** (1) Prepare the 12-04 test2 launch (nothing else on AWS 12-04..06), with the current memory. (2) The user-voice
+  form is mostly in the weights (cascade read): before-build on how sleep consolidates the told items' voice. (3) Launch 12-04 AWS g5 fp16: 6 seeds x (B,
   K-P, D2-PR2). (4) Label-shuffle null for `life_bars.py`. (5) `tools/where_ran.py` ignores the life JSON host field (and
   replay/ceiling/screen JSONs carry none). (6) sim-rag-autoupdate.service fails. Pool40-42 ~/brain-lane/route_repo holds
   the KR snapshots + trunks (keep until the routing arc closes).

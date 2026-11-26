@@ -478,3 +478,6 @@ Board #286: identity gate read (no variant), test2 arms fixed, freeze gates buil
 
 ## 2026-11-26  cascade + screen3 X KILLED
 #286 appended: own_decay KILLED (empty replies), skip-permanent KILLED (no fetch), J-space ceiling running.
+
+## 2026-11-26  routing arc STOPPED
+#286 appended: screen 3 X + J KILLED; arc closed at timebox, banked in PREREQUISITES.
