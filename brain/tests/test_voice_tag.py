@@ -32,7 +32,7 @@ def test_hybrid_open_and_battery_on_a_stub_life(tmp_path, monkeypatch):
         assert len(b.hippocampus.episodes) == len(json.load(open(os.path.join(snaps, "n2", "episodes.json"))))
     finally:
         b.release()
-    monkeypatch.setattr(VT, "_onset_ids", lambda pipe: (1, 2))
+    monkeypatch.setattr(VT, "_onset_ids", lambda pipe: ([1, 3], 2))
     out = VT.battery(res, snaps, trunk, StubCortex(), str(tmp_path / "w"), qs, None, None, 1, "A0", night=2)
     assert set(out) == {"hoff", "intact"}
     assert len(out["hoff"]["rows"]) == len(qs) and all(r["onset"] is not None for r in out["hoff"]["rows"])

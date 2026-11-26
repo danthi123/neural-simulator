@@ -10,7 +10,7 @@ episodes. The arms are:
   same norm as TAG's). The batteries are A0, TAG, LESION (TAG's adapters, tag removed), SHAM, plus A0snap (the banked
   night-N adapters).
 Each battery is asked hippocampus-off (primary) and intact. The hippocampus-off battery also records the onset
-log-odds, logp(" Your") - logp(" My"), at the first answer token. brain.py, sleep.py and cortex.py are untouched; the
+log-odds, log(p(" You") + p(" Your")) - logp(" My"), at the first answer token (R2). brain.py, sleep.py and cortex.py are untouched; the
 tag lives in PlasticCortex."""
 from __future__ import annotations
 
@@ -106,9 +106,10 @@ def reproduction(state, snap_adapters):
 
 
 def _onset_ids(pipe):
-    y, m = pipe.encode(" Your"), pipe.encode(" My")
-    assert len(y) == 1 and len(m) == 1, (y, m)
-    return y[0], m[0]
+    """(second-person first tokens, user-voice first token): ([" You", " Your"], " My"), each one token (R2)."""
+    ids = [pipe.encode(w) for w in (" You", " Your", " My")]
+    assert all(len(i) == 1 for i in ids), ids
+    return [ids[0][0], ids[1][0]], ids[2][0]
 
 
 def battery(res, snaps, trunk, cortex, work, qs, adapters, vec, layer, tag_name, night=NIGHT, conds=CONDS, weekend=True):
@@ -140,7 +141,7 @@ def battery(res, snaps, trunk, cortex, work, qs, adapters, vec, layer, tag_name,
                         with torch.no_grad():
                             lg, _ = b.cortex.read(f"User: {q['text']}\n\n{b._asst}", [x.clone() for x in b.base])
                             lp = torch.log_softmax(lg.float(), -1)
-                            onset = float(lp[yid] - lp[mid])
+                            onset = float(torch.logsumexp(lp[yid], 0) - lp[mid])
                     b.state = [x.clone() for x in b.base]
                     life._reseed(seed, 500 + night)   # paired draws: every arm samples each reply from the same RNG state
                     r = life.run_battery(b, [q], led, night)[0]

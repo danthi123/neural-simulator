@@ -175,3 +175,18 @@ pool40 (~18 GB peak). Read by 11-28.
 - The reviewer expects NO-ENGAGEMENT or NEGATIVE: the training texts are all user turns, so the tag has little
   contrast in training. That reading is a verdict on this tag form only.
 - Smoke check added: the first generated token of knows rows is mostly " Your" or " My" (onset mass).
+
+## Amendment R2 (11-26, after the smoke, before any TAG, SHAM or LESION data)
+- **Smoke** (s319, A0 only), on pool40:
+  - sleep 3144 s and batteries of about 106 s;
+  - reproduction rel diff 0.25 and cosine 0.97, under the 0.5 bound;
+  - A0 hippocampus-off knows 19/25;
+  - onset present on every row.
+- **Disclosed leak.** The smoke log printed A0 (uv_knows, knows) = (3, 19) hippocampus-off and (2, 18) intact. There
+  is no treatment data.
+- **The pre-registered onset check failed.** The first words of A0's knows rows were "You" 8, "Your" 5, "The" 3, "My" 2
+  and other 1. So " Your" vs " My" misses the most common second-person start.
+- **New primary onset:** log(p(" You") + p(" Your")) − log p(" My"). " I" is excluded because refusals start with it.
+  The rule is otherwise unchanged.
+- **Timing.** A full seed is about 3 h (3 sleeps of about 52 min, 2 KL passes and 9 batteries). The seeds chain on
+  pool40 and should finish about 05:30 UTC on 11-27.
