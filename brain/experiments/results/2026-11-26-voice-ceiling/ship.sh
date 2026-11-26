@@ -8,6 +8,6 @@ for x in $L; do N=${x%:*}; S=${x#*:}; D=brain-lane/route_repo/_scratch/route/kr
   rsync -a --delete --exclude experiments/results --exclude __pycache__ -e "$E" brain/ $N:brain-lane/route_repo/brain/ || exit 1
   echo $H | $E $N "cat > ~/brain-lane/route_repo/COMMIT" || exit 1
   rsync -a -e "$E" brain/experiments/results/2026-11-26-voice-ceiling/run_node.sh $N:$D/vc_run_node.sh || exit 1
-  if [ "$M" = smoke ]; then A="--nights 6 --arms T_pixel"; else A=""; fi
+  if [ "$M" = smoke ]; then A="--nights 6 --arms T"; else A=""; fi
   $E $N "(nohup bash ~/$D/vc_run_node.sh $S $M $A >/dev/null 2>&1 &); sleep 5; cat ~/$D/vc_done_${M}_s$S.txt" </dev/null
 done
