@@ -109,16 +109,19 @@ def distill(b, targets, steps=STEPS, lr=LR, kl_weight=KL_WEIGHT, seed=0):
     losses = []
     for _ in range(steps):
         m = rng.randrange(len(t_ids))
+        j = rng.randrange(len(gen_ids))
+        opt.zero_grad()
+        # two backward passes (the same summed gradient; one graph alive at a time: memory on 23 GB CPU nodes)
         lg, _ = plastic(t_ids[m], base)
         guard = F.kl_div(F.log_softmax(lg[t_from[m]:], -1), t_ref[m], log_target=True, reduction="batchmean")
-        j = rng.randrange(len(gen_ids))
+        (kl_weight * guard).backward()
+        del lg
         g, _ = plastic(gen_ids[j], base)
         keep = F.kl_div(F.log_softmax(g, -1), keep_ref[j], log_target=True, reduction="batchmean")
-        loss = kl_weight * guard + kl_weight * keep
-        opt.zero_grad()
-        loss.backward()
+        (kl_weight * keep).backward()
+        del g
         opt.step()
-        losses.append((round(float(guard), 4), round(float(keep), 5)))
+        losses.append((round(guard.item(), 4), round(keep.item(), 5)))
     for prm in plastic.parameters():
         prm.grad = None
     agree1 = _agreement(plastic, base, t_ids, t_from, t_ref)
