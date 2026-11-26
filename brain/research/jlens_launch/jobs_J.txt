@@ -1,0 +1,2 @@
+# Routing screen 3 part J (brain/research/2026-11-26-routing-screen3-prereg.md): mean Jacobians J_l of the pretrained 1.5B cortex, fp32, 24 held-out prompts x 64 tokens
+jlens_J brain.experiments.jlens compute --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --tokens 64 --layers 12 18 23 --chunk 16
