@@ -73,7 +73,8 @@
   (pre-data sonnet review, 7 BLOCKING fixed), harness `brain/experiments/voice_ceil.py` (d7132cd0f). Trains the slept
   weights (KL, reply positions) toward the pretrained cortex's in-context answer on ~20 rotating told items, tests the
   never-trained name items (pixel, marguerite); arms A0 / T / sham S, nights 6/10/14, hippocampus off, fresh state.
-  pool40/41/42 s319/320/321 from 11:46 UTC, ~2.1 h; `~/brain-lane/route_repo/_scratch/route/kr/vc_full_s*.json`,
+  ALL ON pool40 (23 GB; pool41/42 have 15 GB and OOM-killed at load+train, records *.oom15g.*): s319 from 11:46,
+  then s320, s321 chained (vc_chain.sh), ~2.1 h each, done ~18:15 UTC; `~/brain-lane/route_repo/_scratch/route/kr/vc_full_s*.json`,
   `vc_done_full_s*.txt`. Smoke (s319 n6, T only): engaged (guard KL 0.55 -> 0.10, agreement 0.90), 17.7 GB peak,
   ~20 min per training arm; its log printed T n6 uv|knows 0/4 (a leak, disclosed; smoke rows not used).
   Read: pull to results/2026-11-26-voice-ceiling/, `voice_ceil table vc_full_s*.json --vs
