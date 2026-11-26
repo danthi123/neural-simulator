@@ -144,7 +144,13 @@ def open_snapshot(snap: str, home: str, cortex, brain_kw: dict, trunk: str | Non
     b = Brain(home, cortex=cortex, lock=True, **{**brain_kw, "sleep_on_restart": False})
     if with_deltas:
         for e, r in zip(b.hippocampus.episodes, rows):
-            if not torch.equal(e.key, keys[r["file"]]):
+            kk = keys[r["file"]]
+            if kk is None or e.key is None:   # an S_all store keeps no S0 key (arm S, 11-26): both must be None
+                if not (kk is None and e.key is None):
+                    raise ValueError(f"{r['file']}: trunk episode key and the snapshot's keys.pt disagree on None")
+                if e.delta is None:
+                    raise ValueError(f"{r['file']}: an S_all episode with no stored delta")
+            elif not torch.equal(e.key, kk):
                 raise ValueError(f"{r['file']}: trunk episode key differs from the snapshot's keys.pt")
             for k in ("strength", "uses", "last_used"):
                 assert getattr(e, k) == r[k], (r["file"], k)

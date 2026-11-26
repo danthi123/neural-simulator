@@ -1,0 +1,3388 @@
+{
+ "seeds": {
+  "319": {
+   "void_nights": 0,
+   "void": false,
+   "flip": [
+    {
+     "night": 5,
+     "arm": "hippocampus-off",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 4,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 4,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 1
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "intact",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 5,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 5
+     },
+     "A2": {
+      "V": 2,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 5,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "hippocampus-off",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 8,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 8
+     },
+     "A2": {
+      "V": 8,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 8,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    }
+   ],
+   "nonflip": [
+    {
+     "night": 2,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 2,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 3,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 3,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 2,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 2
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 5,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 4,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 1,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 6,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 6,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 1,
+      "user_voice": 2,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 9,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 9,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 7,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 7,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 6,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 3,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 8,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 8,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 5,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 3
+     },
+     "D50": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 8,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 8,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 2,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 2,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 8,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    }
+   ]
+  },
+  "320": {
+   "void_nights": 1,
+   "void": false,
+   "flip": [
+    {
+     "night": 6,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 4,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 6,
+     "arm": "hippocampus-off",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 2
+     },
+     "A2": {
+      "V": 5,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 5,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "intact",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 2,
+      "user_voice": 2,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 5,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 5,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "hippocampus-off",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 5,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 3
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 7,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 7,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 4,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "hippocampus-off",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 4,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    }
+   ],
+   "nonflip": [
+    {
+     "night": 2,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "A2": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 2,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 6
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 3,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 3,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 5,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 5,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 3,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 4,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 9,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 6
+     },
+     "B": {
+      "V": 3,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 5,
+      "ok": 1,
+      "user_q": 1,
+      "user_voice": 2,
+      "refusal": 3
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 6
+     },
+     "B": {
+      "V": 3,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 3
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 3,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 4,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    }
+   ]
+  },
+  "321": {
+   "void_nights": 0,
+   "void": false,
+   "flip": [
+    {
+     "night": 3,
+     "arm": "intact",
+     "diag": "CASCADE",
+     "A": {
+      "V": 4,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "hippocampus-off",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 5,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 5,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 6
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 8,
+     "arm": "hippocampus-off",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 2
+     },
+     "B": {
+      "V": 4,
+      "ok": 1,
+      "user_q": 1,
+      "user_voice": 3,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 9,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "intact",
+     "diag": "BETWEEN",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 12,
+     "arm": "hippocampus-off",
+     "diag": "CASCADE",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 3,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "hippocampus-off",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 6,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 5,
+      "ok": 2,
+      "user_q": 1,
+      "user_voice": 3,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "intact",
+     "diag": "WEIGHTS",
+     "A": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 5,
+      "refusal": 1
+     },
+     "A2": {
+      "V": 6,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 6
+     },
+     "B": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    }
+   ],
+   "nonflip": [
+    {
+     "night": 2,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 2,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 3,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 4,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 4,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 4,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 5,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 5,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 6,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 3,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "B": {
+      "V": 3,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 6,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 7,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 9,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 2,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 10,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 5,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 11,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 0,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 1,
+      "user_voice": 1,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 0,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 5,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 5,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 13,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 1,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "B": {
+      "V": 2,
+      "ok": 3,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 14,
+     "arm": "intact",
+     "diag": null,
+     "A": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 2,
+      "ok": 4,
+      "user_q": 0,
+      "user_voice": 2,
+      "refusal": 0
+     },
+     "B": {
+      "V": 5,
+      "ok": 2,
+      "user_q": 2,
+      "user_voice": 3,
+      "refusal": 2
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     }
+    },
+    {
+     "night": 15,
+     "arm": "hippocampus-off",
+     "diag": null,
+     "A": {
+      "V": 0,
+      "ok": 6,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     },
+     "A2": {
+      "V": 8,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 5
+     },
+     "B": {
+      "V": 4,
+      "ok": 1,
+      "user_q": 0,
+      "user_voice": 3,
+      "refusal": 1
+     },
+     "D50": {
+      "V": 1,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 1,
+      "refusal": 0
+     },
+     "D25": {
+      "V": 0,
+      "ok": 0,
+      "user_q": 0,
+      "user_voice": 0,
+      "refusal": 0
+     }
+    }
+   ]
+  }
+ },
+ "per_beta": {
+  "D50": {
+   "status": "KILLED",
+   "core": "KILLED",
+   "k5": "PASS",
+   "kills": [
+    "K2-seed319",
+    "K2-seed320",
+    "K2-seed321"
+   ],
+   "flip_arm_nights": 19,
+   "V_A": 111,
+   "V_A2": 83,
+   "V_D": 30,
+   "diag": {
+    "CASCADE": 2,
+    "WEIGHTS": 7,
+    "BETWEEN": 10
+   }
+  },
+  "D25": {
+   "status": "KILLED",
+   "core": "KILLED",
+   "k5": "PASS",
+   "kills": [
+    "K2-seed319",
+    "K2-seed320",
+    "K2-seed321"
+   ],
+   "flip_arm_nights": 19,
+   "V_A": 111,
+   "V_A2": 83,
+   "V_D": 6,
+   "diag": {
+    "CASCADE": 2,
+    "WEIGHTS": 7,
+    "BETWEEN": 10
+   }
+  }
+ }
+}

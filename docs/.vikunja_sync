@@ -475,3 +475,6 @@ Board #286: identity gate read (no variant), test2 arms fixed, freeze gates buil
 
 ## 2026-11-25  arm S read KILLED
 #286 appended: S_all live KILLED (P2s, collapse); next routing method named.
+
+## 2026-11-26  cascade + screen3 X KILLED
+#286 appended: own_decay KILLED (empty replies), skip-permanent KILLED (no fetch), J-space ceiling running.

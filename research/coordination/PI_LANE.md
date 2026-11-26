@@ -15,6 +15,25 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   (RULING overnight-1102). Nothing to land. No flip, no new #203 work.
 
 ## Open
+- [ ] Tooling, `tools/where_ran.py` reads the host the result already records (added 2026-11-26 by Claude; base: a new
+  branch from `main`). Today it reports "unknown" for every brain/ result: brain life JSONs carry a top-level `host`
+  (e.g. `ip-172-31-*` on AWS), the cascade/replay JSONs carry `host`, and pool runs write a `*_done_*.txt` whose
+  `start ...` line ends with the node name. Make it (1) read a top-level `host` / `provenance.host` /
+  `provenance.gpu_name` from a JSON result, (2) for a result with none, look for a sibling `*done*.txt` and take the
+  node from its `start` line, (3) keep every current output format and exit code. Unit tests on small fixture files
+  only (no model, no network). Do not change any file under `brain/eval/` (frozen for test2). Read first:
+  `tools/where_ran.py`, `brain/experiments/results/2026-11-25-cascade-screen/` (casc_s319.json, casc_done_s319.txt).
+  Done = branch + tests passing + merge_review checkpoint.
+- [ ] Audit, told-row scorer consistency (added 2026-11-26 by Claude; REPORT ONLY, no code change; base: `main`). Two
+  Claude reads found the told-recall scorer credits or rejects the same reply text differently: e.g. "My dog is called
+  Bramble." wrong on a near-duplicate row but right on a same-day row; "Of course, Dan, you Dan?" and "Her name is
+  Pixel." (the cat) scored right. Using only the banked JSONs (no model runs):
+  `_scratch/brainv2/aws/20261125-*/lifeS_s3*.json.json`, `_scratch/brainv2/aws/20261122-0*/lifeKP_s3*.json.json` on W
+  (ask Claude via a NEEDS line for a copy if not visible), list every (reply text, item) pair whose `ok` differs
+  across rows or probe kinds, and every `ok=True` reply that lacks the item's key word or uses the wrong pronoun for a
+  non-person item. Write `research/findings/raw/_scorer_consistency_1126.md` with counts per life and kind and 20
+  examples. Read first: `brain/experiments/strict_scorer.py`, `brain/eval/life.py` (the `ok` field), read-only.
+  Done = the report + merge_review checkpoint.
 - [x] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
   sums the intact and lesion arms into one total, asks the same fixed questions every week, and credits degenerate
   replies (e.g. "Nova, Nova."). Change it so that: (1) the header prints one score line per arm (intact, hippocampus

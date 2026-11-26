@@ -1,0 +1,122 @@
+{
+ "seeds": {
+  "319": {
+   "void": false,
+   "void_nights": 0,
+   "dropped_rows": 0,
+   "K": {
+    "told_n": 80,
+    "right": 6,
+    "wrong": 31,
+    "wrong_nonperm": 7,
+    "fetch_perm": 24,
+    "no_fetch": 43,
+    "fires": 31,
+    "identity_fires": 13,
+    "identity_right": 13
+   },
+   "KX": {
+    "told_n": 80,
+    "right": 7,
+    "wrong": 13,
+    "wrong_nonperm": 13,
+    "fetch_perm": 0,
+    "no_fetch": 60,
+    "fires": 18,
+    "identity_fires": 1,
+    "identity_right": 0
+   },
+   "self": {
+    "n": 47,
+    "to_right": 1,
+    "to_wrong": 5,
+    "to_none": 41
+   }
+  },
+  "320": {
+   "void": false,
+   "void_nights": 0,
+   "dropped_rows": 0,
+   "K": {
+    "told_n": 70,
+    "right": 7,
+    "wrong": 23,
+    "wrong_nonperm": 3,
+    "fetch_perm": 20,
+    "no_fetch": 40,
+    "fires": 23,
+    "identity_fires": 11,
+    "identity_right": 11
+   },
+   "KX": {
+    "told_n": 70,
+    "right": 9,
+    "wrong": 6,
+    "wrong_nonperm": 6,
+    "fetch_perm": 0,
+    "no_fetch": 55,
+    "fires": 3,
+    "identity_fires": 0,
+    "identity_right": 0
+   },
+   "self": {
+    "n": 39,
+    "to_right": 2,
+    "to_wrong": 3,
+    "to_none": 34
+   }
+  },
+  "321": {
+   "void": false,
+   "void_nights": 0,
+   "dropped_rows": 0,
+   "K": {
+    "told_n": 73,
+    "right": 5,
+    "wrong": 24,
+    "wrong_nonperm": 3,
+    "fetch_perm": 21,
+    "no_fetch": 44,
+    "fires": 27,
+    "identity_fires": 13,
+    "identity_right": 13
+   },
+   "KX": {
+    "told_n": 73,
+    "right": 8,
+    "wrong": 3,
+    "wrong_nonperm": 3,
+    "fetch_perm": 0,
+    "no_fetch": 62,
+    "fires": 3,
+    "identity_fires": 0,
+    "identity_right": 0
+   },
+   "self": {
+    "n": 44,
+    "to_right": 3,
+    "to_wrong": 0,
+    "to_none": 41
+   }
+  }
+ },
+ "engagement": {
+  "KX_fetch_perm": 0,
+  "self_rows": 130
+ },
+ "X": {
+  "K_right": 18,
+  "KX_right": 24,
+  "need": 28,
+  "self_to_right": 6,
+  "self_to_wrong": 8,
+  "self_rows": 130,
+  "kills": [
+   "X1 right 24 < 28 (K 18)",
+   "X3 wrong non-permanent excess {'319': 6, '320': 3, '321': 0} (max 5/seed)",
+   "X5 self -> right 6/130 < 1/3",
+   "X7 told no-fetch excess {'319': 17, '320': 15, '321': 18} (max 5/seed)"
+  ]
+ },
+ "status": "KILLED"
+}
