@@ -110,3 +110,73 @@ arm's training reaches another arm.
 - **Cost.** 6 arms × 3 nights per seed, on the three pool nodes in parallel. No AWS, no workstation, nothing on
   12-04..06.
 - **Timebox.** Read by 11-28 (the voice-defect timebox).
+
+## Amendment R1 (11-26, before any data: pre-data sonnet review, 7 BLOCKING; supersedes sections 1-3 where they differ)
+**Why.** Each told item has exactly one probe question ("What is my cat called?"), identical on every seed and night
+(B1). So the T_x / S_x / L_pixel design trained on one string and tested on the same string: in-item measured
+memorising one reply, and its "transfer" was one pair tested two ways.
+- G1 counted the same single target about 9 times (B2).
+- The bootstrap treated nights that share a seed as independent (B3).
+- The sham could abstain and select the surviving rows (B4).
+- The refusal bar was diluted across every told item (B5).
+- The keep subset was not the night's (B6).
+- The smoke's adapter-norm check was vacuous (B7).
+
+**Arms (per night, hippocampus off, fresh state per question, the voice split's reseed):**
+
+| arm | training |
+|---|---|
+| A0 | none. It must reproduce the voice split's hippocampus-off B rows on every told row, else the night is void. |
+| T | DISTILL on every ROTATING told item's own probe question: every told item except dan, nova, pixel, marguerite, volvo and admin, about 20 items per seed. Each target is the pretrained cortex's greedy reply after reading that item's own telling (`User: <telling>\n\nAssistant: <Brain.TEACHER_ACK>\n\n`, without TEACHER_OPEN). |
+| S | sham: the same cues, steps and weights; the teacher reads no context. |
+
+- **DISTILL.** 120 steps, lr 5e-4, KL weight 3.
+  - Guard: the KL on the reply positions of one target per step.
+  - Keep: the KL on the night's own 64-text keep subset (drawn as `Brain.sleep` draws it), held to TONIGHT's slept
+    cortex. It is not held to the pretrained cortex, so what sleep built stays.
+  - There is no replay CE.
+- **Test items.** pixel and marguerite, the day-1 name items, which are never trained. volvo and admin are report
+  only, also never trained.
+- **Nights.** 6, 10 and 14 on s319/s320/s321. They are extended only if the smoke's cost allows, and fixed here
+  before the full run: nights 6, 10, 14.
+
+**Engagement (per training arm and night, read from the logged losses; never the voice).**
+- Mean guard KL of the last 10 steps at most 0.3 × the first 10.
+- Teacher-forced top-1 agreement with the teacher on the targets' reply positions, after training, at least 0.9.
+- A night where T or S fails this is dropped as unengaged.
+
+**G1 (teacher), deduplicated on (item, reply).** Passes when all of:
+- at least 8 distinct T targets name their item's key;
+- at most 0.15 of those are in the user's voice (`own2`).
+
+**Rule:**
+- **VOID:** no live, engaged night.
+- **UNDEFINED, any of:**
+  - a seed has no live night;
+  - G1 fails;
+  - knows on the test items is under 20 for A0, or under 8 for T.
+- **ABSTAINS:** knows(T) / knows(A0) on the test items is below 0.8, or the refusal and empty share of the test items'
+  told rows rises by 0.10 or more.
+- **TRANSFER needs both:**
+  - pooled P(uv|knows) on pixel + marguerite, T minus A0, at most -0.10, AND T below A0 on 3/3 seeds;
+  - T minus S at most -0.05. This bar is waived only if the sham is invalid (S knows below 0.5 × A0); the waiver is
+    then stated.
+- **NO-TRANSFER:** anything else.
+- **Report only:**
+  - the (seed, item, night) bootstrap CIs;
+  - volvo and admin T minus A0;
+  - per-item rates;
+  - the agreement values;
+  - never-told invention and the self-name replies;
+  - a blind hand-read of 30 T rows and 30 S rows.
+
+**Outcomes:**
+- **TRANSFER:** a voice night earns a before-build: cues the brain asks itself about its own episodes (not probes),
+  six seeds, these bars carried over.
+- **NO-TRANSFER:** the in-context second-person frame does not carry to untrained items through the slept weights at
+  1.5B. Close the context-distillation voice class and bank it in PREREQUISITES (Self and identity: needs the
+  self/other tag or scale).
+- **ABSTAINS:** the teacher night's failure again (distilled refusals). Same close.
+
+**Smoke.** The first smoke (old T_pixel design, pool40 s319 night 6) is run-only: its time and memory size the full
+run. Its rows are not read.

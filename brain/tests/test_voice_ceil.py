@@ -17,7 +17,7 @@ def test_voice_ceil_on_a_stub_life(tmp_path, monkeypatch):
     seen = []
     def fake_distill(b, targets, steps=VC.STEPS, **kw):   # the stub _plastic has no weights (test_life fixture)
         seen.append(targets)
-        return [(0.0, 0.0)] * steps
+        return [(0.0, 0.0)] * steps, (0.5, 1.0)
     monkeypatch.setattr(VC, "distill", fake_distill)
 
     snaps = tmp_path / "snaps"
@@ -31,22 +31,30 @@ def test_voice_ceil_on_a_stub_life(tmp_path, monkeypatch):
                  log=lambda *a: None)
     vs = VS.run(res, str(snaps), trunk, StubCortex(), str(tmp_path / "w2"), weekend=False, nights=nights,
                 log=lambda *a: None)
-    assert all(out["cues"][x] for x in VC.NAME_ITEMS)
+    assert out["cues"] and not set(out["cues"]) & set(VC.HELD)   # trained items never include a test item
     for n, vn in zip(out["nights"], vs["nights"]):
         n_q = len(vn["arms"]["hippocampus-off"]["B"]["rows"])
         assert set(n["arms"]) == {a for a, _, _ in VC.ARMS}
         assert all(len(v["rows"]) == n_q for v in n["arms"].values())
         assert [r["brain"] for r in n["arms"]["A0"]["rows"]] == [r["brain"] for r in vn["arms"]["hippocampus-off"]["B"]["rows"]]
-        for a, cue, ctx in VC.ARMS:
-            if cue:
+        for a, trains, ctx in VC.ARMS:
+            if trains:
                 v = n["arms"][a]
-                assert len(v["losses"]) == 3 and len(v["targets"]) == len(out["cues"][cue])
+                assert len(v["losses"]) == 3 and len(v["targets"]) == sum(len(q) for q in out["cues"].values())
+                assert {x for x, _, _ in v["targets"]} == set(out["cues"])
     ctx_n = {len(t) for tg in seen for t in tg}
     assert ctx_n == {2, 3}   # sham targets are (prefix, reply) pairs; teacher and lesion targets carry the context
     t = VC.table([dict(out, seed=s) for s in (1, 2)], [dict(vs, seed=s) for s in (1, 2)],
                  {s: res["ledger"] for s in (1, 2)})
-    assert t["verdict"] in ("TRANSFER", "ITEM-BOUND", "NO-CEILING", "UNDEFINED", "VOID")
+    assert t["verdict"] in ("TRANSFER", "NO-TRANSFER", "ABSTAINS", "UNDEFINED", "VOID")
     assert not t["void_nights"]
+
+
+def test_engaged_rule():
+    good = {"losses": [(1.0, 0.0)] * 10 + [(0.5, 0.0)] * 100 + [(0.2, 0.0)] * 10, "agreement": [0.4, 0.95]}
+    assert VC.engaged(good)
+    assert not VC.engaged({**good, "agreement": [0.4, 0.85]})
+    assert not VC.engaged({**good, "losses": [(1.0, 0.0)] * 120})
 
 
 def test_context_for_uses_the_ledger_telling():

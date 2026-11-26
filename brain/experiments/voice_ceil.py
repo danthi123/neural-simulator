@@ -2,10 +2,11 @@
 # Record: brain/research/2026-11-26-voice-ceiling-prereg.md (prereg); brain/experiments/results/2026-11-26-voice-split-read.md; brain/experiments/results/2026-11-17-teacher-night-1.5b.md (the killed teacher night)
 # Expected-fail: yes for the cross-item transfer (missing prerequisite: self/other source tag); the in-item ceiling is expected to move
 """Voice ceiling: put the pretrained cortex's in-context answer (one item's telling read first) into the slept weights
-by a KL on the reply positions of that item's own (oracle) probe questions, then ask the night's whole battery from a
+by a KL on the reply positions of the OTHER told items' (oracle) probe questions, then ask the night's whole battery from a
 fresh state per question, hippocampus off. DEV ceiling on K-P's KR night snapshots; no Brain change, no flip path.
-Arms: A0 (no training), T_<x> (teacher read x's telling), S_<x> (sham: teacher without context), L_pixel (lesion:
-pixel's cues, volvo's telling).
+Amendment R1: arms A0 (no training), T (trained on every rotating told item's own question, the teacher having read
+that item's telling), S (sham: the same cues, teacher without context). Test: the day-1 name items (pixel, marguerite),
+never trained; volvo and admin report only.
   python -m brain.experiments.voice_ceil run --life lifeKR_s<seed>.json --snaps <dir> --trunk <trunk> --out <json>
   python -m brain.experiments.voice_ceil table <outs...> --vs <vs_s*.json...> --lives <lifeKR...> --out <json>
 """
@@ -26,12 +27,23 @@ from brain.experiments import routing_replay as RR
 from brain.experiments import voice_split as VS
 
 NIGHTS = (6, 10, 14)
-NAME_ITEMS = ("pixel", "marguerite")
-ARMS = (("A0", None, None), ("T_pixel", "pixel", "pixel"), ("T_marguerite", "marguerite", "marguerite"),
-        ("S_pixel", "pixel", None), ("S_marguerite", "marguerite", None), ("L_pixel", "pixel", "volvo"))
+TEST_ITEMS = ("pixel", "marguerite")      # primary (name items); never trained (Amendment R1)
+REPORT_ITEMS = ("volvo", "admin")         # the other day-1 items: report only, never trained
+HELD = ("dan", "nova") + TEST_ITEMS + REPORT_ITEMS
+# arm -> (trains?, teacher reads the item's telling?)
+ARMS = (("A0", False, False), ("T", True, True), ("S", True, False))
+NAME_ITEMS = TEST_ITEMS
 STEPS, LR, KL_WEIGHT = 120, 5e-4, 3.0      # the 1.5B sleep row (brain/brain.py SLEEP_DEFAULTS)
-ACK = "Thanks for telling me. I'll keep that in mind."   # Brain.TEACHER_ACK (declared scaffold, read by the teacher only)
+from brain.brain import Brain as _Brain
+ACK = _Brain.TEACHER_ACK   # declared scaffold (SCAFFOLDS.md), read by the teacher only
 GEN_SEED = 20261127
+
+
+def train_cues(res, ledger):
+    """{item: [its probe questions]} for every told item outside HELD (the rotating items), over every banked night."""
+    items = sorted({r.get("item") for p in res["probes"] if p["arm"] == RR.FROZEN and p.get("line") == "trunk"
+                    for r in p["rows"] if r.get("item") and r["item"] not in HELD and CS.is_told(r, ledger)})
+    return {x: cues_for(res, x, ledger) for x in items}
 
 
 def cues_for(res, item, ledger):
@@ -50,11 +62,17 @@ def context_for(ledger, item):
     return f"User: {ledger[item]['telling']}\n\nAssistant: {ACK}\n\n"
 
 
-def teacher_targets(b, cues, ctx):
-    """(prefix, reply, context) triples, or (prefix, reply) pairs for the sham, from the pretrained cortex (adapters off,
-    birth state); greedy, 24 tokens (near_miss.guard_texts)."""
+def teacher_targets(b, cues, ledger, with_context):
+    """Per train item: (prefix, reply, context) triples with the item's own telling read first, or (prefix, reply)
+    pairs for the sham, from the pretrained cortex (adapters off, birth state); greedy, 24 tokens
+    (near_miss.guard_texts). Returns (targets, items) aligned."""
     from brain.near_miss import guard_texts
-    return guard_texts(b.raw_cortex, b.base, cues, split=True, context=ctx)
+    out, items = [], []
+    for x, qs in cues.items():
+        t = guard_texts(b.raw_cortex, b.base, qs, split=True, context=context_for(ledger, x) if with_context else None)
+        out += t
+        items += [x] * len(t)
+    return out, items
 
 
 def distill(b, targets, steps=STEPS, lr=LR, kl_weight=KL_WEIGHT, seed=0):
@@ -64,9 +82,12 @@ def distill(b, targets, steps=STEPS, lr=LR, kl_weight=KL_WEIGHT, seed=0):
     plastic = b._plastic()
     pipe = b.raw_cortex.pipe
     base = [s.float() for s in b.base]
+    from brain.brain import KEEP_BANK_NIGHT, KEEP_BANK_SEED_OFFSET
     bank = b._keep_bank()
     rng = random.Random(seed)
-    generic = rng.sample(bank, min(64, len(bank)))
+    # the subset tonight's sleep drew (Brain.sleep: meta["sleeps"] in the snapshot is already post-sleep)
+    generic = random.Random(b.sleep_seed + b.meta.get("sleeps", 1) - 1 + KEEP_BANK_SEED_OFFSET).sample(
+        bank, min(KEEP_BANK_NIGHT, len(bank)))
     gen_ids = [pipe.encode(t) for t in generic]
     t_ids, t_from, t_ref = [], [], []
     with torch.no_grad():
@@ -83,6 +104,7 @@ def distill(b, targets, steps=STEPS, lr=LR, kl_weight=KL_WEIGHT, seed=0):
                 ref = F.log_softmax(plastic(ids, base)[0], -1)[k:]
             t_ids.append(ids), t_from.append(k), t_ref.append(ref)
     plastic.enabled = True
+    agree0 = _agreement(plastic, base, t_ids, t_from, t_ref)
     opt = torch.optim.Adam([p for p in plastic.parameters() if p.requires_grad], lr=lr)
     losses = []
     for _ in range(steps):
@@ -99,9 +121,21 @@ def distill(b, targets, steps=STEPS, lr=LR, kl_weight=KL_WEIGHT, seed=0):
         losses.append((round(float(guard), 4), round(float(keep), 5)))
     for prm in plastic.parameters():
         prm.grad = None
+    agree1 = _agreement(plastic, base, t_ids, t_from, t_ref)
     b._adapters_dirty = True
     b.cortex.refresh()
-    return losses
+    return losses, (agree0, agree1)
+
+
+def _agreement(plastic, base, t_ids, t_from, t_ref):
+    """Teacher-forced top-1 agreement of the student with the teacher on the targets' reply positions."""
+    hit = tot = 0
+    with torch.no_grad():
+        for ids, k, ref in zip(t_ids, t_from, t_ref):
+            lg, _ = plastic(ids, base)
+            hit += int((lg[k:].argmax(-1) == ref.argmax(-1)).sum())
+            tot += ref.shape[0]
+    return round(hit / tot, 4) if tot else None
 
 
 def _adapter_norm(b):
@@ -115,33 +149,32 @@ def screen_night(res, night, snap, trunk, cortex, work, weekend, arms=ARMS, step
     ledger = ledger or res["ledger"]
     seed = res["seed"]
     qs = RR._qs(RR.banked_rows(res, night))
-    cues = cues or {x: cues_for(res, x, ledger) for x in NAME_ITEMS}
+    cues = cues or train_cues(res, ledger)
     sim = life.SimClock()
     clock.set(sim.now)
     out = {"night": night, "arms": {}}
     h_off, c_off = life.ARMS["hippocampus-off"]
     try:
-        for name, cue_item, ctx_item in arms:
+        for name, trains, with_ctx in arms:
             home = os.path.join(work, f"s{seed}_n{night}_{name}")
             t0 = time.time()
             sim.to(life.day_start(night + 1, weekend))
             life._reseed(seed, 500 + night)               # the voice split's B reseed
             b = RR.open_snapshot(snap, home, cortex, dict(res["brain_kw"]), trunk=trunk, with_deltas=True)
-            rec = {"cue_item": cue_item, "ctx_item": ctx_item}
+            rec = {"trains": trains, "context": with_ctx}
             try:
                 b.hippocampus.FREEZE_USE = False
                 b.set_lesions(hippocampus_off=h_off, consolidated_off=c_off)
-                if cue_item:
+                if trains:
                     py_state = random.getstate()
                     with torch.random.fork_rng(devices=[]):
                         torch.manual_seed(GEN_SEED + night)
-                        ctx = context_for(ledger, ctx_item) if ctx_item else None
-                        tg = teacher_targets(b, cues[cue_item], ctx)
+                        tg, titems = teacher_targets(b, cues, ledger, with_ctx)
                         n0 = _adapter_norm(b)
-                        losses = distill(b, tg, steps=steps, seed=GEN_SEED + 31 * night)
+                        losses, agree = distill(b, tg, steps=steps, seed=GEN_SEED + 31 * night)
                     random.setstate(py_state)
-                    rec.update({"targets": [list(t[:2]) for t in tg], "losses": losses,
-                                "adapter_norm": [n0, _adapter_norm(b)]})
+                    rec.update({"targets": [[i, t[0], t[1]] for i, t in zip(titems, tg)], "losses": losses,
+                                "agreement": list(agree), "adapter_norm": [n0, _adapter_norm(b)]})
                 rows = []
                 for q in qs:
                     b.state = [x.clone() for x in b.base]
@@ -159,7 +192,7 @@ def screen_night(res, night, snap, trunk, cortex, work, weekend, arms=ARMS, step
 
 def run(res, snaps, trunk, cortex, work, weekend, nights=NIGHTS, arms=ARMS, steps=STEPS, log=print, out_path=None):
     ledger = res["ledger"]
-    cues = {x: cues_for(res, x, ledger) for x in NAME_ITEMS}
+    cues = train_cues(res, ledger)
     R = {"seed": res["seed"], "host": socket.gethostname(), "device": str(getattr(cortex, "device", "?")),
          "brain_kw": res["brain_kw"], "steps": steps, "cues": cues, "nights": []}
     for n in nights:
@@ -220,92 +253,117 @@ def _knows(out, arm, item, ledger):
     return sum(v[1] for v in _cell_rows(out, arm, item, ledger).values())
 
 
-def _told_refusal(out, arm, ledger):
-    t = [r for n in out["nights"] for r in n["arms"][arm]["rows"] if CS.is_told(r, ledger)]
+def _told_refusal(out, arm, ledger, items):
+    """Refusal-or-empty share of the told rows of `items` (B5: never diluted by the other told items)."""
+    t = [r for n in out["nights"] for r in n["arms"][arm]["rows"] if r.get("item") in items and CS.is_told(r, ledger)]
     return (sum(CS.refusal(r["brain"]) or not r["brain"].strip() for r in t) / len(t)) if t else None
 
 
+def engaged(rec):
+    """Pre-registered engagement (Amendment R1, B7): mean guard KL of the last 10 steps <= 0.3 x the first 10, and
+    teacher-forced top-1 agreement after training >= 0.9."""
+    L = [g for g, _ in rec.get("losses") or []]
+    ag = rec.get("agreement") or [None, None]
+    if len(L) < 20 or ag[1] is None:
+        return False
+    return sum(L[-10:]) / 10 <= 0.3 * sum(L[:10]) / 10 and ag[1] >= 0.9
+
+
 def _g1(outs, ledgers):
-    g = {}
-    for x in NAME_ITEMS:
-        n_key = uv = other = dec = 0
-        for o in outs:
-            led = ledgers[o["seed"]]
-            others = [it for it, v in led.items() if it != x and v.get("telling")]
-            for n in o["nights"]:
-                for _, rep in n["arms"][f"T_{x}"]["targets"]:
-                    if VS.knows({"item": x, "brain": rep}, led):
-                        n_key += 1
-                        uv += CS.own2(rep.strip())
-                    elif any(VS.knows({"item": it, "brain": rep}, led) for it in others):
-                        other += 1
-                    if CS.refusal(rep):
-                        dec += 1
-        g[x] = {"key_targets": n_key, "uv_of_key": uv, "uv_share": round(uv / n_key, 4) if n_key else None,
-                "other_item_key": other, "declines": dec,
-                "pass": bool(n_key >= 5 and uv / n_key <= 0.15) if n_key else False}
-    return g
+    """Teacher quality on the T targets, deduplicated on (item, reply) (B2)."""
+    seen = {}
+    for o in outs:
+        led = ledgers[o["seed"]]
+        for n in o["nights"]:
+            for x, _, rep in n["arms"]["T"]["targets"]:
+                seen.setdefault((o["seed"], x, rep.strip()), led)
+    distinct = {}
+    for (sd, x, rep), led in seen.items():
+        distinct.setdefault((x, rep), led)
+    key = [(x, rep) for (x, rep), led in distinct.items() if VS.knows({"item": x, "brain": rep}, led)]
+    uv = sum(CS.own2(rep) for _, rep in key)
+    dec = sum(bool(CS.refusal(rep)) for _, rep in distinct)
+    share = round(uv / len(key), 4) if key else None
+    return {"distinct_targets": len(distinct), "key_targets": len(key), "uv_of_key": uv, "uv_share": share,
+            "declines": dec, "pass": bool(len(key) >= 8 and share is not None and share <= 0.15)}
+
+
+def _rate_rows(out, arm, items, ledger):
+    k = u = 0
+    for n in out["nights"]:
+        for r in n["arms"][arm]["rows"]:
+            if r.get("item") in items and CS.is_told(r, ledger) and VS.knows(r, ledger):
+                k += 1
+                u += CS.own2(r["brain"])
+    return u, k
 
 
 def table(outs, vss, ledgers):
-    """The prereg's rule. outs: voice_ceil JSONs; vss: the voice split JSONs (A0 reproduction); ledgers: {seed: ledger}."""
+    """Amendment R1's rule. outs: voice_ceil JSONs; vss: the voice split JSONs (A0 reproduction); ledgers: {seed: ledger}."""
     vs_by = {v["seed"]: v for v in vss}
-    seeds, void = {}, []
+    seeds, void, unengaged = {}, [], []
+    live = []
     for o in outs:
         led, v = ledgers[o["seed"]], vs_by[o["seed"]]
         vn = {n["night"]: n for n in v["nights"]}
-        good = []
+        keep = []
         for n in o["nights"]:
             a0 = [r["brain"] for r in n["arms"]["A0"]["rows"] if CS.is_told(r, led)]
             ref = [r["brain"] for r in vn[n["night"]]["arms"]["hippocampus-off"]["B"]["rows"] if CS.is_told(r, led)]
-            (good if a0 == ref else void).append((o["seed"], n["night"]))
-        seeds[o["seed"]] = {"live_nights": [g[1] for g in good]}
-    # drop void nights before scoring
-    live = []
-    for o in outs:
-        keep = set(seeds[o["seed"]]["live_nights"])
-        live.append({**o, "nights": [n for n in o["nights"] if n["night"] in keep]})
+            if a0 != ref:
+                void.append((o["seed"], n["night"]))
+                continue
+            if not all(engaged(n["arms"][a]) for a in ("T", "S")):
+                unengaged.append((o["seed"], n["night"], {a: engaged(n["arms"][a]) for a in ("T", "S")}))
+                continue
+            keep.append(n)
+        seeds[o["seed"]] = {"live_nights": [n["night"] for n in keep]}
+        live.append({**o, "nights": keep})
     L = lambda o: ledgers[o["seed"]]
-    cell = lambda arm, item: _merge(_cell_rows(o, arm, item, L(o)) for o in live)
-    a0 = {x: cell("A0", x) for x in NAME_ITEMS}
-    other = {"pixel": "marguerite", "marguerite": "pixel"}
-    in_T = _diff_ci(_merge(cell(f"T_{x}", x) for x in NAME_ITEMS), _merge(a0.values()))
-    in_TS = _diff_ci(_merge(cell(f"T_{x}", x) for x in NAME_ITEMS), _merge(cell(f"S_{x}", x) for x in NAME_ITEMS))
-    cr_T = _diff_ci(_merge(cell(f"T_{x}", other[x]) for x in NAME_ITEMS), _merge(a0.values()))
-    cr_TS = _diff_ci(_merge(cell(f"T_{x}", other[x]) for x in NAME_ITEMS),
-                     _merge(cell(f"S_{x}", other[x]) for x in NAME_ITEMS))
-    dirs = {f"{x}->{other[x]}": _diff_ci(cell(f"T_{x}", other[x]), a0[other[x]]) for x in NAME_ITEMS}
-    in_dirs = {x: _diff_ci(cell(f"T_{x}", x), a0[x]) for x in NAME_ITEMS}
-    knows_ratio = {x: (sum(_knows(o, f"T_{x}", x, L(o)) for o in live) /
-                       max(sum(_knows(o, "A0", x, L(o)) for o in live), 1)) for x in NAME_ITEMS}
-    ref_rise = {x: round(sum((_told_refusal(o, f"T_{x}", L(o)) or 0) - (_told_refusal(o, "A0", L(o)) or 0)
-                             for o in live) / max(len(live), 1), 4) for x in NAME_ITEMS}
+    cell = lambda arm, items: _merge(_cell_rows(o, arm, x, L(o)) for o in live for x in items)
+    T_A0 = _diff_ci(cell("T", TEST_ITEMS), cell("A0", TEST_ITEMS))
+    T_S = _diff_ci(cell("T", TEST_ITEMS), cell("S", TEST_ITEMS))
+    per_seed = {}
+    for o in live:
+        if not o["nights"]:
+            continue
+        r = {a: _rate_rows(o, a, TEST_ITEMS, L(o)) for a in ("A0", "T", "S")}
+        per_seed[o["seed"]] = {a: list(v) for a, v in r.items()}
+    lower = sum(1 for v in per_seed.values() if v["T"][1] and v["A0"][1] and v["T"][0] / v["T"][1] < v["A0"][0] / v["A0"][1])
+    kn = {a: sum(_knows(o, a, x, L(o)) for o in live for x in TEST_ITEMS) for a in ("A0", "T", "S")}
+    kr = {a: (kn[a] / kn["A0"] if kn["A0"] else None) for a in ("T", "S")}
+    ref = {a: [(_told_refusal(o, a, L(o), TEST_ITEMS) or 0) for o in live if o["nights"]] for a in ("A0", "T", "S")}
+    rise = {a: (round(sum(ref[a]) / len(ref[a]) - sum(ref["A0"]) / len(ref["A0"]), 4) if ref["A0"] else None)
+            for a in ("T", "S")}
     g1 = _g1(live, ledgers)
-    lesion = {"diff_pixel": _diff_ci(cell("L_pixel", "pixel"), a0["pixel"]),
-              "knows_pixel": [sum(_knows(o, a, "pixel", L(o)) for o in live) for a in ("A0", "L_pixel")]}
-    report = {arm: {"summary": [{k: n["arms"][arm].get(k) for k in ("n_told", "knows", "uv_knows", "uv_told",
-                                                                     "user_voice", "refusal")} for o in live
-                                for n in o["nights"]],
-                    "volvo": _diff_ci(cell(arm, "volvo"), cell("A0", "volvo")) if arm != "A0" else None}
-              for arm, _, _ in ARMS}
-    n_live = sum(len(s["live_nights"]) for s in seeds.values())
+    report = {"per_item": {x: {a: _rate(cell(a, (x,))) for a in ("A0", "T", "S")} for x in TEST_ITEMS + REPORT_ITEMS},
+              "report_items_T-A0": {x: _diff_ci(cell("T", (x,)), cell("A0", (x,))) for x in REPORT_ITEMS},
+              "summary": {a: [{k: n["arms"][a].get(k) for k in ("n_told", "knows", "uv_knows", "uv_told", "user_voice",
+                                                               "refusal", "never_false", "self_name")}
+                              for o in live for n in o["nights"]] for a in ("A0", "T", "S")},
+              "agreement": {a: [n["arms"][a].get("agreement") for o in live for n in o["nights"]] for a in ("T", "S")}}
+    n_live = sum(len(o["nights"]) for o in live)
+    s_valid = kr["S"] is not None and kr["S"] >= 0.5
+    why = ""
     if n_live == 0:
-        verdict, why = "VOID", "no live night"
-    elif not all(g1[x]["pass"] for x in NAME_ITEMS):
-        verdict, why = "UNDEFINED", "G1: no usable teacher on a name item"
+        verdict, why = "VOID", "no live, engaged night"
+    elif len(per_seed) < 3:
+        verdict, why = "UNDEFINED", "a seed has no live, engaged night"
+    elif not g1["pass"]:
+        verdict, why = "UNDEFINED", "G1: no usable teacher"
+    elif kn["A0"] < 20 or kn["T"] < 8:
+        verdict, why = "UNDEFINED", "too few knows rows on the test items"
+    elif kr["T"] < 0.8 or (rise["T"] is not None and rise["T"] >= 0.10):
+        verdict = "ABSTAINS"
     else:
-        ceil_in = (in_T["diff"] is not None and in_T["diff"] <= -0.15 and in_T["ci"] and in_T["ci"][1] < 0
-                   and in_TS["diff"] is not None and in_TS["diff"] <= -0.10
-                   and all(knows_ratio[x] >= 0.8 for x in NAME_ITEMS) and all(ref_rise[x] < 0.10 for x in NAME_ITEMS))
-        transfer = (ceil_in and cr_T["diff"] is not None and cr_T["diff"] <= -0.10 and cr_T["ci"] and cr_T["ci"][1] < 0
-                    and cr_TS["diff"] is not None and cr_TS["diff"] <= -0.05
-                    and all(d["diff"] is not None and d["diff"] < 0 for d in dirs.values()))
-        verdict = "TRANSFER" if transfer else ("ITEM-BOUND" if ceil_in else "NO-CEILING")
-        why = ""
-    return {"verdict": verdict, "why": why, "seeds": seeds, "void_nights": void, "G1": g1,
-            "in_item": {"T-A0": in_T, "T-S": in_TS, "per_item": in_dirs},
-            "cross_item": {"T-A0": cr_T, "T-S": cr_TS, "per_direction": dirs},
-            "knows_ratio": knows_ratio, "told_refusal_rise": ref_rise, "lesion": lesion, "report": report}
+        moved = T_A0["diff"] is not None and T_A0["diff"] <= -0.10 and lower == len(per_seed)
+        frame = (not s_valid) or (T_S["diff"] is not None and T_S["diff"] <= -0.05)
+        verdict = "TRANSFER" if moved and frame else "NO-TRANSFER"
+        if moved and not s_valid:
+            why = "sham invalid (S knows < 0.5 x A0): T-S not applied"
+    return {"verdict": verdict, "why": why, "seeds": seeds, "void_nights": void, "unengaged": unengaged, "G1": g1,
+            "T-A0": T_A0, "T-S": T_S, "per_seed": per_seed, "seeds_T_lower": lower, "knows": kn, "knows_ratio": kr,
+            "sham_valid": s_valid, "told_refusal_rise": rise, "report": report}
 
 
 def main(argv=None, cortex=None):
@@ -346,8 +404,8 @@ def main(argv=None, cortex=None):
             leds[r["seed"]] = r["ledger"]
         o = table(outs, [json.load(open(p)) for p in a.vs], leds)
         json.dump(o, open(a.out, "w"), indent=1)
-        print(json.dumps({k: o[k] for k in ("verdict", "why", "G1", "in_item", "cross_item", "knows_ratio",
-                                            "told_refusal_rise") if k in o}, indent=1))
+        print(json.dumps({k: o[k] for k in ("verdict", "why", "G1", "T-A0", "T-S", "per_seed", "knows_ratio",
+                                            "told_refusal_rise", "unengaged") if k in o}, indent=1))
 
 
 if __name__ == "__main__":
