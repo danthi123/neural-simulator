@@ -961,3 +961,134 @@ def test_missing_model_smoke_or_kind_refuses(env, checked):
     e.imports = ("no_such_mod_zz",)
     with pytest.raises(SystemExit, match="no such node is in use"):
         e.run()
+
+
+# ---- preconditions blocks: every verdict.json / pick.json carries what earned it (tools.verdict.Verdict, commit gate class V)
+HOOK_MOD = MOD + '''
+def preconditions(results, ctx):
+    ok = all(r["v"] >= 0 for r in results["dev"].values())
+    return [("dev values nonnegative", ok, "spec hook"), ("hook saw stage", ctx["stage"] in ("pick", "final"), ctx["stage"])]
+'''
+
+
+def _gate(path):
+    from tools.gates import verdict_preconditions as G
+    return G.check([str(path)])
+
+
+def _read(env, name, f):
+    return json.loads((env.repo / core.RES / name / f).read_text())
+
+
+def _names(rec):
+    return {c["name"]: c["ok"] for c in rec["preconditions"]}
+
+
+def test_verdict_and_pick_carry_preconditions_and_pass_the_gate(env):
+    (env.repo / "tools/engine/specs/m.py").write_text(HOOK_MOD)
+    env.add("a", grid={"lo": "--v 1", "hi": "--v 5"})
+    env.commit()
+    assert env.engine("a").run() == "GO"
+    v, p = _read(env, "a", "verdict.json"), _read(env, "a", "pick.json")
+    for rec in (v, p):
+        n = _names(rec)
+        assert rec["preconditions_status"] == "GO" and all(ok is True for ok in n.values())
+        assert {"job dev/lo present and parsed", "job dev/hi present and parsed", "dev values nonnegative", "hook saw stage"} <= set(n)
+        assert any(d["process"] == "real smoke stage" for d in rec["disabled_processes"])   # no smoke stage here: scope, not a pass
+    assert {"job six/s1 present and parsed", "job six/s2 present and parsed"} <= set(_names(v))
+    assert "job six/s1 present and parsed" not in _names(p)
+    assert v["verdict"] == "GO" and p["verdict"] == "PICKED"
+    assert _gate(env.repo / core.RES / "a/verdict.json") == [] and _gate(env.repo / core.RES / "a/pick.json") == []
+
+
+def test_negative_dev_and_error_files_carry_the_block_too(env):
+    env.add("n", grid={"lo": "--v -1"})
+    env.add("e", grid={"x": "--fail-always"})
+    env.commit()
+    assert env.engine("n").run() == "NEGATIVE-DEV"
+    v, p = _read(env, "n", "verdict.json"), _read(env, "n", "pick.json")
+    assert v["verdict"] == "NEGATIVE-DEV" and p["verdict"] == "NEGATIVE-DEV" and "job six/s1 present and parsed" not in _names(v)
+    assert _gate(env.repo / core.RES / "n/verdict.json") == [] and _gate(env.repo / core.RES / "n/pick.json") == []
+    assert env.engine("e").run() == "ERROR"
+    ve = _read(env, "e", "verdict.json")
+    assert ve["verdict"] == "ERROR" and _names(ve)["job dev/x present and parsed"] is False
+    assert _gate(env.repo / core.RES / "e/verdict.json") == []        # an ERROR asserts no result
+
+
+def test_unmet_spec_precondition_makes_the_verdict_undefined_and_the_gate_still_passes(env):
+    (env.repo / "tools/engine/specs/m.py").write_text(MOD + '''
+def preconditions(results, ctx):
+    return [("arm engaged", ctx["stage"] == "pick", "fails at the final stage only"),
+            ("never measured", None if ctx["stage"] == "final" else True, "")]
+''')
+    env.add("a", grid={"hi": "--v 5"})
+    env.commit()
+    assert env.engine("a").run().startswith("UNDEFINED")
+    v = _read(env, "a", "verdict.json")
+    assert v["verdict"] == "UNDEFINED (GO)" and v["verdict_raw"] == "GO" and v["preconditions_status"] == "UNDEFINED"
+    assert any("never measured" in r for r in v["undefined_reasons"])
+    assert _gate(env.repo / core.RES / "a/verdict.json") == []
+    # the gate refuses the same file if it were to assert GO over the failed block (the relabel is what keeps it passing)
+    bad = {**v, "verdict": "GO"}
+    (env.tmp / "bad.json").write_text(json.dumps(bad))
+    assert _gate(env.tmp / "bad.json")
+
+
+def test_failed_pick_precondition_stops_before_the_six_seeds(env):
+    (env.repo / "tools/engine/specs/m.py").write_text(MOD + '''
+def preconditions(results, ctx):
+    return [("pick-stage check", ctx["stage"] != "pick", "")]
+''')
+    env.add("a", grid={"hi": "--v 5"})
+    env.commit()
+    assert env.engine("a").run() == "UNDEFINED-DEV"
+    assert not (env.repo / core.RES / "a/six").exists()
+    assert _read(env, "a", "pick.json")["preconditions_status"] == "UNDEFINED"
+
+
+@pytest.mark.parametrize("bad,name", [("smoke_job", "smoke rc 0"), ("smoke_peak", "smoke measured peak RSS"),
+                                      ("dev_file", "job dev/hi present and parsed"), ("six_file", "job six/s1 present and parsed")])
+def test_each_core_precondition_fails_alone(env, bad, name):
+    """Direct block test: a finished state is built, then exactly one thing is broken; only that check may fail."""
+    env.add("a", grid={"hi": "--v 5"}, seeds=(1,), extra="model: m.pth\nsmoke: {params: '--v 5'}\n")
+    env.commit()
+    e = env.engine("a", launch_checks=True)
+    e.st = e.load()
+    e.st.update(commit="c" * 40, tree="t" * 40)
+    spec = e.spec("a")
+    out = e.res / "a"
+    (out / "dev").mkdir(parents=True)
+    (out / "six").mkdir()
+    (out / "dev/hi.json").write_text('{"v": 5}')
+    (out / "six/s1.json").write_text('{"v": 5}')
+    job = lambda k, st="done": {"key": k, "seed": 1, "status": st}
+    ss = {"phase": "done", "pick": {"params": "--v 5"}, "six_reached": True, "smoke": {"peak_rss_gb": 2.0},
+          "jobs": {"smoke/smoke": job("smoke/smoke"), "dev/hi": job("dev/hi"), "six/s1": job("six/s1")}}
+    names = ("smoke rc 0", "smoke measured peak RSS", "job dev/hi present and parsed", "job six/s1 present and parsed")
+    assert [c for c in e.precondition_block(spec, ss, "final").decide(True, False)["preconditions"] if c["ok"] is not True] == []
+    if bad == "smoke_job":
+        ss["jobs"]["smoke/smoke"]["status"] = "failed"
+    elif bad == "smoke_peak":
+        ss["smoke"] = None
+    elif bad == "dev_file":
+        (out / "dev/hi.json").write_text("not json")
+    else:
+        (out / "six/s1.json").unlink()
+    d = e.precondition_block(spec, ss, "final").decide(True, False)
+    assert d["status"] == "UNDEFINED"
+    not_ok = {c["name"] for c in d["preconditions"] if c["ok"] is not True}
+    assert not_ok == {name}, not_ok
+    assert set(names) <= {c["name"] for c in d["preconditions"]}
+
+
+def test_smoke_chain_block_has_smoke_and_measured_peak(env, checked):
+    e = checked("a")
+    assert e.run() == "GO"
+    v = _read(env, "a", "verdict.json")
+    n = _names(v)
+    assert n["smoke rc 0"] is True and n["smoke measured peak RSS"] is True and not v["disabled_processes"]
+    assert _gate(env.repo / core.RES / "a/verdict.json") == []
+    sm = checked("b", smoke="{params: '--fail-always'}")
+    assert sm.run() == "ERROR-SMOKE"
+    vb = _read(env, "b", "verdict.json")
+    assert _names(vb)["smoke rc 0"] is False and _gate(env.repo / core.RES / "b/verdict.json") == []

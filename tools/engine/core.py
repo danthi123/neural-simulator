@@ -26,6 +26,8 @@ from pathlib import Path
 
 import yaml
 
+from tools.verdict import UNDEFINED, Verdict
+
 REPO = Path(__file__).resolve().parents[2]
 RES = "brain/experiments/results"
 POOL = {"pool40": 23, "pool41": 15, "pool42": 15}   # GB RAM per node
@@ -641,22 +643,103 @@ echo $rc > {node.home}/{jd}/rc
                    for k, j in sorted(ss["jobs"].items()) if k.startswith("dev/") and j["status"] == "done"}   # never stale files
             ss["pick"] = spec.pick_fn(dev, ctx) if spec.pick_fn else {"params": spec.six_params}
             if ss["pick"] is None:
+                self.write_pick(spec, ss, "NEGATIVE-DEV")
                 return self.conclude(spec, ss, {"verdict": "NEGATIVE-DEV", "summary": "no dev candidate met the pick rule; six seeds not run"})
             if "stop" in ss["pick"]:                  # the prereg's own stop rule on a dev step (e.g. a step-0 timing bar)
                 return self.conclude(spec, ss, {"verdict": "HOLD-DEV", "summary": f"pick stopped the chain: {ss['pick']['stop']}"})
+            if not self.write_pick(spec, ss, "PICKED")["earned"]:
+                return self.conclude(spec, ss, {"verdict": "UNDEFINED-DEV", "summary": "pick preconditions unmet; six seeds not run"})
             ss["phase"] = "six"
             self.save()
         if ss["phase"] == "six":
+            ss["six_reached"] = True
             six, bad = self.run_jobs(spec, ss, "six", [(f"s{s}", s, ss["pick"]["params"]) for s in spec.seeds])
             if bad:
                 return self.conclude(spec, ss, {"verdict": "ERROR", "summary": f"six-seed jobs failed twice: {bad}"})
             v = spec.verdict_fn({int(k[1:]): r for k, r in six.items()}, ss["pick"], ctx)
             return self.conclude(spec, ss, v)
 
+    # -- preconditions: every verdict.json / pick.json carries what earned it (tools.verdict.Verdict; gate tools/gates/verdict_preconditions.py)
+    def collect(self, spec, ss):
+        """Parsed results of the done dev/six jobs, read from the local files (never stale ones): {"dev": {name: r}, "six": {seed: r}}."""
+        out = {"dev": {}, "six": {}}
+        for k, j in sorted(ss["jobs"].items()):
+            ph, name = k.split("/", 1)
+            f = self.res / spec.name / ph / f"{name}.json"
+            if ph in out and j["status"] == "done" and f.exists():
+                try:
+                    out[ph][name if ph == "dev" else j["seed"]] = json.loads(f.read_text())
+                except ValueError:
+                    pass
+        return out
+
+    def precondition_block(self, spec, ss, stage, v=None):
+        """Verdict for the stage ('pick' or 'final'): smoke rc 0 + measured peak, every scheduled dev/six job present and parsed,
+        the commit/tree recorded, plus the spec module's optional preconditions(results, ctx) -> [(name, ok, note)]."""
+        pv = Verdict(f"engine {spec.name} {stage}")
+        res = self.collect(spec, ss)
+        pv.require("commit and brain/ tree recorded", bool(self.st.get("commit") and self.st.get("tree")), True)
+        sj = ss["jobs"].get("smoke/smoke")
+        if self.checks(spec) and spec.smoke:
+            pv.require("smoke rc 0", None if sj is None else sj["status"] == "done", True, (sj or {}).get("error") or "")
+            pk = (ss.get("smoke") or {}).get("peak_rss_gb")
+            pv.require("smoke measured peak RSS", None if pk is None else (isinstance(pk, (int, float)) and pk > 0), True,
+                       f"peak_rss_gb={pk}")
+        else:
+            pv.disabled("real smoke stage", "this spec has no smoke stage (launch checks off, or status SMOKE)")
+        pick = ss.get("pick")
+        want = {}
+        if spec.dev_grid and any(k.startswith("dev/") for k in ss["jobs"]):
+            want.update({f"dev/{n}": ("dev", n) for n, _, _ in spec.dev_items()})
+        if stage == "final" and ss.get("six_reached"):
+            want.update({f"six/s{s}": ("six", f"s{s}") for s in spec.seeds})
+        for k, (ph, n) in sorted(want.items()):
+            j = ss["jobs"].get(k)
+            f = self.res / spec.name / ph / f"{n}.json"
+            ok = None if j is None else False
+            if j is not None and j["status"] == "done" and f.exists():
+                try:
+                    json.loads(f.read_text())
+                    ok = True
+                except ValueError:
+                    pass
+            pv.require(f"job {k} present and parsed", ok if j is not None else False, True, (j or {}).get("error") or "")
+        hook = getattr(spec.mod, "preconditions", None)
+        if hook:
+            ctx = {"repo": str(self.repo), "spec": spec.name, "res": str(self.res / spec.name), "commit": self.st["commit"],
+                   "tree": self.st["tree"], "vars": dict(spec.vars), "memory_gb": spec.memory_gb, "stage": stage}
+            try:
+                got = list(hook({**res, "pick": pick, "verdict": v}, ctx) or [])
+            except Exception as e:
+                got = [("spec preconditions hook ran", False, f"{type(e).__name__}: {e}")]
+            for g in got:
+                pv.require(str(g[0]), g[1], True, str(g[2]) if len(g) > 2 else "")
+        return pv
+
+    def earn(self, spec, ss, stage, rec, word, v=None):
+        """Attach the block to `rec`; if unearned and the word asserts a result, relabel it UNDEFINED (the raw word kept)."""
+        d = self.precondition_block(spec, ss, stage, v).decide(go=True, verbose=False)
+        earned = d["status"] != UNDEFINED
+        rec.update(preconditions=d["preconditions"], preconditions_status=d["status"], undefined_reasons=d["undefined_reasons"],
+                   disabled_processes=d["disabled_processes"], verdict_raw=word)
+        rec["verdict"] = word if earned or word.startswith(("ERROR", "HOLD", "UNDEFINED")) else f"UNDEFINED ({word})"
+        return earned
+
+    def write_pick(self, spec, ss, word):
+        """pick.json beside verdict.json. Written again at conclude: a spec's own pick/verdict may write a file of the same name."""
+        rec = {"spec": spec.name, "pick": ss["pick"], "commit": self.st["commit"], "when": now()}
+        rec["earned"] = self.earn(spec, ss, "pick", rec, word)
+        ss["pick_written"] = True
+        jwrite(self.res / spec.name / "pick.json", rec)
+        return rec
+
     def conclude(self, spec, ss, v):
         ss.update(phase="done", verdict=v)
         v = {**v, "spec": spec.name, "question": spec.question, "prereg": spec.prereg, "pick": ss["pick"], "smoke": ss.get("smoke"),
              "commit": self.st["commit"], "jobs": {k: j["status"] for k, j in ss["jobs"].items()}, "when": now()}
+        self.earn(spec, ss, "final", v, v["verdict"], v)
+        if ss.get("pick_written"):
+            self.write_pick(spec, ss, "PICKED" if ss.get("pick") is not None else "NEGATIVE-DEV")
         jwrite(self.res / spec.name / "verdict.json", v)
         nxt = spec.next_for(v["verdict"]) if not v["verdict"].startswith("ERROR") else None
         n = len(self.st["variants"][spec.question])

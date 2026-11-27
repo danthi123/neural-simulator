@@ -1,0 +1,40 @@
+# Local rule v3 at 04b, brain/research/2026-11-27-local-rule-v3-prereg.md (DRAFT pending pre-data review: the engine
+# refuses it without --allow-draft). Harness: brain/experiments/local_rule_v3.py (imports local_sleep / local_rule_v2,
+# edits neither). smoke = G0 (the teacher's top-1 at the answer position, >= 10/12) then one gradient and one v3 night of
+# 24 steps: a failing G0 exits non-zero before any night, so the chain stops at ERROR-SMOKE with no night run.
+# dev = seed 7: ref (G0 again, no_sleep, gradient) + 9 v3 cells (lr x keep), one job each; pick = local_rule_v3.dev_pick
+# (STOP-G0 / UNDEFINED-DEV / a refused pick -> HOLD-DEV; NEGATIVE-DEV: no six seeds for this model); six = the 7 arms at
+# the pick. Order: 01b dev -> 01b six -> 04b dev -> 04b six. 01b chains to 04b on every DEFINED verdict (GO-V3,
+# GO-SHALLOW, NEGATIVE, NEGATIVE-DEV); UNDEFINED, HOLD-DEV and ERROR* stop the chain (one question, max_len 2). The
+# two-scale word (GO-V3 / GO-V3-PARTIAL) is `local_rule_v3 combine` on the two verdict.json files. Fresh seeds: no
+# placement. Six-seed jobs carry no --pick: lr, keep come from the engine's pick; model / commit are checked at score.
+name: local_rule_v3_04b
+question: "Does the two-phase layerwise-target local rule (no backward error path) store told facts under the v3 rule (0.1B then 0.4B)?"
+prereg: brain/research/2026-11-27-local-rule-v3-prereg.md
+requires_local: [brain/research/2026-11-27-local-rule-v3-prereg.md]
+status: DRAFT                     # pre-data review pending; flip to REGISTERED only with the review recorded in the prereg
+module: local_rule_v3.py
+pick: pick
+verdict: verdict
+model: rwkv7-g1d-0.4b-20260210-ctx8192.pth
+smoke: {seed: 7, params: "--arms g0,gradient,v3 --steps 24 --tag smoke"}   # engine real smoke: G0, then two short nights
+cmd: >-
+  D=$HOME/brain-lane/engine/data/local_rule_v3_04b/{commit}/{job}; mkdir -p $D &&
+  "$PY" -u -m brain.experiments.local_rule_v3 run --model {model} --seed {seed} --device {device} {params} --out-dir $D
+  > $D/run.log 2>&1 && "$PY" -m tools.engine.bundle $D {out} --glob '*.json'
+dev_seed: 7
+dev_grid:
+  ref: "--arms g0,no_sleep,gradient --tag ref"
+  lr0.03_keep0.3: "--arms v3 --lr 0.03 --keep 0.3 --tag lr0.03_keep0.3"
+  lr0.03_keep1: "--arms v3 --lr 0.03 --keep 1 --tag lr0.03_keep1"
+  lr0.03_keep3: "--arms v3 --lr 0.03 --keep 3 --tag lr0.03_keep3"
+  lr0.1_keep0.3: "--arms v3 --lr 0.1 --keep 0.3 --tag lr0.1_keep0.3"
+  lr0.1_keep1: "--arms v3 --lr 0.1 --keep 1 --tag lr0.1_keep1"
+  lr0.1_keep3: "--arms v3 --lr 0.1 --keep 3 --tag lr0.1_keep3"
+  lr0.3_keep0.3: "--arms v3 --lr 0.3 --keep 0.3 --tag lr0.3_keep0.3"
+  lr0.3_keep1: "--arms v3 --lr 0.3 --keep 1 --tag lr0.3_keep1"
+  lr0.3_keep3: "--arms v3 --lr 0.3 --keep 3 --tag lr0.3_keep3"
+seeds: [42, 43, 44, 100, 101, 102]
+memory_gb: 10                       # the design's cap at 04b; the real smoke's measured peak sets the later memcap
+requires: [brain-lane/models/rwkv7-g1d-0.4b-20260210-ctx8192.pth]
+ladder: {max_len: 2, next: {}}
