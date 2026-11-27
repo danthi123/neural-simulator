@@ -94,5 +94,6 @@ correct-perspective scorer `experiments/strict_scorer.correct_answer`, not a sub
 | 2026-11-16 | Sleep inside the live brain on every restart; high-use facts never wrong; a lesion visibly changes replies; cortex size chosen (0.4B or 1.5B). |
 | 2026-11-30 | Recall from reworded questions (meaning-based selection); mood/arousal state shapes replies (lesion-proven); it asks about what is new to it. |
 | 2026-12-14 | A simulated multi-week life with nightly sleep: savings on relearning, cued recall, transfer (the sysadmin example); honest self-reports. |
-| 2026-12-31 | Sleep learning by a local, biology-style rule instead of gradients; scale to 1.5B. |
+| 2026-12-12 | Decision gate (owner 11-28, after four local rules failed: `brain/research/2026-11-28-local-rule-research-round.md`): a forward-only, biology-style rule (three-factor / reward-gated allowed, global scalar declared in SCAFFOLDS.md) reaches half of gradient recall on six seeds at 0.1B and 0.4B. If met, the 1.5B step follows; if not, the local-rule milestone is recorded as missed and gradient sleep stays the declared scaffold. |
+| early 2027-01 | (if the 12-12 gate is met) Sleep learning by that local rule at 1.5B, replacing the 2026-12-31 date. |
 | 2027 Q1 | Start moving the core onto the shared spiking substrate; port old-track mechanisms only where they earn their place. |
