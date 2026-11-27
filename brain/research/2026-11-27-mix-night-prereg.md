@@ -299,3 +299,13 @@ episodes), so P2 would be UNREAD by construction (P2_MIN_N 5). As section 7 requ
 `recent` merge into one `new` stratum (< 3 clock days; 9 texts at n15 on every seed); P2 now reads `new` and `old`;
 P2_MIN_N stays 5; margins unchanged. `mid` remains report-only. Code: `STRATA`, `P2_STRATA` in mix_night_screen.py; tests
 updated. The question P2 answers is unchanged: does the arm keep recently learned and old texts as well as A0.
+
+## Amendment S2 (2026-11-27 22:55 UTC, from step 0, before any scored unit)
+Step 0 on pool40 (s319 A0r): peak RSS 17.9 GB and 62 min for one night + reading. The registered cap rule gives
+ceil(1.3 x 17.9 + 1) = 24 GB, which no pool node holds (pool40 23 GB; pool41/42 15 GB, where A0r was killed at 10 GB), and
+one night exceeds the 45-min step-0 bound. As section 6/7 require, amended before any scored unit: the screen runs on the
+workstation RTX 3090 (cuda; sleep in fp32 with TF32 off, as brain/life code does on cuda), all three seeds there, one at a
+time, only when nvidia-smi shows the GPU free (owner 11-27). Step 0 is repeated on the 3090 for s319 (A0r, A0 n13,
+determinism pair, A2 n13) before the full run, and its numbers replace the pool40 ones; every unit records device and
+precision; all arms of a seed run on the one device. Rules, arms, margins and Amendment S1 unchanged. The pool40 A0r unit
+(u_A0r_s319_n13.json) is a step-0 measurement only and is not scored.
