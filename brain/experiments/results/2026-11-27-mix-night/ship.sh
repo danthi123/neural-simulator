@@ -30,6 +30,7 @@ ship)
     rsync -a --delete --exclude experiments/results --exclude __pycache__ -e "$E" brain/ $N:brain-lane/route_repo/brain/ || exit 1
     echo $H | $E $N "cat > ~/brain-lane/route_repo/COMMIT" || exit 1
     rsync -a -e "$E" brain/experiments/results/2026-11-27-mix-night/run_node.sh $N:$D/mn_run_node.sh || exit 1
+    rsync -a -e "$E" tools/mem_ok.sh $N:brain-lane/route_repo/tools/mem_ok.sh || exit 1
   done
   for x in $MAP; do N=${x%:*}; S=${x#*:}
     case $S in 319) F=320;; 320) F=321;; 321) F=319;; esac; FN=$(node_of $F)
