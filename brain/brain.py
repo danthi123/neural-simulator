@@ -289,7 +289,8 @@ class Brain:
         key: pattern-completion key (switch, default OFF = "S0": the default Hippocampus, store unchanged). "S_all":
         the meaning key read from every layer's stored matrix-memory delta (brain/hippocampus_keys.py) with its own
         dev-fit bar (2026-11-03-meaning-selection-realpath). None = what the home stored, else "S0". A non-S0 choice
-        is saved in meta.json; an S0 home is written without a key entry.
+        is saved in meta.json; an S0 home is written without a key entry. "dg": the DG pattern-separated code of the
+        same read-out (brain/dg_separation.py; needs Brain.DG_BAR, no shipped bar; DRAFT prereg 2026-11-27).
         key_bar: which selection bar a non-S0 key uses (switch, default OFF = "default": KEY_BARS, fit at 0.1B).
         "size": the bar refit for this key at this cortex size (KEY_BARS_BY_SIZE; brain/research/
         2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. "slept": the bar refit on slept live reads
@@ -505,6 +506,12 @@ class Brain:
     # S_all 1.5B: seeds 42/43/44, fit J 0.407 (results/2026-11-18-sall-slept-fit-1.5b.md).
     KEY_BARS_SLEPT_BY_SIZE = {("S_all", "1.5b"): (0.165, 0.02)}
 
+    # key="dg" (switch, default OFF): the DG pattern-separated code of the all-layer matrix change (brain/dg_separation.py).
+    # Overlap / k is not on a cosine scale, so it has NO shipped bar: set DG_BAR = (familiarity, margin) first (the offline
+    # screen fits it, brain/research/2026-11-27-dg-separation-port-prereg-DRAFT.md); DG_KW = DGHippocampus options.
+    DG_BAR = None
+    DG_KW: dict = {}
+
     GAIN_BY_SIZE = {"1.5b": 0.5}
     # inquiry="auto": the novelty bar per size (fit on the dev bank, brain/research/2026-11-19-curiosity-test-prereg.md)
     # and the lesson lived at birth (declared teacher scaffold, SCAFFOLDS.md). A size with no row = off.
@@ -530,6 +537,11 @@ class Brain:
     def _hippocampus_for(self, key: str) -> Hippocampus:
         if key == "S0":
             return Hippocampus()
+        if key == "dg":
+            if self.DG_BAR is None:
+                raise ValueError("key 'dg' has no fitted bar: set Brain.DG_BAR = (familiarity, margin) first")
+            from brain.dg_separation import DGHippocampus
+            return DGHippocampus(familiarity=self.DG_BAR[0], margin=self.DG_BAR[1], **self.DG_KW)
         if self.key_bar in ("size", "slept"):
             size = model_size(self.cortex_model)
             table = self.KEY_BARS_BY_SIZE if self.key_bar == "size" else self.KEY_BARS_SLEPT_BY_SIZE

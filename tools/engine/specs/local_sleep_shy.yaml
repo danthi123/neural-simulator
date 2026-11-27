@@ -1,0 +1,21 @@
+# Example spec: the SHY dev sweep + six seeds of brain/research/2026-11-27-local-sleep-shy-prereg-DRAFT.md.
+# Mirrors brain/experiments/results/2026-11-27-local-sleep/shy_dev.sh (3 sleeps, each evaluated at 5 g) and the prereg's six-seed rule.
+name: local_sleep_shy
+question: "Does a one-night synaptic downscale make the local sleep rule beat the drift bar?"
+prereg: brain/research/2026-11-27-local-sleep-shy-prereg-DRAFT.md
+module: local_sleep_shy.py        # relative to this file, else to the repo root
+pick: pick                        # python function names in the module
+verdict: verdict
+model: rwkv7-g1d-0.4b-20260210-ctx8192.pth   # under ~/brain-lane/models on the node ({model} = $BRAIN_MODEL_DIR/<this>)
+cmd: '"$PY" -m brain.experiments.local_sleep --model {model} --seed {seed} --steps 240 {params} --out {out}'
+dev_seed: 7
+dev_grid:                         # job name -> {params}
+  gradient: "--arms gradient --downscale-grid 1,0.8,0.6,0.4,0.25 --downscale-factors B"
+  transport_lr0.3: "--arms local --feedback transport --lr 0.3 --decay 1e-3 --downscale-grid 1,0.8,0.6,0.4,0.25 --downscale-factors B"
+  transport_lr0.1: "--arms local --feedback transport --lr 0.1 --decay 1e-3 --downscale-grid 1,0.8,0.6,0.4,0.25 --downscale-factors B"
+seeds: [42, 43, 44, 100, 101, 102]
+memory_gb: 20                     # memcap; RSS at 0.4B is UNMEASURED (prereg), so only pool40 (23 GB) fits
+hosts: [pool40]
+ladder:                           # each entry must be its own registered spec file in tools/engine/specs/
+  max_len: 1                      # variants tried per question (none registered yet: the prereg forbids an unregistered next step)
+  next: {}                        # e.g. {NEGATIVE: some_other_spec, GO-SHY: confirm_0.1b_spec}

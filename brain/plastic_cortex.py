@@ -38,6 +38,9 @@ class PlasticCortex(torch.nn.Module):
         # "User:" turn, brain/source_tag.py). Part of the slow store: applied only while enabled.
         self.source_tag = None
         self.tag_layer = None
+        # Optional mask function (pipe, ids) -> list[bool] naming the tagged positions; None = the "User:" turn mask
+        # (brain/source_tag.py). The source-monitor port sets it to the own-production (efference) mask.
+        self.tag_mask_fn = None
 
     def zero_state(self):
         dev, dt = self.z["emb.weight"].device, self.z["emb.weight"].dtype
@@ -99,7 +102,8 @@ class PlasticCortex(torch.nn.Module):
         if tag is not None:
             from brain.source_tag import user_mask
             ids = tokens.tolist() if torch.is_tensor(tokens) else list(tokens)
-            tag_add = torch.tensor(user_mask(self.cortex.pipe, ids), dtype=x.dtype, device=x.device)[:, None] * tag
+            mask_fn = self.tag_mask_fn or user_mask
+            tag_add = torch.tensor(mask_fn(self.cortex.pipe, ids), dtype=x.dtype, device=x.device)[:, None] * tag
         for i in range(self.L):
             b = f"blocks.{i}."
             xx = F.layer_norm(x, (self.C,), weight=z[b + "ln1.weight"], bias=z[b + "ln1.bias"])
