@@ -18,10 +18,17 @@ normalisation stand-in. Nothing frozen is patched: LocalCortex subclasses Plasti
 
   python -m brain.experiments.local_sleep --model <path.pth> --seed 42 --steps 240 --out <json>
   dev sweep (seed 7, 0.1B, one config per process): bash brain/experiments/results/2026-11-27-local-sleep/dev_sweep.sh
+  SHY after the night (record: brain/research/2026-11-27-local-sleep-shy-prereg-DRAFT.md): --downscale G or
+  --downscale-grid "1,0.8,0.6,0.4,0.25" evaluates several g after ONE night (copy adapters, PlasticCortex.downscale,
+  evaluate, restore). Off by default: with no downscale flag the output has the SAME structure as before this change
+  (same top-level keys, same per-arm keys, no `rows`, no downscale_* keys, keys `arm` not `arm@g..`); the only additions
+  are the intended ones: host, host_env (env HOST, if set), commit, and the per-arm `feedback` field.
 """
 import argparse
 import json
+import os
 import random
+import socket
 import time
 
 import torch
@@ -153,6 +160,80 @@ def local_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=0.05, k
     return losses
 
 
+def commit_id():
+    """Commit of the code that ran: env COMMIT, else the file ~/brain-lane/route_repo/COMMIT, else None."""
+    c = os.environ.get("COMMIT", "").strip()
+    if c:
+        return c
+    try:
+        with open(os.path.expanduser("~/brain-lane/route_repo/COMMIT")) as fh:
+            return fh.read().strip() or None
+    except OSError:
+        return None
+
+
+def provenance():
+    """host = socket.gethostname(); host_env = env HOST when set (the two can differ in containers/ssh); commit."""
+    p = {"host": socket.gethostname(), "commit": commit_id()}
+    if os.environ.get("HOST", "").strip():
+        p["host_env"] = os.environ["HOST"].strip()
+    return p
+
+
+def result_header(a, grid):
+    """Top-level result dict. Without a grid it has exactly the old keys plus provenance; the downscale_* keys and
+    `rows` exist only when a grid was asked for."""
+    res = {"model": a.model, "seed": a.seed, "steps": a.steps, "lr": a.lr, "mode": a.mode, "feedback": a.feedback,
+           "decay": a.decay, **provenance(), "arms": {}}
+    if grid:
+        res.update(downscale_grid=grid, downscale_factors=a.downscale_factors, rows=[])
+    return res
+
+
+def record_arm(res, arm, g, r, *, final_loss, fbk):
+    """Store one evaluated row. g None (no downscale): key `arm`, per-arm dict = the old keys + `feedback`."""
+    r["final_replay_loss"] = final_loss
+    r["feedback"] = fbk          # the preset this arm really used (None: no local rule)
+    key = arm if g is None else f"{arm}@g{g:g}"
+    res["arms"][key] = r
+    if g is not None:
+        res["rows"].append({"arm": arm, "key": key, "g": g, **{k: v for k, v in r.items() if not k.endswith("_items")}})
+    return key
+
+
+def parse_grid(spec):
+    """"1,0.8,0.6" -> [1.0, 0.8, 0.6]; None/"" -> []. g must be in (0, 1]."""
+    gs = [float(x) for x in str(spec or "").split(",") if x.strip()]
+    if any(not 0.0 < g <= 1.0 for g in gs):
+        raise ValueError(f"downscale g must be in (0, 1], got {gs}")
+    return gs
+
+
+def eval_downscaled(pc, evaluate_fn, gs, factors="B"):
+    """Evaluate the SAME slept adapters at each g in `gs`: snapshot, pc.downscale(g, factors), evaluate_fn(pc), restore
+    (also on error). g == 1 is the plain evaluation. Returns [(g, row)], row has downscale_g, downscale_factors and the
+    adapter_norm after the cut. gs == [None] evaluates once with no downscale (the default path)."""
+    snap = [p.detach().clone() for p in pc.parameters()]
+    out = []
+    try:
+        for g in gs:
+            if g is not None and g != 1.0:
+                pc.downscale(g, factors)
+            r = evaluate_fn(pc)
+            r["adapter_norm"] = pc.adapter_norm()
+            if g is not None:
+                r["downscale_g"], r["downscale_factors"] = g, factors
+            out.append((g, r))
+            with torch.no_grad():
+                for p, q in zip(pc.parameters(), snap):
+                    p.copy_(q)
+    finally:
+        with torch.no_grad():
+            for p, q in zip(pc.parameters(), snap):
+                p.copy_(q)
+    return out
+
+
 def main():
     from brain.brain import BIRTH
     from brain.cortex import Cortex, DEFAULT_MODEL
@@ -171,8 +252,16 @@ def main():
     ap.add_argument("--mode", default="kp", choices=["kp", "fa"])
     ap.add_argument("--feedback", default="mixed", choices=list(PRESETS), help="feedback preset of the local arm")
     ap.add_argument("--arms", default="all", help="comma list of: no_sleep,gradient,local,local_shuffled,local_random")
+    ap.add_argument("--downscale", type=float, default=None, help="SHY: g applied to the adapters after the night (default off)")
+    ap.add_argument("--downscale-grid", default=None, help='e.g. "1,0.8,0.6,0.4,0.25": one night, one row per g')
+    ap.add_argument("--downscale-factors", default="B", choices=["B", "AB"])
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
+    if a.downscale is not None and a.downscale_grid:
+        raise SystemExit("use --downscale or --downscale-grid, not both")
+    grid = parse_grid(a.downscale_grid) if a.downscale_grid else ([a.downscale] if a.downscale is not None else [])
+    if any(not 0.0 < g <= 1.0 for g in grid):
+        raise SystemExit("downscale g must be in (0, 1]")
     t0 = time.time()
     c = Cortex(model_path=a.model, device=a.device)
     _, base = c.read(BIRTH, None)
@@ -185,7 +274,7 @@ def main():
     if [x for x in want if x not in arms]:
         raise SystemExit(f"unknown arms; choose from {list(arms)}")
     keys_all = [k for _, _, k in FACTS]
-    res = {"model": a.model, "seed": a.seed, "steps": a.steps, "lr": a.lr, "mode": a.mode, "feedback": a.feedback, "decay": a.decay, "arms": {}}
+    res = result_header(a, grid)
     for arm in want:
         kind, e = arms[arm]
         torch.manual_seed(a.seed)
@@ -197,11 +286,11 @@ def main():
         elif kind.startswith("local"):
             losses = local_sleep(pc, base, e, GENERIC, steps=a.steps, lr=a.lr, kl_weight=a.kl_weight, decay=a.decay,
                                  seed=a.seed, mode=a.mode, feedback="random" if kind == "local_random" else a.feedback, log=lg)
-        r = evaluate(pc, base, keys_all)
-        r["final_replay_loss"] = losses[-1][0] if losses else None
-        r["adapter_norm"] = pc.adapter_norm()
-        res["arms"][arm] = r
-        print(arm, {k: v for k, v in r.items() if not k.endswith("_items")}, flush=True)
+        fbk = {"grad": None, "none": None}.get(kind, "random" if kind == "local_random" else a.feedback)
+        gs = grid if (grid and kind != "none") else [None]    # no_sleep has zero adapters: nothing to downscale
+        for g, r in eval_downscaled(pc, lambda m: evaluate(m, base, keys_all), gs, a.downscale_factors):
+            key = record_arm(res, arm, g, r, final_loss=losses[-1][0] if losses else None, fbk=fbk)
+            print(key, {k: v for k, v in r.items() if not k.endswith("_items")}, flush=True)
     res["elapsed_s"] = time.time() - t0
     with open(a.out, "w") as fh:
         json.dump(res, fh, indent=1)
