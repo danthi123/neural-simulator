@@ -1,0 +1,47 @@
+{
+ "verdict": "NEGATIVE",
+ "clauses": {
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": true,
+  "e": false,
+  "f": true
+ },
+ "numbers": {
+  "G1": 2.3333333333333335,
+  "Gg": 1.6666666666666667,
+  "no_sleep": 0.0,
+  "local_g": 1.1666666666666667,
+  "shuffled_g": 0.5,
+  "kl_local_g": 2.387295334185991,
+  "kl_local_1": 3.0585551795860133,
+  "kl_grad_1": 0.028369780215952132,
+  "kl_grad_g": 0.014157360574851433
+ },
+ "summary": "local@g0.6 recall 1.17 vs gradient 2.33, drift 2.387 vs 0.028; failed clauses ['a', 'b', 'c', 'e']",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "gradient reference recall >= 2 (instrument detects recall)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "gradient@1 recall vs no_sleep",
+   "ok": true,
+   "detail": "treatment=2.33333 control=0 |sep|=2.33333 > 1",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "shuffled control recall <= 1.0 (control did not move)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "precondition_status": "NO-GO"
+}
