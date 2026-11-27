@@ -1,0 +1,234 @@
+{
+ "seed": 320,
+ "night": 15,
+ "store": 98,
+ "rows": [
+  {
+   "i": 0,
+   "cls": "fire",
+   "kind": "open-story",
+   "item": null,
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": 41
+  },
+  {
+   "i": 1,
+   "cls": "fire",
+   "kind": "open-feeling",
+   "item": null,
+   "a_idx": 25,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 2,
+   "cls": "fire",
+   "kind": "open-advice",
+   "item": null,
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 3,
+   "cls": "fire",
+   "kind": "open-opinion",
+   "item": null,
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": 70
+  },
+  {
+   "i": 4,
+   "cls": "fire",
+   "kind": "open-knowledge",
+   "item": null,
+   "a_idx": 25,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 5,
+   "cls": "fire",
+   "kind": "open-chat",
+   "item": null,
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 6,
+   "cls": "fire",
+   "kind": "greet",
+   "item": null,
+   "a_idx": 25,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 7,
+   "cls": "identity",
+   "kind": "H",
+   "item": "dan",
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 8,
+   "cls": "identity",
+   "kind": "H",
+   "item": "nova",
+   "a_idx": 0,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": 0
+  },
+  {
+   "i": 9,
+   "cls": "told",
+   "kind": "H",
+   "item": "pixel",
+   "a_idx": 25,
+   "right_idx": 4,
+   "sham_idx": 8,
+   "k_idx": 25,
+   "a_right": false
+  },
+  {
+   "i": 10,
+   "cls": "told",
+   "kind": "H",
+   "item": "admin",
+   "a_idx": 25,
+   "right_idx": 3,
+   "sham_idx": 7,
+   "k_idx": 0,
+   "a_right": false
+  },
+  {
+   "i": 11,
+   "cls": "told",
+   "kind": "H",
+   "item": "marguerite",
+   "a_idx": 6,
+   "right_idx": 6,
+   "sham_idx": 25,
+   "k_idx": 6,
+   "a_right": true
+  },
+  {
+   "i": 12,
+   "cls": "told",
+   "kind": "H",
+   "item": "volvo",
+   "a_idx": 25,
+   "right_idx": 7,
+   "sham_idx": 3,
+   "k_idx": 0,
+   "a_right": false
+  },
+  {
+   "i": 13,
+   "cls": "told",
+   "kind": "rotating",
+   "item": "e05",
+   "a_idx": null,
+   "right_idx": 24,
+   "sham_idx": 8,
+   "k_idx": 24,
+   "a_right": false
+  },
+  {
+   "i": 14,
+   "cls": "told",
+   "kind": "rotating",
+   "item": "f09",
+   "a_idx": 25,
+   "right_idx": 55,
+   "sham_idx": 54,
+   "k_idx": 55,
+   "a_right": false
+  },
+  {
+   "i": 15,
+   "cls": "told",
+   "kind": "neardup",
+   "item": "d04",
+   "a_idx": 95,
+   "right_idx": 95,
+   "sham_idx": 89,
+   "k_idx": null,
+   "a_right": true
+  },
+  {
+   "i": 16,
+   "cls": "told",
+   "kind": "neardup",
+   "item": "d05",
+   "a_idx": 25,
+   "right_idx": 89,
+   "sham_idx": 85,
+   "k_idx": null,
+   "a_right": false
+  },
+  {
+   "i": 17,
+   "cls": "fire",
+   "kind": "never",
+   "item": "never2",
+   "a_idx": 25,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": 0
+  },
+  {
+   "i": 18,
+   "cls": "fire",
+   "kind": "never",
+   "item": "never4",
+   "a_idx": null,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": null
+  },
+  {
+   "i": 19,
+   "cls": "fire",
+   "kind": "never",
+   "item": "never3",
+   "a_idx": 6,
+   "right_idx": null,
+   "sham_idx": null,
+   "k_idx": 94
+  }
+ ],
+ "void_rows": [],
+ "void": false,
+ "k_dec": {
+  "0": 41,
+  "3": 70,
+  "8": 0,
+  "9": 25,
+  "10": 0,
+  "11": 6,
+  "12": 0,
+  "13": 24,
+  "14": 55,
+  "17": 0,
+  "19": 94
+ },
+ "host": "node-dl4g243",
+ "commit": "52b846adbb1f67536a19a7b07adf49eb6ff89e88",
+ "device": "?",
+ "stage0_sha": "ef54d7cbb53d6828"
+}

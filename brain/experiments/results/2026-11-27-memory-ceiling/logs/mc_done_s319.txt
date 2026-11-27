@@ -1,0 +1,6 @@
+start node-mxl1462drl 2026-11-27T18:03:19Z s319 52b846adbb1f67536a19a7b07adf49eb6ff89e88 --nights 5-5
+s319 rc 1 2026-11-27T18:03:24Z node-mxl1462drl
+start node-mxl1462drl 2026-11-27T18:03:40Z s319 52b846adbb1f67536a19a7b07adf49eb6ff89e88 --nights 5-5 --model /home/node/brain-lane/models/rwkv7-g1l-1.5b-20261031-ctx34304.pth
+s319 rc 0 2026-11-27T18:15:21Z node-mxl1462drl
+start node-mxl1462drl 2026-11-27T18:49:55Z s319 52b846adbb1f67536a19a7b07adf49eb6ff89e88 --model /home/node/brain-lane/models/rwkv7-g1l-1.5b-20261031-ctx34304.pth
+s319 rc 0 2026-11-27T20:44:05Z node-mxl1462drl

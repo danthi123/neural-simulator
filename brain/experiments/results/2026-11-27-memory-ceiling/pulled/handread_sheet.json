@@ -1,0 +1,442 @@
+[
+ {
+  "id": "319:6:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "Her name is Marguerite.",
+   "B": "Marguerite.",
+   "C": "Marguerite.",
+   "D": "Marguerite.",
+   "E": "Marguerite."
+  }
+ },
+ {
+  "id": "321:6:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "You work as a system administrator, mostly Linux servers.",
+   "B": "You work as a system administrator, mostly Linux servers.",
+   "C": "You work as a system administrator, mostly Linux servers.",
+   "D": "You work as a system administrator, mostly Linux servers.",
+   "E": "I work as a system administrator, mostly Linux servers."
+  }
+ },
+ {
+  "id": "319:14:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "Her name is Marguerite.",
+   "B": "Her name is Marguerite.",
+   "C": "Her name is Marguerite.",
+   "D": "Your sister's name is Marguerite.",
+   "E": "Her name is Marguerite."
+  }
+ },
+ {
+  "id": "321:15:9",
+  "question": "What is my cat called?",
+  "replies": {
+   "A": "Your cat is called Pixel.",
+   "B": "My cat is called Pixel.",
+   "C": "My cat is called Pixel.",
+   "D": "My cat is called Pixel.",
+   "E": "My cat is called Pixel."
+  }
+ },
+ {
+  "id": "319:15:14",
+  "question": "Who is my dentist?",
+  "replies": {
+   "A": "Dr Venkataraman.",
+   "B": "My dentist is called Dr Venkataraman.",
+   "C": "My dentist is called Dr Venkataraman.",
+   "D": "I don't know.",
+   "E": "I'm not sure, but I think it's Dr Venkataraman."
+  }
+ },
+ {
+  "id": "320:14:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "I drive a red Volvo.",
+   "B": "I drive a red Volvo.",
+   "C": "I drive a red Volvo.",
+   "D": "I drive a red Volvo.",
+   "E": "I drive a red Volvo."
+  }
+ },
+ {
+  "id": "319:10:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "Her name is Marguerite.",
+   "B": "Her name is Marguerite.",
+   "C": "Your sister's name is Marguerite.",
+   "D": "Your sister's name is Marguerite.",
+   "E": "Her name is Marguerite."
+  }
+ },
+ {
+  "id": "319:11:9",
+  "question": "What is my cat called?",
+  "replies": {
+   "A": "My cat is called Nova.",
+   "B": "Her name is Pixel.",
+   "C": "What's your cat's name?",
+   "D": "Her name is Fabrizio.",
+   "E": "Her name is Meridian."
+  }
+ },
+ {
+  "id": "319:15:9",
+  "question": "What is my cat called?",
+  "replies": {
+   "A": "I don't know.",
+   "B": "I don't know.",
+   "C": "I don't know.",
+   "D": "My cat is called Pixel.",
+   "E": "I'm not sure, but I think it's called Pixel."
+  }
+ },
+ {
+  "id": "320:8:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "My sister's name is Marguerite.",
+   "B": "Her name is Marguerite.",
+   "C": "My sister's name is Marguerite.",
+   "D": "My sister's name is Marguerite.",
+   "E": "Her name is Marguerite."
+  }
+ },
+ {
+  "id": "319:13:13",
+  "question": "Who is my landlord?",
+  "replies": {
+   "A": "Your landlord is a man named Mr Fitzgerald.",
+   "B": "Mr Fitzgerald.",
+   "C": "Mr Fitzgerald.",
+   "D": "Your landlord is a man named Mr Fitzgerald.",
+   "E": "Mr Fitzgerald."
+  }
+ },
+ {
+  "id": "319:14:13",
+  "question": "What is the new pizza place called?",
+  "replies": {
+   "A": "The new pizza place is called Fabrizio's.",
+   "B": "The new pizza place is called Fabrizio's.",
+   "C": "The new pizza place is called Fabrizio's.",
+   "D": "The new pizza place is called Fabrizio's.",
+   "E": "The new pizza place is called Fabrizio's."
+  }
+ },
+ {
+  "id": "319:8:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "You work as a system administrator.",
+   "B": "You work as a system administrator.",
+   "C": "You work as a system administrator.",
+   "D": "You work as a system administrator, mostly Linux servers.",
+   "E": "You work as a system administrator."
+  }
+ },
+ {
+  "id": "321:14:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "I work as a baker.",
+   "B": "I work as a system administrator, mostly Linux servers.",
+   "C": "You work as a baker.",
+   "D": "I work as a baker.",
+   "E": "I work as a baker."
+  }
+ },
+ {
+  "id": "319:10:16",
+  "question": "What is my cousin's name?",
+  "replies": {
+   "A": "Your cousin's name is Philippa.",
+   "B": "Your cousin's name is Philippa.",
+   "C": "Your cousin's name is Philippa.",
+   "D": "Your cousin's name is Philippa.",
+   "E": "Your cousin's name is Philippa."
+  }
+ },
+ {
+  "id": "320:11:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "Her name is called Marguerite.",
+   "B": "Her name is called Marguerite.",
+   "C": "Her name is called Marguerite.",
+   "D": "Her name is called Marguerite.",
+   "E": "My sister's name is called Marguerite."
+  }
+ },
+ {
+  "id": "319:6:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "You work as a system administrator, mostly Linux servers.",
+   "B": "You work as a system administrator, mostly Linux servers.",
+   "C": "You work as a system administrator, mostly Linux servers.",
+   "D": "You work as a system administrator.",
+   "E": "You work as a system administrator."
+  }
+ },
+ {
+  "id": "321:14:9",
+  "question": "What is my cat called?",
+  "replies": {
+   "A": "My cat is called Pixel.",
+   "B": "My cat is called Pixel.",
+   "C": "My cat is called Pixel.",
+   "D": "My cat is called Pixel.",
+   "E": "My cat is called Pixel."
+  }
+ },
+ {
+  "id": "321:12:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "My sister's name is Marguerite.",
+   "B": "My sister's name is Marguerite.",
+   "C": "My sister's name is Marguerite.",
+   "D": "My sister's name is Marguerite.",
+   "E": "My sister's name is Marguerite."
+  }
+ },
+ {
+  "id": "319:12:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "You drive a red Volvo.",
+   "B": "You drive a red Volvo.",
+   "C": "You drive a red Volvo.",
+   "D": "You drive a red Volvo.",
+   "E": "You drive a red Volvo."
+  }
+ },
+ {
+  "id": "319:6:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "A red Volvo.",
+   "B": "A red Volvo.",
+   "C": "A red Volvo.",
+   "D": "You drive a red Volvo.",
+   "E": "A red Volvo."
+  }
+ },
+ {
+  "id": "320:15:16",
+  "question": "What does my nephew do for work?",
+  "replies": {
+   "A": "Your nephew works as a baker.",
+   "B": "Your nephew works as a baker called Dan, my friend.",
+   "C": "Your nephew works as a baker.",
+   "D": "Your nephew works as a baker called Otto.",
+   "E": "Your nephew works as a baker."
+  }
+ },
+ {
+  "id": "321:12:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "I work as a system administrator, mostly Linux servers.",
+   "B": "I work as a system administrator, mostly Linux servers.",
+   "C": "I work as a system administrator, mostly Linux servers.",
+   "D": "I work as a system administrator, mostly Linux servers.",
+   "E": "I work as a system administrator, mostly Linux servers."
+  }
+ },
+ {
+  "id": "321:8:13",
+  "question": "What is my favourite cheese?",
+  "replies": {
+   "A": "I don't know, I'm not a cheese.",
+   "B": "I'm Dan, your Dan.",
+   "C": "I'm sorry, I don't know your favourite cheese.",
+   "D": "Your favourite cheese is manchego.",
+   "E": "manchego."
+  }
+ },
+ {
+  "id": "320:12:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "You drive a red Volvo.",
+   "B": "You drive a red Volvo.",
+   "C": "You drive a red Volvo.",
+   "D": "You drive a red Volvo.",
+   "E": "You drive a red Volvo."
+  }
+ },
+ {
+  "id": "319:10:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "You drive a red Vespa.",
+   "B": "You drive a red Vespa.",
+   "C": "You drive a red Vespa.",
+   "D": "You drive a red Vespa.",
+   "E": "You drive a red Vespa."
+  }
+ },
+ {
+  "id": "321:11:11",
+  "question": "What is my sister's name?",
+  "replies": {
+   "A": "Her name is Marguerite.",
+   "B": "Her name is Marguerite.",
+   "C": "Her name is Marguerite.",
+   "D": "Her name is Marguerite.",
+   "E": "Her name is Marguerite."
+  }
+ },
+ {
+  "id": "321:11:10",
+  "question": "What do I do for work?",
+  "replies": {
+   "A": "You work as a baker.",
+   "B": "You work as a baker.",
+   "C": "You work as a system administrator, mostly Linux servers.",
+   "D": "You work as a baker.",
+   "E": "You work as a baker."
+  }
+ },
+ {
+  "id": "319:6:9",
+  "question": "What is my cat called?",
+  "replies": {
+   "A": "Pixel.",
+   "B": "Pixel.",
+   "C": "Her name is Pixel.",
+   "D": "Pixel.",
+   "E": "Pixel."
+  }
+ },
+ {
+  "id": "319:6:16",
+  "question": "What is my cousin's name?",
+  "replies": {
+   "A": "Philippa.",
+   "B": "Philippa.",
+   "C": "Philippa.",
+   "D": "Philippa.",
+   "E": "Philippa."
+  }
+ },
+ {
+  "id": "320:10:13",
+  "question": "Which chef did I sit next to on a flight?",
+  "replies": {
+   "A": "You sat next to a famous chef called Ottoline on a flight.",
+   "B": "You sat next to a famous chef called Ottoline on a flight.",
+   "C": "You sat next to a chef called Ottoline on a flight.",
+   "D": "You sat next to a chef called Ottoline on a flight.",
+   "E": "You sat next to a famous chef called Ottoline on a flight."
+  }
+ },
+ {
+  "id": "320:13:13",
+  "question": "Who teaches me piano?",
+  "replies": {
+   "A": "I teach you piano.",
+   "B": "You're learning piano from Mrs Okonkwo.",
+   "C": "I teach you piano.",
+   "D": "I teach you piano.",
+   "E": "Your teacher is called Mrs Okonkwo."
+  }
+ },
+ {
+  "id": "320:15:14",
+  "question": "What is the new pizza place called?",
+  "replies": {
+   "A": "The new pizza place is Fabrizio's.",
+   "B": "The new pizza place is Petrizzo's.",
+   "C": "The new pizza place is Fabrizio's.",
+   "D": "The new pizza place is Petrizzo's.",
+   "E": "The new pizza place is Petrizzo's."
+  }
+ },
+ {
+  "id": "321:8:12",
+  "question": "What car do I drive?",
+  "replies": {
+   "A": "You drive a red Volvo.",
+   "B": "I'm Dan, your Dan.",
+   "C": "A red Volvo.",
+   "D": "I don't know, I'm not a car.",
+   "E": "I'm sorry, I don't know your car."
+  }
+ },
+ {
+  "id": "321:9:14",
+  "question": "Who cuts my hair?",
+  "replies": {
+   "A": "I have a hairdresser who cuts my hair.",
+   "B": "I have a hairdresser called Marguerite.",
+   "C": "I cut your hair.",
+   "D": "I cut my hair myself.",
+   "E": "I don't know, but I think it's called \"Nerve\" or \"Nerve\"."
+  }
+ },
+ {
+  "id": "320:14:13",
+  "question": "Which day do the bins go out?",
+  "replies": {
+   "A": "The bins go out on Tuesday.",
+   "B": "The bins go out on Tuesday.",
+   "C": "The bins go out on Tuesday.",
+   "D": "The bins go out on Tuesday.",
+   "E": "The bins go out on Tuesday."
+  }
+ },
+ {
+  "id": "319:14:15",
+  "question": "What is my dog called?",
+  "replies": {
+   "A": "My dog is called Bramble.",
+   "B": "My dog is called Bramble.",
+   "C": "My dog is called Bramble.",
+   "D": "Her name is Bramble.",
+   "E": "Your dog is called Bramble."
+  }
+ },
+ {
+  "id": "320:11:14",
+  "question": "What is my favourite film?",
+  "replies": {
+   "A": "My favourite film is Stalker.",
+   "B": "Stalker is a great film.",
+   "C": "My favourite film is Stalker.",
+   "D": "My favourite film is Stalker.",
+   "E": "My favourite film is Stalker."
+  }
+ },
+ {
+  "id": "321:10:13",
+  "question": "What did I name the stray terrier?",
+  "replies": {
+   "A": "You named the stray terrier \"Terry\".",
+   "B": "You named it Pixel.",
+   "C": "You named the stray terrier called Sprocket.",
+   "D": "You named the stray terrier, but I don't know what you meant.",
+   "E": "You named it Sprocket."
+  }
+ },
+ {
+  "id": "321:13:14",
+  "question": "Where was I born?",
+  "replies": {
+   "A": "You were born in Ljubljana.",
+   "B": "I was born in Ljubljana.",
+   "C": "You were born in Ljubljana.",
+   "D": "You were born in Ljubljana.",
+   "E": "You were born in Ljubljana."
+  }
+ }
+]
