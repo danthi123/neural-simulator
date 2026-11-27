@@ -102,7 +102,7 @@ launch)
     "$JOBS" "${R[0]}:brainv2/jobs.txt"
   scp -q -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR \
     "$ROOT/tools/brain_batch_run.sh" "${R[0]}:brainv2/run.sh"
-  "${SSH[@]}" "${R[@]}" "chmod +x ~/brainv2/run.sh && nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h +$GRACE' >/dev/null 2>&1 < /dev/null &"
+  "${SSH[@]}" "${R[@]}" "chmod +x ~/brainv2/run.sh; nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h +$GRACE' >/dev/null 2>&1 < /dev/null &"
   echo "[aws-brain] running $(grep -vc '^\(#\|$\)' "$JOBS") job(s) on $IID; it stops itself when done (dead-man ${MAX_MIN} min)."
   echo "[aws-brain] later: bash tools/aws_brain_batch.sh pull"
   ;;

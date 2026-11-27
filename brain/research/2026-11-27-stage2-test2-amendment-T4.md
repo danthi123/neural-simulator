@@ -22,3 +22,11 @@ was replaced (atomic rename, not an in-place edit of the running script) with th
 sha256 4d94c7ab... (freeze note, "recorded for the launch") -> 8ba819ab7851509ac1a9718a0209a79adf4d4479200364b6f63b311a7dc52b5a.
 Nothing that runs on the instance changes (code, env, models and run.sh are byte-identical); lifeKP_s42 was launched
 with the old tool, every later life with the new one. Same fix on the working branch.
+
+## T4 addendum 2 (2026-11-27 18:45 UTC, lives running, no result read)
+The first addendum's `< /dev/null` did not stop the 40-min launch hang (KP43, KP44, KP100 still ended rc 124). Root cause:
+line 105 runs `chmod +x run.sh && nohup bash -c '...' >/dev/null 2>&1 < /dev/null &`, and `&` backgrounds the whole AND
+list, so a subshell holding the ssh channel waits for the job. Verified on pool41: the old pattern held ssh for the job's
+full 20 s, the new pattern (`chmod ...; nohup ... &`) returned in 1 s. Replaced in the freeze worktree by atomic rename:
+sha256 -> 2b83d117ae4381bb4832e77aca984b077ed087ba43152a06d8b67fd85d970722. Nothing that runs on the instance changes.
+KP42-KP101 launched with the earlier tool versions; later lives with this one. Same fix on the working branch.
