@@ -1,0 +1,276 @@
+{
+ "K": 200,
+ "inner_perm": 300,
+ "registered_n_perm": 10000,
+ "master_seed": 20261127,
+ "sections": [
+  "p0",
+  "savings",
+  "transfer",
+  "cue"
+ ],
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "n_seeds": 3,
+ "bars": {
+  "P0": {
+   "section": "p0",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": 0.10149999999999999,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.1134,
+    "p95": 0.3558,
+    "p99": 0.4409
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": 0.5423,
+   "rank": 109,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 180,
+    "1": 20
+   }
+  },
+  "SAV-G": {
+   "section": "savings",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": -0.132,
+   "observed_seed_count": 1,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.02,
+    "p95": 0.6038,
+    "p99": 0.86
+   },
+   "false_pass_rate": 0.035,
+   "frac_ge": 0.6169,
+   "rank": 124,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 36,
+    "1": 62,
+    "2": 74,
+    "3": 28
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.013
+  },
+  "SAV-dR": {
+   "section": "savings",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": -2.0,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.0567,
+    "p95": 1.3666,
+    "p99": 2.6667
+   },
+   "false_pass_rate": 0.05,
+   "frac_ge": 0.9602,
+   "rank": 183,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 98,
+    "1": 87,
+    "2": 15
+   }
+  },
+  "TRF-T4": {
+   "section": "transfer",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.812,
+   "observed_seed_count": 3,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0002,
+    "p95": 0.5857,
+    "p99": 0.879
+   },
+   "false_pass_rate": 0.025,
+   "frac_ge": 0.0249,
+   "rank": 5,
+   "beyond_p95": true,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 20,
+    "1": 75,
+    "2": 78,
+    "3": 27
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.011
+  },
+  "TRF-K": {
+   "section": "transfer",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.22220000000000006,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0411,
+    "p95": 1.0194,
+    "p99": 1.3729
+   },
+   "false_pass_rate": 0.505,
+   "frac_ge": 0.3632,
+   "rank": 73,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "None": 200
+   }
+  },
+  "TRF-C": {
+   "section": "transfer",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.8302,
+   "observed_seed_count": 3,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0419,
+    "p95": 0.922,
+    "p99": 1.1688
+   },
+   "false_pass_rate": 0.15,
+   "frac_ge": 0.0746,
+   "rank": 15,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 21,
+    "1": 75,
+    "2": 74,
+    "3": 30
+   }
+  },
+  "CUE-R": {
+   "section": "cue",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": 0.0952,
+   "observed_seed_count": 1,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.1202,
+    "p95": 0.0476,
+    "p99": 0.0952
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": 0.0249,
+   "rank": 2,
+   "beyond_p95": true,
+   "beyond_p99": true,
+   "null_seed_count": {
+    "0": 141,
+    "1": 56,
+    "2": 3
+   },
+   "trusted_rule": "yes",
+   "false_pass_se": 0.0
+  },
+  "CUE-D": {
+   "section": "cue",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.5227,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0016,
+    "p95": 0.1591,
+    "p99": 0.2045
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": 0.005,
+   "rank": 1,
+   "beyond_p95": true,
+   "beyond_p99": true,
+   "null_seed_count": {
+    "None": 200
+   }
+  }
+ },
+ "composite": {
+  "p0": {
+   "bars": [
+    "P0"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "savings": {
+   "bars": [
+    "SAV-G",
+    "SAV-dR"
+   ],
+   "false_pass_rate": 0.005,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.005,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "transfer": {
+   "bars": [
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C"
+   ],
+   "false_pass_rate": 0.005,
+   "observed_composite": "PASS",
+   "false_pass_se": 0.005,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "cue": {
+   "bars": [
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "all": {
+   "bars": [
+    "P0",
+    "SAV-G",
+    "SAV-dR",
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C",
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  }
+ }
+}

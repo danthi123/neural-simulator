@@ -1,0 +1,294 @@
+{
+ "K": 200,
+ "inner_perm": 300,
+ "registered_n_perm": 10000,
+ "master_seed": 20261127,
+ "sections": [
+  "p0",
+  "savings",
+  "transfer",
+  "cue"
+ ],
+ "seeds": [
+  9000,
+  9001,
+  9002,
+  9003,
+  9004,
+  9005
+ ],
+ "n_seeds": 6,
+ "bars": {
+  "P0": {
+   "section": "p0",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": 0.10056666666666665,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.068,
+    "p95": 0.2252,
+    "p99": 0.2939
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": 0.3731,
+   "rank": 75,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 177,
+    "1": 21,
+    "2": 1,
+    "3": 1
+   }
+  },
+  "SAV-G": {
+   "section": "savings",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": -0.1272,
+   "observed_seed_count": 2,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.0,
+    "p95": 0.3739,
+    "p99": 0.4739
+   },
+   "false_pass_rate": 0.035,
+   "frac_ge": 0.6816,
+   "rank": 137,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 3,
+    "1": 18,
+    "2": 48,
+    "3": 61,
+    "4": 51,
+    "5": 16,
+    "6": 3
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.013
+  },
+  "SAV-dR": {
+   "section": "savings",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": -0.3333,
+   "observed_seed_count": 1,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.03,
+    "p95": 1.3333,
+    "p99": 1.6667
+   },
+   "false_pass_rate": 0.03,
+   "frac_ge": 0.7463,
+   "rank": 115,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 71,
+    "1": 84,
+    "2": 36,
+    "3": 8,
+    "4": 1
+   }
+  },
+  "TRF-T4": {
+   "section": "transfer",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.4975,
+   "observed_seed_count": 5,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0036,
+    "p95": 0.3956,
+    "p99": 0.5435
+   },
+   "false_pass_rate": 0.03,
+   "frac_ge": 0.0348,
+   "rank": 7,
+   "beyond_p95": true,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "1": 20,
+    "2": 46,
+    "3": 65,
+    "4": 45,
+    "5": 22,
+    "6": 2
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.0121
+  },
+  "TRF-K": {
+   "section": "transfer",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": -0.29460000000000003,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.0114,
+    "p95": 0.5396,
+    "p99": 0.9036
+   },
+   "false_pass_rate": 0.43,
+   "frac_ge": 0.8209,
+   "rank": 165,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "None": 200
+   }
+  },
+  "TRF-C": {
+   "section": "transfer",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.5935,
+   "observed_seed_count": 5,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.0087,
+    "p95": 0.5615,
+    "p99": 0.6838
+   },
+   "false_pass_rate": 0.105,
+   "frac_ge": 0.0398,
+   "rank": 8,
+   "beyond_p95": true,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 3,
+    "1": 19,
+    "2": 52,
+    "3": 59,
+    "4": 46,
+    "5": 20,
+    "6": 1
+   }
+  },
+  "CUE-R": {
+   "section": "cue",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": 0.0208,
+   "observed_seed_count": 1,
+   "null_stat": {
+    "n": 200,
+    "mean": -0.0824,
+    "p95": 0.0417,
+    "p99": 0.0833
+   },
+   "false_pass_rate": 0.005,
+   "frac_ge": 0.1194,
+   "rank": 18,
+   "beyond_p95": false,
+   "beyond_p99": false,
+   "null_seed_count": {
+    "0": 62,
+    "1": 99,
+    "2": 34,
+    "3": 4,
+    "4": 1
+   },
+   "trusted_rule": "yes",
+   "false_pass_se": 0.005
+  },
+  "CUE-D": {
+   "section": "cue",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 0.5059,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 200,
+    "mean": 0.0022,
+    "p95": 0.1065,
+    "p99": 0.1647
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": 0.005,
+   "rank": 1,
+   "beyond_p95": true,
+   "beyond_p99": true,
+   "null_seed_count": {
+    "None": 200
+   }
+  }
+ },
+ "composite": {
+  "p0": {
+   "bars": [
+    "P0"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "savings": {
+   "bars": [
+    "SAV-G",
+    "SAV-dR"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "transfer": {
+   "bars": [
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C"
+   ],
+   "false_pass_rate": 0.005,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.005,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "cue": {
+   "bars": [
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "all": {
+   "bars": [
+    "P0",
+    "SAV-G",
+    "SAV-dR",
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C",
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.0308,
+   "trusted_rule": "yes",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  }
+ },
+ "synthetic": "SIMULATED: 6 pseudo-seeds bootstrapped from ['brain/experiments/results/2026-11-26-voice-split/lives/lifeKR_s319.json.json', 'brain/experiments/results/2026-11-26-voice-split/lives/lifeKR_s320.json.json', 'brain/experiments/results/2026-11-26-voice-split/lives/lifeKR_s321.json.json']"
+}
