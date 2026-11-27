@@ -2,7 +2,7 @@
 
 Status: design only, 11-27, revised after a record check and again after the skeptic's rejection of amendment
 revision 1. **Blocked by the stop rule (section 2) until `2026-11-27-voice-store-amendment.md` (revision 2) is in
-force. Blind hand-read done: the floor is not met on any seed, so Stage 1 cannot run on the days 1-14 store.**
+force, which needs a fresh skeptic APPROVAL first. Blind hand-read done: the floor is not met on any seed, so Stage 1 cannot run on the days 1-14 store.**
 
 ## 1. Record brief (corrected)
 - Defect: slept cortex answers told facts in the user's voice (hippocampus-off P(uv|knows) 0.24-0.28).
@@ -31,9 +31,15 @@ The headline measure here is P(uv|knows), so this is a sixth perspective lever. 
 - Amendment revision 2 rests on one ground: routing was tried (three routing methods KILLED, arc stopped by its
   timebox 11-26), reading the rule as "before a routing method has been tried". It makes no one-cause claim and does
   not use the memory ceiling (verdict UNDEFINED).
-- Nothing here is registered or run until the pointer line is in the recall-voice prereg.
-- **Binding stop line: no perspective lever 7 at 1.5B**, whatever Stage 1 returns (amendment section 5, copied
-  verbatim into the Stage-1 prereg).
+- Nothing here is registered or run until a fresh skeptic APPROVES the amendment and only then the pointer line is
+  added to the recall-voice prereg.
+- Routing work is neither closed nor resumed (memory ceiling UNDEFINED; reachable strength held); the amendment only
+  permits side S before a NEW routing method.
+- **Binding stop line: no perspective lever 7 at 1.5B**, whatever a Stage 1 that ran returns (amendment section 5,
+  copied verbatim into the Stage-1 prereg). UNDEFINED-by-floor (never ran) does not consume lever 6 and does not
+  trigger the line.
+- Data: Stage 1 waits for a larger store; candidate is the Stage-2 test2 lives, only after the test2 read is complete
+  (amendment section 7).
 - Allowed meanwhile: the host-only Stage-0 recount and hand-read.
 
 ## 3. Mechanism
@@ -108,7 +114,7 @@ Compute: 8 sleeps x 3 seeds, AWS g5 fp16 or pool40 CPU.
 
 ## 6. Stage 2 (only after ENGAGED or UNDERPOWERED-LEAD): DEV life
 `Brain(answered_replay=True)` on K-P, seeds 319-321; an exchange is kept unless the user's next turn corrects it.
-Sleep-only list, as section 3. A fail or UNDEFINED closes perspective at 1.5B (stop line, section 2). Bars are the recall-voice prereg's, unchanged, plus hippocampus-off
+Sleep-only list, as section 3. A fail closes perspective at 1.5B (stop line, section 2); UNDEFINED-by-floor does not. Bars are the recall-voice prereg's, unchanged, plus hippocampus-off
 P(uv|knows) <= K-P - 0.10 on the 223 told rows. Six seeds only after a DEV pass.
 
 ## 7. Expected outcome, honest odds
