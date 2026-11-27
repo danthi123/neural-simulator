@@ -1,0 +1,315 @@
+{
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "reproduction": {
+  "319": {
+   "n": 25,
+   "same": 25,
+   "frac": 1.0,
+   "onset_same": 25,
+   "onset_frac": 1.0,
+   "ref_knows": 18,
+   "ref_uv_knows": 0,
+   "ref": "st_full_s319.json"
+  },
+  "320": {
+   "n": 22,
+   "same": 22,
+   "frac": 1.0,
+   "onset_same": 22,
+   "onset_frac": 1.0,
+   "ref_knows": 14,
+   "ref_uv_knows": 6,
+   "ref": "st_full_s320.json"
+  },
+  "321": {
+   "n": 20,
+   "same": 20,
+   "frac": 1.0,
+   "onset_same": 20,
+   "onset_frac": 1.0,
+   "ref_knows": 11,
+   "ref_uv_knows": 6,
+   "ref": "st_full_s321.json"
+  }
+ },
+ "reproduction_vs_report": {
+  "319": {
+   "n": 8,
+   "same": 6,
+   "frac": 0.75,
+   "onset_same": 0,
+   "onset_frac": 0.0,
+   "ref_knows": 6,
+   "ref_uv_knows": 0,
+   "ref": "vs_s319.json"
+  },
+  "320": {
+   "n": 7,
+   "same": 6,
+   "frac": 0.8571428571428571,
+   "onset_same": 0,
+   "onset_frac": 0.0,
+   "ref_knows": 6,
+   "ref_uv_knows": 4,
+   "ref": "vs_s320.json"
+  },
+  "321": {
+   "n": 7,
+   "same": 6,
+   "frac": 0.8571428571428571,
+   "onset_same": 0,
+   "onset_frac": 0.0,
+   "ref_knows": 6,
+   "ref_uv_knows": 3,
+   "ref": "vs_s321.json"
+  }
+ },
+ "primary_layer": 12,
+ "noop_arms": [],
+ "clauses": {
+  "onset_ORACLE-H": {
+   "diff": 0.5477246597631654,
+   "ci": [
+    0.4439654815942049,
+    0.6546046023859697
+   ],
+   "n": 67,
+   "clusters": 42
+  },
+  "onset_ORACLE-SHAM": {
+   "diff": 0.6307090271764727,
+   "ci": [
+    0.4843006224571904,
+    0.780010998249054
+   ],
+   "n": 67,
+   "clusters": 42
+  },
+  "onset_ORACLE-ALL": {
+   "diff": -0.15303526885473906,
+   "ci": [
+    -0.22301300366719565,
+    -0.08595667341176201
+   ],
+   "n": 67,
+   "clusters": 42
+  },
+  "onset_ORACLE-WRONG": {
+   "diff": 0.2837704135410821,
+   "ci": [
+    0.2369605669608483,
+    0.33547397967307796
+   ],
+   "n": 67,
+   "clusters": 42
+  },
+  "H": {
+   "told": 67,
+   "knows": 43,
+   "uv_knows": 12,
+   "refusal": 8,
+   "p_uv": 0.27906976744186046
+  },
+  "ORACLE": {
+   "told": 67,
+   "knows": 36,
+   "uv_knows": 7,
+   "refusal": 14,
+   "p_uv": 0.19444444444444445
+  },
+  "SHAM": {
+   "told": 67,
+   "knows": 40,
+   "uv_knows": 13,
+   "refusal": 8,
+   "p_uv": 0.325
+  },
+  "ALL": {
+   "told": 67,
+   "knows": 32,
+   "uv_knows": 5,
+   "refusal": 9,
+   "p_uv": 0.15625
+  },
+  "WRONG": {
+   "told": 67,
+   "knows": 33,
+   "uv_knows": 9,
+   "refusal": 24,
+   "p_uv": 0.2727272727272727
+  },
+  "per_seed": {
+   "319": {
+    "onset_diff": 0.38088011264801025,
+    "p_uv_H": 0.0,
+    "p_uv_ORACLE": 0.0,
+    "holds": false
+   },
+   "320": {
+    "onset_diff": 0.3849816159768538,
+    "p_uv_H": 0.42857142857142855,
+    "p_uv_ORACLE": 0.3,
+    "holds": true
+   },
+   "321": {
+    "onset_diff": 0.935297691822052,
+    "p_uv_H": 0.5454545454545454,
+    "p_uv_ORACLE": 0.4,
+    "holds": true
+   }
+  },
+  "per_item": {
+   "pixel": {
+    "onset_diff": 0.44192880392074585,
+    "n": 3,
+    "p_uv_H": 0.3333333333333333,
+    "p_uv_ORACLE": 0.6666666666666666,
+    "knows_H": 3,
+    "knows_ORACLE": 3,
+    "holds": false
+   },
+   "marguerite": {
+    "onset_diff": 0.39224720001220703,
+    "n": 3,
+    "p_uv_H": 0.6666666666666666,
+    "p_uv_ORACLE": 0.0,
+    "knows_H": 3,
+    "knows_ORACLE": 2,
+    "holds": true
+   },
+   "volvo": {
+    "onset_diff": 0.6348265806833903,
+    "n": 3,
+    "p_uv_H": 0.0,
+    "p_uv_ORACLE": 0.0,
+    "knows_H": 2,
+    "knows_ORACLE": 3,
+    "holds": false
+   }
+  },
+  "items_evaluable": [
+   "pixel",
+   "marguerite"
+  ],
+  "item_rows": {
+   "pixel": {
+    "n_told_cells": 3,
+    "knows_H": 3,
+    "knows_ORACLE": 3
+   },
+   "marguerite": {
+    "n_told_cells": 3,
+    "knows_H": 3,
+    "knows_ORACLE": 2
+   },
+   "volvo": {
+    "n_told_cells": 3,
+    "knows_H": 2,
+    "knows_ORACLE": 3
+   }
+  },
+  "ok": {
+   "onset": true,
+   "sham": true,
+   "all": false,
+   "wrong": true,
+   "voice": false,
+   "voice_sham": true,
+   "knows": false,
+   "refusals": true,
+   "seeds": true,
+   "items": false
+  }
+ },
+ "C_moves_onset": {
+  "diff": 0.572047025410097,
+  "ci": [
+   0.3096525723283941,
+   0.8415767829139511
+  ],
+  "n": 67,
+  "clusters": 42
+ },
+ "C": {
+  "told": 67,
+  "knows": 55,
+  "uv_knows": 6,
+  "refusal": 9,
+  "p_uv": 0.10909090909090909
+ },
+ "p_uv_ORACLE-H": {
+  "diff": -0.08462532299741601,
+  "ci": [
+   -0.23149236192714456,
+   0.05982905982905978
+  ]
+ },
+ "report_layers": {
+  "6": {
+   "onset_ORACLE-H": {
+    "diff": 0.1216959277195717,
+    "ci": [
+     0.07494828198105097,
+     0.171629654638695
+    ],
+    "n": 67,
+    "clusters": 42
+   },
+   "onset_ORACLE-SHAM": {
+    "diff": 0.26255992900079755,
+    "ci": [
+     0.18564966525117013,
+     0.33666709065437317
+    ],
+    "n": 67,
+    "clusters": 42
+   },
+   "ORACLE": {
+    "told": 67,
+    "knows": 43,
+    "uv_knows": 13,
+    "refusal": 5,
+    "p_uv": 0.3023255813953488
+   }
+  },
+  "18": {
+   "onset_ORACLE-H": {
+    "diff": 0.6566272867259695,
+    "ci": [
+     0.5487696730038699,
+     0.7658609828123679
+    ],
+    "n": 67,
+    "clusters": 42
+   },
+   "onset_ORACLE-SHAM": {
+    "diff": 0.6279686778338988,
+    "ci": [
+     0.4659943349659443,
+     0.7835488878190517
+    ],
+    "n": 67,
+    "clusters": 42
+   },
+   "ORACLE": {
+    "told": 67,
+    "knows": 35,
+    "uv_knows": 8,
+    "refusal": 15,
+    "p_uv": 0.22857142857142856
+   }
+  }
+ },
+ "failed": [
+  "all",
+  "voice",
+  "knows",
+  "items"
+ ],
+ "verdict": "CLASS-CLOSED",
+ "why": "the oracle direction fails ['voice']: no residual tag is built at 1.5B"
+}

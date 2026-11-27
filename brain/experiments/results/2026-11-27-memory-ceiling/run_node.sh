@@ -10,5 +10,5 @@ mkdir -p $O
 echo "start $(hostname) $(date -u +%FT%TZ) s$S $(cat $R/COMMIT) $*" >> $C/mc_done_s$S.txt
 bash $R/tools/memcap.sh ${MEMCAP_GB:-20} -- $PY -u -m brain.experiments.memory_ceiling run --life $C/lifeKR_s$S.json.json \
   --snaps $C/snaps_s$S --trunk $C/trunk_s$S --stage0 $R/brain/experiments/results/2026-11-27-memory-ceiling/stage0.json \
-  --out-dir $O --work $O/work "$@" >> $C/mc_s$S.log 2>&1
+  --out-dir $O --work $O/work --model ~/brain-lane/models/rwkv7-g1l-1.5b-20261031-ctx34304.pth "$@" >> $C/mc_s$S.log 2>&1
 echo "s$S rc $? $(date -u +%FT%TZ) $(hostname)" >> $C/mc_done_s$S.txt
