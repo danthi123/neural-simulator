@@ -13,3 +13,12 @@ Owner, 11-27: "Just increase the cap then?" (asked to run the test as soon as po
 - Cap: AWS_DAILY_CAP_USD=150 for UTC 11-27 and 11-28 (owner-approved; 6 x $1.01/h is at most about $145 per day),
   then back to $50. Expected total unchanged (about $95-105; worst $131).
 - Read by 12-10 or earlier, land 12-14: unchanged.
+
+## T4 addendum (2026-11-27 16:25 UTC, after the first life started, before any result)
+The launch tool's remote start (`tools/aws_brain_batch.sh` lines 105 and 154) left the remote job's stdin on the ssh
+channel, so `launch` returned only when the job ended or the 40-min `timeout` in launch_life killed it (the job
+survives: nohup). That serialises the slot loop at 40 min per life and delays pulls. In the freeze worktree the tool
+was replaced (atomic rename, not an in-place edit of the running script) with the same two lines plus `< /dev/null`:
+sha256 4d94c7ab... (freeze note, "recorded for the launch") -> 8ba819ab7851509ac1a9718a0209a79adf4d4479200364b6f63b311a7dc52b5a.
+Nothing that runs on the instance changes (code, env, models and run.sh are byte-identical); lifeKP_s42 was launched
+with the old tool, every later life with the new one. Same fix on the working branch.
