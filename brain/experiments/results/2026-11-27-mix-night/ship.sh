@@ -14,6 +14,7 @@ W=$(git -C "$(dirname "$0")" rev-parse --show-toplevel) && cd "$W" || exit 1
 E="ssh -o IdentitiesOnly=yes"; export SSH_AUTH_SOCK=; M=$1
 D=brain-lane/route_repo/_scratch/route/kr
 MAP="pool40:319 pool41:320 pool42:321"
+seed_of() { for x in $MAP; do [ "${x%:*}" = "$1" ] && echo "${x#*:}"; done; }
 node_of() { for x in $MAP; do [ "${x#*:}" = "$1" ] && echo "${x%:*}"; done; }
 case $M in
 ship)
@@ -42,11 +43,11 @@ ship)
 strata|measure|run)
   L=${NODES:-pool40 pool41 pool42}; [ "$M" = measure ] && L=${NODES:-pool40}
   for N in $L; do
-    if [ "$M" = strata ]; then $E $N "bash ~/$D/mn_run_node.sh strata" </dev/null
+    if [ "$M" = strata ]; then $E $N "SEED=$(seed_of $N) bash ~/$D/mn_run_node.sh strata" </dev/null
     else
       # refusals in run_node.sh are echo + exit 2: log them, and show the log, so a run cannot look launched when it is not
       LG="~/$D/mix_night/launch_$M.log"
-      $E $N "mkdir -p ~/$D/mix_night; (MEMCAP_GB=$MEMCAP_GB THREADS=$THREADS setsid nohup bash ~/$D/mn_run_node.sh $M >> $LG 2>&1 &); sleep 5; echo '-- $N launch log:'; tail -5 $LG; tail -2 ~/$D/mix_night/done_s*.txt 2>/dev/null" </dev/null
+      $E $N "mkdir -p ~/$D/mix_night; (SEED=$(seed_of $N) MEMCAP_GB=$MEMCAP_GB THREADS=$THREADS setsid nohup bash ~/$D/mn_run_node.sh $M >> $LG 2>&1 &); sleep 5; echo '-- $N launch log:'; tail -5 $LG; tail -2 ~/$D/mix_night/done_s*.txt 2>/dev/null" </dev/null
     fi
   done ;;
 status)

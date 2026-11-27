@@ -31,9 +31,11 @@ case $MODE in strata|measure|run) ;; *) echo "usage: run_node.sh strata|measure|
 COMMIT=$(cat $R/COMMIT 2>/dev/null)
 [ -n "$COMMIT" ] || { echo "$R/COMMIT missing or empty: ship the code with its COMMIT file"; exit 2; }
 HAVE=$(cd $C 2>/dev/null && ls -d snaps_s3* 2>/dev/null | sed 's/snaps_s//')
-[ "$(echo $HAVE | wc -w)" = 1 ] || { echo "$(hostname): expected exactly one snaps_s<seed> in $C, found: '$HAVE'"; exit 2; }
-S=${SEED:-$HAVE}
-[ "$S" = "$HAVE" ] || { echo "$(hostname) holds snaps_s$HAVE, not s$S: seed $S runs on its own node"; exit 2; }
+if [ -n "$SEED" ]; then
+  echo " $HAVE " | tr '\n' ' ' | grep -q " $SEED " || { echo "$(hostname) holds snaps_s{$HAVE}, not s$SEED"; exit 2; }; S=$SEED
+else
+  [ "$(echo $HAVE | wc -w)" = 1 ] || { echo "$(hostname): several snaps_s<seed> in $C ('$HAVE'): give SEED=<s>"; exit 2; }; S=$HAVE
+fi
 case $S in 319) F=320;; 320) F=321;; 321) F=319;; *) echo "seed must be 319/320/321, node holds s$S"; exit 2;; esac
 OFFFRAME=${OFFFRAME:-$R/brain/eval/mix_night_offframe.json}
 OFFFRAME_SHA256=${OFFFRAME_SHA256:-b1a95684b8caeec1f6564493afa35a6cddc280d791f8466a2c73ccbc49e6f268}
