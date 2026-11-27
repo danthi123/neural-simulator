@@ -33,6 +33,11 @@ class PlasticCortex(torch.nn.Module):
             self.A_v[str(i)] = torch.nn.Parameter(torch.randn(hidden, rank, device=dev, dtype=dtype) / hidden ** 0.5)
             self.B_v[str(i)] = torch.nn.Parameter(torch.zeros(rank, self.C, device=dev, dtype=dtype))
         self.enabled = True  # lesion switch: False = the pretrained cortex alone
+        # Source tag (switch, default OFF = None; brain/research/2026-11-26-source-tag-prereg-DRAFT.md): a vector added
+        # to the residual after block tag_layer on the tokens the host's channel marks as heard from the user (a
+        # "User:" turn, brain/source_tag.py). Part of the slow store: applied only while enabled.
+        self.source_tag = None
+        self.tag_layer = None
 
     def zero_state(self):
         dev, dt = self.z["emb.weight"].device, self.z["emb.weight"].dtype
@@ -90,6 +95,11 @@ class PlasticCortex(torch.nn.Module):
         state = [s.clone() for s in (state if state is not None else self.zero_state())]
         x = z["emb.weight"][tokens]
         v_first = torch.empty_like(x)
+        tag = self.source_tag if self.enabled else None
+        if tag is not None:
+            from brain.source_tag import user_mask
+            ids = tokens.tolist() if torch.is_tensor(tokens) else list(tokens)
+            tag_add = torch.tensor(user_mask(self.cortex.pipe, ids), dtype=x.dtype, device=x.device)[:, None] * tag
         for i in range(self.L):
             b = f"blocks.{i}."
             xx = F.layer_norm(x, (self.C,), weight=z[b + "ln1.weight"], bias=z[b + "ln1.bias"])
@@ -98,6 +108,8 @@ class PlasticCortex(torch.nn.Module):
             xx = F.layer_norm(x, (self.C,), weight=z[b + "ln2.weight"], bias=z[b + "ln2.bias"])
             xx, state[i * 3 + 2] = self._cmix(i, xx, state[i * 3 + 2])
             x = x + xx
+            if tag is not None and i == self.tag_layer:
+                x = x + tag_add
         x = F.layer_norm(x, (self.C,), weight=z["ln_out.weight"], bias=z["ln_out.bias"])
         return x @ z["head.weight"], state
 
