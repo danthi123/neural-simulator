@@ -676,7 +676,7 @@ def test_mix_night_spec_renders_per_seed_and_is_runnable_once_registered():
     c = sp.render(320, "A0 A1", "/o.json", tree="t" * 12, commit="c" * 12, job="s320")
     assert "--seed 320" in c and "snaps_s320 " in c and "--foreign-snaps $KR/foreign_s321" in c
     assert "mix_night/cccccccccccc/s320" in c and "for X in A0 A1;" in c and "tools.engine.bundle $D /o.json --text '*.txt'" in c
-    assert f"--offframe-sha256 {M.OFFFRAME_SHA256}" in c and "TF=$D/time_${A}.$(date +%s).txt; /usr/bin/time -v -o $TF" in c and "detcheck --dir $D --seed 320" in c
+    assert f"--offframe-sha256 {M.OFFFRAME_SHA256}" in c and "TF=$D/time_${A}.$(date +%s).txt; ${TIMEV:-/usr/bin/time} -v -o $TF" in c and "detcheck --dir $D --seed 320" in c
     req = [sp.fill(p, 321) for p in sp.requires]
     assert "brain-lane/route_repo/_scratch/route/kr/foreign_s319/n13/episodes.json" in req and any("snaps_s321/n12" in r for r in req)
     pre = core.REPO / "brain/research/2026-11-27-mix-night-prereg.md"
@@ -1114,3 +1114,55 @@ def test_mix_night_runs_on_w3090_only_amendment_s2(monkeypatch):
     sc = e.job_script(nodes[0], sp, {"key": "smoke/smoke", "seed": 319, "params": "A0r"}, "r", "jd")
     assert "--device cuda" in sc and "BRAIN_ALLOW_W3090=1" in sc and "POOL_NODE" not in sc and "memcap.sh 21 " in sc
     assert "$BRAIN_MODEL_DIR/rwkv7-g1l-1.5b-20261031-ctx34304.pth" in sc and "${BRAIN_MODEL_DIR:-$HOME/brain-lane/models}" in sc
+
+
+# ---- w3090 smoke without GNU time: tools/engine/peak_rss.py (time -v compatible report), pool nodes keep /usr/bin/time
+def test_w3090_job_script_uses_peak_rss_launcher_pool_keeps_gnu_time(env):
+    nodes = make_nodes("ssh", allow_w3090=True)
+    env.add("a", grid={"x": "--v 1"})
+    env.commit()
+    e = Engine("a", nodes, repo=env.repo, log=lambda *_: None)
+    spec, job = _prep(e)
+    job = {**job, "key": "smoke/smoke"}
+    w, pool = nodes[-1], nodes[0]
+    sw, sp = e.job_script(w, spec, job, "r", "jd"), e.job_script(pool, spec, job, "r", "jd")
+    assert '"$PY" -m tools.engine.peak_rss -v -o' in sw and "/usr/bin/time" not in sw and 'TIMEV="$PY -m tools.engine.peak_rss"' in sw
+    assert "/usr/bin/time -v -o" in sp and "peak_rss" not in sp and "TIMEV" not in sp
+    assert "tools/engine/peak_rss.py" in core.SHIP_TOOLS
+
+
+def _peak(tmp_path, code, extra_env=None, monkeypatch=None):
+    from tools.engine import peak_rss
+    out = tmp_path / "time.txt"
+    rc = peak_rss.main(["-v", "-o", str(out), "--", sys.executable, "-c", code])
+    return rc, out.read_text()
+
+
+def test_peak_rss_report_is_parsed_by_timev_and_passes_the_exit_code(tmp_path, monkeypatch):
+    from tools.engine import peak_rss
+    monkeypatch.setattr(peak_rss, "gpu_used_mib", lambda: None)
+    rc, txt = _peak(tmp_path, "b = bytearray(200*1024*1024); b[::4096] = b'x' * len(b[::4096]); import time; time.sleep(0.8); raise SystemExit(7)")
+    assert rc == 7 and "Exit status: 7" in txt
+    m = core.timev(txt)
+    assert m and 0.19 < m["peak_rss_gb"] < 1.5 and 0.5 < m["wall_s"] < 30 and "Peak GPU" not in txt
+
+
+def test_peak_rss_covers_grandchildren_and_gpu_peak(tmp_path, monkeypatch):
+    from tools.engine import peak_rss
+    used = iter([300, 300, 5300, 9300, 9300] + [300] * 50)
+    monkeypatch.setattr(peak_rss, "gpu_used_mib", lambda: next(used))
+    monkeypatch.setattr(peak_rss, "POLL_S", 0.05)
+    code = ("import subprocess, sys, time; subprocess.run([sys.executable, '-c', 'b = bytearray(150*1024*1024); "
+            "b[::4096] = b\"x\" * len(b[::4096])']); time.sleep(0.6)")
+    rc, txt = _peak(tmp_path, code)
+    assert rc == 0 and core.timev(txt)["peak_rss_gb"] > 0.14      # the waited grandchild's RSS counts
+    assert "Peak GPU memory (MiB): 9000 (nvidia-smi sampled" in txt
+
+
+def test_peak_rss_prefers_the_jobs_torch_peak_file(tmp_path, monkeypatch):
+    from tools.engine import peak_rss
+    monkeypatch.setattr(peak_rss, "gpu_used_mib", lambda: 300)
+    code = "import os; open(os.environ['ENGINE_GPU_PEAK_FILE'], 'w').write(str(2048 * 1048576))"
+    rc, txt = _peak(tmp_path, code)
+    assert rc == 0 and "Peak GPU memory (MiB): 2048 (torch max_memory_allocated)" in txt
+

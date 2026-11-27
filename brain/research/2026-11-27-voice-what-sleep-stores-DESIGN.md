@@ -1,6 +1,8 @@
 # DESIGN (not a prereg): answered-exchange replay. Sleep also replays what the brain itself answered
 
-Status: design only, 11-27, revised after a record check. **Blocked by the stop rule (section 2).**
+Status: design only, 11-27, revised after a record check and again after the skeptic's rejection of amendment
+revision 1. **Blocked by the stop rule (section 2) until `2026-11-27-voice-store-amendment.md` (revision 2) is in
+force. Blind hand-read done: the floor is not met on any seed, so Stage 1 cannot run on the days 1-14 store.**
 
 ## 1. Record brief (corrected)
 - Defect: slept cortex answers told facts in the user's voice (hippocampus-off P(uv|knows) 0.24-0.28).
@@ -16,21 +18,23 @@ Status: design only, 11-27, revised after a record check. **Blocked by the stop 
   19 terse or other ("Pixel."), 7 My/I (user voice plus hedges, not split); 3 of the 36 are hedged. All 36 pass a
   frame-blind "reply names the fact" filter (hedges included). Days 1-15 gives 57 / 38 (10 / 19 / 9), matching the earlier
   peek's 38 and split; its 63 answered total is not reproduced. **Stage-1 floor (>= 8 confirmed per seed): met on all
-  three seeds (16 / 9 / 11), seed 320 by 1 only; the filter is frame-blind, so a blind hand-read may lower it.** Not
-  registered; the hand-read still needs `own2`.
+  three seeds (16 / 9 / 11) under the frame-blind filter only.** That filter is superseded by the hand-read below.
+- **Blind hand-read of all 54** (labels before key, single reader; `2026-11-27-voice-stage0/handread.md`).
+  LISTENER-CORRECT 6 / 1 / 4; LISTENER-CORRECT + NEUTRAL-CORRECT 12 / 5 / 9. Seed 320 has 8 hedged replies. Every
+  listener, neutral and user-voice reply states the told fact. **Floor of 8 under the primary filter: not met on any
+  seed; the looser filter also fails seed 320.**
 
 ## 2. Stop rule: this is a perspective lever, so it waits
 HANDOFF L18, recall-voice prereg section 5: D2 lever count 5, no further perspective lever before a ROUTING method.
 The headline measure here is P(uv|knows), so this is a sixth perspective lever. It is not exempt.
 
-- It reads hippocampus-off, where nothing is fetched, so a routing method cannot fix this defect. That is an argument
-  for amending the rule, not a way round it.
-- Sequence: nothing here runs or is registered before the memory reply ceiling verdict
-  (`2026-11-27-memory-ceiling-prereg.md`, running now).
-  - A right fetch improves the reply: a routing method goes first; this design waits until one has been tried.
-  - It does not: the stop rule needs a written amendment in the recall-voice prereg, with a fresh skeptic, before
-    this is registered.
-- Allowed meanwhile: the host-only Stage-0 recount.
+- Amendment revision 2 rests on one ground: routing was tried (three routing methods KILLED, arc stopped by its
+  timebox 11-26), reading the rule as "before a routing method has been tried". It makes no one-cause claim and does
+  not use the memory ceiling (verdict UNDEFINED).
+- Nothing here is registered or run until the pointer line is in the recall-voice prereg.
+- **Binding stop line: no perspective lever 7 at 1.5B**, whatever Stage 1 returns (amendment section 5, copied
+  verbatim into the Stage-1 prereg).
+- Allowed meanwhile: the host-only Stage-0 recount and hand-read.
 
 ## 3. Mechanism
 When the user asks and the brain answers, that lived exchange (question and own spoken reply) is kept as an **answered
@@ -41,9 +45,9 @@ only. The question is context, as when lived.
 - Contrast (the banked prerequisite for a speaker signal): the fact appears in two speaker spans, `User: My cat is called Pixel.` and
   `User: What is my cat called?\n\nAssistant: Your cat is called Pixel.`.
 - Storage: sleep-only, never in the hippocampus, so routing is untouched.
-- World filter: the user's next turn. Offline, the ledger check "reply names the user's fact" stands in (declared
-  teacher scaffold; frame-blind, so the voice scorer never selects training text). Hedges that name the key pass this
-  filter: counted and reported.
+- World filter: the user's next turn. Offline, the blind hand-read stands in (declared teacher scaffold; labels in
+  `handread_labels.json`). Only LISTENER-CORRECT exchanges enter AE-L; a second arm adds NEUTRAL-CORRECT. User-voice,
+  hedged, wrong-fact, wrong-frame and other replies are excluded.
 - **Code that must be written (none exists).** `sleep_extra` is a plain `(text, strength)` list and `sleep()` takes CE
   on the whole text (`sleep.py` L66-68). Only the guard KL has a `(prefix, reply)` form.
   1. `brain/sleep.py`: an episode item may be `((prefix, reply), strength)`; CE then runs from position
@@ -51,7 +55,7 @@ only. The question is context, as when lived.
   2. `brain.py`: `Brain(answered_replay=...)`, default OFF, keeps the exchanges in their own sleep-only list, saved
      and resumed with the home; flag-off byte-identity test.
   3. Tests: mask boundary on a multi-token label, no loss on prefix positions.
-  4. A SCAFFOLDS row (ledger filter, masking rule). `local_sleep.py` and `memory_ceiling.py` are not touched.
+  4. A SCAFFOLDS row (hand-read filter, masking rule). `local_sleep.py` and `memory_ceiling.py` are not touched.
 
 ## 4. Why it is not a killed or existing lever
 | lever | difference |
@@ -68,16 +72,20 @@ Honest overlap: storing the brain's own confirmed turn as its own is confab M2's
 here: night replay of it, told content, reply-only CE.
 
 ## 5. Stage 1: offline screen (KR seeds 319/320/321, re-sleep night 14 from the n13 store, as `voice_tag.py`)
-At most about 12 exchanges per seed. If fewer than 8 pass the filter on any seed: UNDEFINED, not run.
+Side S only; there is no reinstatement side. Floor: 8 LISTENER-CORRECT exchanges per seed, else that seed is UNDEFINED
+and not run (on any arm). Today: 6 / 1 / 4, so no seed runs on the days 1-14 store. The floor and filter are not
+relaxed; a later store needs a new blind hand-read.
 
 | arm | night-14 replay adds |
 |---|---|
 | A0 | nothing (re-sleep noise floor) |
-| AE | confirmed answered exchanges, reply-masked |
-| AE-LOO (lesion) | AE without any exchange about pixel or marguerite |
+| AE-L (primary; "AE" below) | LISTENER-CORRECT exchanges (the You/Your replies), reply-masked |
+| AE-LN (second arm) | LISTENER-CORRECT plus NEUTRAL-CORRECT, reply-masked |
+| AE-LN-M | a fixed draw from the AE-LN set, equal in count to AE-L |
+| AE-LOO (lesion) | AE-L without any exchange about pixel or marguerite |
 | SHAM | equal count and length of lived small-talk exchanges, same masking |
-| NOCON | the same replies as bare text, no question, no labels, whole-text CE |
-| ALL | every answered exchange, wrong ones included |
+| NOCON | the AE-L replies as bare text, no question, no labels, whole-text CE |
+| ALL | every answered exchange, wrong ones included (control only; never carried to Stage 2) |
 
 Measure, hippocampus off, the 67 told questions: onset (log P(You/Your) - log P(My)), P(uv|knows), knows, refusals,
 language KL against A0, self-name wrong, blind 40-row hand-read per arm. Item-clustered
@@ -92,17 +100,22 @@ bootstrap; weight lesion (consolidated-off returns the both-off rows). Bars chec
 - **UNDERPOWERED-LEAD:** 1 and 3 hold, the point estimate of 2 holds, its CI crosses 0. No claim; Stage 2 allowed once.
 - **KILLED:** AE does not beat SHAM on onset, or clause 3 fails.
 - **AE-LOO sets the wording:** left-out items <= A0 - 0.10 reads "the frame transfers"; else "item-bound".
+- **AE-L against AE-LN-M sets the second wording:** AE-L onset above AE-LN-M with CI lower bound > 0 reads "own
+  correct-frame replies"; otherwise, with AE-LN engaged against A0, SHAM and NOCON, "own replies" and no frame claim.
+  AE-LN against AE-L is reported only (counts differ).
 
-Compute: 6 sleeps x 3 seeds, AWS g5 fp16 or pool40 CPU.
+Compute: 8 sleeps x 3 seeds, AWS g5 fp16 or pool40 CPU.
 
 ## 6. Stage 2 (only after ENGAGED or UNDERPOWERED-LEAD): DEV life
-`Brain(answered_replay=True)` on K-P, seeds 319-321; an exchange is kept unless the user's next turn corrects it. Bars are the recall-voice prereg's, unchanged, plus hippocampus-off
+`Brain(answered_replay=True)` on K-P, seeds 319-321; an exchange is kept unless the user's next turn corrects it.
+Sleep-only list, as section 3. A fail or UNDEFINED closes perspective at 1.5B (stop line, section 2). Bars are the recall-voice prereg's, unchanged, plus hippocampus-off
 P(uv|knows) <= K-P - 0.10 on the 223 told rows. Six seeds only after a DEV pass.
 
 ## 7. Expected outcome, honest odds
 - Onset beats A0: about 55%; also SHAM and NOCON: about 35%.
 - Voice clause with its CI: about 15%; UNDERPOWERED-LEAD another 20%.
 - Transfer to left-out items: 10-15%. DEV life pass: about 10%.
-- Failure modes: user-voice and hedged replies written into the weights (9 of 38 start My/I), language drift (M1
-  s321), refusals, too few exchanges.
-- A fail is a verdict on this replay form at 1.5B with about 12 exchanges only.
+- These odds predate the hand-read. The likeliest outcome now is UNDEFINED: too few LISTENER-CORRECT exchanges
+  (6 / 1 / 4 against a floor of 8).
+- Other failure modes: language drift (M1 s321), refusals.
+- A fail is a verdict on this replay form at 1.5B with a handful of exchanges only.

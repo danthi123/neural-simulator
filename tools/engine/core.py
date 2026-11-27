@@ -44,7 +44,7 @@ SHIP_NEED = ("tools/memcap.sh", "tools/mem_ok.sh")    # a memcapped node refuses
 NODES_JSON = "tools/engine/nodes.json"              # optional node inventory (ram_gb read); else `free -g` on the node
 KIND_IMPORTS = ("torch", "rwkv")                    # the node kind check: its python must import these (cached per run)
 SHIP_TOOLS = ("tools/memcap.sh", "tools/mem_ok.sh", "tools/engine/__init__.py", "tools/engine/bundle.py",
-              "tools/engine/smoke_job.py")
+              "tools/engine/smoke_job.py", "tools/engine/peak_rss.py")
 
 
 class StopAfterLaunch(Exception):
@@ -391,6 +391,8 @@ class Engine:
         run = f"bash -c {shlex.quote(cmd)}"
         if phase == "smoke":                         # GNU time; ENGINE_TIME is a test shim on the local backend only
             tv = '"${ENGINE_TIME:-/usr/bin/time}"' if node.local else "/usr/bin/time"
+            if node.kind == "w3090":                 # no GNU time on the workstation: the same -v -o interface, in python
+                tv = '"$PY" -m tools.engine.peak_rss'
             run = f"{tv} -v -o {node.home}/{jd}/time.txt {run}"
         if node.memcap:
             run = f"bash tools/memcap.sh {self.mem(spec, phase, job['seed'])} -- {run}"
@@ -399,12 +401,13 @@ class Engine:
         guard = "" if node.local else f'[ "$(hostname)" != {shlex.quote(socket.gethostname())} ] || exit 96\n'
         model = "${BRAIN_MODEL_DIR:-$HOME/brain-lane/models}" if w else "$HOME/brain-lane/models"
         hostflag = {"ssh": " POOL_NODE=1", "w3090": " BRAIN_ALLOW_W3090=1"}.get(node.kind, " ENGINE_LOCAL_TEST=1")
+        timev_env = '; export TIMEV="$PY -m tools.engine.peak_rss"' if w else ""   # the spec's own step-0 `time -v` (w3090 only)
         return f"""{guard}[ -f {node.home}/{jd}/pid ] && kill -0 $(cat {node.home}/{jd}/pid) 2>/dev/null && exit 0
 echo $$ > {node.home}/{jd}/pid
 cd {node.home}/{repo_dir} || exit 97
 export COMMIT=$(cat COMMIT) HOST=$(hostname) OMP_NUM_THREADS=$(nproc) BRAIN_MODEL_DIR={model}{" BRAIN_DEVICE=cuda" if w else ""}{hostflag}
 export PYTHONPATH=$PWD:$HOME/brain-lane/pylib
-{py}; export PY
+{py}; export PY{timev_env}
 {run} > {node.home}/{jd}/log 2>&1
 rc=$?; [ $rc = 0 ] && [ ! -s {out} ] && rc=98
 echo $rc > {node.home}/{jd}/rc
