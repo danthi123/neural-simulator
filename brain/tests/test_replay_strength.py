@@ -184,15 +184,19 @@ def test_switch_draws_no_rng(tmp_path, night):
     assert torch.equal(ts, torch.get_rng_state()) and rs == random.getstate()
 
 
+PRE_SWITCH_SHA = "4389b39ac6e4a9355c139096fb55f0eb18a72ecb"   # the last commit before 6000f438c added the switch to brain.py
+
+
 def test_off_equals_the_head_brain(tmp_path, night):
-    """With the switches absent, the eps handed to replay and the saved files equal the pre-switch HEAD brain.py."""
+    """With the switches absent, the eps handed to replay and the saved files equal the PRE-SWITCH brain.py, pinned to its
+    commit (review 11-27, NB2: comparing against HEAD skipped once the switch was committed). A later default-changing
+    edit of brain.py would fail this too; that is a real off-path change and must be looked at, not skipped."""
     try:
-        src = subprocess.run(["git", "-C", ROOT, "show", "HEAD:brain/brain.py"], capture_output=True, text=True,
-                             check=True).stdout
+        src = subprocess.run(["git", "-C", ROOT, "show", f"{PRE_SWITCH_SHA}:brain/brain.py"], capture_output=True,
+                             text=True, check=True).stdout
     except Exception:
-        pytest.skip("HEAD not available")
-    if "replay_strengthen" in src:
-        pytest.skip("HEAD already carries the switch")
+        pytest.skip(f"pre-switch commit {PRE_SWITCH_SHA[:9]} not available (shallow clone?)")
+    assert "replay_strengthen" not in src, "the pinned pre-switch brain.py must not carry the switch"
     path = str(tmp_path / "_ref_brain_rs.py")
     open(path, "w").write(src)
     try:

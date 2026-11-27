@@ -10,11 +10,14 @@ Status: design only, 11-27, revised after a record check. **Blocked by the stop 
   KL; K-P replaces them with 64 of the cortex's own samples a night (whole-text KL; `prior_u` masks to frame turns,
   `keep_mask.py`). The replay CE gets only `User: <telling>`; questions are not stored (`_is_telling`). True gap: no
   told fact is ever a CE target in an own turn after a question.
-- **Stage-0 peek, trunk only** (host only, first-token count, `_scratch/stage2/read/lifeKP_s319-321.json`, kinds
-  sameday/remention, self-name excluded). The earlier 72 / 47 counted prunedA lines twice and mis-summed. Trunk: 63
-  answered questions (21 per life), 38 name the ledger key: 10 start You/Your, 19 terse or other ("Pixel."), 9 My/I
-  (user voice plus hedges, not split). Days 1-14: about 12 key-naming replies per seed before any confirmation filter,
-  hedges included. Not registered; redo with `own2` and a blind hand-read.
+- **Stage-0 recount, trunk only** (host only, `brain/experiments/results/2026-11-27-voice-stage0/recount.{py,md}`,
+  `_scratch/stage2/read/lifeKP_s319-321.json`, kinds sameday/remention, self-name items excluded, first-token class).
+  Days 1-14: 54 answered questions (18 per seed); 36 name the ledger key (319: 16, 320: 9, 321: 11): 10 start You/Your,
+  19 terse or other ("Pixel."), 7 My/I (user voice plus hedges, not split); 3 of the 36 are hedged. All 36 pass a
+  frame-blind "reply names the fact" filter (hedges included). Days 1-15 gives 57 / 38 (10 / 19 / 9), matching the earlier
+  peek's 38 and split; its 63 answered total is not reproduced. **Stage-1 floor (>= 8 confirmed per seed): met on all
+  three seeds (16 / 9 / 11), seed 320 by 1 only; the filter is frame-blind, so a blind hand-read may lower it.** Not
+  registered; the hand-read still needs `own2`.
 
 ## 2. Stop rule: this is a perspective lever, so it waits
 HANDOFF L18, recall-voice prereg section 5: D2 lever count 5, no further perspective lever before a ROUTING method.

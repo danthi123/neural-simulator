@@ -1,0 +1,65 @@
+{
+ "root": "engine_smoke",
+ "commit": "61d5816d6ecfc384a6a664a672b680d31a03b034",
+ "tree": "25013f4c7517c91b62b875cd14db27e447b26277",
+ "current": null,
+ "chain": [
+  "engine_smoke"
+ ],
+ "variants": {
+  "Does the engine ship, launch, reattach, pull and resume on every pool node?": [
+   "engine_smoke"
+  ]
+ },
+ "specs": {
+  "engine_smoke": {
+   "phase": "done",
+   "jobs": {
+    "six/s1": {
+     "key": "six/s1",
+     "seed": 1,
+     "params": "--imports torch,rwkv --sleep 20",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool40",
+     "jd": "brain-lane/engine/jobs/engine_smoke-25013f4c/six_s1_a0",
+     "started": "2026-11-27 19:54Z",
+     "t0": 1795809287.9717736,
+     "finished": "2026-11-27 19:55Z"
+    }
+   },
+   "pick": {
+    "params": "--imports torch,rwkv --sleep 20"
+   },
+   "verdict": {
+    "verdict": "SMOKE-OK",
+    "per_seed": {
+     "1": {
+      "imports": true,
+      "once": true,
+      "commit": true,
+      "host": "node-mxl1462drl",
+      "imports_detail": {
+       "torch": {
+        "ok": true,
+        "version": "2.11.0+cpu"
+       },
+       "rwkv": {
+        "ok": true,
+        "version": "?"
+       }
+      },
+      "torch": {
+       "threads": 6,
+       "cuda": false
+      },
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/run-r24c25539153d43e184062b0332428b48.scope",
+      "python": "3.10.12"
+     }
+    },
+    "summary": "1 node jobs; all imported, once, at this commit"
+   }
+  }
+ },
+ "finished": "SMOKE-OK"
+}

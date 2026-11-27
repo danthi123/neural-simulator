@@ -1,0 +1,27 @@
+{
+ "seed": 1,
+ "host": "node-mxl1462drl",
+ "host_env": "node-mxl1462drl",
+ "commit": "61d5816d6ecfc384a6a664a672b680d31a03b034",
+ "device": "cpu",
+ "precision": "n/a (no model)",
+ "python": "3.10.12",
+ "imports": {
+  "torch": {
+   "ok": true,
+   "version": "2.11.0+cpu"
+  },
+  "rwkv": {
+   "ok": true,
+   "version": "?"
+  }
+ },
+ "torch": {
+  "threads": 6,
+  "cuda": false
+ },
+ "count": 1,
+ "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/run-r24c25539153d43e184062b0332428b48.scope",
+ "model_dir": "/home/node/brain-lane/models",
+ "wall_s": 21.6
+}

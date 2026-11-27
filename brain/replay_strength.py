@@ -67,12 +67,13 @@ def homeostatic_scale(episodes, eff_fn, setpoint: float, now: float, lo: float =
     """One factor g over every non-permanent strength so their mean effective strength moves to setpoint (clamped)."""
     live = [e for e in episodes if not e.permanent]
     if not live:
-        return {"g": 1.0, "mean_eff_before": None, "n": 0}
+        return {"g": 1.0, "g_raw": None, "clamped": False, "mean_eff_before": None, "n": 0}
     m = sum(eff_fn(e, now) for e in live) / len(live)
-    g = 1.0 if m <= 0 else min(max(setpoint / m, lo), hi)
+    raw = None if m <= 0 else setpoint / m
+    g = 1.0 if raw is None else min(max(raw, lo), hi)
     for e in live:
         e.strength *= g
-    return {"g": g, "mean_eff_before": m, "n": len(live)}
+    return {"g": g, "g_raw": raw, "clamped": raw is not None and g != raw, "mean_eff_before": m, "n": len(live)}
 
 
 def night_update(episodes, weights, n_generic: int, steps: int, seed: int, now: float, eff_fn, boost=None,

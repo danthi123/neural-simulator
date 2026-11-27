@@ -1,0 +1,39 @@
+{
+ "verdict": "SMOKE-OK",
+ "per_seed": {
+  "1": {
+   "imports": true,
+   "once": true,
+   "commit": true,
+   "host": "node-mxl1462drl",
+   "imports_detail": {
+    "torch": {
+     "ok": true,
+     "version": "2.11.0+cpu"
+    },
+    "rwkv": {
+     "ok": true,
+     "version": "?"
+    }
+   },
+   "torch": {
+    "threads": 6,
+    "cuda": false
+   },
+   "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/run-r24c25539153d43e184062b0332428b48.scope",
+   "python": "3.10.12"
+  }
+ },
+ "summary": "1 node jobs; all imported, once, at this commit",
+ "spec": "engine_smoke",
+ "question": "Does the engine ship, launch, reattach, pull and resume on every pool node?",
+ "prereg": "none: infrastructure smoke, no measurement",
+ "pick": {
+  "params": "--imports torch,rwkv --sleep 20"
+ },
+ "commit": "61d5816d6ecfc384a6a664a672b680d31a03b034",
+ "jobs": {
+  "six/s1": "done"
+ },
+ "when": "2026-11-27 19:55Z"
+}
