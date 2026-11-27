@@ -1,3 +1,5 @@
 # Engine digest (one line per finished spec; written by tools/engine, no AI)
 
 - 2026-11-27 19:55Z | question 'Does the engine ship, launch, reattach, pull and resume on every pool node?' | variant 1 of max 1 (engine_smoke) | SMOKE-OK | 1 node jobs; all imported, once, at this commit | commit 61d5816d | next: none
+- 2026-11-27 22:10Z | question 'Does the local delta rule with plasticity confined off the keep-bank subspace pass the v2 rule (0.1B then 0.4B)?' | variant 1 of max 2 (local_rule_v2_01b) | NEGATIVE-DEV | no dev candidate met the pick rule; six seeds not run | commit 34325395 | next: local_rule_v2_04b
+- 2026-11-27 22:38Z | question 'Does the local delta rule with plasticity confined off the keep-bank subspace pass the v2 rule (0.1B then 0.4B)?' | variant 2 of max 2 (local_rule_v2_04b) | NEGATIVE-DEV | no dev candidate met the pick rule; six seeds not run | commit 34325395 | next: none

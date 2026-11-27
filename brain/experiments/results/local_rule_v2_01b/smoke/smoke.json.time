@@ -1,0 +1,23 @@
+	Command being timed: "bash -c D=$HOME/brain-lane/engine/data/local_rule_v2_01b/343253959290/smoke; mkdir -p $D && "$PY" -u -m brain.experiments.local_rule_v2 run --model $BRAIN_MODEL_DIR/rwkv7-g1d-0.1b-20260129-ctx8192.pth --seed 7 --device cpu --arms gradient --steps 24 --tag smoke --out-dir $D > $D/run.log 2>&1 && "$PY" -m tools.engine.bundle $D /home/node/brain-lane/engine/jobs/local_rule_v2_01b-1a001e4e/smoke_smoke_a0/out.json --glob '*.json'"
+	User time (seconds): 230.35
+	System time (seconds): 1.45
+	Percent of CPU this job got: 544%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:42.53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3036108
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1995
+	Minor (reclaiming a frame) page faults: 844650
+	Voluntary context switches: 2726
+	Involuntary context switches: 397
+	Swaps: 0
+	File system inputs: 832264
+	File system outputs: 968
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,52 @@
+{
+ "verdict": "NEGATIVE-DEV",
+ "summary": "no dev candidate met the pick rule; six seeds not run",
+ "spec": "local_rule_v2_01b",
+ "question": "Does the local delta rule with plasticity confined off the keep-bank subspace pass the v2 rule (0.1B then 0.4B)?",
+ "prereg": "brain/research/2026-11-27-local-rule-v2-prereg.md",
+ "pick": null,
+ "smoke": {
+  "peak_rss_gb": 2.895458221435547,
+  "wall_s": 42.53,
+  "memcap_gb": 5
+ },
+ "commit": "34325395929024416750c55bbd785000e59fe0b4",
+ "jobs": {
+  "smoke/smoke": "done",
+  "dev/ref": "done",
+  "dev/lr0.1_tau0.9": "done",
+  "dev/lr0.1_tau0.99": "done",
+  "dev/lr0.1_tau0.999": "done",
+  "dev/lr0.3_tau0.9": "done",
+  "dev/lr0.3_tau0.99": "done",
+  "dev/lr0.3_tau0.999": "done",
+  "dev/lr1.0_tau0.9": "done",
+  "dev/lr1.0_tau0.99": "done",
+  "dev/lr1.0_tau0.999": "done"
+ },
+ "when": "2026-11-27 22:10Z",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "all 9 dev cells measured",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every dev cell has finite recall and drift",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "real-node smoke succeeded (rc 0, engine log)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "engine_local_rule_v2.log: smoke rc=0"
+  }
+ ],
+ "precondition_status": "NO-GO"
+}
