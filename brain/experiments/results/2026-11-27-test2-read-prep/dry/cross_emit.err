@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/dant123/Projects/sim/_scratch/wt-mixday/brain/eval/life_read.py", line 1356, in <module>
+    main()
+  File "/home/dant123/Projects/sim/_scratch/wt-mixday/brain/eval/life_read.py", line 1321, in main
+    out = emit_cross([json.load(open(p)) for p in a.arm_lives], [json.load(open(p)) for p in a.b_lives], a.emit_cross,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dant123/Projects/sim/_scratch/wt-mixday/brain/eval/life_read.py", line 1062, in emit_cross
+    out = build_cross(arm_lives, b_lives, week, lived_context, rng_seed, id_prefix)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dant123/Projects/sim/_scratch/wt-mixday/brain/eval/life_read.py", line 1018, in build_cross
+    raise ValueError(f"canary {ctype} has no site on any unit (at most {CROSS_MAX_CANARIES_PER_UNIT} per unit)")
+ValueError: canary experience has no site on any unit (at most 2 per unit)
+  0.03s user 0.01s system 98% cpu 0.039 total

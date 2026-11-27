@@ -1,0 +1,974 @@
+{
+ "mode": "cross",
+ "spec": "read-spec-2026-11-21",
+ "spec_sha256": "6cf3690a68e13f05fadcf42df76141b5e2f1d598985ec6065f8a71cdf30ae05a",
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "week": 3,
+ "lived_context": "all",
+ "user_turns_match": {
+  "319": true,
+  "320": true,
+  "321": true
+ },
+ "readers": {
+  "pairs1": {
+   "rows": [
+    {
+     "group": 0,
+     "ids": [
+      "C0",
+      "C16"
+     ],
+     "what": "cross",
+     "seed": 319,
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "arm",
+      "B"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 1,
+     "ids": [
+      "C18",
+      "C28"
+     ],
+     "what": "decoy",
+     "seed": 319,
+     "decoy": "keyword-stuffer",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "both-off",
+      "decoy:keyword-stuffer"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 2,
+     "ids": [
+      "C5",
+      "C10"
+     ],
+     "what": "dup",
+     "seed": 319,
+     "dup_of": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "right",
+      "left"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 3,
+     "ids": [
+      "C13",
+      "C23"
+     ],
+     "what": "cross",
+     "seed": 320,
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "B",
+      "arm"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 4,
+     "ids": [
+      "C15",
+      "C21"
+     ],
+     "what": "decoy",
+     "seed": 320,
+     "decoy": "generic",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "both-off",
+      "decoy:generic"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 5,
+     "ids": [
+      "C14",
+      "C25"
+     ],
+     "what": "dup",
+     "seed": 320,
+     "dup_of": "B",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "left",
+      "right"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 6,
+     "ids": [
+      "C7",
+      "C11"
+     ],
+     "what": "cross",
+     "seed": 321,
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "B",
+      "arm"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 7,
+     "ids": [
+      "C1",
+      "C22"
+     ],
+     "what": "decoy",
+     "seed": 321,
+     "decoy": "refuse",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "both-off",
+      "decoy:refuse"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 8,
+     "ids": [
+      "C2",
+      "C27"
+     ],
+     "what": "dup",
+     "seed": 321,
+     "dup_of": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "right",
+      "left"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 9,
+     "ids": [
+      "C4",
+      "C6"
+     ],
+     "what": "canary",
+     "seed": 319,
+     "canary": "pet-named",
+     "source": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "source",
+      "canary:pet-named"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 10,
+     "ids": [
+      "C19",
+      "C26"
+     ],
+     "what": "canary",
+     "seed": 320,
+     "canary": "invented",
+     "source": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "source",
+      "canary:invented"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 11,
+     "ids": [
+      "C3",
+      "C9"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "experience",
+     "source": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "canary:experience",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 12,
+     "ids": [
+      "C12",
+      "C24"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "wrong-episode",
+     "source": "B",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "canary:wrong-episode",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 13,
+     "ids": [
+      "C20",
+      "C29"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "perspective",
+     "source": "B",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "source",
+      "canary:perspective"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 14,
+     "ids": [
+      "C8",
+      "C17"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "collapse",
+     "source": "arm",
+     "choices": [
+      "A",
+      "A"
+     ],
+     "winners": [
+      "source",
+      "canary:collapse"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    }
+   ],
+   "per_seed": {
+    "319": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "arm",
+      "B"
+     ],
+     "decoy": "keyword-stuffer",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "arm",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "A",
+      "A"
+     ]
+    },
+    "320": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "B",
+      "arm"
+     ],
+     "decoy": "generic",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "B",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "A",
+      "A"
+     ]
+    },
+    "321": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "B",
+      "arm"
+     ],
+     "decoy": "refuse",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "arm",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "A",
+      "A"
+     ]
+    }
+   },
+   "n_groups": 15,
+   "n_read": 15,
+   "complete": true,
+   "read_counts": {
+    "valid": 30,
+    "bad_choice": 0,
+    "duplicate_id": 0,
+    "missing": 0,
+    "extra": 0
+   },
+   "undefined_seeds": [],
+   "inconsistent": 15,
+   "consistency_rate": 0.0,
+   "position_bias_rate": 1.0,
+   "cross_consistency": "0/3",
+   "decoys_ok": "3/3",
+   "decoys_strict": "0/3 (need 2)",
+   "position_bias_nondup": 1.0,
+   "position_bias_cap": 0.333,
+   "discriminates": false,
+   "dups_tie": "3/3",
+   "dup_choices": {
+    "319": [
+     "A",
+     "A"
+    ],
+    "320": [
+     "A",
+     "A"
+    ],
+    "321": [
+     "A",
+     "A"
+    ]
+   },
+   "canaries": [
+    {
+     "type": "pet-named",
+     "seed": 319,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "invented",
+     "seed": 320,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "experience",
+     "seed": 321,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "wrong-episode",
+     "seed": 321,
+     "source_side": "B",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "perspective",
+     "seed": 321,
+     "source_side": "B",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "collapse",
+     "seed": 321,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    }
+   ],
+   "canary_copy_not_preferred": "6/6 (need 5 of 6 planted)",
+   "canary_source_preferred": "0/6",
+   "valid": false,
+   "arm_preferred": 0,
+   "b_preferred": 0,
+   "ties": 3,
+   "arm_or_tie": 3,
+   "need": 2,
+   "n_seeds": 3,
+   "g9_pass": null
+  },
+  "pairs2": {
+   "rows": [
+    {
+     "group": 0,
+     "ids": [
+      "C0",
+      "C16"
+     ],
+     "what": "cross",
+     "seed": 319,
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "B",
+      "arm"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 1,
+     "ids": [
+      "C18",
+      "C28"
+     ],
+     "what": "decoy",
+     "seed": 319,
+     "decoy": "keyword-stuffer",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "decoy:keyword-stuffer",
+      "both-off"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 2,
+     "ids": [
+      "C5",
+      "C10"
+     ],
+     "what": "dup",
+     "seed": 319,
+     "dup_of": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "left",
+      "right"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 3,
+     "ids": [
+      "C13",
+      "C23"
+     ],
+     "what": "cross",
+     "seed": 320,
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "arm",
+      "B"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 4,
+     "ids": [
+      "C15",
+      "C21"
+     ],
+     "what": "decoy",
+     "seed": 320,
+     "decoy": "generic",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "decoy:generic",
+      "both-off"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 5,
+     "ids": [
+      "C14",
+      "C25"
+     ],
+     "what": "dup",
+     "seed": 320,
+     "dup_of": "B",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "right",
+      "left"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 6,
+     "ids": [
+      "C7",
+      "C11"
+     ],
+     "what": "cross",
+     "seed": 321,
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "arm",
+      "B"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 7,
+     "ids": [
+      "C1",
+      "C22"
+     ],
+     "what": "decoy",
+     "seed": 321,
+     "decoy": "refuse",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "decoy:refuse",
+      "both-off"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 8,
+     "ids": [
+      "C2",
+      "C27"
+     ],
+     "what": "dup",
+     "seed": 321,
+     "dup_of": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "left",
+      "right"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 9,
+     "ids": [
+      "C4",
+      "C6"
+     ],
+     "what": "canary",
+     "seed": 319,
+     "canary": "pet-named",
+     "source": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "canary:pet-named",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 10,
+     "ids": [
+      "C19",
+      "C26"
+     ],
+     "what": "canary",
+     "seed": 320,
+     "canary": "invented",
+     "source": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "canary:invented",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 11,
+     "ids": [
+      "C3",
+      "C9"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "experience",
+     "source": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "source",
+      "canary:experience"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 12,
+     "ids": [
+      "C12",
+      "C24"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "wrong-episode",
+     "source": "B",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "source",
+      "canary:wrong-episode"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 13,
+     "ids": [
+      "C20",
+      "C29"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "perspective",
+     "source": "B",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "canary:perspective",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    },
+    {
+     "group": 14,
+     "ids": [
+      "C8",
+      "C17"
+     ],
+     "what": "canary",
+     "seed": 321,
+     "canary": "collapse",
+     "source": "arm",
+     "choices": [
+      "B",
+      "B"
+     ],
+     "winners": [
+      "canary:collapse",
+      "source"
+     ],
+     "consistent": false,
+     "same_position": true,
+     "winner": "tie"
+    }
+   ],
+   "per_seed": {
+    "319": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "B",
+      "arm"
+     ],
+     "decoy": "keyword-stuffer",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "arm",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "B",
+      "B"
+     ]
+    },
+    "320": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "arm",
+      "B"
+     ],
+     "decoy": "generic",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "B",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "B",
+      "B"
+     ]
+    },
+    "321": {
+     "winner": "tie",
+     "user_turns_match": true,
+     "consistent": false,
+     "winners_by_order": [
+      "arm",
+      "B"
+     ],
+     "decoy": "refuse",
+     "decoy_winner": "tie",
+     "decoy_ok": true,
+     "dup_of": "arm",
+     "dup_winner": "tie",
+     "dup_choices": [
+      "B",
+      "B"
+     ]
+    }
+   },
+   "n_groups": 15,
+   "n_read": 15,
+   "complete": true,
+   "read_counts": {
+    "valid": 30,
+    "bad_choice": 0,
+    "duplicate_id": 0,
+    "missing": 0,
+    "extra": 0
+   },
+   "undefined_seeds": [],
+   "inconsistent": 15,
+   "consistency_rate": 0.0,
+   "position_bias_rate": 1.0,
+   "cross_consistency": "0/3",
+   "decoys_ok": "3/3",
+   "decoys_strict": "0/3 (need 2)",
+   "position_bias_nondup": 1.0,
+   "position_bias_cap": 0.333,
+   "discriminates": false,
+   "dups_tie": "3/3",
+   "dup_choices": {
+    "319": [
+     "B",
+     "B"
+    ],
+    "320": [
+     "B",
+     "B"
+    ],
+    "321": [
+     "B",
+     "B"
+    ]
+   },
+   "canaries": [
+    {
+     "type": "pet-named",
+     "seed": 319,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "invented",
+     "seed": 320,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "experience",
+     "seed": 321,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "wrong-episode",
+     "seed": 321,
+     "source_side": "B",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "perspective",
+     "seed": 321,
+     "source_side": "B",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    },
+    {
+     "type": "collapse",
+     "seed": 321,
+     "source_side": "arm",
+     "winner": "tie",
+     "source_preferred": false,
+     "copy_not_preferred": true
+    }
+   ],
+   "canary_copy_not_preferred": "6/6 (need 5 of 6 planted)",
+   "canary_source_preferred": "0/6",
+   "valid": false,
+   "arm_preferred": 0,
+   "b_preferred": 0,
+   "ties": 3,
+   "arm_or_tie": 3,
+   "need": 2,
+   "n_seeds": 3,
+   "g9_pass": null
+  }
+ },
+ "n_readers": 2,
+ "readers_combined": {
+  "319": "tie",
+  "320": "tie",
+  "321": "tie"
+ },
+ "g9": "UNDEFINED",
+ "g9_bar": "arm preferred or tie on >= 4/6 seeds (scaled ceil(4n/6)), per reader; two readers, both valid (else UNDEFINED)",
+ "pair_kappa": 0.0
+}

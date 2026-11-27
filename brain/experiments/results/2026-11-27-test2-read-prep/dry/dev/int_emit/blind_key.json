@@ -1,0 +1,3008 @@
+{
+ "U0": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f18:know"
+ },
+ "U1": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never3:forced"
+ },
+ "U2": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U3": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f18:know"
+ },
+ "U4": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never3:know"
+ },
+ "U5": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f15:forced"
+ },
+ "U6": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U7": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never3:know"
+ },
+ "U8": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U9": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U10": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U11": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U12": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U13": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U14": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f10:know"
+ },
+ "U15": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "d05:forced"
+ },
+ "U16": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never3:forced"
+ },
+ "U17": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U18": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U19": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never4:know"
+ },
+ "U20": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never2:know"
+ },
+ "U21": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never1:know"
+ },
+ "U22": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f06:forced"
+ },
+ "U23": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never4:forced"
+ },
+ "U24": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never1:forced"
+ },
+ "U25": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U26": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f07:know"
+ },
+ "U27": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U28": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f10:forced"
+ },
+ "U29": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U30": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f10:forced"
+ },
+ "U31": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U32": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U33": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e02:forced"
+ },
+ "U34": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f12:know"
+ },
+ "U35": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f10:know"
+ },
+ "U36": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f07:know"
+ },
+ "U37": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e08:know"
+ },
+ "U38": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U39": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U40": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U41": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e10:know"
+ },
+ "U42": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f02:know"
+ },
+ "U43": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f10:forced"
+ },
+ "U44": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f17:forced"
+ },
+ "U45": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "d05:know"
+ },
+ "U46": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never4:know"
+ },
+ "U47": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab01:know"
+ },
+ "U48": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f02:forced"
+ },
+ "U49": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never1:know"
+ },
+ "U50": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U51": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U52": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U53": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never1:know"
+ },
+ "U54": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U55": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f10:forced"
+ },
+ "U56": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never2:know"
+ },
+ "U57": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "d03:know"
+ },
+ "U58": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U59": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f04:forced"
+ },
+ "U60": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f10:know"
+ },
+ "U61": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e08:know"
+ },
+ "U62": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f07:know"
+ },
+ "U63": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e01:know"
+ },
+ "U64": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U65": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab01:know"
+ },
+ "U66": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U67": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f13:forced"
+ },
+ "U68": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never3:forced"
+ },
+ "U69": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f17:forced"
+ },
+ "U70": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f11:know"
+ },
+ "U71": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e01:know"
+ },
+ "U72": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab07:know"
+ },
+ "U73": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U74": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f04:know"
+ },
+ "U75": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f18:know"
+ },
+ "U76": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U77": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U78": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U79": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never3:know"
+ },
+ "U80": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "d05:forced"
+ },
+ "U81": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f10:know"
+ },
+ "U82": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U83": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab01:forced"
+ },
+ "U84": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f17:forced"
+ },
+ "U85": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e01:forced"
+ },
+ "U86": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U87": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U88": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f18:forced"
+ },
+ "U89": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab06:forced"
+ },
+ "U90": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U91": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U92": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab06:forced"
+ },
+ "U93": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab06:know"
+ },
+ "U94": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab05:forced"
+ },
+ "U95": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "e09:forced"
+ },
+ "U96": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U97": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f13:know"
+ },
+ "U98": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab06:know"
+ },
+ "U99": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never1:forced"
+ },
+ "U100": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f04:know"
+ },
+ "U101": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e03:forced"
+ },
+ "U102": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U103": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U104": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab01:forced"
+ },
+ "U105": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never1:know"
+ },
+ "U106": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab05:know"
+ },
+ "U107": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never1:forced"
+ },
+ "U108": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never2:forced"
+ },
+ "U109": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U110": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f17:know"
+ },
+ "U111": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e05:forced"
+ },
+ "U112": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U113": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f12:know"
+ },
+ "U114": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U115": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f02:know"
+ },
+ "U116": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never4:forced"
+ },
+ "U117": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U118": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f15:forced"
+ },
+ "U119": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f14:forced"
+ },
+ "U120": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e10:forced"
+ },
+ "U121": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U122": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f17:know"
+ },
+ "U123": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U124": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e08:know"
+ },
+ "U125": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f10:forced"
+ },
+ "U126": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U127": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f16:know"
+ },
+ "U128": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e05:forced"
+ },
+ "U129": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never4:know"
+ },
+ "U130": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "e04:know"
+ },
+ "U131": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f11:know"
+ },
+ "U132": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U133": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f10:forced"
+ },
+ "U134": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab06:forced"
+ },
+ "U135": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U136": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e01:forced"
+ },
+ "U137": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f17:know"
+ },
+ "U138": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e03:forced"
+ },
+ "U139": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e08:forced"
+ },
+ "U140": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U141": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab07:know"
+ },
+ "U142": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never2:know"
+ },
+ "U143": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U144": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f13:know"
+ },
+ "U145": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U146": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "e09:forced"
+ },
+ "U147": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab06:forced"
+ },
+ "U148": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f18:forced"
+ },
+ "U149": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f14:forced"
+ },
+ "U150": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab01:know"
+ },
+ "U151": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f02:forced"
+ },
+ "U152": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never4:forced"
+ },
+ "U153": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f10:know"
+ },
+ "U154": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U155": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U156": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never1:know"
+ },
+ "U157": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U158": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f01:forced"
+ },
+ "U159": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f18:know"
+ },
+ "U160": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U161": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U162": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f06:know"
+ },
+ "U163": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U164": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never3:forced"
+ },
+ "U165": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U166": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never4:know"
+ },
+ "U167": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U168": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U169": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f14:know"
+ },
+ "U170": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f15:forced"
+ },
+ "U171": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U172": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U173": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U174": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f07:forced"
+ },
+ "U175": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "e04:know"
+ },
+ "U176": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U177": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f04:forced"
+ },
+ "U178": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "d03:forced"
+ },
+ "U179": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f04:forced"
+ },
+ "U180": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U181": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e10:forced"
+ },
+ "U182": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f15:know"
+ },
+ "U183": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U184": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U185": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never1:forced"
+ },
+ "U186": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never3:know"
+ },
+ "U187": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f15:know"
+ },
+ "U188": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "d04:know"
+ },
+ "U189": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U190": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "d04:know"
+ },
+ "U191": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never3:know"
+ },
+ "U192": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab10:know"
+ },
+ "U193": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U194": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U195": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U196": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e01:forced"
+ },
+ "U197": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never2:forced"
+ },
+ "U198": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U199": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U200": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U201": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab07:forced"
+ },
+ "U202": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f13:forced"
+ },
+ "U203": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U204": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never2:know"
+ },
+ "U205": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U206": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f15:forced"
+ },
+ "U207": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never2:forced"
+ },
+ "U208": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f01:know"
+ },
+ "U209": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never1:know"
+ },
+ "U210": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f18:forced"
+ },
+ "U211": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U212": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never3:know"
+ },
+ "U213": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f02:know"
+ },
+ "U214": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U215": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U216": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U217": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U218": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U219": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U220": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U221": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U222": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U223": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f18:forced"
+ },
+ "U224": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f13:forced"
+ },
+ "U225": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U226": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never3:forced"
+ },
+ "U227": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U228": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f15:know"
+ },
+ "U229": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U230": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U231": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f17:forced"
+ },
+ "U232": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f17:forced"
+ },
+ "U233": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U234": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never2:know"
+ },
+ "U235": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U236": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e01:know"
+ },
+ "U237": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U238": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U239": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never4:know"
+ },
+ "U240": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "e04:know"
+ },
+ "U241": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never2:know"
+ },
+ "U242": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U243": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U244": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "e09:know"
+ },
+ "U245": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U246": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never3:know"
+ },
+ "U247": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U248": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never2:know"
+ },
+ "U249": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never1:know"
+ },
+ "U250": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e01:forced"
+ },
+ "U251": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f18:know"
+ },
+ "U252": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e01:forced"
+ },
+ "U253": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U254": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U255": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U256": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab07:know"
+ },
+ "U257": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f10:know"
+ },
+ "U258": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab07:forced"
+ },
+ "U259": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f10:forced"
+ },
+ "U260": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e10:know"
+ },
+ "U261": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U262": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U263": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f10:forced"
+ },
+ "U264": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never4:forced"
+ },
+ "U265": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never4:know"
+ },
+ "U266": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U267": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f15:forced"
+ },
+ "U268": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U269": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "e04:forced"
+ },
+ "U270": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab05:forced"
+ },
+ "U271": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f15:know"
+ },
+ "U272": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f15:forced"
+ },
+ "U273": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U274": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U275": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never1:forced"
+ },
+ "U276": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e02:know"
+ },
+ "U277": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U278": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never2:forced"
+ },
+ "U279": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e05:forced"
+ },
+ "U280": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never4:forced"
+ },
+ "U281": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U282": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U283": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e05:know"
+ },
+ "U284": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never3:forced"
+ },
+ "U285": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab10:forced"
+ },
+ "U286": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e05:know"
+ },
+ "U287": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e08:forced"
+ },
+ "U288": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never4:know"
+ },
+ "U289": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f07:forced"
+ },
+ "U290": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f04:know"
+ },
+ "U291": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f18:know"
+ },
+ "U292": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U293": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab05:know"
+ },
+ "U294": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab06:know"
+ },
+ "U295": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U296": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "e09:know"
+ },
+ "U297": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U298": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U299": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never4:forced"
+ },
+ "U300": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U301": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U302": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U303": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f10:know"
+ },
+ "U304": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f18:forced"
+ },
+ "U305": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f10:forced"
+ },
+ "U306": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f17:forced"
+ },
+ "U307": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab06:forced"
+ },
+ "U308": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U309": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f18:forced"
+ },
+ "U310": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never1:know"
+ },
+ "U311": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f15:know"
+ },
+ "U312": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f14:know"
+ },
+ "U313": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f15:know"
+ },
+ "U314": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab05:know"
+ },
+ "U315": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f11:forced"
+ },
+ "U316": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e01:know"
+ },
+ "U317": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U318": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f10:forced"
+ },
+ "U319": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "d03:forced"
+ },
+ "U320": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U321": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab05:forced"
+ },
+ "U322": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "d03:know"
+ },
+ "U323": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U324": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f11:forced"
+ },
+ "U325": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never2:forced"
+ },
+ "U326": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f14:forced"
+ },
+ "U327": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f10:know"
+ },
+ "U328": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f18:forced"
+ },
+ "U329": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U330": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f04:forced"
+ },
+ "U331": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f07:forced"
+ },
+ "U332": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e02:forced"
+ },
+ "U333": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "d03:forced"
+ },
+ "U334": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U335": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f18:know"
+ },
+ "U336": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U337": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab10:forced"
+ },
+ "U338": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "e09:forced"
+ },
+ "U339": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U340": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f17:know"
+ },
+ "U341": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e01:know"
+ },
+ "U342": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U343": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never4:know"
+ },
+ "U344": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f18:forced"
+ },
+ "U345": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "e05:know"
+ },
+ "U346": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U347": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U348": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U349": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U350": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U351": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f18:forced"
+ },
+ "U352": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "d03:know"
+ },
+ "U353": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U354": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never3:forced"
+ },
+ "U355": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f16:know"
+ },
+ "U356": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f01:forced"
+ },
+ "U357": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never2:forced"
+ },
+ "U358": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U359": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "d04:know"
+ },
+ "U360": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never4:forced"
+ },
+ "U361": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:week"
+ },
+ "U362": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never2:know"
+ },
+ "U363": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never4:forced"
+ },
+ "U364": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U365": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U366": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f07:know"
+ },
+ "U367": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U368": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f07:know"
+ },
+ "U369": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e02:know"
+ },
+ "U370": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "f10:know"
+ },
+ "U371": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never1:forced"
+ },
+ "U372": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U373": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab10:know"
+ },
+ "U374": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f04:know"
+ },
+ "U375": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e01:know"
+ },
+ "U376": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f07:know"
+ },
+ "U377": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f01:know"
+ },
+ "U378": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U379": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f07:forced"
+ },
+ "U380": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f10:know"
+ },
+ "U381": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f06:know"
+ },
+ "U382": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab06:forced"
+ },
+ "U383": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never5:know"
+ },
+ "U384": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U385": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never3:know"
+ },
+ "U386": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f16:forced"
+ },
+ "U387": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab10:know"
+ },
+ "U388": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab06:know"
+ },
+ "U389": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e10:know"
+ },
+ "U390": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U391": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "d04:forced"
+ },
+ "U392": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:know"
+ },
+ "U393": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f15:know"
+ },
+ "U394": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f18:know"
+ },
+ "U395": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f18:know"
+ },
+ "U396": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U397": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never1:know"
+ },
+ "U398": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U399": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f10:forced"
+ },
+ "U400": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:overnight"
+ },
+ "U401": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "e08:forced"
+ },
+ "U402": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e01:forced"
+ },
+ "U403": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f15:forced"
+ },
+ "U404": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f12:forced"
+ },
+ "U405": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab07:forced"
+ },
+ "U406": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "d04:forced"
+ },
+ "U407": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "ab01:forced"
+ },
+ "U408": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f06:forced"
+ },
+ "U409": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f15:forced"
+ },
+ "U410": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f16:forced"
+ },
+ "U411": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f18:know"
+ },
+ "U412": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f18:forced"
+ },
+ "U413": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U414": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f18:know"
+ },
+ "U415": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U416": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never4:know"
+ },
+ "U417": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U418": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f10:know"
+ },
+ "U419": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never3:forced"
+ },
+ "U420": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "f10:forced"
+ },
+ "U421": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "e03:know"
+ },
+ "U422": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f01:forced"
+ },
+ "U423": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U424": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f04:forced"
+ },
+ "U425": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f10:know"
+ },
+ "U426": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f15:forced"
+ },
+ "U427": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never2:forced"
+ },
+ "U428": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "f04:know"
+ },
+ "U429": {
+  "seed": 320,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never1:forced"
+ },
+ "U430": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:overnight"
+ },
+ "U431": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "never6:know"
+ },
+ "U432": {
+  "seed": 320,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U433": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f12:forced"
+ },
+ "U434": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e03:know"
+ },
+ "U435": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never5:know"
+ },
+ "U436": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f17:know"
+ },
+ "U437": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f01:know"
+ },
+ "U438": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f15:know"
+ },
+ "U439": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e03:forced"
+ },
+ "U440": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab06:know"
+ },
+ "U441": {
+  "seed": 321,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U442": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "d05:know"
+ },
+ "U443": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "e02:forced"
+ },
+ "U444": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f11:know"
+ },
+ "U445": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U446": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "e09:know"
+ },
+ "U447": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "d05:forced"
+ },
+ "U448": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "never6:forced"
+ },
+ "U449": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never1:forced"
+ },
+ "U450": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e02:know"
+ },
+ "U451": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "generic:week"
+ },
+ "U452": {
+  "seed": 319,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f11:forced"
+ },
+ "U453": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never2:forced"
+ },
+ "U454": {
+  "seed": 320,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f06:know"
+ },
+ "U455": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "ab10:forced"
+ },
+ "U456": {
+  "seed": 319,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "d04:forced"
+ },
+ "U457": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f17:know"
+ },
+ "U458": {
+  "seed": 321,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never5:forced"
+ },
+ "U459": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f04:know"
+ },
+ "U460": {
+  "seed": 319,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never4:forced"
+ },
+ "U461": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never5:forced"
+ },
+ "U462": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f06:forced"
+ },
+ "U463": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f13:know"
+ },
+ "U464": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "d05:know"
+ },
+ "U465": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never6:know"
+ },
+ "U466": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U467": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f07:forced"
+ },
+ "U468": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "e10:forced"
+ },
+ "U469": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f12:know"
+ },
+ "U470": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "e03:know"
+ },
+ "U471": {
+  "seed": 319,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never3:forced"
+ },
+ "U472": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "ab06:know"
+ },
+ "U473": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:overnight"
+ },
+ "U474": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f15:know"
+ },
+ "U475": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f12:forced"
+ },
+ "U476": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never2:forced"
+ },
+ "U477": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f16:know"
+ },
+ "U478": {
+  "seed": 321,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "e04:forced"
+ },
+ "U479": {
+  "seed": 320,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "generic:week"
+ },
+ "U480": {
+  "seed": 321,
+  "night": 15,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U481": {
+  "seed": 319,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U482": {
+  "seed": 321,
+  "night": 10,
+  "arm": "intact",
+  "unit": "e04:forced"
+ },
+ "U483": {
+  "seed": 320,
+  "night": 15,
+  "arm": "intact",
+  "unit": "f14:know"
+ },
+ "U484": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "never1:forced"
+ },
+ "U485": {
+  "seed": 320,
+  "night": 10,
+  "arm": "both-off",
+  "unit": "f16:forced"
+ },
+ "U486": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f07:forced"
+ },
+ "U487": {
+  "seed": 319,
+  "night": 10,
+  "arm": "intact",
+  "unit": "f18:know"
+ },
+ "U488": {
+  "seed": 321,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "never6:forced"
+ },
+ "U489": {
+  "seed": 319,
+  "night": 15,
+  "arm": "intact",
+  "unit": "generic:cant"
+ },
+ "U490": {
+  "seed": 320,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f18:forced"
+ },
+ "U491": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "never5:forced"
+ },
+ "U492": {
+  "seed": 319,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never3:know"
+ },
+ "U493": {
+  "seed": 320,
+  "night": 10,
+  "arm": "intact",
+  "unit": "never5:know"
+ },
+ "U494": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "f02:forced"
+ },
+ "U495": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "f04:forced"
+ },
+ "U496": {
+  "seed": 321,
+  "night": 10,
+  "arm": "hippocampus-off",
+  "unit": "never2:know"
+ },
+ "U497": {
+  "seed": 320,
+  "night": 5,
+  "arm": "hippocampus-off",
+  "unit": "generic:cant"
+ },
+ "U498": {
+  "seed": 321,
+  "night": 5,
+  "arm": "both-off",
+  "unit": "never6:forced"
+ },
+ "U499": {
+  "seed": 319,
+  "night": 15,
+  "arm": "both-off",
+  "unit": "generic:cant"
+ },
+ "U500": {
+  "seed": 321,
+  "night": 5,
+  "arm": "intact",
+  "unit": "f18:forced"
+ }
+}

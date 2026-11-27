@@ -1,0 +1,10 @@
+record (prereg-literal: 15/15 nights, bank_size 512): 15/15 nights, sizes [512] -> True
+record (HELPER extras, not prereg: one subset_n, 15 distinct hashes, keep_kl > 0 n2+): subset_n [64], distinct hashes 15, min keep_kl n2+ 0.08823503504196803 -> True
+bank: 512 texts, distinct 512 (1.000), mean_tokens 63.5, told-key hits 6 (0.012) -> True
+report-only: refusal-pattern share 0/512, 'my name is'/assistant-self-name share 0/512
+G0 seed (prereg-literal): PASS
+G0 seed (helper-stricter): PASS
+night 5: perm 0.0444 vs ref 0.2981 (True); top6 0.3831 vs ref 0.4363 (True)
+night 10: perm 0.0334 vs ref 0.2483 (True); top6 0.2231 vs ref 0.4098 (True)
+G0 seed (prereg-literal): PASS
+G0 seed (helper-stricter): PASS (same: PR has no helper extras)

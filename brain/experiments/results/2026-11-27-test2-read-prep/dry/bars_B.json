@@ -1,0 +1,637 @@
+{
+ "n_seeds": 1,
+ "seeds": [
+  7
+ ],
+ "n_perm": 10000,
+ "rng_seed": 20261121,
+ "bars": [
+  {
+   "id": "P0",
+   "group": "P0",
+   "name": "Forgetting precondition P0-v2 (age ladder, hippocampus-off, LOW items)",
+   "definition": "per seed: item-weighted ladder recall(age 1: 12 ladder + 8 matched-night controls) - recall(age>=10) >= 0.15 AND mean log-odds(age>=10) < log-odds(age 1) (span rows) AND recall(age>=10) - slot-matched never-told floor (nights 11-15, per question) >= 0.10; VALID if >=5/6 seeds",
+   "registered_bar": "VALID if >=5/6 seeds pass; else savings UNDEFINED (design 2026-11-22 section 3)",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": [
+    {
+     "seed": 7,
+     "instrument": "age-ladder",
+     "recall_age1": 1.0,
+     "n_items_age1": 2,
+     "recall_age10p": null,
+     "n_items_age10p": 0,
+     "recall_controls": null,
+     "n_controls": 0,
+     "matched_night_drop": null,
+     "logodds_age1": 5.2872,
+     "n_lo_age1": 10,
+     "logodds_age10p": null,
+     "n_lo_age10p": 0,
+     "drop": null,
+     "floor_margin": null,
+     "slot_floor": null,
+     "floor_questions": 0,
+     "floor_rows": 0,
+     "H_off": 0.9167,
+     "item_means_age1": {
+      "f07": 1.0,
+      "f56": 1.0
+     },
+     "item_means_age10p": {},
+     "clauses": null,
+     "pass": null
+    }
+   ],
+   "pooled": {
+    "seeds_passing": 0,
+    "defined_seeds": 0,
+    "need": 1,
+    "sensitivity_age_offset0_passing": "n/a (ladder)",
+    "perm_stat": null,
+    "mean_matched_night_drop": null
+   },
+   "p": null,
+   "null": null,
+   "note": "a seed with an empty age bin is UNDEFINED and counts as not passing; the pooled permutation is reported beside the 5/6 count"
+  },
+  {
+   "id": "FM-v2",
+   "group": "P0",
+   "name": "False memory FM-v2 (never-told ladder questions, any told key, STOCK out)",
+   "definition": "per question then averaged: hippocampus-off nights 11-15, intact and both-off night 15; per seed intact <= both-off + 0.10 AND hippocampus-off <= both-off + 0.10; >=5/6 seeds",
+   "registered_bar": "PASS if >=5/6 seeds; its own verdict, never gates savings (design 2026-11-22 section 3b)",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": [
+    {
+     "seed": 7,
+     "hippocampus-off": {
+      "fm_v2": null,
+      "v1_style": null,
+      "questions": 0,
+      "rows": 0,
+      "by_night": {
+       "2": 0.4167
+      }
+     },
+     "intact": {
+      "fm_v2": null,
+      "v1_style": null,
+      "questions": 0,
+      "rows": 0,
+      "by_night": {}
+     },
+     "both-off": {
+      "fm_v2": null,
+      "v1_style": null,
+      "questions": 0,
+      "rows": 0,
+      "by_night": {}
+     },
+     "pass": null
+    }
+   ],
+   "pooled": {
+    "seeds_passing": 0,
+    "defined": 0,
+    "need": 1,
+    "mean_fm_v2": {
+     "hippocampus-off": null,
+     "intact": null,
+     "both-off": null
+    },
+    "mean_v1_style": {
+     "hippocampus-off": null,
+     "intact": null,
+     "both-off": null
+    }
+   },
+   "p": null,
+   "null": {
+    "both-off": null
+   },
+   "note": "v1_style = the Stage-1 rate (any told key, STOCK included) on the same rows"
+  },
+  {
+   "id": "SAV-G",
+   "group": "Savings",
+   "name": "Savings G_null_sub night 1",
+   "definition": "needs --pruned-a records",
+   "registered_bar": "see design 5/13",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {},
+   "pooled": null,
+   "p": null,
+   "null": null,
+   "note": "no pruned_a savings section in any life"
+  },
+  {
+   "id": "SAV-dR",
+   "group": "Savings",
+   "name": "Savings dR_null_sub night 1",
+   "definition": "needs --pruned-a records",
+   "registered_bar": "see design 5/13",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {},
+   "pooled": null,
+   "p": null,
+   "null": null,
+   "note": "no pruned_a savings section in any life"
+  },
+  {
+   "id": "CUE-R",
+   "group": "Cued recall",
+   "name": "R_cue at +1 (intact) and +3 (hippocampus-off), E+F pooled",
+   "definition": "R_cue = P(C2) - max(P(C3), P(C4)); pooled item-level permutation p<0.05 and R_cue>0 at each of +1 and +3 (per-seed direction count beside it; pooled permutation is primary per 13)",
+   "registered_bar": "R_cue>0 at +1 and +3 (pooled p<0.05 primary, 13); per-seed 5/6 reported",
+   "verdict_core": "FAIL",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "intact +1": {
+     "7": 0.5
+    },
+    "hippocampus-off +3": {}
+   },
+   "pooled": {
+    "intact +1": {
+     "R_cue": 0.5,
+     "n_items": 2,
+     "seeds_positive": 1
+    },
+    "hippocampus-off +3": {
+     "R_cue": null,
+     "n_items": 0,
+     "seeds_positive": 0
+    }
+   },
+   "p": {
+    "intact +1": 0.34236576342365765,
+    "hippocampus-off +3": null
+   },
+   "null": {
+    "both-off +1": {
+     "R_cue": 0.0,
+     "n_items": 2
+    },
+    "both-off +3": {
+     "R_cue": null,
+     "n_items": 0
+    }
+   },
+   "note": ""
+  },
+  {
+   "id": "CUE-D",
+   "group": "Cued recall",
+   "name": "direct (C0) minus uncued (C4), pooled, age <= 3 nights, headline arms",
+   "definition": "mean C0 right - mean C4 right over items in (intact +1) and (hippocampus-off +3) >= 0.4",
+   "registered_bar": "pooled >= 0.4",
+   "verdict_core": "PASS",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": 1.0
+   },
+   "pooled": {
+    "diff": 1.0,
+    "n_items": 2,
+    "C0": 1.0,
+    "C4": 0.0
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "CUE-H",
+   "group": "Cued recall",
+   "name": "H has 0 wrong answers on every probe, every seed",
+   "definition": "wrong = battery row kind 'H' not RIGHT (strict scorer ok False; reader wins when run), intact arm, every non-tagged probe of every line; per-arm not-right and wrong_fetch (retrieval, not an answer) reported",
+   "registered_bar": "0 wrong on every probe on 6/6 seeds (any wrong H answer = fail)",
+   "verdict_core": "FAIL",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": {
+     "wrong_fetch": 17,
+     "n_H_rows": 60,
+     "not_right": 30,
+     "not_right_names_other_key": 6,
+     "wrong_fetch_by_arm": {
+      "intact": 7,
+      "hippocampus-off": 0,
+      "consolidated-off": 7,
+      "both-off": 0,
+      "intact-frozen": 3
+     },
+     "not_right_by_arm": {
+      "intact": 4,
+      "hippocampus-off": 1,
+      "consolidated-off": 12,
+      "both-off": 12,
+      "intact-frozen": 1
+     },
+     "H_n_by_arm": {
+      "intact": 12,
+      "hippocampus-off": 12,
+      "consolidated-off": 12,
+      "both-off": 12,
+      "intact-frozen": 12
+     }
+    }
+   },
+   "pooled": {
+    "seeds_clean": 0,
+    "intact_not_right": 4,
+    "total_wrong_fetch": 17,
+    "total_H_rows": 60
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "CUE-HL",
+   "group": "Cued recall",
+   "name": "HIGH-use >= LOW-use recall at matched age (hippocampus-off)",
+   "definition": "per seed: LOW-weighted mean over exactly matched ages of recall(H) - recall(LOW) >= 0; H age counted from its last told-or-re-mentioned day (schedule 'remention' turns), LOW = battery rotating/told-neardup + cue C0 rows",
+   "registered_bar": "HIGH>=LOW at matched age on >=5/6 seeds",
+   "verdict_core": "PASS",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": {
+     "diff": 0.0833,
+     "matched_ages": 1,
+     "n_LOW": 4
+    }
+   },
+   "pooled": {
+    "seeds_ok": 1,
+    "defined": 1,
+    "intact_arm": {
+     "seeds_ok": 1,
+     "defined": 1
+    }
+   },
+   "p": null,
+   "null": null,
+   "note": "an undefined seed counts as not passing"
+  },
+  {
+   "id": "TRF-T4",
+   "group": "Transfer",
+   "name": "T_life > 0 at k=4 (intact copy)",
+   "definition": "T = s*(mean_sys - mean_home of lp(X)-lp(Y) over the never-told incident questions) read the morning both domains have 4 incidents told; >0 on >=5/6 seeds AND pooled permutation (domain labels permuted within seed, 10000 perms) p<0.05. RAW T (the registered quantity); dT = T - T0 is shown in the table",
+   "registered_bar": "T>0 at k=4 on >=5/6 seeds (+ common-rule pooled p<0.05, 13)",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": null
+   },
+   "pooled": {
+    "mean_T": null,
+    "perm_stat": null,
+    "seeds_positive": 0,
+    "need": 1,
+    "mean_dT": null
+   },
+   "p": null,
+   "null": {
+    "both_off_T_k4": {
+     "7": null
+    }
+   }
+  },
+  {
+   "id": "TRF-K",
+   "group": "Transfer",
+   "name": "T increases with k (k=4 above k=1, pooled, intact)",
+   "definition": "mean over seeds of T(k=4) > mean of T(k=1)",
+   "registered_bar": "k=4 above k=1 pooled",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {
+    "k1": {
+     "7": null
+    },
+    "k2": {
+     "7": null
+    },
+    "k4": {
+     "7": null
+    }
+   },
+   "pooled": {
+    "mean_T_k1": null,
+    "mean_T_k2": null,
+    "mean_T_k4": null
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "TRF-B0",
+   "group": "Transfer",
+   "name": "both-off T about 0 at k=4",
+   "definition": "|mean T| <= 2 SE across seeds (n>=3); no numeric threshold is registered for 'about 0', this rule is mine",
+   "registered_bar": "both-off T about 0",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": null
+   },
+   "pooled": {
+    "mean_T": null,
+    "se": null
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "TRF-N0",
+   "group": "Transfer",
+   "name": "L-nosleep T about 0 at k=4",
+   "definition": "needs a nosleep line with transfer records",
+   "registered_bar": "L-nosleep T about 0",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {},
+   "pooled": null,
+   "p": null,
+   "null": null,
+   "note": "no L-nosleep transfer records in these lives"
+  },
+  {
+   "id": "TRF-C",
+   "group": "Transfer",
+   "name": "consolidated-off reduces T at k=4",
+   "definition": "T_intact - T_consolidated-off at the consolidated-off k=4 night (same night) > 0 on >=5/6 seeds and mean > 0 (no permutation test is registered for this clause)",
+   "registered_bar": "consolidated-off must reduce T",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": null
+   },
+   "pooled": {
+    "mean_reduction": null,
+    "seeds_reduced": 0,
+    "defined": 0,
+    "mean_T_consolidated_off": null
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "LG-KL",
+   "group": "Language guard",
+   "name": "night-15 KL <= 2x night-1 KL (per seed)",
+   "definition": "KL of adapters-on vs pretrained on the frozen held-out set (nights[].lang_guard.kl); every seed must satisfy it; UNDEFINED if any seed lacks the lang_guard record at night 1 or 15",
+   "registered_bar": "night-15 KL <= 2x night 1 (never a kill)",
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": {
+     "kl_n1": 0.167831,
+     "kl_n15": null,
+     "ratio": null,
+     "nll_on_n1": 2.015288,
+     "nll_off_n1": 1.930912,
+     "nll_on_n15": null,
+     "nll_off_n15": null,
+     "kl_by_night": {
+      "1": 0.167831,
+      "2": 0.363813
+     }
+    }
+   },
+   "pooled": {
+    "seeds_ok": 0,
+    "defined": 0
+   },
+   "p": null,
+   "null": null,
+   "note": "reading a seed without lang_guard records as UNDEFINED, not a pass"
+  },
+  {
+   "id": "LG-COL",
+   "group": "Language guard",
+   "name": "collapse on no more than 3/6 seeds, per arm",
+   "definition": "a seed collapses in an arm if the most-repeated reply share is >=0.4 on ANY probe night of that arm (trunk probes); every arm must have <=3 collapsed seeds (counts only when n<6)",
+   "registered_bar": "collapse on <=3/6 seeds per arm",
+   "verdict_core": "PASS",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "both-off": {
+     "7": false
+    },
+    "consolidated-off": {
+     "7": false
+    },
+    "hippocampus-off": {
+     "7": false
+    },
+    "intact": {
+     "7": false
+    },
+    "intact-frozen": {
+     "7": false
+    }
+   },
+   "pooled": {
+    "both-off": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "consolidated-off": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "hippocampus-off": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "intact": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    },
+    "intact-frozen": {
+     "seeds_ever": 0,
+     "seeds_at_last_probe": 0
+    }
+   },
+   "p": null,
+   "null": null
+  },
+  {
+   "id": "KILL-10",
+   "group": "Language guard",
+   "name": "section-10 per-seed kill (collapse on 2 consecutive probe nights, as amended by 13)",
+   "definition": "intact-arm collapse share >=0.4 on two adjacent probe nights ends that seed's life; norm and KL clauses are dropped by 13",
+   "registered_bar": "no seed ended",
+   "verdict_core": "PASS",
+   "verdict": "DEV (1 seeds)",
+   "n_seeds": 1,
+   "per_seed": {
+    "7": {
+     "seed": 7,
+     "triggered": false,
+     "night": null,
+     "first_night": null
+    }
+   },
+   "pooled": {
+    "triggered": []
+   },
+   "p": null,
+   "null": null,
+   "note": "would have ended: none"
+  }
+ ],
+ "p0": {
+  "valid": false,
+  "age_bins_pooled": [
+   {
+    "age_nights": 1,
+    "recall": 1.0,
+    "n": 2
+   }
+  ],
+  "fit": null,
+  "valid_label": "DEV (1 seeds) UNDEFINED",
+  "instrument": "age-ladder",
+  "v1_style_bins_dedup": [
+   {
+    "age_nights": 1,
+    "recall": 0.75,
+    "n": 4
+   }
+  ],
+  "drop_label": null
+ },
+ "savings": {},
+ "cue": {
+  "cells": {
+   "intact +1": {
+    "n_items": 2,
+    "R_cue": 0.5,
+    "p": 0.34236576342365765,
+    "per_seed": {
+     "7": 0.5
+    },
+    "seeds_positive": 1
+   },
+   "hippocampus-off +3": {
+    "n_items": 0,
+    "R_cue": null,
+    "p": null,
+    "per_seed": {},
+    "seeds_positive": 0
+   }
+  },
+  "overall": "DEV (1 seeds)"
+ },
+ "transfer": {
+  "overall": "DEV (1 seeds) UNDEFINED",
+  "table": {
+   "7": {
+    "intact@k1": null,
+    "intact@k2": null,
+    "intact@k4": null,
+    "hippocampus-off@k1": null,
+    "hippocampus-off@k2": null,
+    "hippocampus-off@k4": null,
+    "consolidated-off@k1": null,
+    "consolidated-off@k2": null,
+    "consolidated-off@k4": null,
+    "both-off@k1": null,
+    "both-off@k2": null,
+    "both-off@k4": null
+   }
+  }
+ },
+ "language": {
+  "collapse_arms": {
+   "both-off": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "7": false
+    },
+    "per_seed_max_share": {
+     "7": 0.056
+    }
+   },
+   "consolidated-off": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "7": false
+    },
+    "per_seed_max_share": {
+     "7": 0.056
+    }
+   },
+   "hippocampus-off": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "7": false
+    },
+    "per_seed_max_share": {
+     "7": 0.056
+    }
+   },
+   "intact": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "7": false
+    },
+    "per_seed_max_share": {
+     "7": 0.35
+    }
+   },
+   "intact-frozen": {
+    "seeds_ever": 0,
+    "seeds_at_last_probe": 0,
+    "per_seed_ever": {
+     "7": false
+    },
+    "per_seed_max_share": {
+     "7": 0.056
+    }
+   }
+  }
+ },
+ "adapter_norm": {
+  "7": {
+   "1": {
+    "norm": 58.7316,
+    "x_night1": 1.0
+   },
+   "2": {
+    "norm": 105.0552,
+    "x_night1": 1.7887
+   }
+  }
+ },
+ "sections": {
+  "Cued recall": "DEV (1 seeds)",
+  "Transfer": "DEV (1 seeds) UNDEFINED"
+ }
+}

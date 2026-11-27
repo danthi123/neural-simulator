@@ -185,7 +185,7 @@ def run(res, snaps, trunk, cortex, work, out_path=None, night=NIGHT, steps=None,
     qs = told_questions(res, night)
     L = cortex.n_layers // 2
     assert L >= 1, cortex.n_layers
-    R = {"seed": seed, "host": socket.gethostname(), "device": str(getattr(cortex, "device", "cpu")), "night": night,
+    R = {"seed": seed, "host": socket.gethostname(), "device": str(getattr(cortex, "strategy", "cpu")).split()[0], "strategy": str(getattr(cortex, "strategy", "?")), "night": night,
          "layer": L, "n_questions": len(qs), "sleeps": {}, "batteries": {}}
 
     def save():

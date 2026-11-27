@@ -1,0 +1,305 @@
+{
+ "arm_files": [
+  "_scratch/brainv2/aws/20261127-0920-KP/smokeKP_s7.json.json"
+ ],
+ "b_files": [
+  "_scratch/brainv2/aws/20261127-0920/smokeB_s7.json.json"
+ ],
+ "arm": [
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
+ ],
+ "b": [
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
+ ],
+ "bars": {
+  "per_seed": [
+   {
+    "seed": 42,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   },
+   {
+    "seed": 43,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   },
+   {
+    "seed": 44,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   },
+   {
+    "seed": 100,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   },
+   {
+    "seed": 101,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   },
+   {
+    "seed": 102,
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": null,
+    "raw": {
+     "G7": null,
+     "G8a": null,
+     "G10": null,
+     "G11_rate_cmp": null
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   }
+  ],
+  "n_seeds": 6,
+  "need": 5,
+  "n_scorable": 0,
+  "mode": "registered",
+  "undefined_seeds": {
+   "42": [
+    "B life missing"
+   ],
+   "43": [
+    "B life missing"
+   ],
+   "44": [
+    "B life missing"
+   ],
+   "100": [
+    "B life missing"
+   ],
+   "101": [
+    "B life missing"
+   ],
+   "102": [
+    "B life missing"
+   ]
+  },
+  "g8b_violations": [],
+  "g8b_excused_cells": [],
+  "g8b_same_seed (reported)": {
+   "violations": [],
+   "pass": null
+  },
+  "G7": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 6,
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G8a": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 6,
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G10": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 6,
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G11": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 6,
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "pass": null,
+   "pass_all": false,
+   "role": "setup check (not a cost guard): both-off rows equal per seed; rate reported only"
+  },
+  "G8b": {
+   "n_pass": 0,
+   "n_undefined": 6,
+   "verdict_core": "UNDEFINED",
+   "verdict": "UNDEFINED",
+   "pass": null
+  },
+  "ignored_seeds": [
+   7
+  ],
+  "status": {
+   "42": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   },
+   "43": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   },
+   "44": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   },
+   "100": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   },
+   "101": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   },
+   "102": {
+    "undefined": [
+     "B life missing"
+    ],
+    "notes": [
+     "arm life missing (not passing)"
+    ],
+    "arm_k": null,
+    "b_k": null,
+    "arm_missing": true
+   }
+  }
+ }
+}

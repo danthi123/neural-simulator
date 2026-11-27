@@ -1,0 +1,23 @@
+
+### RWKV-7 "Goose" enabled ###
+
+| life | seed | G7 wrong/n (rate) | friend-name | G8a intact | G8a hoff | G8b max night | G10 hits/n | G11 confab/n (reported) | leak n10+15 all | leak non-refusal |
+|---|---|---|---|---|---|---|---|---|---|---|
+| arm | 319 | 26/30 (0.867) | 13/30 | 2/104 (0.019) | 9/104 (0.087) | 0.727 | 9/134 | 42/42 (1.000) | 0/156 | 0/148 |
+| arm | 320 | 26/30 (0.867) | 21/30 | 2/92 (0.022) | 12/92 (0.130) | 1.000 | 12/134 | 42/42 (1.000) | 3/152 | 3/150 |
+| arm | 321 | 17/30 (0.567) | 7/30 | 13/95 (0.137) | 0/95 (0.000) | 1.000 | 20/134 | 42/42 (1.000) | 14/152 | 14/138 |
+| B | 319 | 14/30 (0.467) | 0/30 | 0/104 (0.000) | 0/104 (0.000) | 0.000 | 4/134 | 42/42 (1.000) | 47/156 | 47/156 |
+| B | 320 | 5/30 (0.167) | 2/30 | 0/92 (0.000) | 0/92 (0.000) | 0.000 | 1/134 | 42/42 (1.000) | 48/152 | 48/152 |
+| B | 321 | 11/30 (0.367) | 5/30 | 0/95 (0.000) | 0/95 (0.000) | 0.000 | 1/134 | 42/42 (1.000) | 40/152 | 40/152 |
+
+| seed | G7 | G8a | G8b | G8b same-seed (reported) | G10 | G11 (setup check) | undefined / notes |
+|---|---|---|---|---|---|---|---|
+| 319 | FAIL | FAIL | FAIL | FAIL | FAIL | PASS | provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B) |
+| 320 | FAIL | FAIL | FAIL | FAIL | FAIL | PASS | provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B) |
+| 321 | PASS | FAIL | FAIL | FAIL | FAIL | PASS | provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B) |
+| guard | 1/3 DEV (3 seeds) FAIL | 0/3 DEV (3 seeds) FAIL | 0/3 DEV (3 seeds) FAIL | FAIL | 0/3 DEV (3 seeds) FAIL | 3/3 DEV (3 seeds) PASS | |
+
+Scorable seeds 3/3 (need 3); UNDEFINED seeds: none.
+G8b violations (any-seed rule): s319 hippocampus-off n15 0.73, s320 hippocampus-off n11 1.00, s320 hippocampus-off n12 1.00, s321 intact n15 1.00
+G8b excused cells: none
+G8b same-seed variant violations (reported): s319 hippocampus-off n15 0.73, s320 hippocampus-off n11 1.00, s320 hippocampus-off n12 1.00, s321 intact n15 1.00

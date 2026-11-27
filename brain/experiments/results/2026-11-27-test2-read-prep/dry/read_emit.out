@@ -1,0 +1,46 @@
+{
+ "units": 28,
+ "by_kind": {
+  "real": 18,
+  "canary": 5,
+  "decoy": 3,
+  "duplicate": 2
+ },
+ "pairs": 10,
+ "answers": 132,
+ "reader_chars": {
+  "min": 4540,
+  "median": 6300,
+  "max": 7696
+ },
+ "pair_chars_max": 8457,
+ "answer_chars_max": 514,
+ "over_60k": [],
+ "leaks": {},
+ "canaries": [
+  {
+   "type": "pet-named",
+   "planted": true
+  },
+  {
+   "type": "invented",
+   "planted": true
+  },
+  {
+   "type": "experience",
+   "planted": false
+  },
+  {
+   "type": "wrong-episode",
+   "planted": true
+  },
+  {
+   "type": "perspective",
+   "planted": true
+  },
+  {
+   "type": "collapse",
+   "planted": true
+  }
+ ]
+}

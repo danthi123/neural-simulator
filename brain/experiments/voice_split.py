@@ -89,7 +89,7 @@ def screen_night(res, night, snap, trunk, cortex, work, weekend, plan=PLAN):
 
 
 def run(res, snaps, trunk, cortex, work, weekend, nights=NIGHTS, log=print, out_path=None):
-    R = {"seed": res["seed"], "host": socket.gethostname(), "device": str(getattr(cortex, "device", "?")),
+    R = {"seed": res["seed"], "host": socket.gethostname(), "device": str(getattr(cortex, "strategy", "?")).split()[0], "strategy": str(getattr(cortex, "strategy", "?")),
          "brain_kw": res["brain_kw"], "nights": []}
     for n in nights:
         rec = screen_night(res, n, os.path.join(snaps, f"n{n}"), trunk, cortex, work, weekend)

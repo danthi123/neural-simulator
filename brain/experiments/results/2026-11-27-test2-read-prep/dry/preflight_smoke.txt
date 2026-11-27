@@ -1,0 +1,16 @@
+arm seed nights code_commit ami gpu status
+B | 7 | 2 | 4ad30c097 | ami-012ba162b9cd2729c | NVIDIA A10G | frozen sha differs: brain/brain.py
+KP | 7 | 1 | 4ad30c097 | ami-012ba162b9cd2729c | NVIDIA A10G | nights recorded 1 (a section-10 kill or a partial file); frozen sha differs: brain/brain.py
+PR | 7 | 2 | 1e91dce6c | ami-012ba162b9cd2729c | NVIDIA A10G | frozen sha differs: brain/brain.py
+provenance values across lives: {'torch': ["'2.7.0+cu128'"], 'torch_cuda': ["'12.8'"], 'gpu_name': ["'NVIDIA A10G'"], 'tf32_matmul': ['True'], 'tf32_cudnn': ['True']}
+launcher tools/aws_brain_batch.sh sha256 now: 2b83d117ae4381bb4832e77aca984b077ed087ba43152a06d8b67fd85d970722 (T4 addendum 2 (final fix))
+  recorded: freeze 4d94c7ab..., addendum1 8ba819ab7851509ac1a9718a0209a79adf4d4479200364b6f63b311a7dc52b5a, addendum2 2b83d117ae4381bb4832e77aca984b077ed087ba43152a06d8b67fd85d970722
+  launched under: KP42-KP101 earlier versions (KP42 the freeze one); later lives addendum 2 (T4 addendum 2). Not recorded in any life JSON.
+PROBLEMS:
+ - KP s7: 2 copies ['_scratch/brainv2/aws/20261127-0920-KP/smokeKP_s7.json.json', '_scratch/brainv2/aws/20261127-0920/smokeKP_s7.json.json']; use the newest complete one on purpose
+ - B s7: frozen sha differs: brain/brain.py
+ - KP s7: nights recorded 1 (a section-10 kill or a partial file)
+ - KP s7: frozen sha differs: brain/brain.py
+ - PR s7: frozen sha differs: brain/brain.py
+ - code_commit differs across lives: ['1e91dce6c9e6d8d8386e7a492cd1a92055ce039b', '4ad30c097449a4be9fca08ee9f6faa324c7526e3']
+ - code_commit ['1e91dce6c9e6d8d8386e7a492cd1a92055ce039b', '4ad30c097449a4be9fca08ee9f6faa324c7526e3'] != freeze commit d965bc716 (T4 launches from the freeze worktree)

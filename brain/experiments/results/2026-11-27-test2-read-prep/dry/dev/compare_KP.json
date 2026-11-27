@@ -1,0 +1,801 @@
+{
+ "arm_name": "KP",
+ "d2pr2": false,
+ "mode": "DEV",
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "unpaired_seeds": [],
+ "ignored_seeds": [],
+ "unscored": {},
+ "undefined": {},
+ "scorable_seeds": [
+  319,
+  320,
+  321
+ ],
+ "setup_check": true,
+ "notes": {
+  "319": [
+   "provenance unrecorded: cuda_precision (arm+B)",
+   "provenance unrecorded: torch (arm+B)",
+   "provenance unrecorded: torch_cuda (arm+B)",
+   "provenance unrecorded: gpu_name (arm+B)"
+  ],
+  "320": [
+   "provenance unrecorded: cuda_precision (arm+B)",
+   "provenance unrecorded: torch (arm+B)",
+   "provenance unrecorded: torch_cuda (arm+B)",
+   "provenance unrecorded: gpu_name (arm+B)"
+  ],
+  "321": [
+   "provenance unrecorded: cuda_precision (arm+B)",
+   "provenance unrecorded: torch (arm+B)",
+   "provenance unrecorded: torch_cuda (arm+B)",
+   "provenance unrecorded: gpu_name (arm+B)"
+  ]
+ },
+ "need": 3,
+ "lives": {
+  "319": {
+   "arm": {
+    "brain_kw": {
+     "sleep_seed": 319,
+     "keep_bank": "prior"
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   },
+   "b": {
+    "brain_kw": {
+     "sleep_seed": 319
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   }
+  },
+  "320": {
+   "arm": {
+    "brain_kw": {
+     "sleep_seed": 320,
+     "keep_bank": "prior"
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   },
+   "b": {
+    "brain_kw": {
+     "sleep_seed": 320
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   }
+  },
+  "321": {
+   "arm": {
+    "brain_kw": {
+     "sleep_seed": 321,
+     "keep_bank": "prior"
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   },
+   "b": {
+    "brain_kw": {
+     "sleep_seed": 321
+    },
+    "device": "cuda",
+    "split": "dev",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 15,
+    "provenance": {
+     "device": "cuda"
+    },
+    "completed_nights": 15
+   }
+  }
+ },
+ "same_brain_kw_seeds": [],
+ "bars": {
+  "LG-P1": {
+   "id": "LG-P1",
+   "night": 15,
+   "per_seed": {
+    "319": {
+     "arm": 0.351011,
+     "b": 2.093431,
+     "ok": true
+    },
+    "320": {
+     "arm": 0.293588,
+     "b": 2.69338,
+     "ok": true
+    },
+    "321": {
+     "arm": 0.323438,
+     "b": 2.616021,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 0.322679,
+    "b": 2.467610666666667,
+    "ratio": 0.13076576639858906,
+    "half_b": 1.2338053333333334,
+    "ok": true
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "primary",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "LG-P1 n10 (reported)": {
+   "id": "LG-P1 (night 10, reported)",
+   "night": 10,
+   "per_seed": {
+    "319": {
+     "arm": 0.262239,
+     "b": 1.736475,
+     "ok": true
+    },
+    "320": {
+     "arm": 0.236049,
+     "b": 1.604069,
+     "ok": true
+    },
+    "321": {
+     "arm": 0.257819,
+     "b": 1.730837,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 0.2520356666666667,
+    "b": 1.6904603333333332,
+    "ratio": 0.14909291966034502,
+    "half_b": 0.8452301666666666,
+    "ok": true
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "reported",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "LG-P2": {
+   "id": "LG-P2",
+   "night": 15,
+   "per_seed": {
+    "319": {
+     "arm": 2.257749,
+     "b_n1": 1.998481,
+     "b": 3.871618,
+     "arm_n1": 1.970636,
+     "rise_arm": 0.25926800000000005,
+     "half_rise_b": 0.9365684999999999,
+     "ok": true
+    },
+    "320": {
+     "arm": 2.179147,
+     "b_n1": 2.002367,
+     "b": 4.479823,
+     "arm_n1": 1.98788,
+     "rise_arm": 0.17677999999999994,
+     "half_rise_b": 1.2387279999999998,
+     "ok": true
+    },
+    "321": {
+     "arm": 2.200328,
+     "b_n1": 1.99758,
+     "b": 4.364911,
+     "arm_n1": 1.998365,
+     "rise_arm": 0.20274799999999993,
+     "half_rise_b": 1.1836655,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 2.212408,
+    "b": 4.238784,
+    "b_n1": 1.9994759999999998,
+    "arm_n1": 1.985627
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "primary",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "LG-P2 n10 (reported)": {
+   "id": "LG-P2 (night 10, reported)",
+   "night": 10,
+   "per_seed": {
+    "319": {
+     "arm": 2.138525,
+     "b_n1": 1.998481,
+     "b": 3.500459,
+     "arm_n1": 1.970636,
+     "rise_arm": 0.14004400000000006,
+     "half_rise_b": 0.7509890000000001,
+     "ok": true
+    },
+    "320": {
+     "arm": 2.120684,
+     "b_n1": 2.002367,
+     "b": 3.301783,
+     "arm_n1": 1.98788,
+     "rise_arm": 0.11831699999999978,
+     "half_rise_b": 0.649708,
+     "ok": true
+    },
+    "321": {
+     "arm": 2.157188,
+     "b_n1": 1.99758,
+     "b": 3.464843,
+     "arm_n1": 1.998365,
+     "rise_arm": 0.1596080000000002,
+     "half_rise_b": 0.7336315000000001,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 2.138799,
+    "b": 3.4223616666666667,
+    "b_n1": 1.9994759999999998,
+    "arm_n1": 1.985627
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "reported",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "LG-FIX": {
+   "id": "LG-FIX",
+   "per_seed": {
+    "319": {
+     "n1": 0.06672,
+     "n15": 0.351011,
+     "ratio": 5.2609562350119905,
+     "ok": false
+    },
+    "320": {
+     "n1": 0.070363,
+     "n15": 0.293588,
+     "ratio": 4.172477012066001,
+     "ok": false
+    },
+    "321": {
+     "n1": 0.091445,
+     "n15": 0.323438,
+     "ratio": 3.5369675761386627,
+     "ok": false
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": false,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "verdict": "DEV (3 seeds) FAIL",
+   "role": "reported",
+   "undefined_seeds": [],
+   "verdict_core": "FAIL"
+  },
+  "G1": {
+   "id": "G1",
+   "margin": 1.0,
+   "per_seed": {
+    "319": {
+     "arm": 4.0,
+     "b": 2.8181818181818183,
+     "diff": 1.1818181818181817,
+     "ok": true
+    },
+    "320": {
+     "arm": 3.272727272727273,
+     "b": 3.0,
+     "diff": 0.27272727272727293,
+     "ok": true
+    },
+    "321": {
+     "arm": 3.8181818181818183,
+     "b": 2.4545454545454546,
+     "diff": 1.3636363636363638,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 3.6969696969696972,
+    "b": 2.757575757575758
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "guard",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "G2a": {
+   "id": "G2a",
+   "nights": [
+    1,
+    4
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "319": {
+     "arm": 4.9655172413793105,
+     "b": 4.344827586206897,
+     "arm_k": 24,
+     "arm_n": 29,
+     "b_k": 21,
+     "b_n": 29,
+     "diff": 0.6206896551724137,
+     "ok": true
+    },
+    "320": {
+     "arm": 4.344827586206897,
+     "b": 5.379310344827586,
+     "arm_k": 21,
+     "arm_n": 29,
+     "b_k": 26,
+     "b_n": 29,
+     "diff": -1.0344827586206895,
+     "ok": false
+    },
+    "321": {
+     "arm": 4.344827586206897,
+     "b": 5.379310344827586,
+     "arm_k": 21,
+     "arm_n": 29,
+     "b_k": 26,
+     "b_n": 29,
+     "diff": -1.0344827586206895,
+     "ok": false
+    }
+   },
+   "count": {
+    "count": 1,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": false,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 4.551724137931035,
+    "b": 5.03448275862069
+   },
+   "sign_flip_p": 0.875,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) FAIL",
+   "role": "guard",
+   "undefined_seeds": [],
+   "verdict_core": "FAIL"
+  },
+  "G2b": {
+   "id": "G2b",
+   "nights": [
+    5,
+    15
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "319": {
+     "arm": 3.972972972972973,
+     "b": 2.5135135135135136,
+     "arm_k": 49,
+     "arm_n": 74,
+     "b_k": 31,
+     "b_n": 74,
+     "diff": 1.4594594594594592,
+     "ok": true
+    },
+    "320": {
+     "arm": 3.287671232876712,
+     "b": 3.041095890410959,
+     "arm_k": 40,
+     "arm_n": 73,
+     "b_k": 37,
+     "b_n": 73,
+     "diff": 0.24657534246575308,
+     "ok": true
+    },
+    "321": {
+     "arm": 3.6315789473684212,
+     "b": 2.3684210526315788,
+     "arm_k": 46,
+     "arm_n": 76,
+     "b_k": 30,
+     "b_n": 76,
+     "diff": 1.2631578947368425,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 3.630741051072702,
+    "b": 2.6410101521853506
+   },
+   "sign_flip_p": 0.125,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "guard",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "G2 n1-15 (reported)": {
+   "id": "G2 n1-15 (reported)",
+   "nights": [
+    1,
+    15
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "319": {
+     "arm": 4.252427184466019,
+     "b": 3.029126213592233,
+     "arm_k": 73,
+     "arm_n": 103,
+     "b_k": 52,
+     "b_n": 103,
+     "diff": 1.2233009708737863,
+     "ok": true
+    },
+    "320": {
+     "arm": 3.5882352941176467,
+     "b": 3.7058823529411766,
+     "arm_k": 61,
+     "arm_n": 102,
+     "b_k": 63,
+     "b_n": 102,
+     "diff": -0.11764705882352988,
+     "ok": true
+    },
+    "321": {
+     "arm": 3.8285714285714283,
+     "b": 3.2,
+     "arm_k": 67,
+     "arm_n": 105,
+     "b_k": 56,
+     "b_n": 105,
+     "diff": 0.6285714285714281,
+     "ok": true
+    }
+   },
+   "count": {
+    "count": 3,
+    "n": 3,
+    "defined": 3,
+    "need": 3,
+    "ok": true,
+    "undefined": 0,
+    "scorable": 3
+   },
+   "pooled": {
+    "arm": 3.889744635718365,
+    "b": 3.311669522177803
+   },
+   "sign_flip_p": 0.25,
+   "sign_flip_n": 3,
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "reported",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  },
+  "G3": {
+   "id": "G3",
+   "cap": 3,
+   "per_arm": {
+    "both-off": {
+     "arm_seeds_ever": 0,
+     "b_seeds_ever": 0,
+     "arm_max_share": {
+      "319": 0.056,
+      "320": 0.056,
+      "321": 0.056
+     },
+     "b_max_share": {
+      "319": 0.056,
+      "320": 0.056,
+      "321": 0.056
+     },
+     "ok": true
+    },
+    "consolidated-off": {
+     "arm_seeds_ever": 0,
+     "b_seeds_ever": 0,
+     "arm_max_share": {
+      "319": 0.056,
+      "320": 0.056,
+      "321": 0.056
+     },
+     "b_max_share": {
+      "319": 0.056,
+      "320": 0.056,
+      "321": 0.056
+     },
+     "ok": true
+    },
+    "hippocampus-off": {
+     "arm_seeds_ever": 2,
+     "b_seeds_ever": 1,
+     "arm_max_share": {
+      "319": 0.35,
+      "320": 0.55,
+      "321": 0.55
+     },
+     "b_max_share": {
+      "319": 0.35,
+      "320": 0.35,
+      "321": 0.75
+     },
+     "ok": false
+    },
+    "intact": {
+     "arm_seeds_ever": 1,
+     "b_seeds_ever": 0,
+     "arm_max_share": {
+      "319": 0.15,
+      "320": 0.1,
+      "321": 0.55
+     },
+     "b_max_share": {
+      "319": 0.2,
+      "320": 0.389,
+      "321": 0.35
+     },
+     "ok": false
+    },
+    "intact-frozen": {
+     "arm_seeds_ever": 1,
+     "b_seeds_ever": 1,
+     "arm_max_share": {
+      "319": 0.1,
+      "320": 0.056,
+      "321": 0.55
+     },
+     "b_max_share": {
+      "319": 0.25,
+      "320": 0.722,
+      "321": 0.25
+     },
+     "ok": true
+    }
+   },
+   "complete": true,
+   "verdict": "DEV (3 seeds) FAIL",
+   "role": "guard",
+   "undefined_seeds": [],
+   "verdict_core": "FAIL"
+  },
+  "G4": {
+   "id": "G4",
+   "rows": {
+    "all": {
+     "id": "G4 (all)",
+     "per_seed": {
+      "319": {
+       "arm": 0.0,
+       "b": 0.30128205128205127,
+       "arm_k": 0,
+       "arm_n": 156,
+       "b_k": 47,
+       "b_n": 156,
+       "ok": true
+      },
+      "320": {
+       "arm": 0.019736842105263157,
+       "b": 0.3157894736842105,
+       "arm_k": 3,
+       "arm_n": 152,
+       "b_k": 48,
+       "b_n": 152,
+       "ok": true
+      },
+      "321": {
+       "arm": 0.09210526315789473,
+       "b": 0.2631578947368421,
+       "arm_k": 14,
+       "arm_n": 152,
+       "b_k": 40,
+       "b_n": 152,
+       "ok": true
+      }
+     },
+     "count": {
+      "count": 3,
+      "n": 3,
+      "defined": 3,
+      "need": 3,
+      "ok": true,
+      "undefined": 0,
+      "scorable": 3
+     },
+     "pooled": {
+      "arm_k": 17,
+      "arm_n": 460,
+      "b_k": 135,
+      "b_n": 460,
+      "arm": 0.03695652173913044,
+      "b": 0.29347826086956524,
+      "reduction": 0.8740740740740741,
+      "complete": true,
+      "ok": true
+     },
+     "sign_flip_p": 0.125,
+     "sign_flip_n": 3,
+     "verdict": "DEV (3 seeds) PASS",
+     "verdict_core": "PASS"
+    },
+    "non_refusal": {
+     "id": "G4 (non_refusal)",
+     "per_seed": {
+      "319": {
+       "arm": 0.0,
+       "b": 0.30128205128205127,
+       "arm_k": 0,
+       "arm_n": 148,
+       "b_k": 47,
+       "b_n": 156,
+       "ok": true
+      },
+      "320": {
+       "arm": 0.02,
+       "b": 0.3157894736842105,
+       "arm_k": 3,
+       "arm_n": 150,
+       "b_k": 48,
+       "b_n": 152,
+       "ok": true
+      },
+      "321": {
+       "arm": 0.10144927536231885,
+       "b": 0.2631578947368421,
+       "arm_k": 14,
+       "arm_n": 138,
+       "b_k": 40,
+       "b_n": 152,
+       "ok": true
+      }
+     },
+     "count": {
+      "count": 3,
+      "n": 3,
+      "defined": 3,
+      "need": 3,
+      "ok": true,
+      "undefined": 0,
+      "scorable": 3
+     },
+     "pooled": {
+      "arm_k": 17,
+      "arm_n": 436,
+      "b_k": 135,
+      "b_n": 460,
+      "arm": 0.0389908256880734,
+      "b": 0.29347826086956524,
+      "reduction": 0.8671423717295277,
+      "complete": true,
+      "ok": true
+     },
+     "sign_flip_p": 0.125,
+     "sign_flip_n": 3,
+     "verdict": "DEV (3 seeds) PASS",
+     "verdict_core": "PASS"
+    }
+   },
+   "verdict": "DEV (3 seeds) PASS",
+   "role": "guard",
+   "undefined_seeds": [],
+   "verdict_core": "PASS"
+  }
+ },
+ "primary": {
+  "LG-P1": "DEV (3 seeds) PASS",
+  "LG-P2": "DEV (3 seeds) PASS"
+ },
+ "guards": {
+  "G1": "DEV (3 seeds) PASS",
+  "G2a": "DEV (3 seeds) FAIL",
+  "G2b": "DEV (3 seeds) PASS",
+  "G3": "DEV (3 seeds) FAIL",
+  "G4": "DEV (3 seeds) PASS"
+ }
+}

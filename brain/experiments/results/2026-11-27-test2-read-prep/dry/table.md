@@ -1,0 +1,45 @@
+# Life table (per night: D1 wrong fetch, D2 intrusion, guard)
+
+D1 wf = wrong fetches / questions with a ledger source (fetched = an episode came back). D1 cost = off right - intact right (direct questions). D2 = open-turn intrusions (intact / off / both-off); excess = intact - both-off (full nights only). col = most-repeated reply share (0.4+ collapse).
+
+
+## trunk
+
+| seed | night | s | store | norm | H int/off | wf | fetched | D1 cost | D2 int/off/both | D2 excess | never false int/off | col int/off | KL | KL / night-1 | ladder recall off (age>=10) | slot floor off | FM-v2 off | v1-style off |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7 | 1 | 702.0 | 8 | 58.7316 | 5/5 of 6 | 2/6 | 5 | +0 of 6 | 2/3/0 of 6 | 2 | 0/0 of 3 | 0.056/0.056 | 0.167831 | 1.0 | - | - | - | - |
+| 7 | 2 | 660.2 | 22 | 105.0552 | 3/6 of 6 | 6/8 | 6 | +3 of 8 | 2/2/0 of 6 | 2 | 3/0 of 3 | 0.35/0.05 | 0.363813 | 2.168 | 2/2 (0/0) | 3/12 | 5/12 | 5/12 |
+| 7 | 1 | 1775.0 | 8 | 74.3241 | 6/6 of 6 | 2/6 | 5 | +0 of 6 | 0/0/0 of 6 | 0 | 0/0 of 3 | 0.056/0.056 | 0.06062 | 1.0 | - | - | - | - |
+| 7 | 2 | 1135.7 | 22 | 102.113 | 6/6 of 6 | 6/8 | 6 | +0 of 8 | 1/0/0 of 6 | 1 | 0/2 of 3 | 0.05/0.05 | 0.100869 | 1.664 | 2/2 (0/0) | 0/12 | 0/12 | 0/12 |
+| 7 | 1 | 659.3 | 8 | 50.8903 | 5/6 of 6 | 2/6 | 5 | +1 of 6 | 2/2/0 of 6 | 2 | 0/0 of 3 | 0.056/0.056 | 0.174386 | 1.0 | - | - | - | - |
+| 7 | 2 | 610.4 | 22 | 107.5664 | 5/5 of 6 | 6/8 | 6 | +0 of 8 | 2/2/0 of 6 | 2 | 0/0 of 3 | 0.05/0.05 | 0.293172 | 1.681 | 2/2 (0/0) | 0/12 | 1/12 | 2/12 |
+
+### M-use / M-scale read-outs (new columns)
+
+fetched/right/wrong = intact-probe fetches of the direct questions with a source (counts). boosts = live-day fetches whose use update was granted/denied (M-use runs only). max strength = largest non-permanent episode strength when the probe copy opened. hub top-1 = share of the most fetched episode among live trunk fetches (live) and among intact-frozen probe fetches (frozen); distinct = distinct episodes fetched live. norm pre/g/post = adapter norm before the night's cut, the cut factor, the norm in the intact probe; A, B = factor norms (M-scale runs). direct d1-2 / d3+ = right/n int and off on H + rotating questions whose fact was first told on day 1-2 / day 3+ (every H fact is told on day 1).
+
+| seed | night | fetched | right | wrong | boosts granted/denied | max strength | hub top-1 live | frozen | distinct | norm pre | g | norm post | A | B | direct d1-2 int/off | direct d3+ int/off |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7 | 1 | 5 | 3 | 2 | -/- | 1.5 | 0.33 | 0.67 | 3 | - | - | 58.7316 | 21.3979 | 8.4142 | 5/5 of 6 | 0/0 of 0 |
+| 7 | 2 | 6 | 0 | 6 | -/- | 1.5 | 0.8 | 0.25 | 2 | - | - | 105.0552 | 23.6255 | 13.4627 | 4/7 of 8 | 0/0 of 0 |
+| 7 | 1 | 5 | 3 | 2 | -/- | 1.5 | 0.33 | 0.67 | 3 | - | - | 74.3241 | 21.6134 | 10.311 | 6/6 of 6 | 0/0 of 0 |
+| 7 | 2 | 6 | 0 | 6 | -/- | 1.5 | 0.8 | 0.25 | 2 | - | - | 102.113 | 22.8172 | 13.8029 | 8/8 of 8 | 0/0 of 0 |
+| 7 | 1 | 5 | 3 | 2 | -/- | 1.5 | 0.33 | 0.67 | 3 | - | - | 50.8903 | 20.9904 | 7.346 | 5/6 of 6 | 0/0 of 0 |
+| 7 | 2 | 6 | 0 | 6 | -/- | 1.5 | 0.75 | 0.25 | 2 | - | - | 107.5664 | 23.79 | 13.4248 | 6/6 of 8 | 0/0 of 0 |
+
+### sums over seeds, per night
+
+| night | seeds | H int | H off | wrong fetch | D1 cost | intrusions int | off | D2 excess (both-off nights) | max col | mean s |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 3 | 16/18 | 17 | 6/18 | +1 | 4/18 | 5 | 4 (3 seeds) | 0.056 | 1045.4 |
+| 2 | 3 | 14/18 | 17 | 18/24 | +3 | 5/18 | 4 | 5 (3 seeds) | 0.35 | 802.1 |
+
+## Cue ladder, pooled over seeds
+
+_R_cue = P(C2) - max(P(C3), P(C4)); auto scorer (strict_scorer.correct_answer, cue text as the question), PROVISIONAL until the blind reader; per-seed R_cue > 0 on 5/6 seeds has low power (a few items per cell), the pooled item-level permutation is the registered primary. p = one-sided permutation (rungs shuffled within item)._
+
+| arm | track | delay | items | R_cue pooled | p perm | seeds R>0 | per seed | headline |
+|---|---|---|---|---|---|---|---|---|
+| both-off | F | +1 | 2 | +0.000 | 1.0 | 0/1 | {7: 0.0} |  |
+| hippocampus-off | F | +1 | 2 | +0.000 | 1.0 | 0/1 | {7: 0.0} |  |
+| intact | F | +1 | 2 | +0.000 | 1.0 | 0/1 | {7: 0.0} | yes |

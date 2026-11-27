@@ -1,0 +1,2639 @@
+{
+ "spec": "read-spec-2026-11-21",
+ "spec_sha256": "6cf3690a68e13f05fadcf42df76141b5e2f1d598985ec6065f8a71cdf30ae05a",
+ "weeks": [
+  1
+ ],
+ "lived_context": "all",
+ "rng_seed": 0,
+ "seeds": [
+  7
+ ],
+ "canaries": [
+  {
+   "type": "pet-named",
+   "planted": true
+  },
+  {
+   "type": "invented",
+   "planted": true
+  },
+  {
+   "type": "experience",
+   "planted": false
+  },
+  {
+   "type": "wrong-episode",
+   "planted": true
+  },
+  {
+   "type": "perspective",
+   "planted": true
+  },
+  {
+   "type": "collapse",
+   "planted": true
+  }
+ ],
+ "units": {
+  "T0": {
+   "kind": "canary",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "canary": {
+    "type": "collapse",
+    "defect": "repetition-or-collapse",
+    "turns": [
+     20,
+     21,
+     22,
+     23
+    ],
+    "text": "Your sister's name is Marguerite.",
+    "original": [
+     "You drive a red Volvo.",
+     "Your pony is called Pixel.",
+     "Your tortoise is called Pixel."
+    ]
+   },
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2834
+  },
+  "T1": {
+   "kind": "real",
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 4579
+  },
+  "T2": {
+   "kind": "canary",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "canary": {
+    "type": "pet-named",
+    "defect": "intrusion",
+    "turns": [
+     10
+    ],
+    "text": "Once upon a time there was a little fox named Marguerite, and Marguerite loved to explore the quiet forest.",
+    "original": "Once upon a time, there was a small, gray badger named Pixel."
+   },
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2859
+  },
+  "T3": {
+   "kind": "duplicate",
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 3245,
+   "dup_partner": "T7"
+  },
+  "T4": {
+   "kind": "canary",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "canary": {
+    "type": "wrong-episode",
+    "defect": "wrong-episode",
+    "turns": [
+     21
+    ],
+    "text": "Your sister's name is Marguerite.",
+    "original": "You drive a red Volvo."
+   },
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2824
+  },
+  "T5": {
+   "kind": "decoy",
+   "decoy": "refuse",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 1836
+  },
+  "T6": {
+   "kind": "canary",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "canary": {
+    "type": "invented",
+    "defect": "invented",
+    "turns": [
+     15
+    ],
+    "text": "I'm well, thanks. You told me your brother Bertil moved to Trondheim. How is he?",
+    "original": "I'm doing well, thank you. How about you?"
+   },
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2852
+  },
+  "T7": {
+   "kind": "real",
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 3245,
+   "dup_partner": "T3"
+  },
+  "T8": {
+   "kind": "canary",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "canary": {
+    "type": "perspective",
+    "defect": "perspective",
+    "turns": [
+     19
+    ],
+    "text": "I work as a system administrator, mostly Linux servers.",
+    "original": "You work as a system administrator, mostly Linux servers."
+   },
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2811
+  },
+  "T9": {
+   "kind": "decoy",
+   "decoy": "keyword-stuffer",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2319
+  },
+  "T10": {
+   "kind": "real",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2813,
+   "dup_partner": "T12"
+  },
+  "T11": {
+   "kind": "decoy",
+   "decoy": "generic",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2433
+  },
+  "T12": {
+   "kind": "duplicate",
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "days": [
+    1
+   ],
+   "turns": [
+    {
+     "turn": 1,
+     "section": "lived",
+     "kind": "greet",
+     "day": 1
+    },
+    {
+     "turn": 2,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 3,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 4,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 5,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 6,
+     "section": "lived",
+     "kind": "tell",
+     "day": 1
+    },
+    {
+     "turn": 7,
+     "section": "lived",
+     "kind": "sameday",
+     "day": 1
+    },
+    {
+     "turn": 8,
+     "section": "lived",
+     "kind": "small",
+     "day": 1
+    },
+    {
+     "turn": 9,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 10,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 11,
+     "section": "battery",
+     "kind": "open-chat",
+     "day": null
+    },
+    {
+     "turn": 12,
+     "section": "battery",
+     "kind": "open-advice",
+     "day": null
+    },
+    {
+     "turn": 13,
+     "section": "battery",
+     "kind": "open-story",
+     "day": null
+    },
+    {
+     "turn": 14,
+     "section": "battery",
+     "kind": "open-knowledge",
+     "day": null
+    },
+    {
+     "turn": 15,
+     "section": "battery",
+     "kind": "greet",
+     "day": null
+    },
+    {
+     "turn": 16,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 17,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 18,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 19,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 20,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 21,
+     "section": "battery",
+     "kind": "H",
+     "day": null
+    },
+    {
+     "turn": 22,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 23,
+     "section": "battery",
+     "kind": "neardup",
+     "day": null
+    },
+    {
+     "turn": 24,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 25,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    },
+    {
+     "turn": 26,
+     "section": "battery",
+     "kind": "never",
+     "day": null
+    }
+   ],
+   "n_turns": 26,
+   "chars": 2813,
+   "dup_partner": "T10"
+  }
+ },
+ "pairs": {
+  "P0": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "both-off",
+   "B": "decoy:generic",
+   "unit": "T11",
+   "context": true,
+   "group": 2,
+   "partner": "P7"
+  },
+  "P1": {
+   "what": "intact-vs-bothoff",
+   "seed": 7,
+   "A": "both-off",
+   "B": "intact",
+   "unit": null,
+   "context": true,
+   "group": 0,
+   "partner": "P6"
+  },
+  "P2": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "both-off",
+   "B": "decoy:keyword-stuffer",
+   "unit": "T9",
+   "context": true,
+   "group": 1,
+   "partner": "P4"
+  },
+  "P3": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "both-off",
+   "B": "decoy:refuse",
+   "unit": "T5",
+   "context": true,
+   "group": 3,
+   "partner": "P5"
+  },
+  "P4": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "decoy:keyword-stuffer",
+   "B": "both-off",
+   "unit": "T9",
+   "context": true,
+   "group": 1,
+   "partner": "P2"
+  },
+  "P5": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "decoy:refuse",
+   "B": "both-off",
+   "unit": "T5",
+   "context": true,
+   "group": 3,
+   "partner": "P3"
+  },
+  "P6": {
+   "what": "intact-vs-bothoff",
+   "seed": 7,
+   "A": "intact",
+   "B": "both-off",
+   "unit": null,
+   "context": true,
+   "group": 0,
+   "partner": "P1"
+  },
+  "P7": {
+   "what": "decoy-vs-bothoff",
+   "seed": 7,
+   "A": "decoy:generic",
+   "B": "both-off",
+   "unit": "T11",
+   "context": true,
+   "group": 2,
+   "partner": "P0"
+  }
+ },
+ "answers": {
+  "A0": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "dan",
+   "ok": true,
+   "control": null
+  },
+  "A1": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "admin",
+   "ok": true,
+   "control": null
+  },
+  "A2": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": null,
+   "control": "answer",
+   "expect": "yes"
+  },
+  "A3": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": false,
+   "control": null
+  },
+  "A4": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "marguerite",
+   "ok": true,
+   "control": null
+  },
+  "A5": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "nova",
+   "ok": null,
+   "control": "subject",
+   "expect": "no"
+  },
+  "A6": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "marguerite",
+   "ok": false,
+   "control": null
+  },
+  "A7": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "pixel",
+   "ok": true,
+   "control": null
+  },
+  "A8": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "nova",
+   "ok": false,
+   "control": null
+  },
+  "A9": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "admin",
+   "ok": true,
+   "control": null
+  },
+  "A10": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "pixel",
+   "ok": false,
+   "control": null
+  },
+  "A11": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "pixel",
+   "ok": true,
+   "control": null
+  },
+  "A12": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": null,
+   "control": "answer",
+   "expect": "yes"
+  },
+  "A13": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": true,
+   "control": null
+  },
+  "A14": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "nova",
+   "ok": null,
+   "control": "echo",
+   "expect": "no"
+  },
+  "A15": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "nova",
+   "ok": false,
+   "control": null
+  },
+  "A16": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": null,
+   "control": "answer",
+   "expect": "yes"
+  },
+  "A17": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "admin",
+   "ok": false,
+   "control": null
+  },
+  "A18": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "nova",
+   "ok": false,
+   "control": null
+  },
+  "A19": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "marguerite",
+   "ok": null,
+   "control": "refuse",
+   "expect": "no"
+  },
+  "A20": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "dan",
+   "ok": true,
+   "control": null
+  },
+  "A21": {
+   "seed": 7,
+   "week": 1,
+   "arm": "hippocampus-off",
+   "night": 1,
+   "kind": "H",
+   "item": "volvo",
+   "ok": true,
+   "control": null
+  },
+  "A22": {
+   "seed": 7,
+   "week": 1,
+   "arm": "both-off",
+   "night": 1,
+   "kind": "H",
+   "item": "dan",
+   "ok": false,
+   "control": null
+  },
+  "A23": {
+   "seed": 7,
+   "week": 1,
+   "arm": "intact",
+   "night": 1,
+   "kind": "H",
+   "item": "marguerite",
+   "ok": true,
+   "control": null
+  }
+ }
+}

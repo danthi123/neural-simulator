@@ -78,3 +78,27 @@ def test_knows_whole_word():
     assert VS.knows({"item": "volvo", "brain": "You drive a red Volvo."}, led)
     assert not VS.knows({"item": "volvo", "brain": "You drive a Volvoish car."}, led)
     assert not VS.knows({"item": None, "brain": "Volvo"}, led)
+
+
+def test_outputs_record_the_real_device_and_strategy(tmp_path):
+    """The Cortex has no .device; the headers must carry cortex.strategy (e.g. 'cuda fp16'), not '?'/'cpu'."""
+    import inspect
+
+    from brain.experiments import life_kw
+    from brain.experiments import voice_tag as VT
+
+    class CudaStub(StubCortex):
+        strategy = "cuda fp32"
+
+    snaps = tmp_path / "snaps"
+    argv = ["--seed", "7", "--days", "3", "--full-probe-nights", "1", "--frozen-probe", "--homes", str(tmp_path / "h"),
+            "--out", str(tmp_path / "o" / "life_s7"), "--night-snapshots", str(snaps)]
+    life_kw.main(argv, cortex=StubCortex(), brain_kw=BKW)
+    res = json.load(open(str(tmp_path / "o" / "life_s7") + ".json"))
+    trunk = str(tmp_path / "h" / "trunk")
+    for mod, w in ((VS, "w"), (CS, "w2")):
+        out = mod.run(res, str(snaps), trunk, CudaStub(), str(tmp_path / w), weekend=False, nights=(1,),
+                      log=lambda *a: None)
+        assert out["device"] == "cuda" and out["strategy"] == "cuda fp32"
+    src = inspect.getsource(VT.run)  # full voice_tag.run needs sleeps; the header expression is checked in source
+    assert '"strategy": str(getattr(cortex, "strategy"' in src and 'getattr(cortex, "device"' not in src

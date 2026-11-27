@@ -1,0 +1,40 @@
+{
+ "prompts": 30,
+ "by_what": {
+  "cross": 6,
+  "decoy": 6,
+  "dup": 6,
+  "canary": 12
+ },
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "user_turns_match": {
+  "319": true,
+  "320": true,
+  "321": true
+ },
+ "canaries_planted": [
+  "pet-named",
+  "invented",
+  "experience",
+  "wrong-episode",
+  "perspective",
+  "collapse"
+ ],
+ "canaries_per_unit": {
+  "arm:319": 1,
+  "arm:320": 1,
+  "arm:321": 2,
+  "B:321": 2
+ },
+ "prompt_chars": {
+  "min": 10416,
+  "median": 13873,
+  "max": 16337
+ },
+ "ids": "C0..",
+ "decoy_reference": "both-off (arm life, same seed and week)"
+}

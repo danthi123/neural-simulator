@@ -1,0 +1,12 @@
+usage: life_read.py [-h] [--emit EMIT] [--lives LIVES [LIVES ...]]
+                    [--weeks WEEKS] [--lived-context {all,intact}]
+                    [--rng-seed RNG_SEED] [--score] [--key KEY]
+                    [--reads READS] [--reads2 READS2] [--pairs PAIRS]
+                    [--pairs2 PAIRS2] [--answers ANSWERS]
+                    [--answers2 ANSWERS2] [--out OUT]
+                    [--emit-cross EMIT_CROSS]
+                    [--arm-lives ARM_LIVES [ARM_LIVES ...]]
+                    [--b-lives B_LIVES [B_LIVES ...]]
+                    [--cross-week CROSS_WEEK] [--score-cross]
+                    [--cross-id-prefix CROSS_ID_PREFIX]
+life_read.py: error: --pairs and --pairs2 are the same file: two different readers are required

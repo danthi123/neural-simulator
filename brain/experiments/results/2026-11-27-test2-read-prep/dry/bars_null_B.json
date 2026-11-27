@@ -1,0 +1,260 @@
+{
+ "K": 3,
+ "inner_perm": 20,
+ "registered_n_perm": 10000,
+ "master_seed": 20261127,
+ "sections": [
+  "p0",
+  "savings",
+  "transfer",
+  "cue"
+ ],
+ "seeds": [
+  7
+ ],
+ "n_seeds": 1,
+ "bars": {
+  "P0": {
+   "section": "p0",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "0": 3
+   }
+  },
+  "SAV-G": {
+   "section": "savings",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "None": 3
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.0
+  },
+  "SAV-dR": {
+   "section": "savings",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "None": 3
+   }
+  },
+  "TRF-T4": {
+   "section": "transfer",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "0": 3
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.0
+  },
+  "TRF-K": {
+   "section": "transfer",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "None": 3
+   }
+  },
+  "TRF-C": {
+   "section": "transfer",
+   "observed_verdict": "UNDEFINED",
+   "observed_verdict_at_null_inner_perm": "UNDEFINED",
+   "observed_stat": null,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "0": 3
+   }
+  },
+  "CUE-R": {
+   "section": "cue",
+   "observed_verdict": "FAIL",
+   "observed_verdict_at_null_inner_perm": "FAIL",
+   "observed_stat": null,
+   "observed_seed_count": 0,
+   "null_stat": {
+    "n": 0,
+    "mean": null,
+    "p95": null,
+    "p99": null
+   },
+   "false_pass_rate": 0.0,
+   "frac_ge": null,
+   "rank": null,
+   "beyond_p95": null,
+   "beyond_p99": null,
+   "null_seed_count": {
+    "0": 3
+   },
+   "trusted_rule": "inconclusive",
+   "false_pass_se": 0.0
+  },
+  "CUE-D": {
+   "section": "cue",
+   "observed_verdict": "PASS",
+   "observed_verdict_at_null_inner_perm": "PASS",
+   "observed_stat": 1.0,
+   "observed_seed_count": null,
+   "null_stat": {
+    "n": 3,
+    "mean": 0.0,
+    "p95": 0.45,
+    "p99": 0.49
+   },
+   "false_pass_rate": 0.3333333333333333,
+   "frac_ge": 0.25,
+   "rank": 1,
+   "beyond_p95": true,
+   "beyond_p99": true,
+   "null_seed_count": {
+    "None": 3
+   }
+  }
+ },
+ "composite": {
+  "p0": {
+   "bars": [
+    "P0"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.2517,
+   "trusted_rule": "inconclusive",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "savings": {
+   "bars": [
+    "SAV-G",
+    "SAV-dR"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.2517,
+   "trusted_rule": "inconclusive",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "transfer": {
+   "bars": [
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.2517,
+   "trusted_rule": "inconclusive",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "cue": {
+   "bars": [
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.2517,
+   "trusted_rule": "inconclusive",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  },
+  "all": {
+   "bars": [
+    "P0",
+    "SAV-G",
+    "SAV-dR",
+    "TRF-T4",
+    "TRF-K",
+    "TRF-C",
+    "CUE-R",
+    "CUE-D"
+   ],
+   "false_pass_rate": 0.0,
+   "observed_composite": "not PASS",
+   "false_pass_se": 0.0,
+   "mc_margin_2se": 0.2517,
+   "trusted_rule": "inconclusive",
+   "note": "upper bound: the all-bars-PASS composite is not the registered per-bar rule"
+  }
+ }
+}

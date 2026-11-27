@@ -1,0 +1,158 @@
+# KP vs B (test2 prereg sections 4-5, `life_compare.py`)
+
+Mode: DEV. Seeds scored over: [319, 320, 321]; >= rule need 3/3. UNDEFINED seeds (neither pass nor fail): none. Arm missing or ended early (scored on completed nights; not passing where a later night is needed): none. Unpaired lives: none. Ignored lives (seed not expected): none.
+
+Primary: {'LG-P1': 'DEV (3 seeds) PASS', 'LG-P2': 'DEV (3 seeds) PASS'}. Guards: {'G1': 'DEV (3 seeds) PASS', 'G2a': 'DEV (3 seeds) FAIL', 'G2b': 'DEV (3 seeds) PASS', 'G3': 'DEV (3 seeds) FAIL', 'G4': 'DEV (3 seeds) PASS'}.
+
+
+| seed | side | split | device | provenance | completed nights | model | days | brain_kw |
+|---|---|---|---|---|---|---|---|---|
+| 319 | arm | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"keep_bank": "prior", "sleep_seed": 319} |
+| 319 | b | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"sleep_seed": 319} |
+| 320 | arm | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"keep_bank": "prior", "sleep_seed": 320} |
+| 320 | b | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"sleep_seed": 320} |
+| 321 | arm | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"keep_bank": "prior", "sleep_seed": 321} |
+| 321 | b | dev | cuda | unrecorded | 15 | rwkv7-g1l-1.5b-20261031-ctx34304 | 15 | {"sleep_seed": 321} |
+
+Notes s319: provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B)
+
+Notes s320: provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B)
+
+Notes s321: provenance unrecorded: cuda_precision (arm+B); provenance unrecorded: torch (arm+B); provenance unrecorded: torch_cuda (arm+B); provenance unrecorded: gpu_name (arm+B)
+
+## LG-P1: lang_guard.kl night 15 (arm < B per seed; pooled arm <= 0.5 x B)
+
+| seed | KP KL | B KL | pass |
+|---|---|---|---|
+| 319 | 0.3510 | 2.0934 | True |
+| 320 | 0.2936 | 2.6934 | True |
+| 321 | 0.3234 | 2.6160 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; **LG-P1: DEV (3 seeds) PASS**
+
+Pooled (mean over seeds) KP 0.3227 vs B 2.4676, ratio 0.131, half of B 1.2338, pooled ok True.
+
+## LG-P1 (night 10, reported): lang_guard.kl night 10 (arm < B per seed; pooled arm <= 0.5 x B)
+
+| seed | KP KL | B KL | pass |
+|---|---|---|---|
+| 319 | 0.2622 | 1.7365 | True |
+| 320 | 0.2360 | 1.6041 | True |
+| 321 | 0.2578 | 1.7308 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; LG-P1 (night 10, reported): DEV (3 seeds) PASS (reported, not a bar)
+
+Pooled (mean over seeds) KP 0.2520 vs B 1.6905, ratio 0.149, half of B 0.8452, pooled ok True.
+
+## LG-P2: NLL_arm(n15) - NLL_B(n1) <= 0.5 x (NLL_B(n15) - NLL_B(n1))
+
+| seed | KP NLL n15 | KP own n1 | B n1 | B n15 | KP rise | 0.5 x B rise | pass |
+|---|---|---|---|---|---|---|---|
+| 319 | 2.258 | 1.971 | 1.998 | 3.872 | 0.259 | 0.937 | True |
+| 320 | 2.179 | 1.988 | 2.002 | 4.480 | 0.177 | 1.239 | True |
+| 321 | 2.200 | 1.998 | 1.998 | 4.365 | 0.203 | 1.184 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; **LG-P2: DEV (3 seeds) PASS**
+
+## LG-P2 (night 10, reported): NLL_arm(n10) - NLL_B(n1) <= 0.5 x (NLL_B(n10) - NLL_B(n1))
+
+| seed | KP NLL n10 | KP own n1 | B n1 | B n10 | KP rise | 0.5 x B rise | pass |
+|---|---|---|---|---|---|---|---|
+| 319 | 2.139 | 1.971 | 1.998 | 3.500 | 0.140 | 0.751 | True |
+| 320 | 2.121 | 1.988 | 2.002 | 3.302 | 0.118 | 0.650 | True |
+| 321 | 2.157 | 1.998 | 1.998 | 3.465 | 0.160 | 0.734 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; LG-P2 (night 10, reported): DEV (3 seeds) PASS (reported, not a bar)
+
+## LG-FIX: the arm's own n15 KL <= 2x n1 ('language-drift defect fixed')
+
+| seed | KL n1 | KL n15 | ratio | pass |
+|---|---|---|---|---|
+| 319 | 0.0667 | 0.3510 | 5.2610 | False |
+| 320 | 0.0704 | 0.2936 | 4.1725 | False |
+| 321 | 0.0914 | 0.3234 | 3.5370 | False |
+
+Count 0/3 (need 3); LG-FIX: DEV (3 seeds) FAIL (reported, not a bar)
+
+## G1: H hippocampus-off nights 5-15, mean of 6 (arm >= B - 1.0)
+
+| seed | KP | B | diff | pass |
+|---|---|---|---|---|
+| 319 | 4.000 | 2.818 | 1.182 | True |
+| 320 | 3.273 | 3.000 | 0.273 | True |
+| 321 | 3.818 | 2.455 | 1.364 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; **G1: DEV (3 seeds) PASS**
+
+Pooled KP 3.697 vs B 2.758.
+
+## G2a: hippocampus-off day-1-2 recall, nights 1-4, rate x 6 (arm >= B - 1.0)
+
+| seed | KP k/n | KP x6 | B k/n | B x6 | diff | pass |
+|---|---|---|---|---|---|---|
+| 319 | 24/29 | 4.97 | 21/29 | 4.34 | 0.62 | True |
+| 320 | 21/29 | 4.34 | 26/29 | 5.38 | -1.03 | False |
+| 321 | 21/29 | 4.34 | 26/29 | 5.38 | -1.03 | False |
+
+Count 1/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.8750 over 3 seeds; **G2a: DEV (3 seeds) FAIL**
+
+## G2b: hippocampus-off day-1-2 recall, nights 5-15, rate x 6 (arm >= B - 1.0)
+
+| seed | KP k/n | KP x6 | B k/n | B x6 | diff | pass |
+|---|---|---|---|---|---|---|
+| 319 | 49/74 | 3.97 | 31/74 | 2.51 | 1.46 | True |
+| 320 | 40/73 | 3.29 | 37/73 | 3.04 | 0.25 | True |
+| 321 | 46/76 | 3.63 | 30/76 | 2.37 | 1.26 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; **G2b: DEV (3 seeds) PASS**
+
+## G2 n1-15 (reported): hippocampus-off day-1-2 recall, nights 1-15, rate x 6 (arm >= B - 1.0)
+
+| seed | KP k/n | KP x6 | B k/n | B x6 | diff | pass |
+|---|---|---|---|---|---|---|
+| 319 | 73/103 | 4.25 | 52/103 | 3.03 | 1.22 | True |
+| 320 | 61/102 | 3.59 | 63/102 | 3.71 | -0.12 | True |
+| 321 | 67/105 | 3.83 | 56/105 | 3.20 | 0.63 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.2500 over 3 seeds; G2 n1-15 (reported): DEV (3 seeds) PASS (reported, not a bar)
+
+## G3: collapse seeds-ever per probe arm (arm <= B and <= 3)
+
+| probe arm | KP seeds-ever | B seeds-ever | KP max share per seed | B max share per seed | ok |
+|---|---|---|---|---|---|
+| both-off | 0 | 0 | 319:0.06, 320:0.06, 321:0.06 | 319:0.06, 320:0.06, 321:0.06 | True |
+| consolidated-off | 0 | 0 | 319:0.06, 320:0.06, 321:0.06 | 319:0.06, 320:0.06, 321:0.06 | True |
+| hippocampus-off | 2 | 1 | 319:0.35, 320:0.55, 321:0.55 | 319:0.35, 320:0.35, 321:0.75 | False |
+| intact | 1 | 0 | 319:0.15, 320:0.10, 321:0.55 | 319:0.20, 320:0.39, 321:0.35 | False |
+| intact-frozen | 1 | 1 | 319:0.10, 320:0.06, 321:0.55 | 319:0.25, 320:0.72, 321:0.25 | True |
+
+**G3: DEV (3 seeds) FAIL**
+
+## G4: stock leak n10+15, arm not higher than B (per seed and pooled)
+
+### all rows
+
+| seed | KP k/n | KP share | B k/n | B share | pass |
+|---|---|---|---|---|---|
+| 319 | 0/156 | 0.000 | 47/156 | 0.301 | True |
+| 320 | 3/152 | 0.020 | 48/152 | 0.316 | True |
+| 321 | 14/152 | 0.092 | 40/152 | 0.263 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; G4 (all): DEV (3 seeds) PASS (clause of the bar below)
+
+Pooled KP 17/460 = 0.0370 vs B 135/460 = 0.2935; reduction 0.874; pooled ok True.
+
+### non_refusal rows
+
+| seed | KP k/n | KP share | B k/n | B share | pass |
+|---|---|---|---|---|---|
+| 319 | 0/148 | 0.000 | 47/156 | 0.301 | True |
+| 320 | 3/150 | 0.020 | 48/152 | 0.316 | True |
+| 321 | 14/138 | 0.101 | 40/152 | 0.263 | True |
+
+Count 3/3 (need 3); sign-flip p (one-sided, arm better, reported) 0.1250 over 3 seeds; G4 (non_refusal): DEV (3 seeds) PASS (clause of the bar below)
+
+Pooled KP 17/436 = 0.0390 vs B 135/460 = 0.2935; reduction 0.867; pooled ok True.
+
+**G4: DEV (3 seeds) PASS** (all rows AND non-refusal rows)
+

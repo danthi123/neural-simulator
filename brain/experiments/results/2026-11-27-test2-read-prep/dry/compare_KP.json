@@ -1,0 +1,912 @@
+{
+ "arm_name": "KP",
+ "d2pr2": false,
+ "mode": "registered",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "unpaired_seeds": [],
+ "ignored_seeds": [
+  7
+ ],
+ "unscored": {},
+ "undefined": {
+  "42": [
+   "B life missing"
+  ],
+  "43": [
+   "B life missing"
+  ],
+  "44": [
+   "B life missing"
+  ],
+  "100": [
+   "B life missing"
+  ],
+  "101": [
+   "B life missing"
+  ],
+  "102": [
+   "B life missing"
+  ]
+ },
+ "scorable_seeds": [],
+ "setup_check": true,
+ "notes": {
+  "42": [
+   "arm life missing (not passing)"
+  ],
+  "43": [
+   "arm life missing (not passing)"
+  ],
+  "44": [
+   "arm life missing (not passing)"
+  ],
+  "100": [
+   "arm life missing (not passing)"
+  ],
+  "101": [
+   "arm life missing (not passing)"
+  ],
+  "102": [
+   "arm life missing (not passing)"
+  ]
+ },
+ "need": 5,
+ "lives": {
+  "7": {
+   "arm": {
+    "brain_kw": {
+     "sleep_seed": 7,
+     "keep_bank": "prior"
+    },
+    "device": "cuda",
+    "split": "test2",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 2,
+    "provenance": {
+     "device": "cuda",
+     "cuda_precision": "cuda fp16",
+     "torch": "2.7.0+cu128",
+     "torch_cuda": "12.8",
+     "gpu_name": "NVIDIA A10G",
+     "tf32_matmul": true,
+     "tf32_cudnn": true,
+     "code_commit": "4ad30c097449a4be9fca08ee9f6faa324c7526e3",
+     "aws_ami_id": "ami-012ba162b9cd2729c"
+    },
+    "completed_nights": 2
+   },
+   "b": {
+    "brain_kw": {
+     "sleep_seed": 7
+    },
+    "device": "cuda",
+    "split": "test2",
+    "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+    "days": 2,
+    "provenance": {
+     "device": "cuda",
+     "cuda_precision": "cuda fp16",
+     "torch": "2.7.0+cu128",
+     "torch_cuda": "12.8",
+     "gpu_name": "NVIDIA A10G",
+     "tf32_matmul": true,
+     "tf32_cudnn": true,
+     "code_commit": "4ad30c097449a4be9fca08ee9f6faa324c7526e3",
+     "aws_ami_id": "ami-012ba162b9cd2729c"
+    },
+    "completed_nights": 2
+   }
+  }
+ },
+ "same_brain_kw_seeds": [],
+ "bars": {
+  "LG-P1": {
+   "id": "LG-P1",
+   "night": 15,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null,
+    "ratio": null,
+    "half_b": null,
+    "ok": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "primary",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "LG-P1 n10 (reported)": {
+   "id": "LG-P1 (night 10, reported)",
+   "night": 10,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null,
+    "ratio": null,
+    "half_b": null,
+    "ok": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "reported",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "LG-P2": {
+   "id": "LG-P2",
+   "night": 15,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null,
+    "b_n1": null,
+    "arm_n1": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "primary",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "LG-P2 n10 (reported)": {
+   "id": "LG-P2 (night 10, reported)",
+   "night": 10,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null,
+    "b_n1": null,
+    "arm_n1": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "reported",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "LG-FIX": {
+   "id": "LG-FIX",
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "verdict": "UNDEFINED",
+   "role": "reported",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G1": {
+   "id": "G1",
+   "margin": 1.0,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "guard",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G2a": {
+   "id": "G2a",
+   "nights": [
+    1,
+    4
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "guard",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G2b": {
+   "id": "G2b",
+   "nights": [
+    5,
+    15
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "guard",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G2 n1-15 (reported)": {
+   "id": "G2 n1-15 (reported)",
+   "nights": [
+    1,
+    15
+   ],
+   "margin": 1.0,
+   "per_seed": {
+    "42": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "43": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "44": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "100": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "101": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    },
+    "102": {
+     "ok": "UNDEFINED",
+     "undefined": [
+      "B life missing"
+     ]
+    }
+   },
+   "count": {
+    "count": 0,
+    "n": 0,
+    "defined": 0,
+    "need": 5,
+    "ok": false,
+    "undefined": 6,
+    "scorable": 0
+   },
+   "pooled": {
+    "arm": null,
+    "b": null
+   },
+   "sign_flip_p": null,
+   "sign_flip_n": 0,
+   "verdict": "UNDEFINED",
+   "role": "reported",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G3": {
+   "id": "G3",
+   "cap": 3,
+   "per_arm": {},
+   "complete": true,
+   "verdict": "UNDEFINED",
+   "role": "guard",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  },
+  "G4": {
+   "id": "G4",
+   "rows": {
+    "all": {
+     "id": "G4 (all)",
+     "per_seed": {
+      "42": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "43": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "44": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "100": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "101": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "102": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      }
+     },
+     "count": {
+      "count": 0,
+      "n": 0,
+      "defined": 0,
+      "need": 5,
+      "ok": false,
+      "undefined": 6,
+      "scorable": 0
+     },
+     "pooled": {
+      "arm_k": 0,
+      "arm_n": 0,
+      "b_k": 0,
+      "b_n": 0,
+      "arm": null,
+      "b": null,
+      "reduction": null,
+      "complete": true,
+      "ok": true
+     },
+     "sign_flip_p": null,
+     "sign_flip_n": 0,
+     "verdict": "UNDEFINED",
+     "verdict_core": "UNDEFINED"
+    },
+    "non_refusal": {
+     "id": "G4 (non_refusal)",
+     "per_seed": {
+      "42": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "43": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "44": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "100": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "101": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      },
+      "102": {
+       "ok": "UNDEFINED",
+       "undefined": [
+        "B life missing"
+       ]
+      }
+     },
+     "count": {
+      "count": 0,
+      "n": 0,
+      "defined": 0,
+      "need": 5,
+      "ok": false,
+      "undefined": 6,
+      "scorable": 0
+     },
+     "pooled": {
+      "arm_k": 0,
+      "arm_n": 0,
+      "b_k": 0,
+      "b_n": 0,
+      "arm": null,
+      "b": null,
+      "reduction": null,
+      "complete": true,
+      "ok": true
+     },
+     "sign_flip_p": null,
+     "sign_flip_n": 0,
+     "verdict": "UNDEFINED",
+     "verdict_core": "UNDEFINED"
+    }
+   },
+   "verdict": "UNDEFINED",
+   "role": "guard",
+   "undefined_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdict_core": "UNDEFINED"
+  }
+ },
+ "primary": {
+  "LG-P1": "UNDEFINED",
+  "LG-P2": "UNDEFINED"
+ },
+ "guards": {
+  "G1": "UNDEFINED",
+  "G2a": "UNDEFINED",
+  "G2b": "UNDEFINED",
+  "G3": "UNDEFINED",
+  "G4": "UNDEFINED"
+ }
+}

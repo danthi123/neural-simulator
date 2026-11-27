@@ -1,0 +1,20 @@
+
+### RWKV-7 "Goose" enabled ###
+
+| life | seed | G7 wrong/n (rate) | friend-name | G8a intact | G8a hoff | G8b max night | G10 hits/n | G11 confab/n (reported) | leak n10+15 all | leak non-refusal |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+| seed | G7 | G8a | G8b | G8b same-seed (reported) | G10 | G11 (setup check) | undefined / notes |
+|---|---|---|---|---|---|---|---|
+| 42 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| 43 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| 44 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| 100 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| 101 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| 102 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life missing; arm life missing (not passing) |
+| guard | 0/6 UNDEFINED | 0/6 UNDEFINED | 0/6 UNDEFINED | - | 0/6 UNDEFINED | 0/6 UNDEFINED | |
+
+Scorable seeds 0/6 (need 5); UNDEFINED seeds: {42: ['B life missing'], 43: ['B life missing'], 44: ['B life missing'], 100: ['B life missing'], 101: ['B life missing'], 102: ['B life missing']}.
+G8b violations (any-seed rule): none
+G8b excused cells: none
+G8b same-seed variant violations (reported): none

@@ -1,0 +1,170 @@
+{
+ "spec": "interview-spec-2026-11-20",
+ "spec_sha256": "4b70347f5d56d9f89a0de38e2467a5395d1c30044a3a789fa1d54f27cc2e5a72",
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "units": 501,
+ "missing_claims": 0,
+ "missing_know_intact": 0,
+ "auroc_intact": {
+  "auroc": null,
+  "n_units": 70,
+  "n_claim_bearing": 0,
+  "claim_free": 70,
+  "claim_free_share": 1.0,
+  "positives": 0,
+  "per_seed": {},
+  "seeds_above_half": 0,
+  "label_shuffled_null": null
+ },
+ "auroc_both_off": {
+  "auroc": null,
+  "n_units": 70,
+  "n_claim_bearing": 0,
+  "claim_free": 70,
+  "claim_free_share": 1.0,
+  "positives": 0,
+  "per_seed": {},
+  "seeds_above_half": 0,
+  "label_shuffled_null": null
+ },
+ "decoys": {
+  "refuse_everything": {
+   "auroc": 0.5,
+   "overabstention": 1.0,
+   "invented": 0.0
+  },
+  "claim_everything": {
+   "auroc": 0.5,
+   "overabstention": 0.0,
+   "invented": 1.0
+  }
+ },
+ "invented_memory": {
+  "intact": 0.0,
+  "both-off": 0.0,
+  "per_seed": {
+   "319": {
+    "intact": 0.0,
+    "both-off": 0.0
+   },
+   "320": {
+    "intact": 0.0,
+    "both-off": 0.0
+   },
+   "321": {
+    "intact": 0.0,
+    "both-off": 0.0
+   }
+  },
+  "seeds_intact_below": 0,
+  "paired_units": 36,
+  "p_intact_below": 1.0
+ },
+ "overabstention_intact": {
+  "answerable": 11,
+  "claim_bearing": 0,
+  "claim_free": 11,
+  "rate": null
+ },
+ "lesion_sensitivity": {
+  "per_seed": {
+   "319": {
+    "n_items": 4,
+    "n_claim_pairs": 0,
+    "know_drop": null,
+    "forced_drop": 0.5,
+    "know_drop_where_probe_dropped": null
+   },
+   "320": {
+    "n_items": 3,
+    "n_claim_pairs": 0,
+    "know_drop": null,
+    "forced_drop": 0.0,
+    "know_drop_where_probe_dropped": null
+   },
+   "321": {
+    "n_items": 4,
+    "n_claim_pairs": 0,
+    "know_drop": null,
+    "forced_drop": 0.25,
+    "know_drop_where_probe_dropped": null
+   }
+  },
+  "seeds_positive": 0,
+  "bar_seeds": 4
+ },
+ "phenomenal": {
+  "intact": {
+   "319": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   },
+   "320": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   },
+   "321": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   }
+  },
+  "hippocampus-off": {
+   "319": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   },
+   "320": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   },
+   "321": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   }
+  },
+  "both-off": {
+   "319": {
+    "extractor_asserted": 0,
+    "regex_report_only": 1,
+    "quotes": []
+   },
+   "320": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   },
+   "321": {
+    "extractor_asserted": 0,
+    "regex_report_only": 0,
+    "quotes": []
+   }
+  }
+ },
+ "report_only": {
+  "time_provenance": {},
+  "quotes_not_verbatim": 0,
+  "p0_forgotten": {
+   "n": 19,
+   "auroc": null,
+   "claim_free": 19
+  }
+ },
+ "bars": {
+  "auroc": false,
+  "auroc_null_discriminating": false,
+  "invented_below_both_off": false,
+  "overabstention": false,
+  "lesion": false,
+  "phenomenal_zero_every_seed": true
+ }
+}

@@ -1,0 +1,269 @@
+{
+ "arm_files": [
+  "_scratch/brainv2/aws/20261127-0920-KP/smokeKP_s7.json.json"
+ ],
+ "b_files": [
+  "_scratch/brainv2/aws/20261127-0920/smokeB_s7.json.json"
+ ],
+ "arm": [
+  {
+   "seed": 7,
+   "g7": {
+    "n": 4,
+    "wrong": 0,
+    "rate": 0.0,
+    "friend_name": 0,
+    "friend_rate": 0.0,
+    "by_arm": {
+     "intact": {
+      "wrong": 0,
+      "n": 2
+     },
+     "hippocampus-off": {
+      "wrong": 0,
+      "n": 2
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 0,
+     "n": 10,
+     "rate": 0.0
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 10,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 2,
+    "n": 23,
+    "rate": 0.08695652173913043
+   },
+   "g11": {
+    "confab": 20,
+    "n": 20,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 0,
+     "leaks": 0
+    },
+    "non_refusal": {
+     "n": 0,
+     "leaks": 0
+    }
+   },
+   "completed_nights": 2
+  }
+ ],
+ "b": [
+  {
+   "seed": 7,
+   "g7": {
+    "n": 4,
+    "wrong": 3,
+    "rate": 0.75,
+    "friend_name": 0,
+    "friend_rate": 0.0,
+    "by_arm": {
+     "intact": {
+      "wrong": 2,
+      "n": 2
+     },
+     "hippocampus-off": {
+      "wrong": 1,
+      "n": 2
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 0,
+     "n": 10,
+     "rate": 0.0
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 10,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 0,
+    "n": 23,
+    "rate": 0.0
+   },
+   "g11": {
+    "confab": 20,
+    "n": 20,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 0,
+     "leaks": 0
+    },
+    "non_refusal": {
+     "n": 0,
+     "leaks": 0
+    }
+   },
+   "completed_nights": 2
+  }
+ ],
+ "bars": {
+  "per_seed": [
+   {
+    "seed": 7,
+    "undefined": [
+     "B life ended after night 2"
+    ],
+    "notes": [
+     "arm life ended after night 2: scored on nights 1-2, B restricted to the same nights"
+    ],
+    "G7": "UNDEFINED",
+    "G8a": "UNDEFINED",
+    "G8b": "UNDEFINED",
+    "G10": "UNDEFINED",
+    "G11": "UNDEFINED",
+    "G11_rate_cmp (reported)": true,
+    "raw": {
+     "G7": true,
+     "G8a": true,
+     "G10": false,
+     "G11_rate_cmp": true
+    },
+    "G8b same-seed (reported)": "UNDEFINED"
+   }
+  ],
+  "n_seeds": 1,
+  "need": 1,
+  "n_scorable": 0,
+  "mode": "DEV",
+  "undefined_seeds": {
+   "7": [
+    "B life ended after night 2"
+   ]
+  },
+  "g8b_violations": [],
+  "g8b_excused_cells": [],
+  "g8b_same_seed (reported)": {
+   "violations": [],
+   "pass": null
+  },
+  "G7": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 1,
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G8a": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 1,
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G10": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 1,
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "pass": null,
+   "pass_all": false
+  },
+  "G11": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 1,
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "pass": null,
+   "pass_all": false,
+   "role": "setup check (not a cost guard): both-off rows equal per seed; rate reported only"
+  },
+  "G8b": {
+   "n_pass": 0,
+   "n_undefined": 1,
+   "verdict_core": "UNDEFINED",
+   "verdict": "DEV (1 seeds) UNDEFINED",
+   "pass": null
+  },
+  "ignored_seeds": [],
+  "status": {
+   "7": {
+    "undefined": [
+     "B life ended after night 2"
+    ],
+    "notes": [
+     "arm life ended after night 2: scored on nights 1-2, B restricted to the same nights"
+    ],
+    "arm_k": 2,
+    "b_k": 2,
+    "arm_missing": false
+   }
+  }
+ }
+}

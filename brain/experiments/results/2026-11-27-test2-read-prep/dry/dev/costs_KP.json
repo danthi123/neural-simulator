@@ -1,0 +1,1495 @@
+{
+ "arm_files": [
+  "_scratch/stage2/read/lifeKP_s319.json",
+  "_scratch/stage2/read/lifeKP_s320.json",
+  "_scratch/stage2/read/lifeKP_s321.json"
+ ],
+ "b_files": [
+  "_scratch/stage2/read/lifeBg_s319.json",
+  "_scratch/stage2/read/lifeBg_s320.json",
+  "_scratch/stage2/read/lifeBg_s321.json"
+ ],
+ "arm": [
+  {
+   "seed": 319,
+   "g7": {
+    "n": 30,
+    "wrong": 26,
+    "rate": 0.8666666666666667,
+    "friend_name": 13,
+    "friend_rate": 0.43333333333333335,
+    "by_arm": {
+     "intact": {
+      "wrong": 14,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 12,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 2,
+     "n": 104,
+     "rate": 0.019230769230769232
+    },
+    "hippocampus-off": {
+     "refusals": 9,
+     "n": 104,
+     "rate": 0.08653846153846154
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 1,
+      "n": 11,
+      "share": 0.09090909090909091
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 1,
+      "n": 11,
+      "share": 0.09090909090909091
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 5,
+      "n": 11,
+      "share": 0.45454545454545453
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 1,
+      "n": 11,
+      "share": 0.09090909090909091
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 8,
+      "n": 11,
+      "share": 0.7272727272727273
+     }
+    }
+   },
+   "g10": {
+    "hits": 9,
+    "n": 134,
+    "rate": 0.06716417910447761
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 156,
+     "leaks": 0
+    },
+    "non_refusal": {
+     "n": 148,
+     "leaks": 0
+    }
+   },
+   "completed_nights": 15
+  },
+  {
+   "seed": 320,
+   "g7": {
+    "n": 30,
+    "wrong": 26,
+    "rate": 0.8666666666666667,
+    "friend_name": 21,
+    "friend_rate": 0.7,
+    "by_arm": {
+     "intact": {
+      "wrong": 11,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 15,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 2,
+     "n": 92,
+     "rate": 0.021739130434782608
+    },
+    "hippocampus-off": {
+     "refusals": 12,
+     "n": 92,
+     "rate": 0.13043478260869565
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 2,
+      "n": 11,
+      "share": 0.18181818181818182
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 11,
+      "n": 11,
+      "share": 1.0
+     },
+     "12": {
+      "refusals": 11,
+      "n": 11,
+      "share": 1.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 12,
+    "n": 134,
+    "rate": 0.08955223880597014
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 152,
+     "leaks": 3
+    },
+    "non_refusal": {
+     "n": 150,
+     "leaks": 3
+    }
+   },
+   "completed_nights": 15
+  },
+  {
+   "seed": 321,
+   "g7": {
+    "n": 30,
+    "wrong": 17,
+    "rate": 0.5666666666666667,
+    "friend_name": 7,
+    "friend_rate": 0.23333333333333334,
+    "by_arm": {
+     "intact": {
+      "wrong": 6,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 11,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 13,
+     "n": 95,
+     "rate": 0.1368421052631579
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 95,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 4,
+      "n": 11,
+      "share": 0.36363636363636365
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 1,
+      "n": 11,
+      "share": 0.09090909090909091
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 1,
+      "n": 11,
+      "share": 0.09090909090909091
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 11,
+      "n": 11,
+      "share": 1.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 20,
+    "n": 134,
+    "rate": 0.14925373134328357
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 152,
+     "leaks": 14
+    },
+    "non_refusal": {
+     "n": 138,
+     "leaks": 14
+    }
+   },
+   "completed_nights": 15
+  }
+ ],
+ "b": [
+  {
+   "seed": 319,
+   "g7": {
+    "n": 30,
+    "wrong": 14,
+    "rate": 0.4666666666666667,
+    "friend_name": 0,
+    "friend_rate": 0.0,
+    "by_arm": {
+     "intact": {
+      "wrong": 9,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 5,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 0,
+     "n": 104,
+     "rate": 0.0
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 104,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 4,
+    "n": 134,
+    "rate": 0.029850746268656716
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 156,
+     "leaks": 47
+    },
+    "non_refusal": {
+     "n": 156,
+     "leaks": 47
+    }
+   },
+   "completed_nights": 15
+  },
+  {
+   "seed": 320,
+   "g7": {
+    "n": 30,
+    "wrong": 5,
+    "rate": 0.16666666666666666,
+    "friend_name": 2,
+    "friend_rate": 0.06666666666666667,
+    "by_arm": {
+     "intact": {
+      "wrong": 3,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 2,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 0,
+     "n": 92,
+     "rate": 0.0
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 92,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 1,
+    "n": 134,
+    "rate": 0.007462686567164179
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 152,
+     "leaks": 48
+    },
+    "non_refusal": {
+     "n": 152,
+     "leaks": 48
+    }
+   },
+   "completed_nights": 15
+  },
+  {
+   "seed": 321,
+   "g7": {
+    "n": 30,
+    "wrong": 11,
+    "rate": 0.36666666666666664,
+    "friend_name": 5,
+    "friend_rate": 0.16666666666666666,
+    "by_arm": {
+     "intact": {
+      "wrong": 6,
+      "n": 15
+     },
+     "hippocampus-off": {
+      "wrong": 5,
+      "n": 15
+     }
+    }
+   },
+   "g8a": {
+    "intact": {
+     "refusals": 0,
+     "n": 95,
+     "rate": 0.0
+    },
+    "hippocampus-off": {
+     "refusals": 0,
+     "n": 95,
+     "rate": 0.0
+    }
+   },
+   "g8b": {
+    "intact": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    },
+    "hippocampus-off": {
+     "1": {
+      "refusals": 0,
+      "n": 9,
+      "share": 0.0
+     },
+     "2": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "3": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "4": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "5": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "6": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "7": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "8": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "9": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "10": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "11": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "12": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "13": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "14": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     },
+     "15": {
+      "refusals": 0,
+      "n": 11,
+      "share": 0.0
+     }
+    }
+   },
+   "g10": {
+    "hits": 1,
+    "n": 134,
+    "rate": 0.007462686567164179
+   },
+   "g11": {
+    "confab": 42,
+    "n": 42,
+    "rate": 1.0
+   },
+   "leak": {
+    "all": {
+     "n": 152,
+     "leaks": 40
+    },
+    "non_refusal": {
+     "n": 152,
+     "leaks": 40
+    }
+   },
+   "completed_nights": 15
+  }
+ ],
+ "bars": {
+  "per_seed": [
+   {
+    "seed": 319,
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "G7": false,
+    "G8a": false,
+    "G10": false,
+    "G11": true,
+    "G11_rate_cmp (reported)": true,
+    "raw": {
+     "G7": false,
+     "G8a": false,
+     "G10": false,
+     "G11_rate_cmp": true
+    },
+    "G8b": false,
+    "G8b same-seed (reported)": false
+   },
+   {
+    "seed": 320,
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "G7": false,
+    "G8a": false,
+    "G10": false,
+    "G11": true,
+    "G11_rate_cmp (reported)": true,
+    "raw": {
+     "G7": false,
+     "G8a": false,
+     "G10": false,
+     "G11_rate_cmp": true
+    },
+    "G8b": false,
+    "G8b same-seed (reported)": false
+   },
+   {
+    "seed": 321,
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "G7": true,
+    "G8a": false,
+    "G10": false,
+    "G11": true,
+    "G11_rate_cmp (reported)": true,
+    "raw": {
+     "G7": true,
+     "G8a": false,
+     "G10": false,
+     "G11_rate_cmp": true
+    },
+    "G8b": false,
+    "G8b same-seed (reported)": false
+   }
+  ],
+  "n_seeds": 3,
+  "need": 3,
+  "n_scorable": 3,
+  "mode": "DEV",
+  "undefined_seeds": {},
+  "g8b_violations": [
+   {
+    "seed": 319,
+    "arm": "hippocampus-off",
+    "night": 15,
+    "share": 0.7272727272727273,
+    "b_share": 0.0
+   },
+   {
+    "seed": 320,
+    "arm": "hippocampus-off",
+    "night": 11,
+    "share": 1.0,
+    "b_share": 0.0
+   },
+   {
+    "seed": 320,
+    "arm": "hippocampus-off",
+    "night": 12,
+    "share": 1.0,
+    "b_share": 0.0
+   },
+   {
+    "seed": 321,
+    "arm": "intact",
+    "night": 15,
+    "share": 1.0,
+    "b_share": 0.0
+   }
+  ],
+  "g8b_excused_cells": [],
+  "g8b_same_seed (reported)": {
+   "violations": [
+    {
+     "seed": 319,
+     "arm": "hippocampus-off",
+     "night": 15,
+     "share": 0.7272727272727273,
+     "b_share": 0.0
+    },
+    {
+     "seed": 320,
+     "arm": "hippocampus-off",
+     "night": 11,
+     "share": 1.0,
+     "b_share": 0.0
+    },
+    {
+     "seed": 320,
+     "arm": "hippocampus-off",
+     "night": 12,
+     "share": 1.0,
+     "b_share": 0.0
+    },
+    {
+     "seed": 321,
+     "arm": "intact",
+     "night": 15,
+     "share": 1.0,
+     "b_share": 0.0
+    }
+   ],
+   "pass": false
+  },
+  "G7": {
+   "n_pass": 1,
+   "n_missing": 0,
+   "n_undefined": 0,
+   "verdict_core": "FAIL",
+   "verdict": "DEV (3 seeds) FAIL",
+   "pass": null,
+   "pass_all": false
+  },
+  "G8a": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 0,
+   "verdict_core": "FAIL",
+   "verdict": "DEV (3 seeds) FAIL",
+   "pass": null,
+   "pass_all": false
+  },
+  "G10": {
+   "n_pass": 0,
+   "n_missing": 0,
+   "n_undefined": 0,
+   "verdict_core": "FAIL",
+   "verdict": "DEV (3 seeds) FAIL",
+   "pass": null,
+   "pass_all": false
+  },
+  "G11": {
+   "n_pass": 3,
+   "n_missing": 0,
+   "n_undefined": 0,
+   "verdict_core": "PASS",
+   "verdict": "DEV (3 seeds) PASS",
+   "pass": null,
+   "pass_all": true,
+   "role": "setup check (not a cost guard): both-off rows equal per seed; rate reported only"
+  },
+  "G8b": {
+   "n_pass": 0,
+   "n_undefined": 0,
+   "verdict_core": "FAIL",
+   "verdict": "DEV (3 seeds) FAIL",
+   "pass": false
+  },
+  "ignored_seeds": [],
+  "status": {
+   "319": {
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "arm_k": 15,
+    "b_k": 15,
+    "arm_missing": false
+   },
+   "320": {
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "arm_k": 15,
+    "b_k": 15,
+    "arm_missing": false
+   },
+   "321": {
+    "undefined": [],
+    "notes": [
+     "provenance unrecorded: cuda_precision (arm+B)",
+     "provenance unrecorded: torch (arm+B)",
+     "provenance unrecorded: torch_cuda (arm+B)",
+     "provenance unrecorded: gpu_name (arm+B)"
+    ],
+    "arm_k": 15,
+    "b_k": 15,
+    "arm_missing": false
+   }
+  }
+ }
+}

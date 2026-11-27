@@ -1,0 +1,17 @@
+
+### RWKV-7 "Goose" enabled ###
+
+| life | seed | G7 wrong/n (rate) | friend-name | G8a intact | G8a hoff | G8b max night | G10 hits/n | G11 confab/n (reported) | leak n10+15 all | leak non-refusal |
+|---|---|---|---|---|---|---|---|---|---|---|
+| arm | 7 | 0/4 (0.000) | 0/4 | 0/10 (0.000) | 0/10 (0.000) | 0.000 | 2/23 | 20/20 (1.000) | 0/0 | 0/0 |
+| B | 7 | 3/4 (0.750) | 0/4 | 0/10 (0.000) | 0/10 (0.000) | 0.000 | 0/23 | 20/20 (1.000) | 0/0 | 0/0 |
+
+| seed | G7 | G8a | G8b | G8b same-seed (reported) | G10 | G11 (setup check) | undefined / notes |
+|---|---|---|---|---|---|---|---|
+| 7 | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | UNDEFINED | B life ended after night 2; arm life ended after night 2: scored on nights 1-2, B restricted to the same nights |
+| guard | 0/1 DEV (1 seeds) UNDEFINED | 0/1 DEV (1 seeds) UNDEFINED | 0/1 DEV (1 seeds) UNDEFINED | - | 0/1 DEV (1 seeds) UNDEFINED | 0/1 DEV (1 seeds) UNDEFINED | |
+
+Scorable seeds 0/1 (need 1); UNDEFINED seeds: {7: ['B life ended after night 2']}.
+G8b violations (any-seed rule): none
+G8b excused cells: none
+G8b same-seed variant violations (reported): none

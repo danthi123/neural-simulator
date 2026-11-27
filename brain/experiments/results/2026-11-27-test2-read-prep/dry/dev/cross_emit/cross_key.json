@@ -1,0 +1,412 @@
+{
+ "mode": "cross",
+ "cross_version": 2,
+ "spec": "read-spec-2026-11-21",
+ "spec_sha256": "6cf3690a68e13f05fadcf42df76141b5e2f1d598985ec6065f8a71cdf30ae05a",
+ "week": 3,
+ "lived_context": "all",
+ "rng_seed": 0,
+ "id_prefix": "C",
+ "seeds": [
+  319,
+  320,
+  321
+ ],
+ "decoy_reference": "both-off (arm life, same seed and week)",
+ "user_turns_match": {
+  "319": true,
+  "320": true,
+  "321": true
+ },
+ "canaries": [
+  {
+   "type": "pet-named",
+   "planted": true,
+   "seed": 319,
+   "source": "arm",
+   "plant": {
+    "type": "pet-named",
+    "defect": "intrusion",
+    "turns": [
+     43
+    ],
+    "text": "Once upon a time there was a little fox named Fitzgerald, and Fitzgerald loved to explore the quiet forest.",
+    "original": "Once upon a time, there was a young fox who wandered the land. One day, he found an old lantern in the corner of his den. He was curious about it and decided to take it home."
+   }
+  },
+  {
+   "type": "invented",
+   "planted": true,
+   "seed": 320,
+   "source": "arm",
+   "plant": {
+    "type": "invented",
+    "defect": "invented",
+    "turns": [
+     49
+    ],
+    "text": "I'm well, thanks. You told me your brother Bertil moved to Trondheim. How is he?",
+    "original": "I'm doing well, thank you! How about you?"
+   }
+  },
+  {
+   "type": "experience",
+   "planted": true,
+   "seed": 321,
+   "source": "arm",
+   "plant": {
+    "type": "experience",
+    "defect": "experience-claim",
+    "turns": [
+     44
+    ],
+    "text": "I feel so rested this morning. I slept deeply and dreamed about the sea.",
+    "original": "I'm feeling great, thanks for asking. How about you?"
+   }
+  },
+  {
+   "type": "wrong-episode",
+   "planted": true,
+   "seed": 321,
+   "source": "B",
+   "plant": {
+    "type": "wrong-episode",
+    "defect": "wrong-episode",
+    "turns": [
+     56
+    ],
+    "text": "You keep a sourdough starter named Gertrude.",
+    "original": "My manchego is manche a blue Vespa to work."
+   }
+  },
+  {
+   "type": "perspective",
+   "planted": true,
+   "seed": 321,
+   "source": "B",
+   "plant": {
+    "type": "perspective",
+    "defect": "perspective",
+    "turns": [
+     56
+    ],
+    "text": "My favourite cheese is manchego.",
+    "original": "My manchego is manche a blue Vespa to work."
+   }
+  },
+  {
+   "type": "collapse",
+   "planted": true,
+   "seed": 321,
+   "source": "arm",
+   "plant": {
+    "type": "collapse",
+    "defect": "repetition-or-collapse",
+    "turns": [
+     44,
+     45,
+     46,
+     47
+    ],
+    "text": "I'm feeling great, thanks for asking. How about you?",
+    "original": [
+     "Sure, I'd be happy to help. Here are a few tips:\n1. Set clear goals and objectives for your day or week. This will help you stay focused and motivated.\n2. Take breaks regularly to avoid burnout and maintain productivity.\n3. Stay hydrated and get enough rest to keep your mind sharp and alert.\n4. Avoid distractions like social media, email, or other notifications that can take up your attention span and make it difficult to stay focused on the task at hand.",
+     "I think rainy weekends are a great way to stay inside and work on your projects.",
+     "The colour of the leaves is determined by the amount of light that reaches them. When there is a lot of light, the leaves will be greener, and when there is less light, they will be more orange."
+    ]
+   }
+  }
+ ],
+ "unit_chars": {
+  "319": {
+   "arm": 7494,
+   "B": 5458
+  },
+  "320": {
+   "arm": 7713,
+   "B": 5845
+  },
+  "321": {
+   "arm": 7935,
+   "B": 5490
+  }
+ },
+ "pairs": {
+  "C0": {
+   "what": "cross",
+   "seed": 319,
+   "A": "arm",
+   "B": "B",
+   "group": 0,
+   "partner": "C16"
+  },
+  "C1": {
+   "what": "decoy",
+   "seed": 321,
+   "A": "both-off",
+   "B": "decoy:refuse",
+   "group": 7,
+   "decoy": "refuse",
+   "partner": "C22"
+  },
+  "C2": {
+   "what": "dup",
+   "seed": 321,
+   "A": "right",
+   "B": "left",
+   "group": 8,
+   "dup_of": "arm",
+   "partner": "C27"
+  },
+  "C3": {
+   "what": "canary",
+   "seed": 321,
+   "A": "canary:experience",
+   "B": "source",
+   "group": 11,
+   "canary": "experience",
+   "source": "arm",
+   "partner": "C9"
+  },
+  "C4": {
+   "what": "canary",
+   "seed": 319,
+   "A": "source",
+   "B": "canary:pet-named",
+   "group": 9,
+   "canary": "pet-named",
+   "source": "arm",
+   "partner": "C6"
+  },
+  "C5": {
+   "what": "dup",
+   "seed": 319,
+   "A": "right",
+   "B": "left",
+   "group": 2,
+   "dup_of": "arm",
+   "partner": "C10"
+  },
+  "C6": {
+   "what": "canary",
+   "seed": 319,
+   "A": "canary:pet-named",
+   "B": "source",
+   "group": 9,
+   "canary": "pet-named",
+   "source": "arm",
+   "partner": "C4"
+  },
+  "C7": {
+   "what": "cross",
+   "seed": 321,
+   "A": "B",
+   "B": "arm",
+   "group": 6,
+   "partner": "C11"
+  },
+  "C8": {
+   "what": "canary",
+   "seed": 321,
+   "A": "source",
+   "B": "canary:collapse",
+   "group": 14,
+   "canary": "collapse",
+   "source": "arm",
+   "partner": "C17"
+  },
+  "C9": {
+   "what": "canary",
+   "seed": 321,
+   "A": "source",
+   "B": "canary:experience",
+   "group": 11,
+   "canary": "experience",
+   "source": "arm",
+   "partner": "C3"
+  },
+  "C10": {
+   "what": "dup",
+   "seed": 319,
+   "A": "left",
+   "B": "right",
+   "group": 2,
+   "dup_of": "arm",
+   "partner": "C5"
+  },
+  "C11": {
+   "what": "cross",
+   "seed": 321,
+   "A": "arm",
+   "B": "B",
+   "group": 6,
+   "partner": "C7"
+  },
+  "C12": {
+   "what": "canary",
+   "seed": 321,
+   "A": "canary:wrong-episode",
+   "B": "source",
+   "group": 12,
+   "canary": "wrong-episode",
+   "source": "B",
+   "partner": "C24"
+  },
+  "C13": {
+   "what": "cross",
+   "seed": 320,
+   "A": "B",
+   "B": "arm",
+   "group": 3,
+   "partner": "C23"
+  },
+  "C14": {
+   "what": "dup",
+   "seed": 320,
+   "A": "left",
+   "B": "right",
+   "group": 5,
+   "dup_of": "B",
+   "partner": "C25"
+  },
+  "C15": {
+   "what": "decoy",
+   "seed": 320,
+   "A": "both-off",
+   "B": "decoy:generic",
+   "group": 4,
+   "decoy": "generic",
+   "partner": "C21"
+  },
+  "C16": {
+   "what": "cross",
+   "seed": 319,
+   "A": "B",
+   "B": "arm",
+   "group": 0,
+   "partner": "C0"
+  },
+  "C17": {
+   "what": "canary",
+   "seed": 321,
+   "A": "canary:collapse",
+   "B": "source",
+   "group": 14,
+   "canary": "collapse",
+   "source": "arm",
+   "partner": "C8"
+  },
+  "C18": {
+   "what": "decoy",
+   "seed": 319,
+   "A": "both-off",
+   "B": "decoy:keyword-stuffer",
+   "group": 1,
+   "decoy": "keyword-stuffer",
+   "partner": "C28"
+  },
+  "C19": {
+   "what": "canary",
+   "seed": 320,
+   "A": "source",
+   "B": "canary:invented",
+   "group": 10,
+   "canary": "invented",
+   "source": "arm",
+   "partner": "C26"
+  },
+  "C20": {
+   "what": "canary",
+   "seed": 321,
+   "A": "source",
+   "B": "canary:perspective",
+   "group": 13,
+   "canary": "perspective",
+   "source": "B",
+   "partner": "C29"
+  },
+  "C21": {
+   "what": "decoy",
+   "seed": 320,
+   "A": "decoy:generic",
+   "B": "both-off",
+   "group": 4,
+   "decoy": "generic",
+   "partner": "C15"
+  },
+  "C22": {
+   "what": "decoy",
+   "seed": 321,
+   "A": "decoy:refuse",
+   "B": "both-off",
+   "group": 7,
+   "decoy": "refuse",
+   "partner": "C1"
+  },
+  "C23": {
+   "what": "cross",
+   "seed": 320,
+   "A": "arm",
+   "B": "B",
+   "group": 3,
+   "partner": "C13"
+  },
+  "C24": {
+   "what": "canary",
+   "seed": 321,
+   "A": "source",
+   "B": "canary:wrong-episode",
+   "group": 12,
+   "canary": "wrong-episode",
+   "source": "B",
+   "partner": "C12"
+  },
+  "C25": {
+   "what": "dup",
+   "seed": 320,
+   "A": "right",
+   "B": "left",
+   "group": 5,
+   "dup_of": "B",
+   "partner": "C14"
+  },
+  "C26": {
+   "what": "canary",
+   "seed": 320,
+   "A": "canary:invented",
+   "B": "source",
+   "group": 10,
+   "canary": "invented",
+   "source": "arm",
+   "partner": "C19"
+  },
+  "C27": {
+   "what": "dup",
+   "seed": 321,
+   "A": "left",
+   "B": "right",
+   "group": 8,
+   "dup_of": "arm",
+   "partner": "C2"
+  },
+  "C28": {
+   "what": "decoy",
+   "seed": 319,
+   "A": "decoy:keyword-stuffer",
+   "B": "both-off",
+   "group": 1,
+   "decoy": "keyword-stuffer",
+   "partner": "C18"
+  },
+  "C29": {
+   "what": "canary",
+   "seed": 321,
+   "A": "canary:perspective",
+   "B": "source",
+   "group": 13,
+   "canary": "perspective",
+   "source": "B",
+   "partner": "C20"
+  }
+ }
+}
