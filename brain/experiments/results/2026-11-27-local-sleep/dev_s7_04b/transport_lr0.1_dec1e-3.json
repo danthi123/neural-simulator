@@ -1,0 +1,48 @@
+{
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "seed": 7,
+ "steps": 240,
+ "lr": 0.1,
+ "mode": "kp",
+ "feedback": "transport",
+ "decay": 0.001,
+ "arms": {
+  "local": {
+   "recall": 2,
+   "paraphrase": 1,
+   "false_recall": 0,
+   "generic_kl": 0.12275394300619762,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true
+   ],
+   "paraphrase_items": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": 0.40133365988731384,
+   "adapter_norm": 3.1448564529418945
+  }
+ },
+ "elapsed_s": 212.80058193206787
+}
