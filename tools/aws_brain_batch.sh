@@ -58,7 +58,7 @@ launch)
   [[ "$AMI" == ami-* ]] || { echo "could not find the Deep Learning AMI"; exit 1; }
   MYIP=$(curl -s https://checkip.amazonaws.com | tr -d '\n'); [ -n "$MYIP" ] || { echo "no public IP"; exit 1; }
   VPC=$(aws ec2 describe-vpcs --region "$REGION" --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text)
-  SG=$(aws ec2 create-security-group --region "$REGION" --group-name "claude-brain-$(date +%s)" \
+  SG=$(aws ec2 create-security-group --region "$REGION" --group-name "claude-brain-$(date +%s)-$$" \
     --description "temp SSH for brain batch" --vpc-id "$VPC" --query GroupId --output text)
   aws ec2 authorize-security-group-ingress --region "$REGION" --group-id "$SG" --protocol tcp --port 22 --cidr "${MYIP}/32" >/dev/null
   IID=$(aws ec2 run-instances --region "$REGION" --image-id "$AMI" --instance-type "$TYPE" --key-name "$KEYNAME" \
@@ -66,7 +66,7 @@ launch)
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=claude-brain-batch},{Key=Project,Value=neural-sim}]' \
     --query 'Instances[0].InstanceId' --output text)
   [[ "$IID" == i-* ]] || { echo "run-instances failed; deleting SG $SG"; aws ec2 delete-security-group --region "$REGION" --group-id "$SG"; exit 1; }
-  BATCH="$(date +%Y%m%d-%H%M)"
+  BATCH="$(date +%Y%m%d-%H%M)-$$"
   { echo "# LIVE brain batch launched $(date '+%F %T %Z') type=$TYPE ami=$AMI -- pull: tools/aws_brain_batch.sh pull"
     echo "instance=$IID"; echo "sg=$SG"; echo "batch=$BATCH"; echo "jobs=$JOBS"; [ -n "${AWS_BRAIN_AMI_RECORD:-}" ] && echo "ami=$AMI"; } > "$STATE"
   echo "[aws-brain] launched $IID ($TYPE), waiting for it to boot..."
