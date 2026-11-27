@@ -1,0 +1,72 @@
+{
+ "tag": "ref",
+ "seed": 7,
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "model_id": "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "steps": 240,
+ "prompts_sha256": "77e31aa1935c86bf6d6c04ea8e87009b73668a0196f3d831a81766c9d620d8d6",
+ "pick": null,
+ "host": "node-mxl1462drl",
+ "commit": "6ff41baaec46d5ea67d0cc5a12005f7817bbeea6",
+ "device": "cpu",
+ "precision": "float32",
+ "host_env": "node-mxl1462drl",
+ "arm": "gradient",
+ "last_layer": 11,
+ "lr": null,
+ "keep": null,
+ "decay": null,
+ "grad_lr": 0.0005,
+ "teacher": null,
+ "elapsed_s": 218.01317620277405,
+ "engagement": {
+  "kind": "gradient",
+  "steps_run": 240,
+  "loss_head": 1.0050998002290725,
+  "loss_tail": 0.17940700352191924,
+  "loss_start": 2.6089584628740945,
+  "loss_end": 0.15668292716145515,
+  "adapter_norm": 17.30706024169922
+ },
+ "result": {
+  "recall": 3,
+  "paraphrase": 1,
+  "false_recall": 1,
+  "generic_kl": 0.03239515734215578,
+  "recall_items": [
+   true,
+   false,
+   false,
+   false,
+   false,
+   true,
+   false,
+   false,
+   false,
+   true,
+   false,
+   false
+  ],
+  "paraphrase_items": [
+   true,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "heldout_kl": null,
+  "heldout_kl_dev": 0.12235715302328269,
+  "adapter_norm": 17.30706024169922,
+  "factor_norms": [
+   14.45830269113128,
+   3.5390149380685805
+  ]
+ }
+}

@@ -1,0 +1,288 @@
+{
+ "tag": "ref",
+ "seed": 7,
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "model_id": "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "steps": 240,
+ "prompts_sha256": "77e31aa1935c86bf6d6c04ea8e87009b73668a0196f3d831a81766c9d620d8d6",
+ "pick": null,
+ "host": "node-mxl1462drl",
+ "commit": "6ff41baaec46d5ea67d0cc5a12005f7817bbeea6",
+ "device": "cpu",
+ "precision": "float32",
+ "host_env": "node-mxl1462drl",
+ "arm": "g0",
+ "last_layer": 11,
+ "elapsed_s": 2.612481117248535,
+ "engagement": {
+  "kind": "gate",
+  "n": 12
+ },
+ "result": {
+  "n": 12,
+  "n_ok": 12,
+  "n_ok_first": 12,
+  "single_ok": 1,
+  "single_ok_first": 1,
+  "min_ok": 10,
+  "gate": "every token of the answer key",
+  "pass": true,
+  "items": [
+   {
+    "key": "pixel",
+    "answer_pos": 6,
+    "answer_end": 6,
+    "answer_tok": 37173,
+    "answer_toks": [
+     37173
+    ],
+    "teacher_top1": 37173,
+    "single_top1": 269,
+    "teacher_tops": [
+     37173
+    ],
+    "single_tops": [
+     269
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "teal",
+    "answer_pos": 6,
+    "answer_end": 7,
+    "answer_tok": 22575,
+    "answer_toks": [
+     22575,
+     109
+    ],
+    "teacher_top1": 22575,
+    "single_top1": 22368,
+    "teacher_tops": [
+     22575,
+     109
+    ],
+    "single_tops": [
+     22368,
+     47
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "lyon",
+    "answer_pos": 6,
+    "answer_end": 6,
+    "answer_tok": 29319,
+    "answer_toks": [
+     29319
+    ],
+    "teacher_top1": 29319,
+    "single_top1": 3492,
+    "teacher_tops": [
+     29319
+    ],
+    "single_tops": [
+     3492
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "marguerite",
+    "answer_pos": 7,
+    "answer_end": 9,
+    "answer_tok": 29349,
+    "answer_toks": [
+     29349,
+     8882,
+     7924
+    ],
+    "teacher_top1": 29349,
+    "single_top1": 37308,
+    "teacher_tops": [
+     29349,
+     8882,
+     7924
+    ],
+    "single_tops": [
+     37308,
+     2103,
+     7924
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "biscuit",
+    "answer_pos": 6,
+    "answer_end": 8,
+    "answer_tok": 19522,
+    "answer_toks": [
+     19522,
+     1804,
+     1956
+    ],
+    "teacher_top1": 19522,
+    "single_top1": 20393,
+    "teacher_tops": [
+     19522,
+     1804,
+     1956
+    ],
+    "single_tops": [
+     20393,
+     2098,
+     1956
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "volvo",
+    "answer_pos": 6,
+    "answer_end": 7,
+    "answer_tok": 21117,
+    "answer_toks": [
+     21117,
+     2264
+    ],
+    "teacher_top1": 21117,
+    "single_top1": 21415,
+    "teacher_tops": [
+     21117,
+     2264
+    ],
+    "single_tops": [
+     21415,
+     2264
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "tomasz",
+    "answer_pos": 7,
+    "answer_end": 8,
+    "answer_tok": 37471,
+    "answer_toks": [
+     37471,
+     123
+    ],
+    "teacher_top1": 37471,
+    "single_top1": 28398,
+    "teacher_tops": [
+     37471,
+     123
+    ],
+    "single_tops": [
+     28398,
+     47
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "crumb",
+    "answer_pos": 9,
+    "answer_end": 10,
+    "answer_tok": 19666,
+    "answer_toks": [
+     19666,
+     2035
+    ],
+    "teacher_top1": 19666,
+    "single_top1": 269,
+    "teacher_tops": [
+     19666,
+     2035
+    ],
+    "single_tops": [
+     269,
+     2061
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "cello",
+    "answer_pos": 6,
+    "answer_end": 7,
+    "answer_tok": 30422,
+    "answer_toks": [
+     30422,
+     112
+    ],
+    "teacher_top1": 30422,
+    "single_top1": 39276,
+    "teacher_tops": [
+     30422,
+     112
+    ],
+    "single_tops": [
+     39276,
+     112
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "peanut",
+    "answer_pos": 6,
+    "answer_end": 6,
+    "answer_tok": 46780,
+    "answer_toks": [
+     46780
+    ],
+    "teacher_top1": 46780,
+    "single_top1": 46780,
+    "teacher_tops": [
+     46780
+    ],
+    "single_tops": [
+     46780
+    ],
+    "teacher_full": true,
+    "single_full": true
+   },
+   {
+    "key": "oslo",
+    "answer_pos": 6,
+    "answer_end": 6,
+    "answer_tok": 29518,
+    "answer_toks": [
+     29518
+    ],
+    "teacher_top1": 29518,
+    "single_top1": 332,
+    "teacher_tops": [
+     29518
+    ],
+    "single_tops": [
+     332
+    ],
+    "teacher_full": true,
+    "single_full": false
+   },
+   {
+    "key": "march",
+    "answer_pos": 8,
+    "answer_end": 8,
+    "answer_tok": 36988,
+    "answer_toks": [
+     36988
+    ],
+    "teacher_top1": 36988,
+    "single_top1": 332,
+    "teacher_tops": [
+     36988
+    ],
+    "single_tops": [
+     332
+    ],
+    "teacher_full": true,
+    "single_full": false
+   }
+  ]
+ }
+}

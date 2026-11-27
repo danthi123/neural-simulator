@@ -1,0 +1,68 @@
+{
+ "tag": "ref",
+ "seed": 7,
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "model_id": "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "steps": 240,
+ "prompts_sha256": "77e31aa1935c86bf6d6c04ea8e87009b73668a0196f3d831a81766c9d620d8d6",
+ "pick": null,
+ "host": "node-mxl1462drl",
+ "commit": "6ff41baaec46d5ea67d0cc5a12005f7817bbeea6",
+ "device": "cpu",
+ "precision": "float32",
+ "host_env": "node-mxl1462drl",
+ "arm": "no_sleep",
+ "last_layer": 11,
+ "lr": null,
+ "keep": null,
+ "decay": null,
+ "grad_lr": null,
+ "teacher": null,
+ "elapsed_s": 37.59299874305725,
+ "engagement": {
+  "kind": "none",
+  "steps_run": 0,
+  "adapter_norm": 0.0
+ },
+ "result": {
+  "recall": 0,
+  "paraphrase": 0,
+  "false_recall": 0,
+  "generic_kl": 0.0,
+  "recall_items": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "paraphrase_items": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "heldout_kl": null,
+  "heldout_kl_dev": 0.0,
+  "adapter_norm": 0.0,
+  "factor_norms": [
+   13.87420951034863,
+   0.0
+  ]
+ }
+}
