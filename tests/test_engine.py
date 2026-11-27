@@ -473,6 +473,8 @@ def test_placement_on_absent_node_refused_before_any_launch(env):
 
 def test_kr_placement_alias_and_bad_alias():
     sp = core.Spec.find("mix_night")
+    assert sp.placement == {319: ["w3090"], 320: ["w3090"], 321: ["w3090"]}     # Amendment S2: the W 3090
+    sp.apply({"placement": "@kr"})
     assert sp.placement == {319: ["pool40"], 320: ["pool41"], 321: ["pool42"]}
     with pytest.raises(ValueError, match="placement"):
         sp.apply({"placement": "@nope"})
@@ -669,7 +671,7 @@ def test_mix_night_spec_renders_per_seed_and_is_runnable_once_registered():
     e = Engine("mix_night", make_nodes("ssh"), dry=True, log=lambda *_: None)
     sp = e.root
     assert sp.status == "REGISTERED" and sp.dev_seed == 319 and sp.seeds == [319, 320, 321]
-    assert (sp.memory_gb, sp.mem("dev", 319), sp.mem("dev", 321)) == (13, 21, 10) and sp.vars["offframe_sha256"] == M.OFFFRAME_SHA256
+    assert (sp.memory_gb, sp.mem("dev", 319), sp.mem("dev", 321)) == (21, 21, 21) and sp.vars["offframe_sha256"] == M.OFFFRAME_SHA256
     assert (core.REPO / sp.vars["offframe"]).exists()
     c = sp.render(320, "A0 A1", "/o.json", tree="t" * 12, commit="c" * 12, job="s320")
     assert "--seed 320" in c and "snaps_s320 " in c and "--foreign-snaps $KR/foreign_s321" in c
@@ -736,9 +738,9 @@ def test_mix_night_step0_pick(kw, expect):
 
 def test_mix_night_per_seed_caps_reach_the_jobs(env):
     sp = core.Spec.find("mix_night")
-    assert sp.mem("dev", 319) == 21 and sp.mem("dev", 320) == 10 and sp.mem("six", 320) == 13
+    assert sp.mem("dev", 319) == 21 and sp.mem("dev", 320) == 21 and sp.mem("six", 320) == 21
     pk = json.loads(json.dumps({"memcap": {319: 12, 320: 9, 321: 40}}))   # through the JSON state: string keys
-    assert (sp.mem("six", 319, pk), sp.mem("six", 320, pk), sp.mem("six", 321, pk)) == (12, 9, 13)   # never above memory_gb
+    assert (sp.mem("six", 319, pk), sp.mem("six", 320, pk), sp.mem("six", 321, pk)) == (12, 9, 21)   # never above memory_gb
     assert [(n, s) for n, s, _ in sp.dev_items()] == [("step0_s319", 319), ("step0_s320", 320), ("step0_s321", 321)]
 
 
@@ -1092,3 +1094,23 @@ def test_smoke_chain_block_has_smoke_and_measured_peak(env, checked):
     assert sm.run() == "ERROR-SMOKE"
     vb = _read(env, "b", "verdict.json")
     assert _names(vb)["smoke rc 0"] is False and _gate(env.repo / core.RES / "b/verdict.json") == []
+
+
+def test_mix_night_runs_on_w3090_only_amendment_s2(monkeypatch):
+    """Amendment S2: --nodes w3090 --allow-w3090 gives the GPU node only; every seed is placed there and fits its caps
+    (smoke, step 0, six at 21 GB within the 23 GB budget); the job script runs cuda with BRAIN_ALLOW_W3090=1."""
+    with pytest.raises(SystemExit, match="allow-w3090"):
+        make_nodes("ssh", ["w3090"])
+    nodes = make_nodes("ssh", ["w3090"], allow_w3090=True)
+    assert [(n.name, n.kind) for n in nodes] == [("w3090", "w3090")]
+    assert [n.name for n in make_nodes("ssh", ["pool40", "w3090"], allow_w3090=True)] == ["pool40", "w3090"]
+    e = Engine("mix_night", nodes, log=lambda *_: None)
+    sp = e.root
+    monkeypatch.setattr(e, "kind_ok", lambda n: True)
+    for phase in ("smoke", "dev", "six"):
+        for s in sp.seeds:
+            assert [n.name for n in e.allowed(sp, s, e.fits(sp, phase, s))] == ["w3090"]
+    e.st = {"tree": "t" * 40, "commit": "c" * 40, "specs": {}}
+    sc = e.job_script(nodes[0], sp, {"key": "smoke/smoke", "seed": 319, "params": "A0r"}, "r", "jd")
+    assert "--device cuda" in sc and "BRAIN_ALLOW_W3090=1" in sc and "POOL_NODE" not in sc and "memcap.sh 21 " in sc
+    assert "$BRAIN_MODEL_DIR/rwkv7-g1l-1.5b-20261031-ctx34304.pth" in sc and "${BRAIN_MODEL_DIR:-$HOME/brain-lane/models}" in sc

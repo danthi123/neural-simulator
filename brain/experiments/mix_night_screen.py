@@ -136,10 +136,12 @@ def precision_of(device: str, cuda_precision: str) -> str:
 def provenance(device="?", precision="fp32", model=None, env=None, repo=REPO) -> dict:
     """host, commit, device, precision, model. On a pool node (POOL_NODE=1) the commit is READ from <repo>/COMMIT (the
     route_repo copy, ~/brain-lane/route_repo/COMMIT, is a git-archive copy, so `git rev-parse` there would report nothing or
-    an enclosing repo); a missing or empty COMMIT file refuses the run. Elsewhere `git rev-parse HEAD` in the repo."""
+    an enclosing repo); a missing or empty COMMIT file refuses the run. The same on the w3090 node (BRAIN_ALLOW_W3090=1)
+    when the repo is an engine-shipped copy (~/brain-lane/engine/repo_*/COMMIT, not a git checkout; Amendment S2).
+    Elsewhere `git rev-parse HEAD` in the repo."""
     env = os.environ if env is None else env
-    if env.get("POOL_NODE") == "1":
-        cf = os.path.join(repo, "COMMIT")
+    cf = os.path.join(repo, "COMMIT")
+    if env.get("POOL_NODE") == "1" or (env.get("BRAIN_ALLOW_W3090") == "1" and os.path.exists(cf)):
         commit = open(cf).read().strip() if os.path.exists(cf) else ""
         if not commit:
             raise SystemExit(f"pool node: {cf} missing or empty; ship the code with its COMMIT file")

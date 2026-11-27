@@ -275,7 +275,11 @@ def aws_node(*a, **k):
 
 
 def make_nodes(backend, names=None, local_root=None, allow_w3090=False):
-    names = names or list(POOL)
+    """Pool nodes (all, or `names`), plus the w3090 node when allowed. `names` may hold "w3090" (needs allow_w3090):
+    --nodes w3090 --allow-w3090 = the workstation GPU only (mix-night Amendment S2)."""
+    if names and "w3090" in names and not allow_w3090:
+        raise SystemExit("node w3090 needs --allow-w3090 (the workstation GPU is opt-in)")
+    names = list(POOL) if not names else [n for n in names if n != "w3090"]
     if backend == "local":
         nodes = [Node(n, POOL.get(n, 23), root=Path(local_root) / n, py=sys.executable, memcap=False) for n in names]
     else:

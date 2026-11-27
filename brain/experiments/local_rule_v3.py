@@ -21,13 +21,18 @@ Per replayed telling X (both phases forward-only, no_grad, the same cortex):
    - every error comes from the student's own forward, so a later layer corrects only what earlier layers left.
 4. Keep: one keep text per step, the same rule, target = the pretrained cortex's own activity on that text (the error
    is the adapters' own effect), scaled by the keep weight.
-Clip (v1's update-norm clip, divisive-normalisation stand-in) and B decay with the KP copies are v1's, unchanged.
+Clip (v1's update-norm clip, divisive-normalisation stand-in) and B decay with the KP copies are v1's. The keep weight
+multiplies the step AFTER the clip, so the keep grid is not collapsed when the clip binds; the fraction of clipped
+factor updates is logged per arm (replay and keep separately).
+Engagement: a fixed-order, forward-only evaluation of the summed per-layer error on every telling at the start and end of
+the night (err_start / err_end); the gates read end < start, not the noisy first-20 / last-20 step means.
 
 Arms: v3, gradient (brain.sleep.sleep, reference), no_sleep, sham_ctx (the clamped phase reads ANOTHER fact's telling
 before X, seeded derangement), no_target (lesion: no first reading, target = own activity, must stay inert),
 top_only (depth lesion: targets at the last block only), grad_distill (report only: backprop on KL to the same
-teacher's final logits). Gate G0 before any night: the teacher's top-1 at the answer position is the answer for >= 10
-of 12 facts.
+teacher's final logits). Gate G0 before any night: teacher-forced on the second reading, the teacher's top-1 is the
+answer's token at EVERY token of the answer key (not only the first, a word fragment for 6 of 12 facts) for >= 10 of
+12 facts.
 
     POOL_NODE=1 python -m brain.experiments.local_rule_v3 run --model M.pth --seed 7 --arms g0,no_sleep,gradient \\
         --out-dir D --tag ref
@@ -38,7 +43,7 @@ of 12 facts.
         --tag six
     python -m brain.experiments.local_rule_v3 score --dir S --tag six --pick D/pick.json
     python -m brain.experiments.local_rule_v3 combine --v01 V01.json --v04 V04.json      # GO-V3 / GO-V3-PARTIAL
-Prereg: brain/research/2026-11-27-local-rule-v3-prereg.md (DRAFT pending pre-data review).
+Prereg: brain/research/2026-11-27-local-rule-v3-prereg.md (REGISTERED 2026-11-27 after pre-data sonnet review).
 """
 from __future__ import annotations
 
@@ -77,7 +82,7 @@ G0_MIN = 10             # G0: teacher top-1 == answer for >= 10 of 12 facts
 GRAD_MIN = 2            # UNDEFINED if mean gradient recall < 2
 INERT_NORM = 1e-6       # (d) no_target adapter norm "at zero"
 ENGAGE_NORM_MIN = 0.5   # sham_ctx adapter norm >= 0.5 x that seed's v3 norm
-LOSS_WIN = 20           # head / tail = mean of the first / last 20 steps
+LOSS_WIN = 20           # head / tail = mean of the first / last 20 steps (reported only; the gates use start / end)
 SHAM_SEED_OFFSET = 7919
 NLMS_EPS = 1e-6
 
@@ -202,15 +207,20 @@ class KPCopies:
 
 
 def _clip(d, clip):
+    """v1's update-norm clip, in place. Returns True when it bound (norm above `clip`)."""
     if clip:
         n = float(d.norm())
-        d.mul_(min(1.0, clip / (n + 1e-12)))
-    return d
+        if n > clip:
+            d.mul_(clip / (n + 1e-12))
+            return True
+    return False
 
 
-def v3_update(pc, kp, act, tgt, *, lr, layers, decay=0.0, clip=1.0, weight=1.0):
+def v3_update(pc, kp, act, tgt, *, lr, layers, decay=0.0, clip=1.0, weight=1.0, stats=None):
     """One local step on `pc`'s adapters from the student's activity `act` and per-layer targets `tgt` {i: (h*, res*)}.
-    Only `layers` learn. Returns {layer: (value error norm^2 / T, key error norm^2 / T)}. No autograd anywhere."""
+    Only `layers` learn. The error is unweighted; `weight` (the keep weight) scales the step AFTER the clip, so it acts
+    whether or not the clip binds. `stats` (dict) counts factor updates ("n") and clipped ones ("clipped").
+    Returns {layer: (value error norm^2 / T, key error norm^2 / T)}, unweighted. No autograd anywhere."""
     errs = {}
     with torch.no_grad():
         for i in layers:
@@ -218,20 +228,37 @@ def v3_update(pc, kp, act, tgt, *, lr, layers, decay=0.0, clip=1.0, weight=1.0):
             k_in, pre, h, res = act[i]
             ht, rt = tgt[i]
             T = res.shape[0]
-            e = weight * (res - rt)                                   # value path: residual after the block
-            e_h = weight * (h - ht) * 2 * torch.relu(pre)             # key path: hidden, own derivative
+            e = res - rt                                              # value path: residual after the block
+            e_h = (h - ht) * 2 * torch.relu(pre)                      # key path: hidden, own derivative
             errs[i] = (float(e.pow(2).sum()) / T, float(e_h.pow(2).sum()) / T)
             a_v, a_k = h @ pc.A_v[s], k_in @ pc.A_k[s]
             dBv, dBk = nlms(a_v, e), nlms(a_k, e_h)
             dAv, dAk = nlms(h, e @ kp.v[i]), nlms(k_in, e_h @ kp.k[i])
             for p, d in ((pc.B_v[s], dBv), (pc.B_k[s], dBk), (pc.A_v[s], dAv), (pc.A_k[s], dAk)):
-                p.sub_(lr * _clip(d, clip))
-            kp.v[i].sub_(lr * dBv.T)          # the copy gets B's own (clipped) update
-            kp.k[i].sub_(lr * dBk.T)
+                hit = _clip(d, clip)
+                if stats is not None:
+                    stats["n"] = stats.get("n", 0) + 1
+                    stats["clipped"] = stats.get("clipped", 0) + int(hit)
+                p.sub_(lr * weight * d)
+            kp.v[i].sub_(lr * weight * dBv.T)          # the copy gets B's own (clipped, weighted) update
+            kp.k[i].sub_(lr * weight * dBk.T)
             if decay:
                 for p in (pc.B_v[s], pc.B_k[s], kp.v[i], kp.k[i]):
                     p.mul_(1 - decay)
     return errs
+
+
+def replay_error(pc, base_state, ep_ids, tgts, layers):
+    """Fixed-order, forward-only engagement probe: every telling once, in order, adapters as they are now. Returns (mean
+    over tellings of the summed per-layer value error norm^2 / T, {layer: mean value error}). Changes nothing."""
+    tot, per = [], {str(i): [] for i in layers}
+    for ids, tgt in zip(ep_ids, tgts):
+        _, act = activity(pc, ids, base_state)
+        e = {i: float((act[i][3] - tgt[i][1]).pow(2).sum()) / act[i][3].shape[0] for i in layers}
+        tot.append(sum(e.values()))
+        for i, v in e.items():
+            per[str(i)].append(v)
+    return _mean(tot), {k: _mean(v) for k, v in per.items()}
 
 
 def v3_sleep(plastic, base_state, episodes, generic, *, steps=240, lr=0.1, keep=1.0, decay=1e-3, seed=0, clip=1.0,
@@ -259,23 +286,29 @@ def v3_sleep(plastic, base_state, episodes, generic, *, steps=240, lr=0.1, keep=
         keep_t.append(t)
         keep_ref.append(F.log_softmax(lg, -1))
     pc.enabled = True
+    err0, err0_layer = replay_error(pc, base_state, ep_ids, tgts, layers) if info is not None else (None, {})
+    st_r, st_k = {}, {}
     losses, per_layer = [], []
     for step in range(steps):
         j = rng.choices(range(len(episodes)), weights=weights)[0]
         _, act = activity(pc, ep_ids[j], base_state)
-        er = v3_update(pc, kp, act, tgts[j], lr=lr, layers=layers, decay=decay, clip=clip)
+        er = v3_update(pc, kp, act, tgts[j], lr=lr, layers=layers, decay=decay, clip=clip, stats=st_r)
         g = rng.randrange(len(gen_ids))
         lg, gact = activity(pc, gen_ids[g], base_state)
-        ek = v3_update(pc, kp, gact, keep_t[g], lr=lr, layers=layers, clip=clip, weight=keep)
+        ek = v3_update(pc, kp, gact, keep_t[g], lr=lr, layers=layers, clip=clip, weight=keep, stats=st_k)
         kl = float(F.kl_div(F.log_softmax(lg, -1), keep_ref[g], log_target=True, reduction="batchmean"))
         losses.append((sum(v for v, _ in er.values()), sum(v for v, _ in ek.values()), kl))
         per_layer.append({str(i): v for i, (v, _) in er.items()})
         if log and step % 20 == 0:
             log(f"v3 step {step}: replay err {losses[-1][0]:.4f} keep err {losses[-1][1]:.4f} keep kl {kl:.4f}")
     if info is not None:
+        err1, err1_layer = replay_error(pc, base_state, ep_ids, tgts, layers)
+        frac = lambda st: (st.get("clipped", 0) / st["n"]) if st.get("n") else None
         head, tail = losses[:LOSS_WIN], losses[-LOSS_WIN:]
         info.update(kind="local", teacher=teacher_kind, steps_run=len(losses), layers_on=layers,
                     targets_cached=len(tgts), target_ctx_tokens=_mean(ctx_len) if ctx_len else 0.0,
+                    err_start=err0, err_end=err1, err_layer_start=err0_layer, err_layer_end=err1_layer,
+                    clip_frac_replay=frac(st_r), clip_frac_keep=frac(st_k), clip=clip, keep=keep,
                     err_head=_mean(x[0] for x in head) if head else None,
                     err_tail=_mean(x[0] for x in tail) if tail else None,
                     keep_err_head=_mean(x[1] for x in head) if head else None,
@@ -302,6 +335,12 @@ def distill_sleep(plastic, base_state, episodes, generic, *, steps=240, lr=5e-4,
     with torch.no_grad():
         ref = [F.log_softmax(pc(g, base_state)[0], -1) for g in gen_ids]
     pc.enabled = True
+
+    def fixed_kl():                                   # fixed-order, forward-only engagement probe on every telling
+        with torch.no_grad():
+            return _mean(float(F.kl_div(F.log_softmax(pc(ids, base_state)[0][:-1], -1), t, log_target=True,
+                                        reduction="batchmean")) for ids, t in zip(ep_ids, tlog))
+    k0 = fixed_kl() if info is not None else None
     opt = torch.optim.Adam([p for p in plastic.parameters() if p.requires_grad], lr=lr)
     losses = []
     for step in range(steps):
@@ -318,8 +357,21 @@ def distill_sleep(plastic, base_state, episodes, generic, *, steps=240, lr=5e-4,
         if log and step % 20 == 0:
             log(f"distill step {step}: kl to teacher {float(d):.4f} keep {float(keep):.4f}")
     if info is not None:
-        info.update(_loss_engagement("grad_distill", losses))
+        info.update(_loss_engagement("grad_distill", losses), loss_start=k0, loss_end=fixed_kl())
     return losses
+
+
+def replay_ce(pc, base_state, episodes):
+    """Fixed-order, forward-only engagement probe for the gradient arm: mean over every telling, in order, of the
+    next-token CE brain.sleep trains on (adapters as they are now). Changes nothing."""
+    ids_of = pc.cortex.pipe.encode
+    out = []
+    with torch.no_grad():
+        for text, _ in episodes:
+            ids = ids_of(text)
+            lg, _ = pc(ids, base_state)
+            out.append(float(F.cross_entropy(lg[:-1], torch.tensor(ids[1:], device=lg.device))))
+    return _mean(out)
 
 
 def _loss_engagement(kind, losses):
@@ -340,24 +392,41 @@ def answer_index(pipe, ids, text, key):
     raise ValueError(f"key {key!r} beyond the tokens of {text!r}")
 
 
+def answer_span(pipe, ids, text, key):
+    """(first, last) token indices of `ids` covering the characters of `key` in `text` (inclusive)."""
+    a = answer_index(pipe, ids, text, key)
+    end = text.lower().find(key.lower()) + len(key)
+    for j in range(a, len(ids)):
+        if len(pipe.decode(ids[: j + 1])) >= end:
+            return a, j
+    raise ValueError(f"key {key!r} beyond the tokens of {text!r}")
+
+
 def g0_check(pc, base_state, told):
-    """told: [(telling text, answer key)]. For each: does the teacher (adapters off, second reading) put top-1 on the
-    answer's first token? Also the single-reading rate (no context), reported. No night runs."""
+    """told: [(telling text, answer key)]. For each: teacher-forced on the second reading (adapters off), is the
+    teacher's top-1 the answer's token at EVERY token of the key (n_ok, gated)? The first-token rate (n_ok_first) and
+    the single-reading rates (no context) are reported. No night runs."""
     pc = adopt3(pc)
     pipe = pc.cortex.pipe
     items = []
     for text, key in told:
         ids = pipe.encode(text)
-        a = answer_index(pipe, ids, text, key)
+        a, b = answer_span(pipe, ids, text, key)
         if a == 0:
             raise ValueError(f"answer at position 0 of {text!r}: no prediction position")
         t_logits, _ = teacher(pc, ids, ids, base_state)
         s_logits, _ = teacher(pc, [], ids, base_state)
-        items.append({"key": key, "answer_pos": a, "answer_tok": int(ids[a]),
-                      "teacher_top1": int(torch.argmax(t_logits[a - 1])), "single_top1": int(torch.argmax(s_logits[a - 1]))})
-    n_ok = sum(it["teacher_top1"] == it["answer_tok"] for it in items)
-    return {"n": len(items), "n_ok": n_ok, "single_ok": sum(it["single_top1"] == it["answer_tok"] for it in items),
-            "min_ok": G0_MIN, "pass": g0_pass(n_ok), "items": items}
+        toks = [int(ids[j]) for j in range(a, b + 1)]
+        t_top = [int(torch.argmax(t_logits[j - 1])) for j in range(a, b + 1)]
+        s_top = [int(torch.argmax(s_logits[j - 1])) for j in range(a, b + 1)]
+        items.append({"key": key, "answer_pos": a, "answer_end": b, "answer_tok": toks[0], "answer_toks": toks,
+                      "teacher_top1": t_top[0], "single_top1": s_top[0], "teacher_tops": t_top, "single_tops": s_top,
+                      "teacher_full": t_top == toks, "single_full": s_top == toks})
+    n_ok = sum(it["teacher_full"] for it in items)
+    return {"n": len(items), "n_ok": n_ok, "n_ok_first": sum(it["teacher_top1"] == it["answer_tok"] for it in items),
+            "single_ok": sum(it["single_full"] for it in items),
+            "single_ok_first": sum(it["single_top1"] == it["answer_tok"] for it in items),
+            "min_ok": G0_MIN, "gate": "every token of the answer key", "pass": g0_pass(n_ok), "items": items}
 
 
 def g0_pass(n_ok):
@@ -372,9 +441,10 @@ def dev_bar(ns_recall, grad_recall):
 
 def dev_pick(g0, ref, rows):
     """g0: the G0 result ({pass}); ref: {"no_sleep": {recall}, "gradient": {recall, generic_kl, heldout_kl_dev}} on the dev
-    seed; rows: [{lr, keep, recall, generic_kl, heldout_kl_dev, adapter_norm, err_head, err_tail}] of the v3 arm.
+    seed; rows: [{lr, keep, recall, generic_kl, heldout_kl_dev, adapter_norm, err_start, err_end}] of the v3 arm.
     G0 not passed -> STOP-G0. A non-finite ref -> UNDEFINED-DEV. Qualify: all finite; recall >= bar; generic_kl <= 1.25 x
-    gradient's and <= 1; heldout_kl_dev <= 1.25 x gradient's and <= 1; engaged (adapter_norm > 0, err_tail < err_head).
+    gradient's and <= 1; heldout_kl_dev <= 1.25 x gradient's and <= 1; engaged (adapter_norm > 0, err_end < err_start:
+    the fixed-order all-tellings error at the night's end below its start).
     Pick max recall; ties: lower heldout_kl_dev, lower generic_kl, lower lr, lower keep. None -> NEGATIVE-DEV."""
     if not (isinstance(g0, dict) and g0.get("pass") is True):
         return {"verdict": "STOP-G0", "why": f"G0 not passed: {None if not isinstance(g0, dict) else g0.get('n_ok')}"
@@ -386,13 +456,13 @@ def dev_pick(g0, ref, rows):
     floor = dev_bar(ref["no_sleep"]["recall"], ref["gradient"]["recall"])
     cap_g = DRIFT_MULT * ref["gradient"]["generic_kl"]
     cap_h = DRIFT_MULT * ref["gradient"]["heldout_kl_dev"]
-    keys = ("recall", "generic_kl", "heldout_kl_dev", "adapter_norm", "err_head", "err_tail")
+    keys = ("recall", "generic_kl", "heldout_kl_dev", "adapter_norm", "err_start", "err_end")
     ok = [r for r in rows if all(_finite(r.get(k)) for k in keys)
           and r["recall"] >= floor and r["generic_kl"] <= cap_g and r["heldout_kl_dev"] <= cap_h
           and r["generic_kl"] <= KL_NIGHT_MAX and r["heldout_kl_dev"] <= KL_NIGHT_MAX
-          and r["adapter_norm"] > 0 and r["err_tail"] < r["err_head"]]
+          and r["adapter_norm"] > 0 and r["err_end"] < r["err_start"]]
     out = {"floor": floor, "cap_generic": cap_g, "cap_heldout_dev": cap_h, "n_rows": len(rows), "n_qualify": len(ok),
-           "rows": [{k: r.get(k) for k in ("lr", "keep") + keys} for r in rows]}
+           "rows": [{k: r.get(k) for k in ("lr", "keep") + keys + ("clip_frac_replay", "clip_frac_keep")} for r in rows]}
     if not ok:
         return {**out, "verdict": "NEGATIVE-DEV", "pick": None}
     best = sorted(ok, key=lambda r: (-r["recall"], r["heldout_kl_dev"], r["generic_kl"], r["lr"], r["keep"]))[0]
@@ -407,47 +477,49 @@ def _eng(recs, arm, s):
     return recs[arm][s].get("engagement") or {}
 
 
-def _falls(e, head="err_head", tail="err_tail"):
+def _falls(e, head="err_start", tail="err_end"):
     hd, tl = e.get(head), e.get(tail)
     return _finite(hd) and _finite(tl) and tl < hd
 
 
 def engagement(recs, seeds=SEEDS, last_layer=None):
     """{"core": [...], "controls": [...], "report": [...]}: why an arm's night was not what its role needs, per seed.
-    core (no_sleep, gradient, v3): no_sleep adapter norm 0; gradient norm > 0 and loss tail < head; v3 norm > 0, finite,
-    replay error tail < head, teacher "double", every layer on. controls: sham_ctx norm >= 0.5 x v3's and > 0, error tail <
-    head, teacher "sham" with a context read; top_only norm > 0, error tail < head, exactly one layer on (the last when
-    given); no_target ran its steps with teacher "none" and no context (its inertness is clause (d)). report
-    (grad_distill): norm > 0 and loss tail < head; it gates only the NEGATIVE reading."""
+    "end < start" everywhere is the fixed-order, forward-only probe on every telling at the night's start and end
+    (err_start/err_end for the local arms, loss_start/loss_end for gradient and grad_distill), not step means.
+    core (no_sleep, gradient, v3): no_sleep adapter norm 0; gradient norm > 0 and loss end < start; v3 norm > 0, finite,
+    replay error end < start, teacher "double", every layer on. controls: sham_ctx norm >= 0.5 x v3's and > 0, error end
+    < start, teacher "sham" with a context read; top_only norm > 0, error end < start, exactly one layer on (the last
+    when given); no_target ran its steps with teacher "none" and no context (its inertness is clause (d)). report
+    (grad_distill): norm > 0 and loss end < start; it gates only the NEGATIVE reading."""
     core, ctl, rep = [], [], []
     for s in seeds:
         n = lambda arm: recs[arm][s].get("adapter_norm")
         if n("no_sleep") != 0:
             core.append(f"no_sleep s{s}: adapter_norm {n('no_sleep')} != 0")
-        if not (_finite(n("gradient")) and n("gradient") > 0 and _falls(_eng(recs, "gradient", s), "loss_head", "loss_tail")):
+        if not (_finite(n("gradient")) and n("gradient") > 0 and _falls(_eng(recs, "gradient", s), "loss_start", "loss_end")):
             core.append(f"gradient s{s} not engaged: norm {n('gradient')}, loss {_eng(recs, 'gradient', s)}")
         e = _eng(recs, "v3", s)
         if not (_finite(n("v3")) and n("v3") > 0 and _falls(e) and e.get("teacher") == "double"
                 and e.get("steps_run", 0) > 0 and len(e.get("layers_on") or []) > 1):
-            core.append(f"v3 s{s} not engaged: norm {n('v3')}, err {e.get('err_head')}->{e.get('err_tail')}, "
+            core.append(f"v3 s{s} not engaged: norm {n('v3')}, err {e.get('err_start')}->{e.get('err_end')}, "
                         f"teacher {e.get('teacher')}, layers {e.get('layers_on')}")
         e = _eng(recs, "sham_ctx", s)
         v = n("v3")
         if not (_finite(n("sham_ctx")) and n("sham_ctx") > 0 and _finite(v) and n("sham_ctx") >= ENGAGE_NORM_MIN * v
                 and _falls(e) and e.get("teacher") == "sham" and (e.get("target_ctx_tokens") or 0) > 0):
             ctl.append(f"sham_ctx s{s} not engaged: norm {n('sham_ctx')} vs v3 {v} (needs > 0 and >= "
-                       f"{ENGAGE_NORM_MIN} x v3), err {e.get('err_head')}->{e.get('err_tail')}, teacher {e.get('teacher')}")
+                       f"{ENGAGE_NORM_MIN} x v3), err {e.get('err_start')}->{e.get('err_end')}, teacher {e.get('teacher')}")
         e = _eng(recs, "top_only", s)
         lo = e.get("layers_on") or []
         if not (_finite(n("top_only")) and n("top_only") > 0 and _falls(e) and len(lo) == 1
                 and (last_layer is None or lo == [last_layer])):
-            ctl.append(f"top_only s{s} not engaged: norm {n('top_only')}, err {e.get('err_head')}->{e.get('err_tail')}, "
+            ctl.append(f"top_only s{s} not engaged: norm {n('top_only')}, err {e.get('err_start')}->{e.get('err_end')}, "
                        f"layers {lo}")
         e = _eng(recs, "no_target", s)
         if not (e.get("steps_run", 0) > 0 and e.get("teacher") == "none" and e.get("target_ctx_tokens") == 0):
             ctl.append(f"no_target s{s} did not run its lesion night: {e}")
         if not (_finite(n("grad_distill")) and n("grad_distill") > 0
-                and _falls(_eng(recs, "grad_distill", s), "loss_head", "loss_tail")):
+                and _falls(_eng(recs, "grad_distill", s), "loss_start", "loss_end")):
             rep.append(f"grad_distill s{s} not engaged: norm {n('grad_distill')}, loss {_eng(recs, 'grad_distill', s)}")
     return {"core": core, "controls": ctl, "report": rep}
 
@@ -573,9 +645,10 @@ def cmd_pick(a):
         raise SystemExit("pick refused: units carry no commit")
     ref = {u["arm"]: u["result"] for u in ref_u}
     rows = [{"lr": u["lr"], "keep": u["keep"], **u["result"],
-             **{k: (u.get("engagement") or {}).get(k) for k in ("err_head", "err_tail")}} for u in v3_u]
+             **{k: (u.get("engagement") or {}).get(k)
+                for k in ("err_start", "err_end", "clip_frac_replay", "clip_frac_keep")}} for u in v3_u]
     res = {**dev_pick(g0_u[0]["result"], ref, rows), "model_id": model, "commit": commit,
-           "prompts_sha256": ref_u[0].get("prompts_sha256"), "g0": {k: g0_u[0]["result"].get(k) for k in ("n", "n_ok", "single_ok", "pass")}}
+           "prompts_sha256": ref_u[0].get("prompts_sha256"), "g0": {k: g0_u[0]["result"].get(k) for k in ("n", "n_ok", "n_ok_first", "single_ok", "pass")}}
     print(json.dumps(res, indent=1))
     if a.out:
         atomic_write(a.out, res)
@@ -658,9 +731,9 @@ def run_units(a, c, base, *, PROMPTS, GENERIC, build_arm_episodes, evaluate, sle
             unit = {**base_unit, "arm": "g0", "last_layer": last, "elapsed_s": time.time() - t1,
                     "engagement": {"kind": "gate", "n": r["n"]}, "result": r}
             atomic_write(g0f, unit)
-            print("g0", {k: r[k] for k in ("n", "n_ok", "single_ok", "pass")}, flush=True)
+            print("g0", {k: r[k] for k in ("n", "n_ok", "n_ok_first", "single_ok", "pass")}, flush=True)
             if not r["pass"]:
-                raise SystemExit(f"G0 FAILED: teacher top-1 is the answer for {r['n_ok']} of {r['n']} (needs >= {G0_MIN}): "
+                raise SystemExit(f"G0 FAILED: teacher top-1 is every answer token for {r['n_ok']} of {r['n']} (needs >= {G0_MIN}): "
                                  "no nights run")
             continue
         losses, eng = [], {}
@@ -668,9 +741,11 @@ def run_units(a, c, base, *, PROMPTS, GENERIC, build_arm_episodes, evaluate, sle
         if arm == "no_sleep":
             eng = {"kind": "none", "steps_run": 0}
         elif arm == "gradient":
+            ce0 = replay_ce(pc, base, eps["sleep_true"])        # fixed-order probe before the night (adapters at init)
             losses = sleep(pc, base, eps["sleep_true"], GENERIC, steps=a.steps, lr=a.grad_lr, kl_weight=a.kl_weight,
                            seed=a.seed, log=lg)
-            eng = _loss_engagement("gradient", losses)          # (replay CE, keep KL) per step
+            eng = {**_loss_engagement("gradient", losses),       # (replay CE, keep KL) per step, reported
+                   "loss_start": ce0, "loss_end": replay_ce(pc, base, eps["sleep_true"])}
         elif arm == "grad_distill":
             distill_sleep(pc, base, eps["sleep_true"], GENERIC, steps=a.steps, lr=a.grad_lr, kl_weight=a.kl_weight,
                           seed=a.seed, log=lg, info=eng)

@@ -1,6 +1,6 @@
-# Local rule v3 at 04b, brain/research/2026-11-27-local-rule-v3-prereg.md (DRAFT pending pre-data review: the engine
-# refuses it without --allow-draft). Harness: brain/experiments/local_rule_v3.py (imports local_sleep / local_rule_v2,
-# edits neither). smoke = G0 (the teacher's top-1 at the answer position, >= 10/12) then one gradient and one v3 night of
+# Local rule v3 at 04b, brain/research/2026-11-27-local-rule-v3-prereg.md (REGISTERED 2026-11-27 after pre-data sonnet review).
+# Harness: brain/experiments/local_rule_v3.py (imports local_sleep / local_rule_v2,
+# edits neither). smoke = G0 (teacher top-1 on every answer token, >= 10/12) then one gradient and one v3 night of
 # 24 steps: a failing G0 exits non-zero before any night, so the chain stops at ERROR-SMOKE with no night run.
 # dev = seed 7: ref (G0 again, no_sleep, gradient) + 9 v3 cells (lr x keep), one job each; pick = local_rule_v3.dev_pick
 # (STOP-G0 / UNDEFINED-DEV / a refused pick -> HOLD-DEV; NEGATIVE-DEV: no six seeds for this model); six = the 7 arms at
@@ -12,7 +12,7 @@ name: local_rule_v3_04b
 question: "Does the two-phase layerwise-target local rule (no backward error path) store told facts under the v3 rule (0.1B then 0.4B)?"
 prereg: brain/research/2026-11-27-local-rule-v3-prereg.md
 requires_local: [brain/research/2026-11-27-local-rule-v3-prereg.md]
-status: DRAFT                     # pre-data review pending; flip to REGISTERED only with the review recorded in the prereg
+status: REGISTERED                # pre-data sonnet review recorded in the prereg (Registration review, 2026-11-27)
 module: local_rule_v3.py
 pick: pick
 verdict: verdict

@@ -88,7 +88,7 @@ def test_no_target_lesion_is_exactly_inert():
     pc = _pc()
     info = {}
     V.v3_sleep(pc, _st(pc), EPS, GEN, steps=10, lr=0.3, teacher_kind="none", info=info)
-    assert pc.adapter_norm() == 0.0 and info["err_head"] == 0.0 and info["target_ctx_tokens"] == 0
+    assert pc.adapter_norm() == 0.0 and info["err_start"] == 0.0 and info["err_end"] == 0.0 and info["target_ctx_tokens"] == 0
     assert info["teacher"] == "none" and info["steps_run"] == 10
 
 
@@ -96,7 +96,7 @@ def test_v3_night_engages_and_top_only_moves_only_the_last_block():
     pc = _pc()
     info = {}
     V.v3_sleep(pc, _st(pc), EPS, GEN, steps=40, lr=0.3, info=info)
-    assert pc.adapter_norm() > 0 and info["err_tail"] < info["err_head"] and info["layers_on"] == [0, 1]
+    assert pc.adapter_norm() > 0 and info["err_end"] < info["err_start"] and info["layers_on"] == [0, 1]
     assert set(info["err_layer_first"]) == {"0", "1"}
     pc = _pc()
     info = {}
@@ -113,7 +113,54 @@ def test_distill_night_trains_by_backprop():
     pc = _pc()
     info = {}
     V.distill_sleep(pc, _st(pc), EPS, GEN, steps=30, lr=1e-2, info=info)
-    assert pc.adapter_norm() > 0 and info["kind"] == "grad_distill" and info["loss_tail"] < info["loss_head"]
+    assert pc.adapter_norm() > 0 and info["kind"] == "grad_distill" and info["loss_end"] < info["loss_start"]
+
+
+def test_engagement_is_a_fixed_order_probe_and_clip_fraction_is_logged():
+    pc = _pc()
+    info = {}
+    V.v3_sleep(pc, _st(pc), EPS, GEN, steps=40, lr=0.3, info=info)
+    pc2 = V.adopt3(pc)                                   # the end probe re-runs bit-identically, in a fixed order
+    eps_ids = [pc.cortex.pipe.encode(t) for t, _ in EPS]
+    tg = [V.teacher(pc2, ids, ids, _st(pc))[1] for ids in eps_ids]
+    assert V.replay_error(pc2, _st(pc), eps_ids, tg, info["layers_on"])[0] == info["err_end"]
+    assert info["err_end"] < info["err_start"] and set(info["err_layer_start"]) == {"0", "1"}
+    for k in ("clip_frac_replay", "clip_frac_keep"):
+        assert 0.0 <= info[k] <= 1.0, k
+
+
+def test_keep_weight_acts_after_the_clip_so_the_keep_grid_does_not_collapse():
+    torch.manual_seed(0)
+    d = torch.full((3, 3), 10.0)
+    assert V._clip(d, 1.0) and abs(float(d.norm()) - 1.0) < 1e-5
+    small = torch.full((2, 2), 0.01)
+    assert not V._clip(small, 1.0) and torch.equal(small, torch.full((2, 2), 0.01))
+    steps = {}
+    for keep in (0.3, 1.0, 3.0):
+        pc = _pc(0.5)
+        v = V.adopt3(pc)
+        kp = V.KPCopies(v, 0)
+        ids = pc.cortex.pipe.encode(GEN[0])
+        tg = V.teacher(v, [], ids, _st(pc))[1]
+        _, act = V.activity(v, ids, _st(pc))
+        b0 = pc.B_v["1"].detach().clone()
+        st = {}
+        V.v3_update(v, kp, act, tg, lr=0.1, layers=[0, 1], clip=1e-4, weight=keep, stats=st)   # the clip binds
+        assert st["n"] == 8 and st["clipped"] == 8
+        steps[keep] = float((pc.B_v["1"].detach() - b0).norm())
+    assert steps[3.0] > steps[1.0] > steps[0.3] > 0 and abs(steps[3.0] / steps[1.0] - 3.0) < 1e-2
+
+
+def test_g0_gates_on_every_answer_token():
+    pc = _pc()
+    pipe = pc.cortex.pipe
+    ids = pipe.encode(TEXT)
+    a, b = V.answer_span(pipe, ids, TEXT, "pixel")
+    assert pipe.decode(ids[a:b + 1]).strip().lower() == "pixel"
+    r = V.g0_check(pc, _st(pc), [(TEXT, "pixel"), (TEXT2, "bolt")])
+    it = r["items"][0]
+    assert it["answer_toks"] == [int(t) for t in ids[a:b + 1]] and len(it["teacher_tops"]) == b - a + 1
+    assert r["n_ok"] == sum(i["teacher_tops"] == i["answer_toks"] for i in r["items"]) <= r["n_ok_first"]
 
 
 def test_answer_index_and_g0_check_on_stub():
@@ -143,7 +190,7 @@ G0 = {"pass": True, "n": 12, "n_ok": 11}
 
 def _row(lr=0.1, keep=1.0, recall=3, g=0.03, h=0.05, norm=1.0, eh=1.0, et=0.5):
     return {"lr": lr, "keep": keep, "recall": recall, "generic_kl": g, "heldout_kl_dev": h, "adapter_norm": norm,
-            "err_head": eh, "err_tail": et}
+            "err_start": eh, "err_end": et}
 
 
 def test_dev_pick_rule_and_each_disqualifier_alone():
@@ -178,8 +225,8 @@ def _arm(recall, g=0.03, h=0.04, false=1, norm=1.0, eng=None):
 
 def _go():
     loc = lambda t, lo, ctx: {"kind": "local", "teacher": t, "steps_run": 240, "layers_on": lo, "target_ctx_tokens": ctx,
-                              "err_head": 1.0, "err_tail": 0.5}
-    lossy = {"steps_run": 240, "loss_head": 2.0, "loss_tail": 0.5}
+                              "err_start": 1.0, "err_end": 0.5}
+    lossy = {"steps_run": 240, "loss_start": 2.0, "loss_end": 0.5}
     a = {"no_sleep": _arm(0, 0, 0, 0, 0.0, {"kind": "none", "steps_run": 0}),
          "gradient": _arm(4, eng=lossy),
          "v3": _arm(4, eng=loc("double", LAYERS, 20)),
@@ -234,13 +281,13 @@ def test_each_clause_failing_alone_gives_the_exact_verdict(name, edit, want):
 
 @pytest.mark.parametrize("name,edit", [
     ("no_sleep norm", lambda r: _set(r, "no_sleep", seeds=[43], adapter_norm=0.1)),
-    ("gradient loss flat", lambda r: _set(r, "gradient", seeds=[44], eng_loss_tail=3.0)),
+    ("gradient loss flat", lambda r: _set(r, "gradient", seeds=[44], eng_loss_end=3.0)),
     ("gradient norm 0", lambda r: _set(r, "gradient", seeds=[44], adapter_norm=0.0)),
-    ("v3 err flat", lambda r: _set(r, "v3", seeds=[100], eng_err_tail=1.0)),
+    ("v3 err flat", lambda r: _set(r, "v3", seeds=[100], eng_err_end=1.0)),
     ("v3 wrong teacher", lambda r: _set(r, "v3", seeds=[100], eng_teacher="sham")),
     ("v3 norm 0", lambda r: _set(r, "v3", seeds=[100], adapter_norm=0.0)),
     ("sham_ctx weak", lambda r: _set(r, "sham_ctx", seeds=[101], adapter_norm=0.4)),
-    ("sham_ctx err flat", lambda r: _set(r, "sham_ctx", seeds=[101], eng_err_tail=2.0)),
+    ("sham_ctx err flat", lambda r: _set(r, "sham_ctx", seeds=[101], eng_err_end=2.0)),
     ("sham_ctx no context", lambda r: _set(r, "sham_ctx", seeds=[101], eng_target_ctx_tokens=0)),
     ("top_only norm 0", lambda r: _set(r, "top_only", seeds=[102], adapter_norm=0.0)),
     ("top_only all layers", lambda r: _set(r, "top_only", seeds=[102], eng_layers_on=LAYERS)),
@@ -265,7 +312,7 @@ def test_grad_distill_is_report_only_and_reads_a_negative():
     assert V.verdict(neg(), 11)["reading"].startswith("rule-limit")
     assert V.verdict(_set(neg(), "grad_distill", recall=1), 11)["reading"].startswith("target-limit")
     assert V.verdict(_set(neg(), "grad_distill", heldout_kl=0.2), 11)["reading"].startswith("target-limit")
-    assert V.verdict(_set(neg(), "grad_distill", eng_loss_tail=9.0), 11)["reading"].startswith("undetermined")
+    assert V.verdict(_set(neg(), "grad_distill", eng_loss_end=9.0), 11)["reading"].startswith("undetermined")
 
 
 @pytest.mark.parametrize("arm", V.GATED_ARMS)
@@ -353,7 +400,7 @@ def _write_dev(d, g0_pass=True, skip=None):
                 continue
             tag = f"lr{lr:g}_keep{k:g}"
             r = _row(lr, k, recall=3 if (lr, k) == (0.1, 3.0) else 1)
-            eng = {"err_head": r.pop("err_head"), "err_tail": r.pop("err_tail")}
+            eng = {"err_start": r.pop("err_start"), "err_end": r.pop("err_end")}
             V.atomic_write(V.unit_path(d, tag, 7, "v3"), _unit(tag, 7, "v3", r, eng, lr=lr, keep=k))
 
 
@@ -412,6 +459,10 @@ def test_run_units_on_stub_cortex_resume_engagement_and_pick(tmp_path, monkeypat
     assert units["v3"]["lr"] == 0.3 and units["v3"]["keep"] == 3.0 and units["gradient"]["lr"] is None
     assert units["no_sleep"]["result"]["adapter_norm"] == 0.0 and units["no_target"]["result"]["adapter_norm"] == 0.0
     assert units["top_only"]["engagement"]["layers_on"] == [1] and units["sham_ctx"]["teacher"] == "sham"
+    for arm in ("gradient", "grad_distill"):
+        assert all(math.isfinite(units[arm]["engagement"][k]) for k in ("loss_start", "loss_end")), arm
+    for arm in V.LOCAL_ARMS:
+        assert {"err_start", "err_end", "clip_frac_replay", "clip_frac_keep"} <= set(units[arm]["engagement"]), arm
     V.check_units(list(units.values()), V.read_pick(a.pick))
     assert V.run_units(a, c, base, **_kw()) == []                                  # resume
     with pytest.raises(SystemExit, match="model"):
@@ -445,10 +496,10 @@ def test_dev_seed_never_computes_the_verdict_half(tmp_path, monkeypatch):
 
 
 # ------------------------------------------------------------------ engine specs
-def test_engine_specs_render_chain_and_are_draft():
+def test_engine_specs_render_chain_and_are_registered():
     from tools.engine import core
     a, b = core.Spec.find("local_rule_v3_01b"), core.Spec.find("local_rule_v3_04b")
-    assert (a.status, b.status, a.memory_gb, b.memory_gb) == ("DRAFT", "DRAFT", 5, 10) and a.question == b.question
+    assert (a.status, b.status, a.memory_gb, b.memory_gb) == ("REGISTERED", "REGISTERED", 5, 10) and a.question == b.question
     assert a.model == "rwkv7-g1d-0.1b-20260129-ctx8192.pth" and b.model == "rwkv7-g1d-0.4b-20260210-ctx8192.pth"
     assert "{model}" in a.cmd and "{model}" in b.cmd and a.smoke["params"].startswith("--arms g0,")
     assert len(a.dev_grid) == 10 and a.dev_grid == b.dev_grid
@@ -466,13 +517,14 @@ def test_engine_specs_render_chain_and_are_draft():
     assert b.next_for("GO-V3") is None
 
 
-def test_engine_refuses_draft_without_allow_draft():
+def test_registered_specs_run_without_allow_draft():
     from tools.engine import core
     from tools.engine.core import Engine, make_nodes
-    s = core.Spec.find("local_rule_v3_01b")
-    with pytest.raises(SystemExit, match="DRAFT"):
-        Engine("local_rule_v3_01b", make_nodes("ssh"), dry=True, log=lambda *_: None).check_runnable(s)
-    Engine("local_rule_v3_01b", make_nodes("ssh"), dry=True, log=lambda *_: None, allow_draft=True).check_runnable(s)
+    for name in ("local_rule_v3_01b", "local_rule_v3_04b"):
+        s = core.Spec.find(name)
+        Engine(name, make_nodes("ssh"), dry=True, log=lambda *_: None).check_runnable(s)
+    txt = open("brain/research/2026-11-27-local-rule-v3-prereg.md").read()
+    assert "STATUS: REGISTERED 2026-11-27 after pre-data sonnet review" in txt and "## Registration review" in txt
 
 
 def test_engine_pick_and_verdict_delegate_to_the_harness(tmp_path):

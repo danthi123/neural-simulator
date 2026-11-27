@@ -15,6 +15,15 @@
 # NOT shipped by the engine: the KR snapshots / life JSONs (already on the nodes since 11-25) and each node's foreign A5f
 # store (foreign_s<F>/n13..n15/episodes.json): `bash brain/experiments/results/2026-11-27-mix-night/ship.sh ship` copies
 # those node to node. `requires` checks all of it before anything launches.
+# AMENDMENT S2 (prereg, 11-27 22:55 UTC): step 0 on pool40 measured 17.9 GB / 62 min per night, so the cap rule fits no pool
+# node: the whole screen runs on the workstation RTX 3090 (engine node w3090, opt-in: --allow-w3090 --nodes w3090; device
+# cuda, mix_night_screen --cuda-precision fp32 default = fp32 sleep with TF32 off), all three seeds there one at a time
+# (one job per node), only while nvidia-smi shows the GPU free (gpu_idle). The smoke (s319 A0r) and step 0 (s319 A0r, A0
+# n13, determinism pair, A2 n13) are repeated on the 3090 and replace the pool40 numbers; step 0 of s320/s321 also runs
+# there (the pick reads each seed's det pair and RSS, and the six job resumes those units, so it costs no extra night).
+# W-side data: `bash tools/fetch_kr_to_w.sh` (KR life JSONs, snaps, trunks of 319-321 from pool40 into
+# ~/brain-lane/route_repo/_scratch/route/kr, the foreign_s<F> stores built from snaps_s<F>, and the model symlink in
+# ~/brain-lane/models). Caps: the w3090 node's RAM budget is 23 GB (core.W3090_GB), so 21 GB = 23 - FIT_SLACK.
 name: mix_night
 question: "Does a REMIX/keep-coverage recipe change cut multi-night language drift on the K-P slept store?"
 prereg: brain/research/2026-11-27-mix-night-prereg.md
@@ -28,7 +37,7 @@ module: mix_night.py
 pick: pick
 verdict: verdict
 model: rwkv7-g1l-1.5b-20261031-ctx34304.pth   # = --model 1.5b on the pool (one 1.5b file in ~/brain-lane/models)
-smoke: {seed: 319, params: "A0r", memory_gb: 21}   # engine real smoke: the one-night A0r unit on pool40 (step 0 resumes it)
+smoke: {seed: 319, params: "A0r", memory_gb: 21}   # engine real smoke: the one-night A0r unit on w3090 (step 0 resumes it)
 cmd: >-
   [ -x /usr/bin/time ] || { echo "/usr/bin/time missing: measure-first needs GNU time"; exit 2; };
   T0=$(date +%s); KR=$HOME/brain-lane/route_repo/_scratch/route/kr; D=$HOME/brain-lane/engine/data/mix_night/{commit}/s{seed};
@@ -51,7 +60,7 @@ seed_vars:                        # A5f's foreign store: the next KR seed
   319: {foreign: 320}
   320: {foreign: 321}
   321: {foreign: 319}
-placement: "@kr"                  # 319 -> pool40, 320 -> pool41, 321 -> pool42 (where the snapshots were shipped, 11-25)
+placement: {319: w3090, 320: w3090, 321: w3090}   # Amendment S2: every seed on the W 3090 (pool: "@kr", before S2)
 requires:                         # under the node's $HOME
   - brain-lane/route_repo/_scratch/route/kr/lifeKR_s{seed}.json.json
   - brain-lane/route_repo/_scratch/route/kr/snaps_s{seed}/n12/cortex_adapters.pt
@@ -60,12 +69,12 @@ requires:                         # under the node's $HOME
   - brain-lane/route_repo/_scratch/route/kr/foreign_s{foreign}/n14/episodes.json
   - brain-lane/route_repo/_scratch/route/kr/foreign_s{foreign}/n15/episodes.json
   - brain-lane/models
-dev_seed: 319                     # the 45-min bar's node (pool40)
+dev_seed: 319                     # the 45-min bar's seed (s319, now on w3090)
 dev_grid:                         # step 0 per node; the six job of the same seed resumes all four units
   step0_s319: {seed: 319, params: "A0r A0@13 DET A2@13"}
   step0_s320: {seed: 320, params: "A0r A0@13 DET A2@13"}
   step0_s321: {seed: 321, params: "A0r A0@13 DET A2@13"}
-dev_memory_gb: {319: 21, 320: 10, 321: 10}   # step-0 caps, set not measured: MemTotal - 2 on pool40; MEMCAP_GB=10 on 15 GB (review 2, N6)
+dev_memory_gb: {319: 21, 320: 21, 321: 21}   # step-0 caps, set not measured: the w3090 budget 23 - 2 (S2; pool: 21/10/10)
 seeds: [319, 320, 321]            # the KR DEV seeds; a PASS enters a six-seed fresh-split registered test (not this spec)
-memory_gb: 13                     # six-phase ceiling: the largest that fits the 15 GB nodes (13 + 2); each seed runs at its pick cap
+memory_gb: 21                     # six-phase ceiling: the largest that fits the w3090 budget (21 + 2 = 23; S2; pool: 13); each seed runs at its pick cap
 ladder: {max_len: 1, next: {}}    # no registered follow-up yet

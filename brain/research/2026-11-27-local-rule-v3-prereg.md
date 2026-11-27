@@ -3,9 +3,9 @@
 
 # Local rule v3 prereg (2026-11-27): two-phase layerwise targets from the cortex's own in-context activity
 
-STATUS: DRAFT pending pre-data review. Nothing has run. Engine specs `tools/engine/specs/local_rule_v3_{01b,04b}.yaml`
-are `status: DRAFT` and the engine refuses them without `--allow-draft`. They flip to REGISTERED only after the review
-is recorded in a section at the end of this file. Settings below are frozen at registration. lr and keep weight are
+STATUS: REGISTERED 2026-11-27 after pre-data sonnet review. Nothing has run. The fixes are listed in "Registration
+review" at the end of this file. Engine specs `tools/engine/specs/local_rule_v3_{01b,04b}.yaml` are
+`status: REGISTERED`. Settings below are frozen at registration. lr and keep weight are
 frozen per model by that model's seed-7 dev pick. Milestone: ARCHITECTURE section 4, 2026-12-31, "sleep learning by a
 local, biology-style rule instead of gradients; scale to 1.5B". This is lever 4 on that defect (v1, SHY, v2, v3). It
 does not re-open the v1 NEGATIVE, the SHY result or the v2 NEGATIVE-DEV
@@ -39,10 +39,15 @@ Per replayed telling X, both phases forward-only, under `no_grad`, on the same c
    - A factors: dA = x^T (e Bcopy), through v1's Kolen-Pollack copies of B, which receive B's own update and decay.
    - Every step is normalised LMS, divided by the pre-synaptic energy of that factor. At lr 1 a single row is fully
      corrected (tested).
-   - v1's update-norm clip (1.0) and B decay (1e-3) are kept unchanged.
+   - v1's update-norm clip (1.0) and B decay (1e-3) are kept. The clip caps each factor's normalised step at norm 1
+     before lr. So "one lr serves every layer" and "lr 1 fully corrects a row" hold only while the clip is inactive.
+     The fraction of clipped factor updates is logged per arm, replay and keep separately (`clip_frac_replay`,
+     `clip_frac_keep`).
    - All errors come from the student's own forward.
 4. **Keep.** One keep text (`sleep_probe.GENERIC`) per step goes through the same rule. Its target is the pretrained
-   cortex's own activity on that text, and the error is multiplied by the keep weight.
+   cortex's own activity on that text. The keep weight multiplies the keep step AFTER the clip (and the KP copy's
+   update with it), so keep 0.3, 1 and 3 give different steps whether or not the clip binds (tested). The logged
+   errors are unweighted.
 - **RNG draws** match v1/v2: one episode by strength, then one keep text, per step. Each night is 240 steps, with
   `torch.manual_seed(seed)` before each arm's PlasticCortex.
 - **Episodes** are `build_arm_episodes(seed)["sleep_true"]`: the 12 tellings, the same information the gradient
@@ -60,16 +65,18 @@ Per replayed telling X, both phases forward-only, under `no_grad`, on the same c
   - Checked on the real tokenizer (vocab only, no model): `encode(X+X) == encode(X)+encode(X)` for 12/12 tellings, so
     the double reading equals a plain text re-reading.
   - The answer starts at token 6-9 of 20-24.
-  - G0 checks the answer's FIRST token. That is a subword for 6 facts (" tea", " Marg", " Bis", " Vol", " Cru",
-    " cell"), so G0 is a necessary check, not a full-answer check (disclosed).
+  - The answer's first token is a subword for 6 facts (" tea", " Marg", " Bis", " Vol", " Cru", " cell"). G0
+    therefore gates on EVERY token of the answer key, teacher-forced (amended at review). The first-token rate is
+    reported beside it.
 - **v2's measured wall time** (engine units, pool nodes, CPU fp32):
   - 0.1B: a local night plus battery takes 80-88 s, gradient 203 s, no_sleep 30 s. Smoke peak 2.9 GB.
   - 0.4B: 162-242 s, gradient 522 s, no_sleep 86 s. Smoke peak 6.8 GB.
   - v3 adds 12 cached double reads and two forwards per step, as v1. Estimate: local night about 1.2x v2.
 
 ## Gate G0 (free, before any night)
-- On the second reading, the teacher's top-1 at the position predicting the answer's first token must be that token
-  for >= 10 of the 12 facts, per model (`g0_check`). The single-reading rate is reported beside it.
+- On the second reading, teacher-forced, the teacher's top-1 must be the answer's token at every token of the answer
+  key, for >= 10 of the 12 facts, per model (`g0_check`, `n_ok`). The first-token rate (`n_ok_first`) and the
+  single-reading rates are reported beside it.
 - G0 runs first in the engine's real smoke (`--arms g0,gradient,v3 --steps 24`). If it fails, the run writes the G0
   unit and exits non-zero before any night. The chain then stops at ERROR-SMOKE with no night run.
 - The dev `ref` job runs G0 again. The pick refuses if there is no G0 unit, and returns STOP-G0 (engine HOLD-DEV) if G0
@@ -97,7 +104,8 @@ Models: 0.1B `rwkv7-g1d-0.1b-20260129-ctx8192.pth`, then 0.4B `rwkv7-g1d-0.4b-20
     - recall >= the verdict bar, max(0.5 x ref gradient, no_sleep + 2);
     - generic KL <= 1.25 x the ref gradient's, and <= 1;
     - held-out KL on the DEV half <= 1.25 x the ref gradient's, and <= 1;
-    - the cell is engaged: adapter norm > 0 and the replay error's tail < its head.
+    - the cell is engaged: adapter norm > 0 and the replay error at the night's end < at its start (`err_end <
+      err_start`, the fixed-order probe under Measures).
   - Pick the highest recall. Ties go to lower held-out KL, then lower generic KL, then lower lr, then lower keep.
 - **Outcomes.** If no cell qualifies: NEGATIVE-DEV, no six seeds, no grid extension. A non-finite ref: UNDEFINED-DEV.
   A failed G0: STOP-G0.
@@ -113,9 +121,15 @@ Models: 0.1B `rwkv7-g1d-0.1b-20260129-ctx8192.pth`, then 0.4B `rwkv7-g1d-0.4b-20
   gates, the DEV half is used by the pick.
 - **Norms.** Adapter norm and factor norms.
 - **Engagement record** (every arm):
-  - local arms: teacher kind, layers on, targets cached, mean context tokens, replay and keep error head/tail (mean of
-    the first/last 20 steps), per-layer value error first/last (where the fact lives), sham permutation;
-  - gradient and grad_distill: loss head/tail;
+  - **Engagement probe (gated).** At the start and the end of each night, a fixed-order, forward-only pass over all 12
+    tellings, with no update. Local arms: the summed per-layer value error against the cached targets, averaged over
+    tellings (`err_start`, `err_end`, and per layer). gradient: the replay CE that `brain.sleep` trains on
+    (`loss_start`, `loss_end`). grad_distill: the KL to the teacher (`loss_start`, `loss_end`). Every "end < start"
+    gate below reads this probe.
+  - local arms: teacher kind, layers on, targets cached, mean context tokens, clip fractions (replay, keep), and,
+    reported only, replay and keep error head/tail (mean of the first/last 20 steps) and per-layer value error
+    first/last, sham permutation;
+  - gradient and grad_distill: loss head/tail (reported only);
   - no_sleep: steps 0.
 - **Provenance.** Host, host_env, commit, device, precision, model id, prompts sha, lr, keep, grad_lr, last layer,
   elapsed.
@@ -136,14 +150,14 @@ bar = max(0.5 x mean gradient recall, mean no_sleep recall + 2). "Held-out" belo
 **Engagement gates (`engagement()`):**
 - Core arms:
   - `no_sleep`: adapter norm exactly 0.
-  - `gradient`: norm > 0, and loss tail < head.
-  - `v3`: norm finite and > 0, replay error tail < head, teacher "double", more than one layer on.
+  - `gradient`: norm > 0, and probe loss end < start.
+  - `v3`: norm finite and > 0, probe replay error end < start, teacher "double", more than one layer on.
 - Controls:
-  - `sham_ctx`: norm > 0 and >= 0.5 x that seed's `v3` norm, error tail < head, teacher "sham" with context read.
-  - `top_only`: norm > 0, error tail < head, exactly the last layer on.
+  - `sham_ctx`: norm > 0 and >= 0.5 x that seed's `v3` norm, probe error end < start, teacher "sham" with context read.
+  - `top_only`: norm > 0, probe error end < start, exactly the last layer on.
   - `no_target`: ran its steps with teacher "none" and no context. Its inertness is (d).
 - Report only:
-  - `grad_distill`: norm > 0, and loss tail < head. This gate affects only the NEGATIVE reading.
+  - `grad_distill`: norm > 0, and probe loss end < start. This gate affects only the NEGATIVE reading.
 
 **Order of decision:**
 1. **UNDEFINED** if any of these holds:
@@ -216,3 +230,24 @@ Risks:
 - Estimate from v2's wall times: 0.1B six seeds about 12-15 min per seed, 0.4B about 35-45 min per seed.
 - The repo and its COMMIT are frozen from a model's dev through its score. Six-seed jobs take lr and keep from the
   engine's pick, and the score checks model and commit against the pick.
+
+## Registration review (pre-data, sonnet, 2026-11-27)
+No data existed. All points were NON-BLOCKING. Each could have wasted a run, so each is fixed before registration
+(module, tests and this file):
+1. **Noisy engagement gates.** The "error tail < head" gates compared the first 20 and last 20 step means, and each
+   step samples one random telling of 12. One seed with a flat tail would have made the run UNDEFINED through the core
+   gate, a control gate, or a dev cell failing "engaged". Fix: a fixed-order, forward-only probe of the summed
+   per-layer error on all 12 tellings at each night's start and end, gated on end < start. The gradient (replay CE)
+   and grad_distill (KL to the teacher) gates use the same probe. Head/tail stay as report-only fields.
+2. **Clip collapses the keep grid.** The keep weight multiplied the error before the normalised step and the norm-1
+   clip. Once the clip binds, keep 0.3, 1 and 3 would give identical updates. Fix: the keep weight now multiplies the
+   step after the clip (also the KP copy's update), and the logged errors are unweighted. The fraction of clipped
+   factor updates per arm (replay and keep) is in the engagement record. The prereg now states that the
+   normalised-step claims hold only while the clip is inactive.
+3. **G0 checked only the first answer token.** That token is a word fragment for 6 of the 12 facts. Fix: G0 gates on
+   every token of the answer key, teacher-forced on the second reading. The first-token rate is reported. The G0 odds
+   (90%) are kept, since copying is easiest on continuation tokens. This is disclosed as a stricter gate than the
+   draft's.
+Tests: `brain/tests/test_local_rule_v3.py` (the fixed-order probe re-runs bit-identically and falls; clip fraction
+logged; the keep weight scales the step 3:1 while the clip binds; G0 full-span; engagement records carry the start/end
+and clip fields; the registered specs run without `--allow-draft`).

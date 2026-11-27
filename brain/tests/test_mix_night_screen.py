@@ -463,6 +463,11 @@ def test_provenance_reads_commit_file_on_pool_node(tmp_path):
         MN.provenance("cpu", env={"POOL_NODE": "1"}, repo=str(tmp_path))
     g = MN.provenance("cpu", env={})
     assert g["commit_source"] == "git" and re.fullmatch(r"[0-9a-f]{40}", g["commit"])
+    (tmp_path / "COMMIT").write_text("def456\n")                  # the w3090 node runs an engine-shipped copy (no git)
+    w = MN.provenance("cuda", "fp32", env={"BRAIN_ALLOW_W3090": "1"}, repo=str(tmp_path))
+    assert w["commit"] == "def456" and w["commit_source"] == "COMMIT" and w["device"] == "cuda"
+    g = MN.provenance("cpu", env={"BRAIN_ALLOW_W3090": "1"})        # a git checkout (no COMMIT file): git as before
+    assert g["commit_source"] == "git"
     assert MN.precision_of("cpu", "fp16") == "fp32" and MN.precision_of("cuda", "fp16") == "fp16"
 
 
@@ -913,3 +918,33 @@ def test_run_node_measure_stops_early_when_the_run_cap_cannot_fit(tmp_path):
     p = _sh(["measure"], {**env, "MEMCAP_GB": "10"})
     assert p.returncode == 2 and "does not fit" in p.stdout
     assert "--arm A0 " not in (tmp_path / "calls.txt").read_text() and not (O / "measure_s319.txt").exists()
+
+
+def test_run_on_cuda_builds_an_fp32_cortex_and_records_it(tmp_path, monkeypatch):
+    """Amendment S2 (the W 3090): `run --device cuda` loads the cortex in fp32 (Cortex turns TF32 off for fp32 on cuda,
+    tested in test_cortex_precision) and every unit records device cuda, precision fp32; cpu stays the default."""
+    import json
+    import brain.cortex as C
+    monkeypatch.delenv("POOL_NODE", raising=False)
+    monkeypatch.setenv("BRAIN_ALLOW_W3090", "1")
+    _snap_tree(tmp_path / "s")
+    life = tmp_path / "life.json"
+    life.write_text(json.dumps({"seed": 319, "brain_kw": {"keep_bank": "prior"}}))
+    made, seen = [], {}
+
+    class FakeCortex:
+        model_name = "m"
+
+        def __init__(self, model_path=None, device="cpu", cuda_precision="fp16"):
+            made.append((device, cuda_precision))
+
+    monkeypatch.setattr(C, "Cortex", FakeCortex)
+    monkeypatch.setattr(C, "resolve_model", lambda m: "m.pth")
+    monkeypatch.setattr(MN, "run_chain", lambda res, snaps, arm, cortex, work, out_dir, offframe, prov, *a, **k:
+                        seen.update(prov) or [])
+    base = ["run", "--seed", "319", "--arm", "A0", "--life", str(life), "--snaps", str(tmp_path / "s"),
+            "--out-dir", str(tmp_path / "o"), "--offframe", MN.OFFFRAME_FILE, "--offframe-sha256", MN.OFFFRAME_SHA256]
+    MN.main(base + ["--device", "cuda"])
+    assert made == [("cuda", "fp32")] and seen["device"] == "cuda" and seen["precision"] == "fp32"
+    MN.main(base)
+    assert made[-1] == ("cpu", "fp32") and seen["device"] == "cpu" and seen["precision"] == "fp32"
