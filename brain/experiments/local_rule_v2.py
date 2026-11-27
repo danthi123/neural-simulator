@@ -48,7 +48,7 @@ only by the seed-7 pick, `heldout_kl_dev`), odd indices (12) the VERDICT half (`
     POOL_NODE=1 python -m brain.experiments.local_rule_v2 run --model M.pth --seed 42 --pick D/pick.json --out-dir S \\
         --tag six                                                    # lr, tau from the pick; model + commit must match
     python -m brain.experiments.local_rule_v2 score --dir S --tag six --pick D/pick.json   # six-seed verdict
-Prereg: brain/research/2026-11-27-local-rule-v2-prereg.md (DRAFT pending pre-data review).
+Prereg: brain/research/2026-11-27-local-rule-v2-prereg.md (REGISTERED 2026-11-27 after pre-data sonnet review).
 """
 from __future__ import annotations
 
@@ -87,6 +87,9 @@ SPEC_SEEDS = 5          # ... and above v2's on >= 5 of 6 seeds
 RANK_MIN = 4            # dev: a config protects >= 4 directions in every layer and path (more than the shared mean)
 PROMPTS_SHA256 = "77e31aa1935c86bf6d6c04ea8e87009b73668a0196f3d831a81766c9d620d8d6"   # mix_night_screen.PROMPTS @ 4389b39
 GATED = ("recall", "false_recall", "generic_kl", "heldout_kl")
+CONTROL_ARMS = ("v2_shuffled", "noproj", "sham", "sham_tok")   # each must have had a live night before it can count
+ENGAGE_NORM_MIN = 0.5   # a control's adapter norm >= 0.5 x that seed's v2 norm (no upper bound: see the prereg)
+LOSS_WIN = 20           # replay loss head / tail = mean of the first / last 20 steps; a live night has tail < head
 
 
 # ------------------------------------------------------------------ guard and provenance
@@ -370,6 +373,30 @@ def _wins(recs, hi, lo, k, seeds):
     return sum(recs[hi][s][k] > recs[lo][s][k] for s in seeds)
 
 
+def engagement(recs, seeds=SEEDS):
+    """Why each control arm (v2_shuffled, noproj, sham, sham_tok) did NOT have a live night, per seed (empty = all live).
+    Live: adapter_norm finite, > 0 and >= ENGAGE_NORM_MIN x that seed's v2 adapter_norm; replay_loss_tail <
+    replay_loss_head (both finite); sham_tok: the rank-matched subspace was built at full rank (m_k_used == m_k and
+    m_v_used == m_v on every layer). An inert control would pass (b) or (g) for free (v1 was nearly inert)."""
+    why = []
+    for arm in CONTROL_ARMS:
+        for s in seeds:
+            r, v = recs[arm][s], recs["v2"][s].get("adapter_norm")
+            n = r.get("adapter_norm")
+            if not (_finite(n) and n > 0 and _finite(v) and n >= ENGAGE_NORM_MIN * v):
+                why.append(f"{arm} s{s} not engaged: adapter_norm {n} vs v2 {v} (needs > 0 and >= {ENGAGE_NORM_MIN} x v2)")
+            hd, tl = r.get("replay_loss_head"), r.get("replay_loss_tail")
+            if not (_finite(hd) and _finite(tl) and tl < hd):
+                why.append(f"{arm} s{s} not engaged: replay loss head {hd} tail {tl} (needs tail < head)")
+            if arm == "sham_tok":
+                sub = r.get("subspace") or {}
+                if not (sub.get("m_k") and sub.get("m_k_used") == sub.get("m_k")
+                        and sub.get("m_v") and sub.get("m_v_used") == sub.get("m_v")):
+                    why.append(f"sham_tok s{s} not rank-matched: m_k/m_v used {sub.get('m_k_used')}/"
+                               f"{sub.get('m_v_used')} != {sub.get('m_k')}/{sub.get('m_v')}")
+    return why
+
+
 def verdict(recs):
     """recs: {arm: {seed: {recall, false_recall, generic_kl, heldout_kl, adapter_norm}}}, every arm of ARMS on exactly
     SEEDS (else ValueError). heldout_kl is the VERDICT half of the held-out prompts.
@@ -382,6 +409,9 @@ def verdict(recs):
     not gated): mean noproj held-out > the c2 cap AND >= 1.5 x mean v2 held-out AND noproj > v2 on >= 5 of 6 seeds.
     (g) each sham (random, tokens) fails: [held-out drift: mean sham >= 1.5 x v2 AND sham > v2 on >= 5 seeds] OR
     [recall: mean sham < the (a) bar AND v2 > sham on >= 5 seeds].
+    Engagement (`engagement`): if (a), (c1), (c2) and (d) all pass (they read only v2, gradient, no_sleep) and any
+    control arm was not live on any seed -> UNDEFINED (an inert control cannot pass (b), (f) or (g)); a failing
+    (a)/(c1)/(c2)/(d) is NEGATIVE whatever the controls did.
     GO-V2 = core, f, g. GO-PLAIN-LOCAL = core, not f. GO-NONSPECIFIC = core, f, not g (names the sham that passed)."""
     for arm in ARMS:
         if arm not in recs or set(recs[arm]) != set(SEEDS):
@@ -421,6 +451,12 @@ def verdict(recs):
            "shams": g_detail,
            "means": {a: {k: m(a, k) for k in ("recall", "false_recall", "generic_kl", "heldout_kl")} for a in ARMS},
            "clauses": cl}
+    eng = engagement(recs, seeds)
+    out["engagement"] = eng or "all controls live"
+    out["control_norm_ratio"] = {a: _mean(recs[a][s]["adapter_norm"] / recs["v2"][s]["adapter_norm"] for s in seeds)
+                                 if all(_finite(recs[a][s].get("adapter_norm")) for s in seeds)
+                                 and all(recs["v2"][s]["adapter_norm"] for s in seeds) else None
+                                 for a in CONTROL_ARMS}
     why = []
     if G < 2:
         why.append("gradient mean recall < 2")
@@ -430,7 +466,11 @@ def verdict(recs):
         why.append("v2_shuffled mean recall > 1.0")
     if why:
         return {**out, "verdict": "UNDEFINED", "why": why}
-    if not all(cl[k] for k in ("a", "b", "c1", "c2", "d")):
+    if not all(cl[k] for k in ("a", "c1", "c2", "d")):
+        return {**out, "verdict": "NEGATIVE"}
+    if eng:
+        return {**out, "verdict": "UNDEFINED", "why": eng}
+    if not cl["b"]:
         return {**out, "verdict": "NEGATIVE"}
     if not cl["f"]:
         return {**out, "verdict": "GO-PLAIN-LOCAL"}
@@ -516,7 +556,10 @@ def cmd_score(a):
     units = [u for u in _load_dir(a.dir, f"{a.tag}_s*_*.json") if u["seed"] in SEEDS and u["tag"] == a.tag]
     recs = {}
     for u in units:
-        recs.setdefault(u["arm"], {})[u["seed"]] = u["result"]
+        rec = dict(u["result"])
+        if u.get("subspace") is not None:
+            rec["subspace"] = u["subspace"]          # the sham_tok rank check of `engagement` reads it
+        recs.setdefault(u["arm"], {})[u["seed"]] = rec
     missing = [(arm, s) for arm in ARMS for s in SEEDS if s not in recs.get(arm, {})]
     if missing:
         raise SystemExit(f"missing units: {missing}")
@@ -557,12 +600,15 @@ def run_units(a, c, base, *, PROMPTS, GENERIC, build_arm_episodes, evaluate, sle
                               seed=a.seed, mode="kp", feedback=a.feedback, tau=a.tau, subspace=SUBSPACE_OF[arm], log=lg,
                               info=sinfo)
         r = evaluate(pc, base, keys_all)
-        r["heldout_kl"] = heldout_drift(pc, base, ver_p)
+        # dev/verdict firewall: the VERDICT half is never computed on the dev seed (the pick reads only the DEV half)
+        r["heldout_kl"] = None if a.seed == DEV_SEED else heldout_drift(pc, base, ver_p)
         r["heldout_kl_dev"] = heldout_drift(pc, base, dev_p)
         r["adapter_norm"] = pc.adapter_norm()
         r["factor_norms"] = pc.factor_norms()
         r["final_replay_loss"] = losses[-1][0] if losses else None
         r["first_replay_loss"] = losses[0][0] if losses else None
+        r["replay_loss_head"] = _mean(x[0] for x in losses[:LOSS_WIN]) if losses else None
+        r["replay_loss_tail"] = _mean(x[0] for x in losses[-LOSS_WIN:]) if losses else None
         unit = {"tag": a.tag, "seed": a.seed, "arm": arm, "model": a.model, "model_id": _model_id(a.model),
                 "steps": a.steps, "lr": a.lr if arm in LOCAL_ARMS else None,
                 "tau": a.tau if arm in LOCAL_ARMS and arm != "noproj" else None,

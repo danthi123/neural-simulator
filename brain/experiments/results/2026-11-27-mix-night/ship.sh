@@ -1,11 +1,13 @@
 #!/bin/bash
-# W side: ship brain/ (HEAD, clean) to pool40/41/42 and drive the mix-night screen there. NOT run yet (prereg DRAFT).
+# W side: ship brain/ (HEAD, clean) to pool40/41/42 and drive the mix-night screen there. NOT run yet (prereg REGISTERED 11-27).
 #   bash ship.sh ship       code + COMMIT + run_node.sh, and each node's foreign A5f files (3 small episodes.json from the
 #                           next seed's node: pool40 gets s320's, pool41 s321's, pool42 s319's). Refuses while any
 #                           brain.experiments process is live on a node (shipping would move COMMIT and code under it).
 #   bash ship.sh strata     store-only P2 stratum sizes on every node (seconds)
 #   bash ship.sh measure    step 0 on pool40 only (s319: A0r, A0 n13, A2 n13 under /usr/bin/time -v + determinism pair);
-#                           NODES="pool41 pool42" MEMCAP_GB=11 for the 15 GB nodes (required there). THREADS=1 = fallback.
+#                           NODES="pool41 pool42" MEMCAP_GB=10 for the 15 GB nodes (required there). THREADS=1 = fallback.
+#                           MEMCAP_GB / THREADS unset are passed EMPTY; run_node.sh reads empty as unset (${VAR:-default},
+#                           [ -z ]), tested in test_run_node_empty_memcap_and_threads_mean_default.
 #   bash ship.sh run        the full screen on all three nodes (needs each node's measure file)
 #   bash ship.sh status     done files
 W=$(git -C "$(dirname "$0")" rev-parse --show-toplevel) && cd "$W" || exit 1

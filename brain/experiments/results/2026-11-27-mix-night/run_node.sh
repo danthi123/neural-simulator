@@ -1,6 +1,6 @@
 #!/bin/bash
-# Runs ON a pool node (CPU fp32). Mix-night screen, prereg brain/research/2026-11-27-mix-night-prereg.md (DRAFT: do not launch
-# before its pre-data review is recorded there).
+# Runs ON a pool node (CPU fp32). Mix-night screen, prereg brain/research/2026-11-27-mix-night-prereg.md (REGISTERED 2026-11-27 after its
+# pre-data review).
 #
 # Placement: each pool node holds ONE seed's KR snapshots (pool40 s319, pool41 s320, pool42 s321), so the seed is the one
 # whose snapshots are on this node: exactly one $C/snaps_s<seed> must exist (SEED=<s> may be given; it must match).
@@ -12,8 +12,11 @@
 #                                    A0r vs A0 n13). Writes $O/measure_s<S>.txt (max RSS kB of A0r and of A2 = the worst-case
 #                                    arm, wall, threads, det verdict). A determinism MISS exits 3 and writes no measure file:
 #                                    the registered fallback (prereg section 5) is a fresh out dir with THREADS=1.
-#                                    MEMCAP_GB sets the cap; it is REQUIRED on nodes under 24 GB (pool41/42: MEMCAP_GB=11, so
-#                                    mem_ok needs 12 GB free), else the default is MemTotal - 2 GB.
+#                                    MEMCAP_GB sets the cap; it is REQUIRED on nodes under 24 GB (pool41/42: MEMCAP_GB=10, so
+#                                    mem_ok needs 11 GB free), else the default is MemTotal - 2 GB. 10, not 11: the run cap
+#                                    ceil(1.3 x RSS) + 1 must fit MemTotal - 1 = 14, i.e. RSS <= 10 GB (pre-data review 2, N6).
+#                                    After A0r, a run cap that cannot fit stops step 0 at once (no A0 / A2 hours spent).
+#                                    MEMCAP_GB= / THREADS= given EMPTY (ship.sh passes them so when unset) mean the default.
 #   THREADS=<n>                      OMP/torch threads (default nproc); recorded in every unit; run must match measure.
 #   bash run_node.sh run [arm ...]   the rest (default all arms; finished units skip). Needs the measure file with det ok;
 #                                    the cap is ceil(1.3 x max(RSS A0r, RSS A2)) + 1 GB and must fit MemTotal - 1 GB, else it
@@ -74,13 +77,15 @@ if [ "$MODE" = measure ]; then
     [ -f $O/u_${A}_s${S}_n13.json ] && { echo "u_${A}_s${S}_n13.json exists without a measure file: a resumed unit measures nothing; move $O aside"; exit 2; }
   done
   if [ -z "$MEMCAP_GB" ] && [ "$TOTAL_GB" -lt 24 ]; then
-    echo "$(hostname) has ${TOTAL_GB}G: give MEMCAP_GB explicitly (11 on a 15 GB node; mem_ok needs cap + 1 free)"; exit 2
+    echo "$(hostname) has ${TOTAL_GB}G: give MEMCAP_GB explicitly (10 on a 15 GB node; mem_ok needs cap + 1 free)"; exit 2
   fi
   CAP=${MEMCAP_GB:-$(( TOTAL_GB - 2 ))}
   T0=$(date +%s)
   unit A0r $CAP; RC=$?
   [ "$RC" = 0 ] && [ -n "$(rss_of A0r)" ] || { echo "measure A0r failed rc $RC (see $O/A0r_s$S.log)"; exit 1; }
   WALL=$(awk -F': ' '/Elapsed \(wall clock\)/{print $2}' $O/time_A0r_s$S.txt 2>/dev/null)
+  C0=$(awk -v r="$(rss_of A0r)" 'BEGIN{g = 1.3 * r / 1048576; c = int(g); if (c < g) c++; print c + 1}')
+  [ "$C0" -le $(( TOTAL_GB - 1 )) ] || { echo "A0r RSS $(rss_of A0r) kB -> run cap ${C0}G does not fit $(hostname) (${TOTAL_GB}G - 1); step 0 stops before A0 / A2"; exit 2; }
   unit A0 $CAP --max-night 13; RC=$?
   [ "$RC" = 0 ] || { echo "measure A0 n13 failed rc $RC (see $O/A0_s$S.log)"; exit 1; }
   $PY -m brain.experiments.mix_night_screen detcheck --dir $O --seed $S > $O/detcheck_s$S.json 2>&1; DRC=$?

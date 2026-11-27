@@ -3,9 +3,14 @@
 
 # Local rule v2 prereg (2026-11-27): the local delta rule with its plasticity confined off the keep bank's own subspace
 
-STATUS: DRAFT pending a fresh pre-data review (sonnet). Revised 2026-11-27 after the first pre-data review (14 items;
-the response is the last section). Nothing has run. Settings below are frozen only after that review
-and the seed-7 dev picks. Milestone: ARCHITECTURE section 4, 2026-12-31, "sleep learning by a local, biology-style rule
+STATUS: REGISTERED 2026-11-27 after pre-data sonnet review. Fixes from that second review (3 blocking, 9 non-blocking,
+all fixed; detail in the last section): B1/B2 an engagement gate on every control arm (an inert `v2_shuffled`, `noproj`,
+`sham` or `sham_tok`, or a `sham_tok` built below full rank, gives UNDEFINED, not a pass); B3 a decision table for every
+verdict, the engine ladder made to match (UNDEFINED stops it); N1 the VERDICT half is never computed on the dev seed;
+N2 facts shared across seeds disclosed; N3 (c1) labelled a sanity check; N4 held-out gradient reference unmeasured,
+disclosed; N5 bar evidence noted; N6 rank read before freezing; N7 repo frozen between dev and six; N8 Run paragraph and
+engine specs aligned; N9 SCAFFOLDS.md rows added. Revised earlier after the first pre-data review (14 items). Nothing has
+run. Settings below are frozen; lr and tau are frozen per model by its seed-7 dev pick. Milestone: ARCHITECTURE section 4, 2026-12-31, "sleep learning by a local, biology-style rule
 instead of gradients; scale to 1.5B". This is the next method after the v1 NEGATIVE; it does not re-open that verdict or
 the SHY screen (six seeds still running; read separately by its own rule).
 
@@ -48,6 +53,14 @@ the SHY screen (six seeds still running; read separately by its own rule).
   (projection kills drift on keep text by construction; recall may drop because fact texts share the chat frame and
   common directions with the keep bank); given dev passes, about 30% GO-V2 at 0.1B six seeds, about 20% for both scales.
   Most likely failing clauses: (a) recall and (c2) held-out drift. Expected-fail: missing temporal credit.
+- **Bar evidence (single seed only).** 0.1B: gradient six-seed mean 3.83, so the bar is max(1.9, 0 + 2) = 2; v1 reached
+  2/12 only at lr 0.1-0.3 on seed 7 (KL 0.11-0.12); the v1 six seeds ran at lr 0.01 (0.17). 0.4B: gradient 5/12 on seed
+  7, dev floor max(2.5, 2) = 2.5, so >= 3; v1 got 4 at lr 0.3 (KL 0.089). A six-seed mean at the higher lr has never been
+  measured, so the bar is neither trivial nor impossible on single-seed evidence only.
+- **What the seeds vary (disclosed).** `sleep_true` is the same 12 FACTS for every seed (`sleep_probe.py`); the seed
+  varies only the adapter init, the sampling order and the shuffled permutation. Dev on seed 7 tunes on the same facts the
+  six seeds score, and recall is scored on replayed told facts. The claim is "the night stores replayed told facts under
+  the drift caps", not generalisation to other facts.
 
 ## Method
 Module `brain/experiments/local_rule_v2.py` (imports `local_sleep`, does not edit it), tests
@@ -85,13 +98,17 @@ unless the dir holds exactly the two ref units and one unit per (lr, tau) cell, 
 prompt list; the node script stops on any unit that exits non-zero, so an OOM or a bug never becomes NEGATIVE-DEV.
 pick.json carries the model id and commit; the six-seed run refuses a pick of another model or commit and takes lr, tau
 from it; the score refuses units that differ in model, commit, prompt list, lr (local arms) or tau (projected arms), or
-that disagree with the pick. Dev reports m_k / m_v per layer for every cell.
+that disagree with the pick. Dev reports m_k / m_v per layer for every cell; they are read before the six seeds (a
+written note beside pick.json), not used to change the pick: m <= keep tokens (~75) < C, so free directions always
+exist, but if tau 0.999 protects every direction the replay texts use, v2 recall fails by construction and that cell
+simply does not qualify (no grid change). Firewall: the VERDICT half of the held-out prompts is never computed on the dev
+seed (`heldout_kl` is None in every seed-7 unit; tested), so the dev pick cannot see it.
 0.4B gets its own dev pick (operating points do not transfer across scale, PREREQUISITES scale note). One dev seed and
 discrete recall /12: noisy, disclosed.
 
 ## Measures (hippocampus off, per seed, per arm)
 Recall /12, false recall /4, generic drift (KL on GENERIC), held-out drift (VERDICT half; DEV half reported), paraphrase
-/12 (reported), adapter norm, factor norms, replay loss first/final, subspace ranks and keep energy inside, and the mean
+/12 (reported), adapter norm, factor norms, replay loss first/final and head/tail (mean of the first/last 20 steps), subspace ranks and keep energy inside, and the mean
 applied (post-projection) step norm of the replay update and of the keep-error update.
 
 ## Registered rule (written before data; `verdict()` in the module, tested with each clause failing alone)
@@ -101,6 +118,17 @@ the six seeds. bar = max(0.5 x mean gradient recall, mean no_sleep recall + 2) (
 - **UNDEFINED** if any recall, false recall, generic or held-out drift of any arm and seed, or any `v2` adapter norm,
   is non-finite; or mean gradient recall < 2; or any `v2` adapter norm is zero; or mean `v2_shuffled` recall > 1.0 (the
   control moved; the recall measure is not specific to the true episodes).
+- **Engagement of the controls** (`engagement()`; added at the second review). A control arm (`v2_shuffled`, `noproj`,
+  `sham`, `sham_tok`) is live on a seed only if its adapter norm is finite, > 0 and >= 0.5 x that seed's `v2` adapter
+  norm, its replay loss falls (mean of the last 20 steps < mean of the first 20, both finite), and for `sham_tok` the
+  token subspace was built at full rank (m_k_used = m_k and m_v_used = m_v on every layer). If (a), (c1), (c2) and (d)
+  all pass (they read only `v2`, `gradient`, `no_sleep`) and any control is not live on any seed: **UNDEFINED** (an inert
+  control would pass (b), (f) or (g) for free; v1 was nearly inert). A failing (a), (c1), (c2) or (d) is NEGATIVE
+  whatever the controls did. No upper norm bound: the lesion and the random sham remove fewer (or no) directions of A, so
+  a larger delta at the same lr is the expected effect of the subspace choice, not a different instrument; each
+  control's mean norm ratio to `v2` is reported beside the verdict.
+- (c1) is a **sanity check**: generic drift is measured on the keep bank the projector was fitted to, so it is ~0 at
+  tau near 1 by construction. Only (c2), on the held-out VERDICT half, carries the drift claim in the report.
 - Core: (a) mean `v2` recall >= bar; (b) `v2` > `v2_shuffled` on >= 5 of 6 seeds AND mean `v2_shuffled` <= 1.0;
   (c1) mean `v2` generic drift <= 1.25 x mean gradient generic drift; (c2) mean `v2` held-out drift <= 1.25 x mean
   gradient held-out drift; (d) mean `v2` false recall <= mean gradient false recall + 0.5.
@@ -113,7 +141,34 @@ the six seeds. bar = max(0.5 x mean gradient recall, mean no_sleep recall + 2) (
   credited to it). **GO-NONSPECIFIC** = core, (f), not (g) (a rank-matched random or real-activity projection does it;
   the verdict names which sham passed; not credited to the keep subspace).
   **NEGATIVE** = a core clause fails: a verdict on this projection method at this scale, not on local learning.
-A 0.1B GO alone does not pass: 0.4B must GO-V2 too before a 1.5B prereg. Report beside the verdict: all arms' means,
+A 0.1B GO alone does not pass: 0.4B must GO-V2 too before a 1.5B prereg.
+Gradient held-out reference (disclosed): the gradient arm's generic drift is recorded (0.1B six seeds 0.028, cap 0.035;
+0.1B dev 0.032; 0.4B 0.03234) but its held-out drift in this harness has never been measured; the seed-7 ref run is the
+first measurement, so the c2 and (f) caps are uncalibrated before data. If (f) fails because the gradient held-out cap
+is loose (`noproj` under 1.25 x gradient held-out while still >= 1.5 x `v2`), the read is "projection need not shown",
+never "projection unneeded". Noise floor: no separate arm; the `no_sleep + 2` recall floor and `v2_shuffled <= 1` stand
+in for it, and `no_sleep` held-out drift is exactly 0 because its adapters are zero.
+
+## Decision table (what each outcome leads to; the engine ladder matches it)
+| 0.1B outcome | 0.4B | What it means / next |
+|---|---|---|
+| GO-V2 | runs | lead only; nothing is adopted until 0.4B is read |
+| GO-PLAIN-LOCAL | runs | a local night met core but the projection was not shown needed: v2 is not credited and not adopted; next a registered confirmation of plain v1 at lr* (the `noproj` arm's core clauses) on six seeds |
+| GO-NONSPECIFIC | runs | met core, but a rank-matched sham does as well: not credited to the keep subspace; next the passing sham's projection registered as its own method at both scales before any milestone credit |
+| NEGATIVE / NEGATIVE-DEV | runs | a verdict on this method at 0.1B; 0.4B still runs (v1 learned more at 0.4B: 4/12 vs 2/12; operating points do not transfer) |
+| UNDEFINED / UNDEFINED-DEV / a refused pick | does NOT run | the instrument failed (gradient < 2, shuffled moved, an inert control, non-finite); find the cause, record it as an amendment here, re-run 0.1B; 0.4B waits for a defined 0.1B verdict |
+
+| 0.4B outcome (after a defined 0.1B) | Next |
+|---|---|
+| GO-V2, and 0.1B GO-V2 | land-result (skeptic, a lesion that changes the reply); v2 becomes the local-rule baseline; write the 1.5B prereg (the "scale to 1.5B" part of the 2026-12-31 milestone) |
+| GO-V2, 0.1B not GO-V2 | 0.4B lead only; a 1.5B prereg may be written if the 0.1B failure is a scale prerequisite (judged against PREREQUISITES), else no 1.5B |
+| GO-PLAIN-LOCAL / GO-NONSPECIFIC | as the 0.1B rows: not credited to v2; no 1.5B prereg on this method |
+| NEGATIVE / NEGATIVE-DEV (any 0.1B verdict, including a 0.1B GO) | no 1.5B prereg; this projection method is closed at 0.4B; the next method targets the failing clause |
+| UNDEFINED / UNDEFINED-DEV | diagnose, amend, re-run 0.4B |
+
+Milestone (ARCHITECTURE section 4, 2026-12-31: local rule instead of gradients, scaled to 1.5B): only GO-V2 at both
+scales, landed by land-result, starts the 1.5B run; anything else leaves the milestone unmet by this method, with about
+four weeks left for the next method. Report beside the verdict: all arms' means,
 per-seed recall and held-out drift, subspace ranks, `noproj` / `v2` held-out ratio and seed wins, each sham's detail,
 generic drift of every arm, step norms, replay loss.
 
@@ -124,14 +179,18 @@ layer: seconds) and a 24-prompt held-out drift per battery (~48 short forwards);
 and one more keep-length read per seed. Estimates: 0.1B dev ~25-35 min; 0.1B six seeds ~17 min/seed (3 per node on
 pool41/42: ~50 min); 0.4B dev ~50-60 min (pool40); 0.4B six ~35-45 min/seed (3 per node: ~2-2.3 h). Memcap 8 GB (0.1B) /
 13 GB (0.4B). Total about 5 node-hours, no GPU, no AWS.
-Run (after `tools/mem_ok.sh`, on the node, `cd ~/brain-lane/route_repo`):
+Run (after `tools/mem_ok.sh`, on the node, `cd ~/brain-lane/route_repo`; the repo copy and its `COMMIT` file are
+frozen from the start of a model's dev until its score, on every node: the six-seed run refuses a pick of another
+commit, so any push to `route_repo` in between forces a re-dev):
 `bash brain/experiments/results/2026-11-27-local-rule-v2/run_node.sh 01b dev` (pool40), then
 copy pool40's `~/brain-lane/out/local-rule-v2/01b/dev/pick.json` to the same path on pool41/42 (or set PICK=<path>),
 `... 01b six 42 43 44` (pool41) and `... 01b six 100 101 102` (pool42), copy both `six/` dirs and the pick to one
-machine, `... 01b score`; then the same with `04b`. The run path is `run_node.sh` only: the engine spec
-`tools/engine/specs/local_rule_v2.{yaml,py}` (not written by this build, status TODO, so the engine refuses it; its cmd
-still names `local_sleep` and `--arms TODO`) must be rewritten from this prereg before anything is queued through the
-engine.
+machine, `... 01b score`; then the same with `04b`, unless the 0.1B verdict is UNDEFINED (decision table). Engine path
+(alternative to run_node.sh, not both): `tools/engine/specs/local_rule_v2_01b.yaml` and `local_rule_v2_04b.yaml`
+(status REGISTERED, the cmd runs this module, pick and verdict delegate to its CLI via `local_rule_v2.py`); 01b chains to
+04b on GO-*, NEGATIVE and NEGATIVE-DEV, and stops on UNDEFINED, HOLD-DEV and ERROR. The engine's six-seed jobs carry no
+`--pick` (the pick lives on the engine host): lr and tau come from the engine's pick, and the model and commit check
+happens at score (`score --pick`); the engine runs the whole chain at one commit.
 
 ## Response to the pre-data review (2026-11-27)
 Fixed: (1) (f) and (g) gate on the held-out VERDICT half only; generic is reported. (2) (f) and the drift branch of
@@ -161,3 +220,16 @@ Disagreed, with reasons:
 - (12) the engine spec is another session's untracked file and `tests/test_engine.py` (not mine) pins it as a TODO
   skeleton; this build does not edit it. It is inert (status TODO, the engine refuses it) and flagged above.
 
+
+## Response to the second pre-data review (sonnet, 2026-11-27)
+All fixed, none argued away:
+- B1, B2: `engagement()` gates every control (adapter norm > 0 and >= 0.5 x `v2`'s per seed, replay loss falls over the
+  night as first-20 vs last-20 step means, `sham_tok` at full rank); a non-live control -> UNDEFINED unless a
+  `v2`-only core clause already fails. The reviewer's 0.5-2x band is kept as a lower bound only (reason in the rule).
+  Units now record `replay_loss_head` / `replay_loss_tail`; the score passes each unit's subspace info to the rule.
+  Tests: each control inert alone in five ways (norm 0, under 0.5x, NaN, flat loss, missing loss) -> UNDEFINED; one seed
+  enough; large live norms not gated; `sham_tok` rank shortfall or missing info -> UNDEFINED; a `v2` core failure stays
+  NEGATIVE; the score CLI reads unit-level subspace info.
+- B3: the decision table above; the engine ladder drops UNDEFINED from `next` (tests/test_engine.py updated).
+- N1: `heldout_kl` (VERDICT half) is None on the dev seed (tested). N2, N3, N4, N5, N6, N7, N8: stated above.
+- N9: the SVD projector and tau added to `brain/SCAFFOLDS.md` now.

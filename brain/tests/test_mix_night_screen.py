@@ -193,9 +193,16 @@ def test_estimate():
 
 
 # ---------------------------------------------------------------- exact verdicts on synthetic records
-def rd(kl, off=0.10, ret=0.5, ref=0.0, name=0.0):
+def rd(kl, off=0.10, ret=0.5, ref=0.0, name=0.0, arm=None):
     return {"kl": kl, "off_kl": off, "ref": None, "refusal": ref, "name": name,
-            "ret": {s: {"nll": ret, "n": 5, "under1": 1.0} for s in MN.P2_STRATA}}
+            "ret": {s: {"nll": ret, "n": 5, "under1": 1.0} for s in MN.P2_STRATA},
+            "sleep_info": copy.deepcopy(ENG.get(arm, {}))}
+
+
+# what each arm's sleep realizes when engaged (the B1 engagement gate reads sleep_info)
+_PLC = {"placebo_pool": 100, "placebo_excluded": 64, "placebo_overlap": 0}
+ENG = {"A1": {"ce_keep_w": 1.0, "mean_ce_keep": 2.1}, "A2": {"keep_per_step": [2]},
+       "A3": {"keep_n": 256, "keep_n_loop": 256}, "A4": {"kl_weight": 6.0}, "A5s": dict(_PLC), "A5f": dict(_PLC)}
 
 
 def tab_of(a0=0.40, noise=0.01, x=0.20, **xkw):
@@ -207,7 +214,7 @@ def tab_of(a0=0.40, noise=0.01, x=0.20, **xkw):
         tab.setdefault("A0e", {})[s] = {15: rd(a0 + noise)}
         tab.setdefault("A0k", {})[s] = {15: rd(a0 - noise / 2)}
         for X in MN.CANDIDATES:
-            tab.setdefault(X, {})[s] = {15: rd(x, **{"off": 0.05, **xkw})}
+            tab.setdefault(X, {})[s] = {15: rd(x, **{"off": 0.05, **xkw}, arm=X)}
     return tab
 
 
@@ -221,7 +228,8 @@ def start_of(kl=0.10):
 def test_pass():
     v = MN.candidate_verdict(tab_of(), "A3")
     assert v["status"] == "PASS" and v["P1"] and v["P1b"] and v["P2"] and v["P3"] and v["ratio"] == 0.5
-    assert all(r["noise"] == pytest.approx(0.01) for r in v["per_seed"].values())
+    assert all(r["noise_raw"] == pytest.approx(0.01) for r in v["per_seed"].values())
+    assert all(r["noise"] == pytest.approx(0.02) for r in v["per_seed"].values())      # the 5% floor binds (B2)
 
 
 def test_p1_ratio_edge_and_noise_edge():
@@ -230,11 +238,14 @@ def test_p1_ratio_edge_and_noise_edge():
     assert MN.candidate_verdict(tab_of(x=0.30), "A1")["status"] == "PASS"
     v = MN.candidate_verdict(tab_of(x=0.3001), "A1")
     assert not v["P1"] and v["status"] == "INCONCLUSIVE"
-    # gap 0.02 against noise 0.01: needs > 2 x noise, so exactly equal fails
-    v = MN.candidate_verdict(tab_of(a0=0.40, noise=0.01, x=0.38), "A1")
-    assert not v["P1"] and v["status"] == "KILL"
-    v = MN.candidate_verdict(tab_of(a0=0.40, noise=0.005, x=0.38), "A1")
+    # raw noise 0.03 (above the 0.02 floor): gap 0.06 = 2 x noise fails (needs >), a hair more passes
+    v = MN.candidate_verdict(tab_of(a0=0.40, noise=0.03, x=0.34), "A1")
+    assert v["per_seed"][319]["noise"] == pytest.approx(0.03)
+    assert not v["per_seed"][319]["p1_seed"] or (0.40 - 0.34) > 0.06        # float guard: equal-in-reals fails
+    v = MN.candidate_verdict(tab_of(a0=0.40, noise=0.03, x=0.3399), "A1")
     assert v["per_seed"][319]["p1_seed"]
+    v = MN.candidate_verdict(tab_of(a0=0.40, noise=0.03, x=0.3401), "A1")
+    assert not v["per_seed"][319]["p1_seed"] and v["status"] == "KILL"
 
 
 def test_p1b_two_of_three():
@@ -303,8 +314,8 @@ def test_k_sane_is_a_caveat_not_a_void():
 def placebo_tab(d_self, d_for, d_real=0.20, noise=0.01):
     t = tab_of(a0=0.10 + d_real, noise=noise)
     for s in MN.SEEDS:
-        t["A5s"] = {**t.get("A5s", {}), s: {15: rd(0.10 + d_self[s])}}
-        t["A5f"] = {**t.get("A5f", {}), s: {15: rd(0.10 + d_for[s])}}
+        t["A5s"] = {**t.get("A5s", {}), s: {15: rd(0.10 + d_self[s], arm="A5s")}}
+        t["A5f"] = {**t.get("A5f", {}), s: {15: rd(0.10 + d_for[s], arm="A5f")}}
     return t
 
 
@@ -347,7 +358,7 @@ def write_units(d, t=None):
     for s in MN.SEEDS:
         w("start", s, 12, rd(0.1))
         for arm in ("A5s", "A5f"):
-            w(arm, s, 15, rd(0.12))
+            w(arm, s, 15, rd(0.12, arm=arm))
     lives = []
     for s in MN.SEEDS:
         f = os.path.join(d, f"life_{s}.json")
@@ -578,6 +589,19 @@ def test_patched_brain_sleep_legacy_equals_unpatched_and_arms_change_it(tmp_path
     assert infop["placebo"] == "self" and infop["placebo_pool"] == 24 - 5
     pf, infof, _ = night("pf", "A5f", foreign=["foreign fact one", "foreign fact two"])
     assert infof["placebo"] == "foreign" and infof["placebo_pool"] == 2
+    # B1: the realized values reach sleep_info and the engagement gate accepts them; the shipped night reads as A0
+    assert info["kl_weight"] != 6.0 and info["keep_per_step"] == [1] and info["mean_ce_keep"] is None
+    assert info3["keep_n_loop"] == 24 and not MN._engaged("A3", info3)      # a 24-text bank cannot give 256: void, caught
+    assert MN._engaged("A5s", infop) and infop["placebo_overlap"] == 0 and MN._engaged("A5f", infof)
+    _, info1, _ = night("a1", "A1")
+    _, info2, _ = night("a2", "A2")
+    _, info4, b4 = night("a4", "A4")
+    assert MN._engaged("A1", info1) and MN._engaged("A2", info2) and MN._engaged("A4", info4)
+    assert not MN._engaged("A1", info) and not MN._engaged("A2", info) and not MN._engaged("A4", info)
+    own = [e.text for e in b4._night_episodes()]          # the night's real replay texts (unpatched again here)
+    assert own
+    _, infox, _ = night("px", "A5f", foreign=["foreign fact one"] + own)    # the store's own texts offered as "foreign"
+    assert infox["placebo_excluded"] == len(own) and infox["placebo_pool"] == 1 and infox["placebo_overlap"] == 0
 
 
 # ---------------------------------------------------------------- pre-data review fixes (2026-11-27)
@@ -649,9 +673,9 @@ def test_p1_change_diag_is_report_only():
     dg = v["candidates"]["A3"]["p1_change_diag"]
     assert dg["status"] == "READ" and dg["cut_of_change"] == pytest.approx(1 - 0.10 / 0.30)
     assert v["candidates"]["A3"]["status"] == "PASS"
-    t2 = tab_of(a0=0.40, noise=0.2, x=0.20)            # A0's own drift 0.30 not above 2 x noise 0.2 -> UNREAD, KILL stands
-    v2 = MN.verdict(t2, start_of(), BANK)["candidates"]["A3"]
-    assert v2["p1_change_diag"]["status"].startswith("UNREAD") and v2["status"] == "KILL"
+    t2 = tab_of(a0=0.40, noise=0.2, x=0.20)            # A0's own drift 0.30 not above 2 x noise 0.2 -> UNREAD; the KILL
+    v2 = MN.verdict(t2, start_of(), BANK)["candidates"]["A3"]       # stands but is named KILL-UNREAD (review 2, N1)
+    assert v2["p1_change_diag"]["status"].startswith("UNREAD") and v2["status"] == "KILL-UNREAD"
     t3 = tab_of()
     del t3["A0e"][321][15]
     assert MN.p1_change_diag(t3, start_of(), "A3")["status"].startswith("UNREAD: missing")
@@ -670,7 +694,7 @@ RUN_NODE = os.path.join(os.path.dirname(MN.__file__), "results", "2026-11-27-mix
 SHIP = os.path.join(os.path.dirname(RUN_NODE), "ship.sh")
 
 
-def _node(tmp_path, fail_arm="", det_rc=0, total_gb=64):
+def _node(tmp_path, fail_arm="", det_rc=0, total_gb=64, a0r_kb=1000000):
     """A fake pool node under HOME=tmp_path: route_repo with COMMIT, stub mem_ok / memcap / python / GNU time."""
     R = tmp_path / "brain-lane" / "route_repo"
     (R / "tools").mkdir(parents=True)
@@ -695,10 +719,10 @@ exit 0
     tm = tmp_path / "gtime"
     tm.write_text('''#!/bin/bash
 shift; OUT=$2; shift 2; "$@"; RC=$?
-A=$(echo "$*" | sed 's/.*--arm \\([A-Za-z0-9]*\\).*/\\1/'); R=1000000; [ "$A" = A2 ] && R=3000000
+A=$(echo "$*" | sed 's/.*--arm \\([A-Za-z0-9]*\\).*/\\1/'); R=1000000; [ "$A" = A0r ] && R=A0R_KB; [ "$A" = A2 ] && R=3000000
 printf 'Maximum resident set size (kbytes): %s\\nElapsed (wall clock) time (h:mm:ss or m:ss): 0:01\\n' $R > $OUT
 exit $RC
-''')
+'''.replace("A0R_KB", str(a0r_kb)))
     for f in (py, tm):
         f.chmod(0o755)
     env = {**{k: v for k, v in os.environ.items() if k not in ("MEMCAP_GB", "THREADS", "SEED")},
@@ -765,3 +789,127 @@ def test_ship_refuses_a_live_driver_and_logs_launches():
     s = open(SHIP).read()
     assert "brain.experiments|mn_run_node" in s
     assert ">/dev/null 2>&1" not in s and "launch_$M.log" in s
+
+
+# ---------------------------------------------------------------- pre-data review 2: noise floor (B2)
+@pytest.mark.parametrize("raw", [0.0, 1e-9, 0.005])
+def test_noise_floor_never_below_5pct_of_a0(raw):
+    """Two noise draws landing on A0 (raw 0) must not make the 2 x noise clause trivial: the floor is 0.05 x KL(A0)."""
+    t = tab_of(a0=0.40, noise=raw, x=0.385)           # gap 0.015: above 2 x raw, below 2 x 0.02
+    v = MN.candidate_verdict(t, "A1")
+    assert all(r["noise"] == pytest.approx(0.02) for r in v["per_seed"].values())
+    assert v["status"] == "KILL" and not any(r["p1_seed"] for r in v["per_seed"].values())
+    v = MN.candidate_verdict(tab_of(a0=0.40, noise=raw, x=0.359), "A1")       # gap 0.041 > 0.04
+    assert all(r["p1_seed"] for r in v["per_seed"].values())
+
+
+def test_noise_floor_zero_noise_placebo_and_change_diag():
+    # real drift 0.012 on A0 = 0.112: above 2 x raw noise 0, below 2 x 0.05 x 0.112 = 0.0112? no: 0.012 > 0.0112 -> readable;
+    # 0.010 < 0.0110 -> unread. Both readings use the floored noise.
+    t = placebo_tab({s: 0.0 for s in MN.SEEDS}, {s: 0.0 for s in MN.SEEDS}, d_real=0.010, noise=0.0)
+    assert MN.placebo_read(t, start_of())["status"].startswith("UNREAD")
+    assert MN.p1_change_diag(t, start_of(), "A3")["status"].startswith("UNREAD")
+    t = placebo_tab({s: 0.0 for s in MN.SEEDS}, {s: 0.0 for s in MN.SEEDS}, d_real=0.03, noise=0.0)
+    assert MN.placebo_read(t, start_of())["status"] == "CONTENT-DRIVEN"
+    assert MN.noise_floor(t, 319) == pytest.approx(0.05 * 0.13)
+
+
+# ---------------------------------------------------------------- pre-data review 2: engagement gate (B1)
+_NULL = {"A1": {"mean_ce_keep": 0.0}, "A2": {"keep_per_step": [1]}, "A3": {"keep_n": 64}, "A4": {"kl_weight": 3.0}}
+
+
+@pytest.mark.parametrize("arm", ["A1", "A2", "A3", "A4"])
+def test_a_null_candidate_is_void_not_scored(arm):
+    """Each candidate's engagement clause failing alone (on one seed) voids the arm: never PASS, never KILL."""
+    t = tab_of()
+    t[arm][320][15]["sleep_info"].update(_NULL[arm])
+    v = MN.candidate_verdict(t, arm)
+    assert v["status"].startswith("INCONCLUSIVE: arm not engaged") and v["not_engaged"] == [f"{arm}:s320:n15"]
+    t = tab_of(x=0.45)                                    # a would-be KILL on a null arm is void too
+    t[arm][319][15]["sleep_info"].update(_NULL[arm])
+    assert MN.candidate_verdict(t, arm)["status"].startswith("INCONCLUSIVE: arm not engaged")
+    t = tab_of()
+    t[arm][321][15]["sleep_info"] = {}                    # nothing recorded = not engaged
+    assert MN.candidate_verdict(t, arm)["status"].startswith("INCONCLUSIVE: arm not engaged")
+    t = tab_of()
+    t[arm][321][13] = rd(0.2, arm=arm)
+    t[arm][321][13]["sleep_info"].update(_NULL[arm])     # an earlier chained night not engaged counts too
+    assert MN.candidate_verdict(t, arm)["status"].startswith("INCONCLUSIVE: arm not engaged")
+    assert MN.candidate_verdict(tab_of(), arm)["status"] == "PASS"
+
+
+def test_a1_ce_none_and_wrong_weight_are_not_engaged():
+    for upd in ({"mean_ce_keep": None}, {"ce_keep_w": 0.0}, {"mean_ce_keep": -0.1}):
+        t = tab_of()
+        t["A1"][319][15]["sleep_info"].update(upd)
+        assert MN.candidate_verdict(t, "A1")["status"].startswith("INCONCLUSIVE: arm not engaged"), upd
+
+
+@pytest.mark.parametrize("arm,upd", [("A5s", {"placebo_pool": 0}), ("A5f", {"placebo_pool": 0}),
+                                     ("A5s", {"placebo_excluded": None}), ("A5f", {"placebo_overlap": 3}),
+                                     ("A5s", {"placebo_overlap": 1})])
+def test_a_null_placebo_is_void(arm, upd):
+    ds = {s: 0.04 for s in MN.SEEDS}
+    t = placebo_tab(ds, ds)
+    assert MN.placebo_read(t, start_of())["status"] == "CONTENT-DRIVEN"
+    t[arm][320][15]["sleep_info"].update(upd)
+    v = MN.placebo_read(t, start_of())
+    assert v["status"].startswith("INCONCLUSIVE: placebo not engaged") and v["not_engaged"] == [f"{arm}:s320:n15"]
+
+
+def test_mix_sleep_reports_what_it_realized():
+    st = {}
+    run(ce_keep_w=1.0, keep_per_step=2, stats=st)
+    assert st["ce_keep_w"] == 1.0 and st["mean_ce_keep"] > 0 and st["keep_per_step"] == [2]
+    assert st["kl_weight"] == 3.0 and st["keep_n_loop"] == len(GEN) and st["steps_run"] == 30
+    st = {}
+    run(stats=st)
+    assert st["mean_ce_keep"] is None and st["keep_per_step"] == [1]
+    l0, _ = run()
+    l1, _ = run(stats={})
+    assert l0 == l1                                        # stats never changes the loop
+
+
+# ---------------------------------------------------------------- pre-data review 2: KILL-UNREAD (N1), placebo is a reading aid (N4)
+def test_kill_with_unread_change_is_named_kill_unread():
+    t = placebo_tab({s: 0.0 for s in MN.SEEDS}, {s: 0.0 for s in MN.SEEDS}, d_real=0.005, noise=0.001)  # A0 drift unread
+    for s in MN.SEEDS:
+        t["A1"][s][15]["kl"] = 0.2                       # worse than A0 (0.105) on every seed: a KILL by P1
+    v = MN.verdict(t, start_of(), BANK)
+    assert MN.candidate_verdict(t, "A1")["status"] == "KILL"
+    assert v["candidates"]["A1"]["status"] == "KILL-UNREAD"
+    t = placebo_tab({s: 0.0 for s in MN.SEEDS}, {s: 0.0 for s in MN.SEEDS}, d_real=0.30)                # A0 drift readable
+    for s in MN.SEEDS:
+        t["A1"][s][15]["kl"] = 0.45
+    assert MN.verdict(t, start_of(), BANK)["candidates"]["A1"]["status"] == "KILL"
+
+
+def test_placebo_is_a_reading_aid_not_a_gate():
+    """A candidate PASS stands with the placebo units absent (placebo INCONCLUSIVE) or MOTION-DOMINANT (prereg section 5)."""
+    t = tab_of()
+    v = MN.verdict(t, start_of(), BANK)
+    assert v["candidates"]["A3"]["status"] == "PASS" and v["placebo"]["status"].startswith("INCONCLUSIVE: missing")
+    ds = lambda a: {s: a for s in MN.SEEDS}
+    t = placebo_tab(ds(0.15), ds(0.2), d_real=0.20)
+    v = MN.verdict(t, start_of(), BANK)
+    assert v["placebo"]["status"] == "MOTION-DOMINANT" and v["candidates"]["A3"]["status"] == "PASS"
+
+
+def test_run_node_empty_memcap_and_threads_mean_default(tmp_path):
+    """ship.sh passes MEMCAP_GB= THREADS= (empty) when unset; run_node.sh must read empty as unset (N7)."""
+    O, env = _node(tmp_path)
+    p = _sh(["measure"], {**env, "MEMCAP_GB": "", "THREADS": ""})
+    assert p.returncode == 0, p.stdout
+    m = (O / "measure_s319.txt").read_text()
+    import subprocess
+    assert f"threads {subprocess.run(['nproc'], capture_output=True, text=True).stdout.strip()}" in m and "cap_used_GB 62" in m
+    O, env = _node(tmp_path / "small", total_gb=15)
+    assert _sh(["measure"], {**env, "MEMCAP_GB": ""}).returncode == 2
+
+
+def test_run_node_measure_stops_early_when_the_run_cap_cannot_fit(tmp_path):
+    """N6: on a 15 GB node an A0r RSS whose run cap would not fit MemTotal - 1 stops step 0 before A0 and A2."""
+    O, env = _node(tmp_path, total_gb=15, a0r_kb=11 * 1048576)
+    p = _sh(["measure"], {**env, "MEMCAP_GB": "10"})
+    assert p.returncode == 2 and "does not fit" in p.stdout
+    assert "--arm A0 " not in (tmp_path / "calls.txt").read_text() and not (O / "measure_s319.txt").exists()

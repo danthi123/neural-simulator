@@ -1,15 +1,18 @@
-# Local rule v2 at 04b, brain/research/2026-11-27-local-rule-v2-prereg.md (DRAFT pending pre-data review). Harness:
+# Local rule v2 at 04b, brain/research/2026-11-27-local-rule-v2-prereg.md (REGISTERED 2026-11-27 after pre-data sonnet review). Harness:
 # brain/experiments/local_rule_v2.py (imported, not edited); same units, arms, dev grid and pick as
 # results/2026-11-27-local-rule-v2/run_node.sh. dev = seed 7: ref (no_sleep, gradient) + 9 v2 configs (lr x tau), one job
 # each; pick = local_rule_v2.dev_pick (NEGATIVE-DEV: no six seeds for this model); six = the six arms at the pick.
-# Order (prereg Run line): 01b dev -> 01b six -> 04b dev -> 04b six; "NEGATIVE-DEV for that model" does not stop the other
-# scale, so 01b chains to 04b on every verdict except ERROR (one question, max_len 2). Fresh seeds: no placement.
+# Order (prereg decision table): 01b dev -> 01b six -> 04b dev -> 04b six. 01b chains to 04b on every DEFINED verdict
+# (GO-*, NEGATIVE, NEGATIVE-DEV); UNDEFINED, HOLD-DEV (UNDEFINED-DEV or a refused pick) and ERROR stop the chain: the
+# instrument is diagnosed and 01b re-run before 04b (one question, max_len 2). Fresh seeds: no placement.
+# Six-seed jobs carry no --pick: the engine passes lr, tau from its own pick and the model / commit check happens at
+# score (harness `score --pick`); the engine runs the whole chain at one commit.
 # The out-dir is per commit and per job (dev grid key or s<seed>): a retried attempt resumes its finished units.
 name: local_rule_v2_04b
 question: "Does the local delta rule with plasticity confined off the keep-bank subspace pass the v2 rule (0.1B then 0.4B)?"
 prereg: brain/research/2026-11-27-local-rule-v2-prereg.md
 requires_local: [brain/research/2026-11-27-local-rule-v2-prereg.md]
-status: DRAFT                     # -> REGISTERED once the pre-data review is recorded in the prereg
+status: REGISTERED                # pre-data sonnet review recorded in the prereg 2026-11-27
 module: local_rule_v2.py
 pick: pick
 verdict: verdict

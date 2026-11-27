@@ -1,8 +1,13 @@
-# Pre-registration (DRAFT): mix-night screen, does a sleep-recipe change cut multi-night language drift on the K-P slept store?
+# Pre-registration: mix-night screen, does a sleep-recipe change cut multi-night language drift on the K-P slept store?
 
-> **STATUS 11-27: DRAFT. First pre-data review received (6 defects, section 9); all six applied, the two open questions
-> answered there. Pending: a recheck of the fixes, the `strata` output, and the step-0 measure before the full run.** Nothing has been run; no unit, timing or RSS exists. This file is
-> the registered rule once the review is recorded here; until then nothing may launch. The design, the literature check and
+> **STATUS: REGISTERED 2026-11-27 after pre-data sonnet review.** Review 1 (6 defects, section 9) and review 2 (2 BLOCKING,
+> 7 NON-BLOCKING, section 10) are applied: B1 engagement gate (every candidate and placebo arm must have realized its change,
+> logged in `sleep_info`, or it is void), B2 noise floor (noise_s >= 0.05 x KL(A0, n15)), N1 KILL-UNREAD plus one next step
+> per outcome, N2/N3 expected outcome stated, N4 placebo stated as a reading aid (tested), N5 pick isolation stated, N6
+> measure cap 10 GB on the 15 GB nodes plus an early stop after A0r, N7 empty-env test and spec consistency; tests
+> 88 passed. Launch order is section 7: `strata` and step 0 run first and may still amend this file under their own
+> registered rules (P2_MIN_N, the 45-min rule, the THREADS=1 fallback) before any other unit. Nothing has been run; no
+> unit, timing or RSS exists. The design, the literature check and
 > the reasons for each arm are `brain/research/2026-11-27-sleep-drift-recipe-check.md` (sections 1-3, 5, 6); its section 4 is
 > superseded by this file. Capability: Lifelong learning (PREREQUISITES). Code: `brain/experiments/mix_night_screen.py`
 > (switch-free: patches `brain.brain.replay_into_cortex` and `Brain._night_episodes` inside a context manager; brain/sleep.py,
@@ -68,13 +73,29 @@ stub: identical losses and adapters).
    refusal share and "my name is" share.
 5. Adapter norm; A0L's relative L2 distance to the life's n13 adapters (report only); sleep seconds, read seconds; per arm max RSS
    from `/usr/bin/time -v` (node script).
+6. **Engagement** (`sleep_info`, review 2 B1): what the sleep REALIZED, from inside the loop: keep_n (the night's keep set),
+   keep_n_loop, kl_weight, ce_keep_w, keep_per_step (the set of per-step keep draws seen), steps_run, mean_ce_keep (mean CE
+   keep term as added to the loss; None without it); placebo arms also placebo_pool, placebo_excluded, placebo_n and
+   placebo_overlap (replayed texts that are in the night's real store). Also copied to the unit as `mean_ce_keep`,
+   `kl_weight_used`.
 Every unit records host, commit (on a pool node read from `~/brain-lane/route_repo/COMMIT`, refused if missing or empty; on W
 `git rev-parse HEAD`), commit source, device, precision and model, and is written atomically; a rerun resumes and refuses a unit
 written under a different host, commit, device, precision, model or off-frame hash.
 
 ## 5. Pass rule (written before any data; numbers read from unit JSONs by `mix_night_screen.py score --dir D --lives L1 L2 L3`)
 Per candidate X in A1-A4 against A0 at night 15, per seed s:
-- **Noise floor**: noise_s = max(|KL(A0) - KL(A0e)|, |KL(A0) - KL(A0k)|), held-out KL at n15.
+- **Engagement (checked before anything else of X; review 2 B1):** every unit of X (n13-n15, 3 seeds) must show its change
+  realized in `sleep_info`: A1 ce_keep_w == 1.0 and mean_ce_keep > 0; A2 keep_per_step == [2]; A3 keep_n == 256 (and the
+  loop saw 256); A4 kl_weight == 6.0. A unit that fails, or records nothing, makes X **INCONCLUSIVE: arm not engaged**,
+  never PASS and never KILL (a KILL on a null arm would be a verdict on nothing). The placebo read needs, on every A5s/A5f
+  unit, placebo_pool > 0, placebo_excluded recorded and placebo_overlap == 0, else it is INCONCLUSIVE.
+- **Noise floor**: noise_raw_s = max(|KL(A0) - KL(A0e)|, |KL(A0) - KL(A0k)|), held-out KL at n15, and
+  **noise_s = max(noise_raw_s, 0.05 x KL(A0, n15)_s)** (review 2 B2). Two draws can land near A0 by chance and make every
+  "> 2 x noise" clause trivial; the 0.05 floor is set now from the record, not from data: the smallest one-night life
+  change at this point of the KR lives is s319 n12 -> n13, +0.015 on 0.285 (5.3%). It applies to P1, P1-change and the
+  placebo read alike; both noise_raw and noise are reported per seed. This is still a 2-draw screen floor, so the 2 x noise
+  rule screens, it does not estimate a noise distribution (a third noise arm was weighed and not added: +9 nights for a
+  better floor on a screen whose outcome section 8 already expects to be KILL-UNREAD / INCONCLUSIVE).
 - **P1 drift**: KL(X) < KL(A0) and KL(A0) - KL(X) > 2 x noise_s on every seed, AND mean KL(X) <= 0.75 x mean KL(A0).
 - **P1b transfer**: off-frame KL(X) <= 0.85 x off-frame KL(A0) on >= 2 of 3 seeds.
 - **P2 retention**: NLL(X) <= NLL(A0) + 0.10 nats in each of the own, recent and old strata on 3/3 seeds. **A stratum read on
@@ -85,8 +106,20 @@ Per candidate X in A1-A4 against A0 at night 15, per seed s:
   UNREAD with fewer than 2. Reported beside every candidate's status (`p1_change_diag`). Note: P1's per-seed clause is already a
   change contrast (X and A0 share the n12 start), so only P1's 0.75 ratio is level-based; P1-change says what share of the
   three nights' own drift X removed, which is what a KILL must be read against.
-- **KILL** = P1's per-seed clause fails on >= 2 seeds (checked first: an unread P2 does not hide a KILL).
-  **PASS** = P1 and P1b and P2 and P3 with every P2 stratum read. Otherwise INCONCLUSIVE.
+- **KILL** = P1's per-seed clause fails on >= 2 seeds (checked right after engagement: an unread P2 does not hide a KILL).
+  A KILL whose P1-change diagnostic is UNREAD is printed **KILL-UNREAD** (review 2 N1) and the engine digest does not count
+  it as a KILL. **PASS** = P1 and P1b and P2 and P3 with every P2 stratum read. Otherwise INCONCLUSIVE.
+- **What each outcome leads to (review 2 N1):**
+  - PASS: X enters a six-seed fresh-split registered test (below). No default flips.
+  - KILL (P1-change READ): X, as a sleep-recipe constant at 1.5B over 3 chained nights, is recorded as failing to cut
+    drift. The next try is a different METHOD (not another constant of this loop), chosen against PREREQUISITES.
+  - KILL-UNREAD: no verdict on X. A0's own three-night drift is inside twice the noise, so this window cannot show a cut.
+    X is not retired. A longer window (an earlier start night or more chained nights) is the only rerun, and only under a
+    new prereg.
+  - INCONCLUSIVE: the status names the cause. A void (instrument, provenance, engagement) is fixed and the affected units
+    rerun under this rule. Unread P2 means amending P2_MIN_N from `strata` before launch, never after. If P1 holds on every
+    seed and only the 0.75 ratio misses, it is recorded as "holds drift, no repair", a lead for a longer-window prereg,
+    not a pass.
 - **Instrument gate (voids every candidate AND the placebo read: INCONCLUSIVE):** any of the 12 n15 units of A0, A0e, A0k and X (3 seeds)
   missing; A0r or A0 n13 missing on any seed (determinism unread); A0r differs from A0 at n13 by more than 1e-3 relative held-out
   KL (threads are a provenance key; see the determinism fallback below); A0L or A0 n13 missing, or a life's banked n13 KL missing (K-sane unread); mixed provenance: commit, device, precision,
@@ -106,7 +139,9 @@ count other than the measure's), and the time is re-estimated from that step 0 u
 the screen does not launch: the instrument is not repeatable on this CPU path; we do NOT loosen the tolerance after seeing the
 miss (any tolerance chosen then would be fitted to the observed gap). The scorer still applies the gate to every seed.
 
-**Placebo read (diagnostic, not pass/fail).** Per seed D_real = KL(A0, n15) - KL(n12), D_self = KL(A5s, n15) - KL(n12),
+**Placebo read (a reading aid, never a gate; review 2 N4).** No candidate status reads A5s/A5f: a candidate PASS stands
+when the placebo units are missing or the read is MOTION-DOMINANT (tested). A PASS beside MOTION-DOMINANT is reported with
+that caveat, and the six-seed test must then carry its own placebo arm. Per seed D_real = KL(A0, n15) - KL(n12), D_self = KL(A5s, n15) - KL(n12),
 D_foreign = KL(A5f, n15) - KL(n12). A seed is READABLE only if D_real > 2 x noise_s; fewer than 2 readable seeds = UNREAD.
 MOTION-DOMINANT if D_self >= 0.6 x D_real on >= 2 readable seeds (conservative: A5s is biased down). CONTENT-DRIVEN only if BOTH
 D_self and D_foreign <= 0.25 x D_real on >= 2 readable seeds. Otherwise BRACKETED. A5 retention is never a pass. The same
@@ -114,7 +149,8 @@ instrument gate voids it.
 
 All clauses above are exact in `candidate_verdict`, `placebo_read`, `instrument_checks`, `provenance_check` and `score`, with a
 test per clause failing alone on synthetic records (edges at 0.75, 2 x noise, 0.85 on 2/3, +0.10, +0.05, n = 4 vs 5, each
-missing instrument unit, each provenance key).
+missing instrument unit, each provenance key; review 2: each engagement clause per arm, an earlier night not engaged,
+noise raw 0 / 1e-9 / 0.005 against the floor, KILL-UNREAD, placebo as a non-gate).
 
 ## 6. Compute and placement
 - **Placement (data-bound):** each pool node holds one seed's KR snapshots: pool40 s319, pool41 s320, pool42 s321. `run_node.sh`
@@ -127,15 +163,19 @@ missing instrument unit, each provenance key).
   on pool40: the n12 start reading, A0r night 13, A0 night 13 (`--max-night 13`, the run resumes it), the determinism pair,
   then A2 night 13 (the worst-case arm: two keep graphs live through backward), each under `/usr/bin/time -v`, written to
   `mix_night/measure_s319.txt` (max RSS of A0r and of A2, threads, `det ok`). Cap: MemTotal - 2 GB on pool40; on nodes under
-  24 GB it must be given (`NODES="pool41 pool42" MEMCAP_GB=11 ship.sh measure`, so `mem_ok.sh 11 1` needs 12 GB free rather
-  than the whole node). The full run's cap is ceil(1.3 x max(RSS A0r, RSS A2)) + 1 GB and must fit MemTotal - 1 GB or the node
+  24 GB it must be given (`NODES="pool41 pool42" MEMCAP_GB=10 ship.sh measure`, so `mem_ok.sh 10 1` needs 11 GB free rather
+  than the whole node). 10, not 11 (review 2 N6): the run cap ceil(1.3 x RSS) + 1 must fit MemTotal - 1 = 14 GB, so RSS
+  must be <= 10 GB; at 11 an RSS of 10-11 GB would pass step 0 and then refuse at `run`. Also, right after A0r, a run cap
+  that cannot fit stops step 0 (exit 2) before the A0 and A2 hours are spent (tested). 1.5B fp32 weights are about 6 GB,
+  so the 15 GB nodes may well refuse; that fails closed and the seed is INCONCLUSIVE by the missing-unit rule. The full run's cap is ceil(1.3 x max(RSS A0r, RSS A2)) + 1 GB and must fit MemTotal - 1 GB or the node
   refuses. A failed baseline arm (A0L, A0, A0e, A0k: OOM, guard, missing file) stops that node at once (no candidate can be
   scored without it); a failed candidate or placebo is logged and the node moves on; each arm waits on
   `tools/mem_ok.sh <cap> 1` (others' runs share the nodes) and logs its own max RSS.
 - **Launch visibility:** `ship.sh` logs every node launch to `mix_night/launch_<mode>.log` and prints its tail, so a refusal
   (echo + exit 2) is seen at launch. `ship.sh ship` refuses while `brain.experiments` OR `mn_run_node` is live on a node (between
   arms, and while an arm waits on `mem_ok.sh`, only the driver is live).
-- **Time (UNMEASURED):** at a placeholder 25 min per 1.5B CPU night and 10 min per reading set, 87 night-sleeps + 3 start
+- **Time (UNMEASURED):** at a placeholder 25 min per 1.5B CPU night and 10 min per reading set (the reading set includes
+  24 greedy 40-token replies per reading, review 2 N7; step 0 times a real night + reading and the 45-min rule decides), 87 night-sleeps + 3 start
   readings = 51 node-hours, about 17 h wall on three nodes in parallel (a floor: A2's second keep forward, A3's per-step
   reference recompute are not modelled). **Step-0 rule:** if one night + its reading exceeds 45 min on pool40, drop to nights 14-15
   only and drop A4, recorded here as an amendment before any other unit runs. Run `ship.sh strata` first (seconds, no model):
@@ -148,7 +188,7 @@ missing instrument unit, each provenance key).
 bash brain/experiments/results/2026-11-27-mix-night/ship.sh ship      # code + COMMIT + run_node + foreign files
 bash brain/experiments/results/2026-11-27-mix-night/ship.sh strata    # P2 stratum sizes, store-only
 bash brain/experiments/results/2026-11-27-mix-night/ship.sh measure   # step 0 on pool40 (s319: A0r, A0 n13, det pair, A2 n13)
-NODES="pool41 pool42" MEMCAP_GB=11 bash .../ship.sh measure           # each node's own measure (cap required under 24 GB)
+NODES="pool41 pool42" MEMCAP_GB=10 bash brain/experiments/results/2026-11-27-mix-night/ship.sh measure   # cap required under 24 GB
 # on a determinism miss: move mix_night/ aside on every node and repeat both measure lines with THREADS=1 (section 5)
 bash brain/experiments/results/2026-11-27-mix-night/ship.sh run       # all arms on all three nodes
 # read: pull ~/brain-lane/route_repo/_scratch/route/kr/mix_night/u_*.json from the 3 nodes into one dir, then
@@ -196,7 +236,7 @@ above) and `foreign_s{foreign}` before any engine launch; `ship.sh` does not use
 An alternative launcher to `ship.sh`. It does not change any rule above. It points at `brain/eval/mix_night_offframe.json`
 (sha256 above) and `foreign_s{foreign}`, so the stale-spec residual above is closed.
 - **Step 0 on every node**, as in section 6: A0r, A0 n13, `detcheck`, A2 n13, each under `/usr/bin/time -v`. Caps are 21 GB
-  on pool40 and 11 GB on pool41/42. The pick reads, per seed: det ok, and cap = ceil(1.3 x max(RSS A0r, RSS A2)) + 1. On s319
+  on pool40 and 10 GB on pool41/42 (review 2 N6). The pick reads, per seed: det ok, and cap = ceil(1.3 x max(RSS A0r, RSS A2)) + 1. On s319
   it also reads the 45-min bar. Each seed's six-seed job runs at that seed's own cap. Each attempt writes a new time report,
   so a resumed attempt cannot lower a measured peak.
 - **Stricter fit:** the engine needs cap + 2 GB <= node RAM, so the cap is at most 13 GB on every node. The rule above allows
@@ -211,3 +251,44 @@ An alternative launcher to `ship.sh`. It does not change any rule above. It poin
   footprint, because only the episode source changes. Section 6 already names A2 as the worst-case arm, so the spec uses A2.
   A3's 256-text keep set has its reference log-probs recomputed per step rather than cached, so it is not measured at step
   0. Its peak is recorded in the verdict. If it dies at its seed's cap, the run stops as ERROR (memcap) rather than retrying.
+- Launch: `python -m tools.engine mix_night` (status REGISTERED, so no `--allow-draft`), after `ship.sh ship` has placed
+  the foreign files.
+
+## 10. Pre-data review 2 (11-27, sonnet): 2 BLOCKING, 7 NON-BLOCKING; what changed
+Record check repeated (`before_you_build.sh "sleep drift keep bank CE replay mixing"`): no REMIX-style or placebo-night arm
+in the record, so nothing here repeats a killed method. Before the fixes: 69 passed. After: 88 passed
+(`brain/tests/test_mix_night_screen.py`), and `tests/test_engine.py` 79 passed (its mix-night cases updated for
+REGISTERED, the 10 GB cap, and engaged synthetic units).
+- **B1 (fixed) no engagement gate.** `mix_sleep(stats=)` now reports what the loop realized: keep_n_loop, kl_weight,
+  ce_keep_w, keep_per_step, steps_run and mean_ce_keep. `patched` copies it into `sleep_info`, adds placebo_overlap and
+  placebo_n, and the unit carries `mean_ce_keep` and `kl_weight_used`. `engagement()` / `_engaged()` void a candidate or
+  the placebo read (section 5). Tests: each candidate's clause failing alone on one seed, a would-be KILL on a null arm,
+  an empty `sleep_info`, an earlier chained night, the A1 variants (None, weight 0, negative), each placebo clause alone,
+  and the real Brain path. On the stub's 24-text bank the gate catches A3 (keep_n 24, not 256). The returned losses are
+  unchanged, so the legacy replica still equals brain/sleep.py.
+- **B2 (fixed) tiny noise floor.** `noise_floor = max(noise_raw, 0.05 x KL(A0, n15))` (section 5), with `noise_raw`
+  reported. Tests: raw noise 0, 1e-9 and 0.005 against the floor, on both sides of the edge, plus zero noise in the
+  placebo read and in P1-change.
+- **N1 (fixed)** KILL-UNREAD in `verdict()`. The engine digest counts only a plain KILL (`mix_night.py` docstring), and
+  each outcome now names its next step (section 5).
+- **N2 (argued, rule kept)** P1's 0.75 level ratio stays. P1-change is not made the pass clause: per N3 it is likely
+  UNREAD on 2 of 3 seeds, so passing on it would make a PASS no more readable, and the rule was already kept at review 1
+  before any data. Expected outcome, stated so a null is read in that light: PASS needs mean KL(X, n15) <= 0.75 x ~0.32 =
+  ~0.24, below the lives' n12 level (~0.28). That is repair of 12 nights of drift in 3. My PASS probability is low, about
+  10% or less (a judgment, not a computation). The screen is mainly a KILL / KILL-UNREAD / INCONCLUSIVE screen, and its
+  most likely informative result is a "holds drift, no repair" INCONCLUSIVE.
+- **N3 (stated)** With the floor and the lives' own change (+0.081 / +0.022 / -0.037 on ~0.29-0.35), s319 is likely
+  readable and s320 / s321 likely not, so P1-change and the placebo read are expected UNREAD and a KILL is expected to
+  print as KILL-UNREAD.
+- **N4 (fixed in text and test)** the placebo is a reading aid. `test_placebo_is_a_reading_aid_not_a_gate` shows a PASS
+  with the A5 units missing and a PASS beside MOTION-DOMINANT.
+- **N5 (stated)** The engine pick sees A0's n13 unit, a verdict-data unit, before any candidate exists. It reads only
+  RSS, wall time and the determinism pair from it, never a KL contrast, and n13 is not a scored night. Harmless, and named
+  here. A thread count that differs across nodes is blocked by `threads` in PROV_KEYS.
+- **N6 (fixed)** The measure cap is 10 GB on the 15 GB nodes (run_node.sh, ship.sh, mix_night.yaml dev_memory_gb), with
+  an early stop after A0r (tested). A3 is unmeasured at step 0 (engine section). A memcap kill there fails closed, and
+  A3 on that seed is INCONCLUSIVE.
+- **N7 (fixed)** `test_run_node_empty_memcap_and_threads_mean_default` covers ship.sh passing an empty MEMCAP_GB or
+  THREADS. dev_memory_gb is labelled "set, not measured". The header status now lists both reviews. Not changed: A2
+  draws with replacement and A3's extras are drawn from a correlated nested stream (declared residuals, noise only).
+  The reading time is folded into the 10-min placeholder, and step 0 measures it.

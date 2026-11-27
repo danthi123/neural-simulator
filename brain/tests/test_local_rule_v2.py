@@ -163,15 +163,20 @@ def test_prompts_split_pinned():
         V.split_prompts(PROMPTS[:-1] + ["something else"])
 
 
-def _arm(recall, g, h, false=1, norm=1.0):
-    return {s: {"recall": recall, "generic_kl": g, "heldout_kl": h, "false_recall": false, "adapter_norm": norm}
+def _arm(recall, g, h, false=1, norm=1.0, sub=None):
+    return {s: {"recall": recall, "generic_kl": g, "heldout_kl": h, "false_recall": false, "adapter_norm": norm,
+                "replay_loss_head": 2.4, "replay_loss_tail": 0.3, **({"subspace": dict(sub)} if sub else {})}
             for s in V.SEEDS}
+
+
+TOKSUB = {"m_k": {"0": 8, "1": 7}, "m_v": {"0": 9, "1": 9}, "m_k_used": {"0": 8, "1": 7}, "m_v_used": {"0": 9, "1": 9}}
 
 
 def _go():
     return {"no_sleep": _arm(0, 0.0, 0.0, 0, 0.0), "gradient": _arm(4, 0.03, 0.02, 1),
             "v2": _arm(3, 0.03, 0.02, 1), "v2_shuffled": _arm(0, 0.03, 0.02, 0),
-            "noproj": _arm(3, 0.10, 0.06, 1), "sham": _arm(3, 0.09, 0.05, 1), "sham_tok": _arm(3, 0.08, 0.04, 1)}
+            "noproj": _arm(3, 0.10, 0.06, 1), "sham": _arm(3, 0.09, 0.05, 1),
+            "sham_tok": _arm(3, 0.08, 0.04, 1, sub=TOKSUB)}
 
 
 def _set(recs, arm, **kw):
@@ -456,3 +461,100 @@ def test_run_units_on_stub_cortex_resume_and_pick(tmp_path, monkeypatch):
     a3 = SimpleNamespace(**{**vars(a), "out_dir": str(tmp_path / "other3")})
     with pytest.raises(SystemExit, match="commit"):
         V.run_units(a3, c, base, **kw)
+
+
+# ---- engagement of the controls (pre-data review 2, B1/B2): an inert control never passes (b), (f) or (g) for free
+def _inert(recs, arm, how):
+    for s in V.SEEDS:
+        r = recs[arm][s]
+        if how == "norm0":
+            r["adapter_norm"] = 0.0
+        elif how == "norm_small":
+            r["adapter_norm"] = 0.49            # under 0.5 x v2's 1.0
+        elif how == "norm_nan":
+            r["adapter_norm"] = float("nan")
+        elif how == "loss_flat":
+            r["replay_loss_tail"] = r["replay_loss_head"]
+        elif how == "loss_none":
+            r["replay_loss_head"] = r["replay_loss_tail"] = None
+    return recs
+
+
+@pytest.mark.parametrize("how", ["norm0", "norm_small", "norm_nan", "loss_flat", "loss_none"])
+@pytest.mark.parametrize("arm", V.CONTROL_ARMS)
+def test_inert_control_alone_is_undefined_not_go(arm, how):
+    r = _go()
+    if arm in ("sham", "sham_tok"):
+        _set(r, arm, recall=0, heldout_kl=0.0)  # a dead sham: recall 0 -> would 'fail' by recall and give GO-V2
+    if arm == "v2_shuffled":
+        _set(r, arm, recall=0)                  # a dead shuffled night: (b) and shuf <= 1 trivially
+    out = V.verdict(_inert(r, arm, how))
+    assert out["verdict"] == "UNDEFINED" and any(w.startswith(arm + " ") for w in out["why"]), out.get("why")
+
+
+def test_inert_only_one_seed_is_enough_for_undefined():
+    r = _go()
+    r["sham"][101]["adapter_norm"] = 0.0
+    assert V.verdict(r)["verdict"] == "UNDEFINED"
+    r = _go()
+    r["noproj"][44]["replay_loss_tail"] = 9.0
+    assert V.verdict(r)["verdict"] == "UNDEFINED"
+
+
+def test_live_controls_with_large_norm_are_not_gated():
+    # no upper bound: the lesion and the random sham remove fewer directions, so a larger norm is expected
+    r = _set(_set(_go(), "noproj", adapter_norm=5.0), "sham", adapter_norm=5.0)
+    assert V.verdict(r)["verdict"] == "GO-V2" and V.verdict(r)["engagement"] == "all controls live"
+    assert V.verdict(_set(_go(), "sham", adapter_norm=0.5))["verdict"] == "GO-V2"          # boundary 0.5 x v2
+
+
+def test_token_sham_rank_shortfall_is_undefined():
+    r = _go()
+    sub = {**TOKSUB, "m_k_used": {"0": 8, "1": 6}}
+    r["sham_tok"][43]["subspace"] = sub
+    out = V.verdict(r)
+    assert out["verdict"] == "UNDEFINED" and any("rank-matched" in w for w in out["why"])
+    r = _go()
+    del r["sham_tok"][42]["subspace"]
+    assert V.verdict(r)["verdict"] == "UNDEFINED"
+
+
+def test_v2_only_core_failure_stays_negative_with_an_inert_control():
+    r = _inert(_set(_go(), "v2", recall=1.0), "sham", "norm0")
+    assert V.verdict(r)["verdict"] == "NEGATIVE"
+    r = _inert(_set(_go(), "v2", heldout_kl=0.05), "v2_shuffled", "loss_flat")
+    assert V.verdict(r)["verdict"] == "NEGATIVE"
+
+
+def test_score_cli_reads_unit_level_subspace(tmp_path):
+    d = tmp_path / "six"
+    recs = _go()
+    for s in V.SEEDS:
+        recs["sham_tok"][s].pop("subspace")
+    _write_six(d, recs)
+    for s in V.SEEDS:                                  # the run writes the subspace at unit level, as run_units does
+        f = V.unit_path(str(d), "six", s, "sham_tok")
+        u = json.load(open(f))
+        V.atomic_write(f, {**u, "subspace": dict(TOKSUB)})
+    out = tmp_path / "v.json"
+    V.main(["score", "--dir", str(d), "--tag", "six", "--out", str(out)])
+    assert json.loads(out.read_text())["verdict"] == "GO-V2"
+
+
+def test_dev_seed_never_computes_the_verdict_half(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from brain.experiments.mix_night_screen import PROMPTS
+    from brain.experiments.sleep_probe import GENERIC, evaluate
+    from brain.sleep import sleep
+    c = _Cortex()
+    base = _st(_pc())
+    eps = {"sleep_true": [(TEXT, 1.0)], "sleep_shuffled": [(TEXT, 1.0)]}
+    monkeypatch.setenv("COMMIT", "abc")
+    a = SimpleNamespace(seed=V.DEV_SEED, arm_list=["v2"], out_dir=str(tmp_path / "dev"), tag="lr0.3_tau0.99",
+                        model="/x/m.pth", steps=3, lr=0.3, tau=0.99, decay=1e-3, feedback="transport", kl_weight=1.0,
+                        grad_lr=5e-4, device="cpu", pick=None, prompts_sha=V.PROMPTS_SHA256)
+    V.run_units(a, c, base, PROMPTS=PROMPTS, GENERIC=GENERIC, build_arm_episodes=lambda s: eps, evaluate=evaluate,
+                sleep=sleep, keys_all=["pixel"], PlasticCortex=lambda cx: PlasticCortex(cx, rank=2))
+    r = json.load(open(V.unit_path(a.out_dir, a.tag, V.DEV_SEED, "v2")))["result"]
+    assert r["heldout_kl"] is None and V._finite(r["heldout_kl_dev"])
+    assert V._finite(r["replay_loss_head"]) and V._finite(r["replay_loss_tail"])

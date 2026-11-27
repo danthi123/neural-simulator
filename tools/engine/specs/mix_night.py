@@ -1,7 +1,8 @@
 """Pick (the measure-first step-0 bars) and verdict of the mix-night screen. Rule: brain/research/2026-11-27-mix-night-prereg.md
 (design: brain/research/2026-11-27-sleep-drift-recipe-check.md section 4). The pass rule is
 brain.experiments.mix_night_screen.score, imported, not copied. Added here only: the one-word digest line (PASS if any
-candidate PASSes, KILL if every candidate is KILL, else INCONCLUSIVE); the per-candidate statuses, the placebo read and the
+candidate PASSes, KILL if every candidate is KILL, else INCONCLUSIVE; a KILL-UNREAD, a KILL whose A0 window shows no
+readable drift, is not a KILL and makes the digest INCONCLUSIVE, pre-data review 2 N1); the per-candidate statuses, the placebo read and the
 full score are carried in the verdict file and are the registered output."""
 import math
 import re

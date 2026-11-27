@@ -662,13 +662,13 @@ def test_ship_key_carries_commit_and_tools_hash(env):
     assert e.ship_key() != k                                    # one COMMIT file per shipped dir
 
 
-# ---- the mix-night spec (brain/research/2026-11-27-mix-night-prereg.md, DRAFT)
-def test_mix_night_spec_renders_per_seed_and_is_not_runnable_yet():
+# ---- the mix-night spec (brain/research/2026-11-27-mix-night-prereg.md, REGISTERED 11-27 after pre-data review 2)
+def test_mix_night_spec_renders_per_seed_and_is_runnable_once_registered():
     from brain.experiments import mix_night_screen as M
     e = Engine("mix_night", make_nodes("ssh"), dry=True, log=lambda *_: None)
     sp = e.root
-    assert sp.status == "DRAFT" and sp.dev_seed == 319 and sp.seeds == [319, 320, 321]
-    assert (sp.memory_gb, sp.mem("dev", 319), sp.mem("dev", 321)) == (13, 21, 11) and sp.vars["offframe_sha256"] == M.OFFFRAME_SHA256
+    assert sp.status == "REGISTERED" and sp.dev_seed == 319 and sp.seeds == [319, 320, 321]
+    assert (sp.memory_gb, sp.mem("dev", 319), sp.mem("dev", 321)) == (13, 21, 10) and sp.vars["offframe_sha256"] == M.OFFFRAME_SHA256
     assert (core.REPO / sp.vars["offframe"]).exists()
     c = sp.render(320, "A0 A1", "/o.json", tree="t" * 12, commit="c" * 12, job="s320")
     assert "--seed 320" in c and "snaps_s320 " in c and "--foreign-snaps $KR/foreign_s321" in c
@@ -681,9 +681,7 @@ def test_mix_night_spec_renders_per_seed_and_is_not_runnable_yet():
         with pytest.raises(SystemExit, match="requires_local missing"):
             e.check_runnable(sp)
     sp.requires_local = []
-    with pytest.raises(SystemExit, match="is DRAFT"):
-        e.check_runnable(sp)                                     # still DRAFT until the pre-data review
-    Engine("mix_night", make_nodes("ssh"), dry=True, allow_draft=True, log=lambda *_: None).check_runnable(sp)
+    e.check_runnable(sp)                                         # registered: no --allow-draft needed
 
 
 TIME_V = "\tMaximum resident set size (kbytes): {rss}\n\tElapsed (wall clock) time (h:mm:ss or m:ss): {wall}\n"
@@ -737,7 +735,7 @@ def test_mix_night_step0_pick(kw, expect):
 
 def test_mix_night_per_seed_caps_reach_the_jobs(env):
     sp = core.Spec.find("mix_night")
-    assert sp.mem("dev", 319) == 21 and sp.mem("dev", 320) == 11 and sp.mem("six", 320) == 13
+    assert sp.mem("dev", 319) == 21 and sp.mem("dev", 320) == 10 and sp.mem("six", 320) == 13
     pk = json.loads(json.dumps({"memcap": {319: 12, 320: 9, 321: 40}}))   # through the JSON state: string keys
     assert (sp.mem("six", 319, pk), sp.mem("six", 320, pk), sp.mem("six", 321, pk)) == (12, 9, 13)   # never above memory_gb
     assert [(n, s) for n, s, _ in sp.dev_items()] == [("step0_s319", 319), ("step0_s320", 320), ("step0_s321", 321)]
@@ -753,8 +751,14 @@ def test_mix_night_dry_run_fills_seed_vars_per_seed():
     assert len(dev) == 3 and all("A0r A0@13 DET A2@13" in o for o in dev) and "(s320)" in dev[1]
 
 
+_PLC = {"placebo_pool": 100, "placebo_excluded": 64, "placebo_overlap": 0}
+_ENG = {"A1": {"ce_keep_w": 1.0, "mean_ce_keep": 2.1}, "A2": {"keep_per_step": [2]},      # what an engaged arm records
+        "A3": {"keep_n": 256, "keep_n_loop": 256}, "A4": {"kl_weight": 6.0}, "A5s": _PLC, "A5f": _PLC}
+
+
 def _unit(arm, seed, night, kl, off=1.0, nll=1.0, refusal=0.0, name=0.0):
     return {"arm": arm, "seed": seed, "night": night, "kl": kl, "off_kl": off, "refusal": refusal, "name": name,
+            "sleep_info": dict(_ENG.get(arm, {})),
             "ret": {s: {"n": 20, "nll": nll} for s in ("own", "recent", "mid", "old")}, "commit": "c", "device": "cpu",
             "precision": "fp32", "model": "1.5b", "host": f"h{seed}", "offframe_sha256": "h"}
 
@@ -815,18 +819,20 @@ def test_mix_night_verdict_without_lives_is_void(tmp_path):
     assert set(sp.vars["lives"]) <= set(sp.requires_local)      # and the engine refuses to launch without them
 
 
-# ---- the local-rule v2 specs (brain/research/2026-11-27-local-rule-v2-prereg.md, DRAFT)
+# ---- the local-rule v2 specs (brain/research/2026-11-27-local-rule-v2-prereg.md, REGISTERED 11-27)
 def test_local_rule_v2_specs_render_and_chain():
     a, b = core.Spec.find("local_rule_v2_01b"), core.Spec.find("local_rule_v2_04b")
-    assert (a.status, b.status, a.memory_gb, b.memory_gb) == ("DRAFT", "DRAFT", 8, 13) and a.question == b.question
+    assert (a.status, b.status, a.memory_gb, b.memory_gb) == ("REGISTERED", "REGISTERED", 8, 13) and a.question == b.question
     assert len(a.dev_grid) == 10 and a.dev_grid == {k: v for k, v in b.dev_grid.items()}
     assert a.dev_grid["lr0.3_tau0.99"] == "--arms v2 --lr 0.3 --tau 0.99 --tag lr0.3_tau0.99"
     c = a.render(7, a.dev_grid["ref"], "/o.json", commit="c" * 12, job="ref")
     assert "local_rule_v2_01b/cccccccccccc/ref" in c and "--model $BRAIN_MODEL_DIR/rwkv7-g1d-0.1b" in c
     assert "--arms no_sleep,gradient --tag ref --out-dir $D" in c and "tools.engine.bundle $D /o.json --glob '*.json'" in c
-    for v in ("GO-V2", "GO-PLAIN-LOCAL", "GO-NONSPECIFIC", "NEGATIVE", "NEGATIVE-DEV", "UNDEFINED"):
+    for v in ("GO-V2", "GO-PLAIN-LOCAL", "GO-NONSPECIFIC", "NEGATIVE", "NEGATIVE-DEV"):    # every defined verdict
         assert a.next_for(v) == "local_rule_v2_04b", v
-    assert a.next_for("ERROR") is None and a.next_for("HOLD-DEV") is None and b.next_for("GO-V2") is None
+    for v in ("UNDEFINED", "ERROR", "HOLD-DEV"):                      # the prereg decision table: diagnose 01b first
+        assert a.next_for(v) is None, v
+    assert b.next_for("GO-V2") is None
     out = []
     Engine("local_rule_v2_01b", make_nodes("ssh"), dry=True, log=out.append).run()
     assert any("== local_rule_v2_04b" in o for o in out)

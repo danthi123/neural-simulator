@@ -7,7 +7,7 @@
 """Offline mix-night screen. Switch-free: this file only monkeypatches brain.brain.replay_into_cortex and
 Brain._night_episodes inside a context manager (restored on exit); brain/sleep.py, brain/brain.py and every default are
 untouched. Nothing runs without POOL_NODE=1 (or BRAIN_ALLOW_W3090=1). The rule is brain/research/2026-11-27-mix-night-prereg.md
-(DRAFT pending pre-data review); the design and record brief are brain/research/2026-11-27-sleep-drift-recipe-check.md.
+(REGISTERED 2026-11-27 after pre-data review 2); the design and record brief are brain/research/2026-11-27-sleep-drift-recipe-check.md.
 
 Population: the KR night snapshots (life_kw --night-snapshots; s319/s320/s321). Start = snapshot n12 (adapters, keep bank).
 Night k (13..15) is slept on the store of snapshot n<k> (episodes.json: text, strength, uses, last_used, created), at the
@@ -84,7 +84,7 @@ ARMS = {
 CANDIDATES = ("A1", "A2", "A3", "A4")
 NOISE_ARMS = ("A0e", "A0k")
 
-# Draft pass rule (brain/research/2026-11-27-sleep-drift-recipe-check.md section 4; DRAFT pending pre-data review).
+# Registered pass rule (brain/research/2026-11-27-mix-night-prereg.md section 5; REGISTERED 2026-11-27).
 P1_RATIO, P1_NOISE_MULT = 0.75, 2.0
 P1B_RATIO, P1B_SEEDS = 0.85, 2
 P2_MARGIN = 0.10
@@ -93,6 +93,15 @@ KILL_SEEDS = 2
 K_SANE_TOL = 0.25
 DETERMINISM_TOL = 1e-3         # relative KL difference A0r vs A0 at n13
 MOTION_RATIO, CONTENT_RATIO, PLACEBO_SEEDS = 0.6, 0.25, 2
+# Noise-floor minimum (pre-data review 2, B2): noise_s = max(raw two-draw floor, NOISE_FLOOR_REL x KL(A0, n15)_s). Two draws
+# can land near A0 by chance and make "> 2 x noise" trivial. 0.05 is set before data from the record: the smallest one-night
+# life change at this point of the KR lives, s319 n12 -> n13 +0.015 on 0.285 (5.3%).
+NOISE_FLOOR_REL = 0.05
+# Engagement (pre-data review 2, B1): what each arm's sleep must have REALIZED on every night unit (sleep_info), or the
+# arm is void (INCONCLUSIVE), never scored: a KILL on a null arm would be a verdict on nothing.
+ENGAGE = {"A1": "mean_ce_keep > 0 and ce_keep_w == 1.0", "A2": "keep_per_step == [2]", "A3": "keep_n == 256",
+          "A4": "kl_weight == 6.0", "A5s": "placebo_pool > 0, placebo_excluded recorded, placebo_overlap == 0",
+          "A5f": "placebo_pool > 0, placebo_excluded recorded, placebo_overlap == 0"}
 
 PROMPTS = [   # 24 ordinary prompts, none from the life banks (test_prompts_not_in_banks checks)
     "What time does the sun usually set in winter?", "Can you suggest a quiet hobby for the evening?",
@@ -207,7 +216,7 @@ def _ids(cortex, text):
 
 def mix_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weight=1.0, seed=0, log=None, guard=(),
               guard_weight=None, loop="split", ep_add=0, keep_add=0, ce_keep_w=0.0, keep_per_step=1, trace=None,
-              ref_cache=None):
+              ref_cache=None, stats=None):
     """brain.sleep.sleep with extra arm options and optional RNG decoupling. generic: list of str (K-P only, no guard).
     loop="legacy": ONE random.Random(seed) draws episode then keep index exactly as brain/sleep.py (replica, tested equal to
     it; ep_add / keep_add / keep_per_step must be 0 / 0 / 1).
@@ -218,7 +227,11 @@ def mix_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_
     trace (a list) receives (episode index, tuple of keep indices) per step.
     ref_cache: None = hold the frozen reference log-probs of every keep text when the set has <= REF_CACHE_MAX texts (the
     shipped path), else recompute each step's reference from the frozen cortex (adapters off, no grad, no RNG draw): the same
-    numbers without holding 256 x tokens x 65536 floats (about 4.5 GB at 1.5B) for A3. True / False force either path."""
+    numbers without holding 256 x tokens x 65536 floats (about 4.5 GB at 1.5B) for A3. True / False force either path.
+    stats (a dict) receives what the loop REALIZED (pre-data review 2, B1: the engagement gate reads it): keep_n (texts in
+    the keep set), kl_weight, ce_keep_w, keep_per_step (the set of keep texts drawn per step, as observed), steps and
+    mean_ce_keep (mean of the CE keep term as added to the loss; None when ce_keep_w is 0). The returned losses are
+    unchanged (the legacy replica stays equal to brain/sleep.py)."""
     if guard:
         raise ValueError("mix_sleep: the near-miss guard is not part of the K-P screen")
     if any(not isinstance(g, str) for g in generic):
@@ -245,7 +258,7 @@ def mix_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_
             plastic.enabled = True
 
     ref = [ref_of(ids) for ids in gen_ids] if cache else None
-    losses = []
+    losses, ce_vals, kps = [], [], set()
     for step in range(steps):
         ei = rng.choices(range(len(episodes)), weights=weights)[0]
         text = episodes[ei][0]
@@ -263,7 +276,10 @@ def mix_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_
         keep = kls[0] if len(kls) == 1 else sum(kls) / len(kls)
         loss = replay + kl_weight * keep
         if ce_keep_w:
-            loss = loss + ce_keep_w * (ces[0] if len(ces) == 1 else sum(ces) / len(ces))
+            ce_term = ces[0] if len(ces) == 1 else sum(ces) / len(ces)
+            loss = loss + ce_keep_w * ce_term
+            ce_vals.append(float(ce_term))
+        kps.add(len(js))
         opt.zero_grad()
         loss.backward()
         opt.step()
@@ -272,6 +288,10 @@ def mix_sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_
             trace.append((ei, js))
         if log and step % 20 == 0:
             log(f"sleep step {step}: replay {float(replay):.3f} keep {float(keep):.4f}")
+    if stats is not None:
+        stats.update(keep_n_loop=len(gen_ids), kl_weight=float(kl_weight), ce_keep_w=float(ce_keep_w),
+                     keep_per_step=sorted(kps), steps_run=len(losses),
+                     mean_ce_keep=(sum(ce_vals) / len(ce_vals)) if ce_vals else None)
     return losses
 
 
@@ -307,10 +327,14 @@ def patched(b, cfg: dict, foreign_texts: list | None = None, info: dict | None =
         assert gen[:len(generic)] == list(generic), "the shipped keep subset must be the prefix of the arm's keep set"
         info.update(keep_n=len(gen), keep_hash=hashlib.sha1("\x00".join(gen).encode()).hexdigest()[:12],
                     seed=seed, sleeps=sleeps, steps=steps)
-        return mix_sleep(plastic, base, eps, gen, steps=steps, lr=lr,
-                         kl_weight=cfg["kl_weight"] if cfg["kl_weight"] is not None else kl_weight, seed=seed, log=log,
-                         guard=guard, guard_weight=guard_weight, loop=cfg["loop"], ep_add=cfg["ep_add"],
-                         keep_add=cfg["keep_add"], ce_keep_w=cfg["ce_keep_w"], keep_per_step=cfg["keep_per_step"])
+        stats = {}
+        out = mix_sleep(plastic, base, eps, gen, steps=steps, lr=lr,
+                        kl_weight=cfg["kl_weight"] if cfg["kl_weight"] is not None else kl_weight, seed=seed, log=log,
+                        guard=guard, guard_weight=guard_weight, loop=cfg["loop"], ep_add=cfg["ep_add"],
+                        keep_add=cfg["keep_add"], ce_keep_w=cfg["ce_keep_w"], keep_per_step=cfg["keep_per_step"],
+                        stats=stats)
+        info.update(stats)          # realized values: the engagement gate (B1) reads them from sleep_info
+        return out
 
     def night_eps(self):
         eps = real_ne(self)
@@ -323,9 +347,13 @@ def patched(b, cfg: dict, foreign_texts: list | None = None, info: dict | None =
             pool, nex = placebo_pool(bank, shipped_subset(bank, self.sleep_seed, sleeps), PLACEBO_SEED + sleeps)
         else:
             pool, nex = placebo_pool(foreign_texts or [], own, PLACEBO_SEED + sleeps)
-        info.update(placebo=cfg["placebo"], placebo_pool=len(pool), placebo_excluded=nex)
+        assigned = assign_placebo(len(eps), pool)
+        own_set = {t.strip() for t in own}
+        # placebo_overlap: replayed texts that are in the night's real store (must be 0 for the sham to be a sham; B1)
+        info.update(placebo=cfg["placebo"], placebo_pool=len(pool), placebo_excluded=nex,
+                    placebo_overlap=sum(t.strip() in own_set for t in assigned), placebo_n=len(assigned))
         out = []
-        for e, t in zip(eps, assign_placebo(len(eps), pool)):
+        for e, t in zip(eps, assigned):
             e2 = copy.copy(e)
             e2.text = t
             out.append(e2)
@@ -559,6 +587,7 @@ def run_chain(res, snaps, arm, cortex, work, out_dir, offframe, prov, off_sha, f
             rec = {"arm": arm, "seed": seed, "night": k, "cfg": cfg, "sleep_seconds": round(t_sleep, 1),
                    "sleep_info": info, "mean_replay": sum(a for a, _ in losses) / max(len(losses), 1),
                    "mean_keep": sum(c for _, c in losses) / max(len(losses), 1),
+                   "mean_ce_keep": info.get("mean_ce_keep"), "kl_weight_used": info.get("kl_weight"),
                    **read_all(b, offframe, now, k), "offframe_sha256": off_sha, **prov}
             if arm == "A0L" or k == NIGHTS[0]:
                 life_ad = os.path.join(snaps, f"n{k}", "cortex_adapters.pt")
@@ -580,12 +609,12 @@ def run_chain(res, snaps, arm, cortex, work, out_dir, offframe, prov, off_sha, f
     return done
 
 
-# ------------------------------------------------------------------ scoring (the DRAFT rule, exact)
+# ------------------------------------------------------------------ scoring (the registered rule, exact)
 def _g(tab, arm, seed, night):
     return (tab.get(arm, {}).get(seed, {}) or {}).get(night)
 
 
-def noise_floor(tab, seed, night=END):
+def noise_raw(tab, seed, night=END):
     """max |KL(A0) - KL(noise arm)| over the two decoupled noise arms, held-out KL at `night`; None if absent."""
     a0 = _g(tab, "A0", seed, night)
     vals = []
@@ -597,18 +626,57 @@ def noise_floor(tab, seed, night=END):
     return max(vals)
 
 
+def noise_floor(tab, seed, night=END):
+    """The registered floor: max(noise_raw, NOISE_FLOOR_REL x KL(A0, night)); None if absent (B2: two draws can land near
+    A0 by chance, so the floor never goes below 5% of the A0 level)."""
+    raw = noise_raw(tab, seed, night)
+    if raw is None:
+        return None
+    return max(raw, NOISE_FLOOR_REL * abs(_g(tab, "A0", seed, night)["kl"]))
+
+
+def _engaged(arm: str, si: dict) -> bool:
+    si = si or {}
+    if arm == "A1":
+        return si.get("ce_keep_w") == 1.0 and si.get("mean_ce_keep") is not None and si["mean_ce_keep"] > 0
+    if arm == "A2":
+        return si.get("keep_per_step") == [2]
+    if arm == "A3":
+        return si.get("keep_n") == 256 and si.get("keep_n_loop", 256) == 256
+    if arm == "A4":
+        return si.get("kl_weight") == 6.0
+    if arm in ("A5s", "A5f"):
+        return ((si.get("placebo_pool") or 0) > 0 and si.get("placebo_excluded") is not None
+                and si.get("placebo_overlap") == 0)
+    return True
+
+
+def engagement(tab, arm, seeds=SEEDS) -> list:
+    """Units of `arm` (every night present, n13..n15) whose sleep did not realize the arm's change (ENGAGE). [] = engaged.
+    An arm with no unit at all is reported by the missing-unit checks, not here."""
+    bad = []
+    for s in seeds:
+        for k, u in sorted(((tab.get(arm) or {}).get(s) or {}).items()):
+            if not _engaged(arm, u.get("sleep_info")):
+                bad.append(f"{arm}:s{s}:n{k}")
+    return bad
+
+
 def candidate_verdict(tab, X, seeds=SEEDS) -> dict:
     need = [(a, s) for a in ("A0", X) for s in seeds] + [(n, s) for n in NOISE_ARMS for s in seeds]
     missing = [f"{a}:s{s}" for a, s in need if _g(tab, a, s, END) is None]
     if missing:
         return {"status": f"INCONCLUSIVE: missing n{END} units {missing}"}
+    not_engaged = engagement(tab, X, seeds)
+    if not_engaged:
+        return {"status": f"INCONCLUSIVE: arm not engaged ({ENGAGE[X]}) on {not_engaged}", "not_engaged": not_engaged}
     noise = {s: noise_floor(tab, s) for s in seeds}
     rows, p2_unread = {}, []
     for s in seeds:
         x, a = _g(tab, X, s, END), _g(tab, "A0", s, END)
         unread = [st for st in P2_STRATA if not (_stratum_read(x, st) and _stratum_read(a, st))]
         p2_unread += [f"s{s}:{st}" for st in unread]
-        rows[s] = {"kl_x": x["kl"], "kl_a0": a["kl"], "noise": noise[s],
+        rows[s] = {"kl_x": x["kl"], "kl_a0": a["kl"], "noise": noise[s], "noise_raw": noise_raw(tab, s),
                    "p1_seed": x["kl"] < a["kl"] and (a["kl"] - x["kl"]) > P1_NOISE_MULT * noise[s],
                    "p1b_seed": x["off_kl"] <= P1B_RATIO * a["off_kl"],
                    "p2_seed": not unread and all(x["ret"][st]["nll"] <= a["ret"][st]["nll"] + P2_MARGIN for st in P2_STRATA),
@@ -648,6 +716,13 @@ def placebo_read(tab, start, seeds=SEEDS) -> dict:
         nf = noise_floor(tab, s)
         if None in (a0, ps, pf, st) or nf is None:
             return {"status": f"INCONCLUSIVE: missing A0/A5s/A5f n{END}, start or noise arms for s{s}"}
+    not_engaged = engagement(tab, "A5s", seeds) + engagement(tab, "A5f", seeds)
+    if not_engaged:
+        return {"status": f"INCONCLUSIVE: placebo not engaged ({ENGAGE['A5s']}) on {not_engaged}",
+                "not_engaged": not_engaged}
+    for s in seeds:
+        a0, ps, pf, st = (_g(tab, "A0", s, END), _g(tab, "A5s", s, END), _g(tab, "A5f", s, END), start.get(s))
+        nf = noise_floor(tab, s)
         d_real, d_s, d_f = a0["kl"] - st["kl"], ps["kl"] - st["kl"], pf["kl"] - st["kl"]
         readable = d_real > P1_NOISE_MULT * nf
         out[s] = {"d_real": d_real, "d_self": d_s, "d_foreign": d_f, "noise": nf, "readable": readable,
@@ -746,7 +821,11 @@ def verdict(tab, start, banked=None, seeds=SEEDS) -> dict:
     cands = {X: candidate_verdict(tab, X, seeds) for X in CANDIDATES}
     plc = placebo_read(tab, start, seeds)
     for X, v in cands.items():
-        v["p1_change_diag"] = p1_change_diag(tab, start, X, seeds)     # report only; never changes a status
+        v["p1_change_diag"] = p1_change_diag(tab, start, X, seeds)     # report only; never changes PASS / INCONCLUSIVE
+        if v["status"] == "KILL" and v["p1_change_diag"]["status"].startswith("UNREAD"):
+            # pre-data review 2, N1: a KILL whose window shows no readable A0 drift says "this window cannot show the
+            # effect", not "the recipe fails"; it is named apart so no digest rolls it into a KILL
+            v["status"] = "KILL-UNREAD"
     if chk["void"]:
         why = "INCONCLUSIVE: " + "; ".join(chk["void"])
         for v in cands.values():

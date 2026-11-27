@@ -1,11 +1,11 @@
-# Mix-night screen as the engine runs it. Rule: brain/research/2026-11-27-mix-night-prereg.md (DRAFT pending pre-data review;
+# Mix-night screen as the engine runs it. Rule: brain/research/2026-11-27-mix-night-prereg.md (REGISTERED 2026-11-27;
 # requires_local keeps the spec unrunnable without it and the W-side life JSONs). Design and record brief:
 # brain/research/2026-11-27-sleep-drift-recipe-check.md. Harness: brain/experiments/mix_night_screen.py (imported by the
 # node command, never edited here). Same measure-first step 0 as results/2026-11-27-mix-night/run_node.sh measure:
 #   dev  = step 0 on EVERY node (its own seed, prereg section 6): A0r (night 13), A0 night 13 (A0@13 = --max-night 13), the
 #          determinism pair (DET = `mix_night_screen detcheck`; a miss stops the loop, never retried), A2 night 13 (the
 #          worst-case arm), each under /usr/bin/time -v into a NEW time_<arm>.<epoch>.txt (a resumed attempt can only add a
-#          report, never replace the measured one); cap 21 on pool40, 11 on the 15 GB nodes (run_node.sh's MEMCAP_GB);
+#          report, never replace the measured one); cap 21 on pool40, 10 on the 15 GB nodes (run_node.sh's MEMCAP_GB);
 #   pick = per seed: det ok; cap ceil(1.3 x max(RSS A0r, RSS A2)) + 1 GB <= memory_gb; on s319 one night + reading <= 45 min;
 #          any miss is HOLD-DEV (the THREADS=1 fallback and the nights 14-15 amendment are manual, before re-registering).
 #          The six job of each seed runs at ITS measured cap (pick memcap);
@@ -23,7 +23,7 @@ requires_local:                   # the prereg, and the W-side life JSONs the sc
   - _scratch/brainv2/aws/20261124-1219/lifeKR_s319.json.json
   - _scratch/brainv2/aws/20261124-1624/lifeKR_s320.json.json
   - _scratch/brainv2/aws/20261124-1704/lifeKR_s321.json.json
-status: DRAFT                     # -> REGISTERED once the pre-data review is recorded in the prereg
+status: REGISTERED                # 2026-11-27, after the pre-data sonnet review (review 2 recorded in the prereg section 10)
 module: mix_night.py
 pick: pick
 verdict: verdict
@@ -63,7 +63,7 @@ dev_grid:                         # step 0 per node; the six job of the same see
   step0_s319: {seed: 319, params: "A0r A0@13 DET A2@13"}
   step0_s320: {seed: 320, params: "A0r A0@13 DET A2@13"}
   step0_s321: {seed: 321, params: "A0r A0@13 DET A2@13"}
-dev_memory_gb: {319: 21, 320: 11, 321: 11}   # unmeasured: MemTotal - 2 on pool40; run_node.sh's MEMCAP_GB=11 on 15 GB
+dev_memory_gb: {319: 21, 320: 10, 321: 10}   # step-0 caps, set not measured: MemTotal - 2 on pool40; MEMCAP_GB=10 on 15 GB (review 2, N6)
 seeds: [319, 320, 321]            # the KR DEV seeds; a PASS enters a six-seed fresh-split registered test (not this spec)
 memory_gb: 13                     # six-phase ceiling: the largest that fits the 15 GB nodes (13 + 2); each seed runs at its pick cap
 ladder: {max_len: 1, next: {}}    # no registered follow-up yet
