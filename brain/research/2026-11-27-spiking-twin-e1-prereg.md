@@ -163,6 +163,31 @@ On the 3090 the cost is $0 but the card time is long. The gate (section 7) stops
    time is spent first. "in-repo" there means measuring the loop only, and the gate is then expected to stop. A
    chosen kernel needs a parity test against `SpikingTwin` (spikes off, and spikes on through the same count
    function) and its own registered addendum before prep.
+
+   **Decision (2026-11-27, owner-approved): kernel = flash-linear-attention fla-core 0.6.0, `fla.ops.rwkv7.chunk_rwkv7`**
+   (installed `--no-deps` in `_scratch/pylib_fla`, on PYTHONPATH for the twin's jobs only, imported lazily). Switch
+   `SpikingTwin(wkv="fla")` / `train --wkv fla`, default `loop` (the per-token loop; byte-identical to the pre-switch
+   code on CPU, outputs, states and gradients, spikes off and on). Scope: training only, on CUDA, for the student and
+   the teacher's distillation targets inside `train()` (its theta calibration too). Eval, prep and single-token sampling
+   steps (T = 1) run the loop, so every registered read-out is measured on the reference math. Mapping onto fla's DPLR
+   form `S' <- S' exp(gk) + b (a^T S') + k v^T, o = scale S'^T q` (`brain.spiking_twin.wkv_fla_args`): S' = our state
+   transposed (ours [H, V, K], fla [H, K, V]), q = r, gk = log w = -0.606531 sigmoid(w0 + lora) (log space), a = -kk,
+   b = kk * a_gate, scale = 1, layout [B, T, H, N], fp32 state in and out. Kernel input dtype: fp32 (default;
+   `--wkv-dtype bf16` only after its parity case passes). `lower_bound` (fla's 64-chunk scheme) is off.
+   **Parity bar** (`brain/tests/test_spiking_twin_fla.py`; relative L2 error to the fp32 loop): CPU, the mapping equals
+   fla's kernel recurrence and fla's own `dplr_recurrence` reference to fp32 rounding (< 1e-6, outputs, final state,
+   gradients). GPU, tiny random cortex and the real 0.1B teacher, spikes off / on, carried state, nonzero adapters:
+   fp32 spikes off logits <= 2e-3, state <= 2e-3, adapter and weight/theta gradients <= 1e-2, mean token KL <= 1e-4;
+   fp32 spikes on logits / state <= 1e-2, gradients <= 5e-2, KL <= 1e-3 (count flips); bf16 AMP: <= max(the fp32 bar,
+   2 x the bf16 loop's own error). Gradient errors are per parameter (the worst adapter, the worst other weight/theta,
+   and the kernel-only att decay / a / kk group on its own), and each case also runs at T = 512 with checkpointing and
+   at a ragged T = 50 (tiny cortex, spikes on); every fla case asserts the kernel actually ran. The bars are set before
+   data [E]: they allow TF32 inside fla's Triton dots. A
+   failure is not met by moving a bar; it is a mapping bug or a new addendum. `launch_3090.sh kernel` writes
+   `run/KERNEL` with this decision and queues the parity test (a skip counts as a failure); prep and smoke refuse until
+   `run/PARITY_OK` exists for the current code (hash of the twin, plastic_cortex, the E1 harness, the test and fla's
+   installed RECORD), and the gate refuses a smoke whose recorded kernel differs from `run/KERNEL`. **The throughput gate is unchanged** (200-step smoke,
+   >= 10k tok/s, else STOP).
 2. **SpikeOPD is known from its abstract only.** a2 is the generic self-generated-prefix variant, not the published
    recipe.
 3. **The chat data is the teacher's own text.** This flatters the teacher on chat ppl. WT103 val is the clean measure,

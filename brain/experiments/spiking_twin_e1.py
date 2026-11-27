@@ -20,6 +20,9 @@ checkpoint, one eval unit) is written atomically (tmp + os.replace) and skipped 
 
   BRAIN_ALLOW_W3090=1 python -m brain.experiments.spiking_twin_e1 prep  --out-dir D [--device cuda]
   BRAIN_ALLOW_W3090=1 python -m brain.experiments.spiking_twin_e1 train --arm a --seed 7 --out-dir D [--max-steps N]
+      [--wkv loop|fla] [--wkv-dtype fp32|bf16]   (fla = fla-core 0.6.0 chunk_rwkv7, training on CUDA only; prereg
+      section 7 item 1. Teacher targets and student both use it inside train(); eval, prep and a2 sampling steps
+      (T = 1) run the loop.)
   BRAIN_ALLOW_W3090=1 python -m brain.experiments.spiking_twin_e1 eval  --arm a --seed 7 --out-dir D
   python -m brain.experiments.spiking_twin_e1 score --out-dir D [--seeds 42,43,44,100,101,102]
   python -m brain.experiments.spiking_twin_e1 estimate [--tok-per-s 25000]
@@ -252,9 +255,11 @@ def load_teacher(device, model=None):
     return Cortex(model_path=path, device=device, cuda_precision="fp32")
 
 
-def make_twin(cortex, *, spikes=True, trainable=False, ckpt=False, blob=None):
+def make_twin(cortex, *, spikes=True, trainable=False, ckpt=False, blob=None, wkv="loop", wkv_dtype="fp32"):
+    import torch
     from brain.spiking_twin import SpikingTwin
-    tw = SpikingTwin(cortex, spikes=spikes, trainable=trainable, ckpt=ckpt, max_count=CFG["max_count"])
+    tw = SpikingTwin(cortex, spikes=spikes, trainable=trainable, ckpt=ckpt, max_count=CFG["max_count"], wkv=wkv,
+                     wkv_dtype={"fp32": torch.float32, "bf16": torch.bfloat16}[wkv_dtype])
     if blob is not None:
         tw.load_weights(blob)
     return tw
@@ -290,8 +295,10 @@ def distill_loss(student, teacher, toks, cfg=CFG):
 
 
 def train(arm, seed, out_dir, device="cuda", precision="bf16", max_steps=None, cfg=CFG, cortex=None, pools=None,
-          log=print):
-    """Train one arm; resumes from ckpt_<arm>_s<seed>.pt. Returns the train record (also written as JSON)."""
+          log=print, wkv="loop", wkv_dtype="fp32"):
+    """Train one arm; resumes from ckpt_<arm>_s<seed>.pt. Returns the train record (also written as JSON).
+    wkv="fla" (CUDA only) computes the WKV state recurrence of the teacher targets and the student with fla's
+    chunk_rwkv7; the default "loop" is the per-token loop, unchanged."""
     import numpy as np
     import torch
     assert arm in TRAINED, arm
@@ -303,8 +310,10 @@ def train(arm, seed, out_dir, device="cuda", precision="bf16", max_steps=None, c
         pools = (np.load(os.path.join(out_dir, "fineweb.npy"), mmap_mode="r"),
                  np.load(os.path.join(out_dir, "chat_train.npy"), mmap_mode="r"))
     torch.manual_seed(seed)
-    teacher = make_twin(cortex, spikes=False)
-    student = make_twin(cortex, spikes=True, trainable=True, ckpt=(device == "cuda"))
+    if wkv != "loop" and device != "cuda":
+        raise SystemExit(f"--wkv {wkv} runs on CUDA only")
+    teacher = make_twin(cortex, spikes=False, wkv=wkv, wkv_dtype=wkv_dtype)
+    student = make_twin(cortex, spikes=True, trainable=True, ckpt=(device == "cuda"), wkv=wkv, wkv_dtype=wkv_dtype)
     # Distillation trains the weights and thetas only. The slow-store adapters stay at zero and out of the forward
     # (enabled=False): they are sleep's, and a trained twin is saved without them (weights_state).
     student.enabled = teacher.enabled = False
@@ -404,6 +413,9 @@ def train(arm, seed, out_dir, device="cuda", precision="bf16", max_steps=None, c
            "final_loss": losses[-1] if losses else None, "loss_tail": losses[-20:],
            "init": "rwkv" if arm == "b" else "teacher", "init_fallback": getattr(student, "init_fallback", None),
            "provenance": provenance(device, precision)}
+    if wkv != "loop":     # the record carries the kernel only when it is not the default (old records unchanged)
+        from brain.spiking_twin import fla_version
+        rec["wkv"] = {"kernel": wkv, "dtype": wkv_dtype, "fla_core": fla_version()}   # measured, not the constant
     if step >= n_total:
         torch_save(student.weights_state(), final)
         write_json(rec_path, rec)
@@ -740,6 +752,10 @@ def main(argv=None):
         if name == "train":
             p.add_argument("--precision", default="bf16", choices=["bf16", "fp32"])
             p.add_argument("--max-steps", type=int, default=None, help="smoke / throughput gate; never a final twin")
+            p.add_argument("--wkv", default="loop", choices=["loop", "fla"],
+                           help="WKV training kernel: loop (default) or fla (fla-core 0.6.0 chunk_rwkv7, CUDA)")
+            p.add_argument("--wkv-dtype", default="fp32", choices=["fp32", "bf16"],
+                           help="dtype of the tensors handed to the fla kernel (its state is fp32)")
         else:
             p.add_argument("--units", default="ppl,sleep,ladder,transcript")
     p = sub.add_parser("score")
@@ -775,7 +791,7 @@ def main(argv=None):
         chat_pool(teacher, c.pipe, CFG["chat_train_tokens"], 0, os.path.join(a.out_dir, "chat_train.npy"), CFG["seq"])
         write_json(os.path.join(a.out_dir, "prep.json"), {"cfg": CFG, "provenance": provenance(a.device, "fp32")})
     elif a.cmd == "train":
-        train(a.arm, a.seed, a.out_dir, a.device, a.precision, a.max_steps)
+        train(a.arm, a.seed, a.out_dir, a.device, a.precision, a.max_steps, wkv=a.wkv, wkv_dtype=a.wkv_dtype)
     elif a.cmd == "eval":
         evaluate_arm(a.arm, a.seed, a.out_dir, a.device, tuple(u for u in a.units.split(",") if u))
 
