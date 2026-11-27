@@ -1,0 +1,14 @@
+# Infrastructure smoke of tools/engine (python -m tools.engine --smoke): no model, no claim, no prereg.
+# The driver overrides seeds (1..N), placement (seed i -> node i) and six_params (--imports, --sleep) for the nodes in use.
+name: engine_smoke
+question: "Does the engine ship, launch, reattach, pull and resume on every pool node?"
+prereg: "none: infrastructure smoke, no measurement"
+status: SMOKE
+module: engine_smoke.py
+verdict: verdict
+cmd: '"$PY" -m tools.engine.smoke_job --seed {seed} --out {out} {params}'
+six_params: "--imports torch,rwkv --sleep 20"
+seeds: [1]
+memory_gb: 2
+requires: [brain-lane]          # exercises the requires check (every node has ~/brain-lane)
+ladder: {max_len: 1, next: {}}

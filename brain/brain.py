@@ -226,7 +226,8 @@ class Brain:
                  sleep_downscale: float | None = None, rank: str | None = None,
                  downscale_factors: str = "B", downscale_when: str = "before",
                  replay_priority: str | None = None, keep_bank: str | None = None,
-                 recall_skip_permanent: bool = False):
+                 recall_skip_permanent: bool = False, replay_strengthen: float | None = None,
+                 strength_setpoint: float | None = None):
         """inquiry: novelty gate for "it asks about what is new to it". Default ON since 2026-11-19 = "auto": the size bar
         (INQUIRY_BAR_BY_SIZE; a size with no row, e.g. 0.1B, stays off) and, in a new home, the lesson lived at birth.
         Six-seed PASS NARROWED + weekly-with-sleep guard (results/2026-11-19-inquiry-{test,weekly}-1.5b.md). None = off
@@ -358,6 +359,12 @@ class Brain:
         carry_penalty: (switch, default OFF) the mouth's presence/frequency penalty counts carry across the turns since
         waking, decaying 0.996 per generated token, as the model family's own chat tooling runs it (reference arm;
         results/2026-11-16-onset-baseline.md). Off: the counts reset every turn. Not saved.
+        replay_strengthen / strength_setpoint: (switches, default OFF = None: Brain.sleep byte-identical) reachable
+        strength (brain/replay_strength.py; DRAFT prereg brain/research/2026-11-27-reachable-strength-prereg-DRAFT.md).
+        After a night's replay, replay_strengthen = b adds b per replay draw to each non-permanent replayed episode's own
+        strength and restarts its decay clock at the night; strength_setpoint = S then scales every non-permanent strength
+        by one factor so their mean effective strength is S (ratios kept). The draw counts are sleep.py's own draw sequence
+        for that night. Either may be on alone. The night's record is in last_strength_record. Not saved: pass it each time.
         fake_think: (switch, default OFF) each reply is prompted with the model makers' recommended chat prefix,
         "Assistant: <think></think" (the cortex continues ">" + reply; the ">" is not spoken), and the exchange enters the
         conversation state in that form (rwkv7-g1 model card: "Fake think prompt (great result, highly recommended)").
@@ -420,6 +427,9 @@ class Brain:
         self.own_gain = None if own_gain is None else float(own_gain)
         self.own_gain_copies = bool(own_gain_copies)
         self.recall_skip_permanent = bool(recall_skip_permanent)
+        self.replay_strengthen = None if replay_strengthen is None else float(replay_strengthen)
+        self.strength_setpoint = None if strength_setpoint is None else float(strength_setpoint)
+        self.last_strength_record = None   # the last night's reachable-strength record (only with a switch on)
         self.own_decay = None if own_decay is None else float(own_decay)
         if self.own_decay is not None and (self.own_gain is not None or self.arousal_gain is not None):
             raise ValueError("own_decay excludes own_gain and arousal_gain")
@@ -929,6 +939,12 @@ class Brain:
                                         log=self.sleep_log, guard=guard)
         for prm in plastic.parameters():
             prm.grad = None
+        if self.replay_strengthen is not None or self.strength_setpoint is not None:   # reachable strength (no RNG drawn)
+            from brain.replay_strength import night_update
+            self.last_strength_record = night_update(
+                night_eps, [w for _, w in eps], len(generic), steps or self.sleep_cfg["steps"],
+                self.sleep_seed + self.meta.get("sleeps", 0), now, self.hippocampus.effective_strength,
+                boost=self.replay_strengthen, setpoint=self.strength_setpoint)
         if subset is not None:
             self.last_keep_record = {
                 "bank_size": len(self._keep_bank_texts), "subset_n": len(subset),

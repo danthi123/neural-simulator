@@ -30,6 +30,18 @@ POOL = {"pool40": 23, "pool41": 15, "pool42": 15}   # GB RAM per node
 W3090_GB = 23                                       # RAM budget for the workstation GPU node (kind w3090, opt-in)
 FIT_SLACK = 2                                       # a job's memcap needs ram >= memcap + 2 (20 on 23, 13 on 15 GB)
 REQUIRED = ("name", "prereg", "module", "cmd", "memory_gb", "seeds")
+# Where per-seed data lives on the pool (spec key `placement: "@kr"`). KR night snapshots, life JSONs and trunks were shipped
+# one seed per node by brain/experiments/results/2026-11-25-routing-screen/ship.sh (and routing-ceiling/ship.sh).
+PLACEMENTS = {"kr": {319: "pool40", 320: "pool41", 321: "pool42"}}
+OOM_RC = ("rc=137",)                                # SIGKILL: the cgroup OOM kill under tools/memcap.sh
+STATUSES = ("REGISTERED", "DRAFT", "TODO", "SMOKE")   # TODO never runs; DRAFT runs only with --allow-draft
+# Repo files shipped beside brain/ (the job side of the engine: memcap, the unit bundler, the smoke job). No yaml needed there.
+SHIP_TOOLS = ("tools/memcap.sh", "tools/mem_ok.sh", "tools/engine/__init__.py", "tools/engine/bundle.py",
+              "tools/engine/smoke_job.py")
+
+
+class StopAfterLaunch(Exception):
+    """Raised by an Engine made with stop_after_launch=True once every job of a phase is launched (smoke: driver crash)."""
 
 
 def now():
@@ -47,14 +59,31 @@ def jwrite(path, obj):
 # ---------------------------------------------------------------- spec
 class Spec:
     """One registered experiment. YAML keys: name question prereg module pick verdict cmd model dev_seed dev_grid six_params
-    seeds memory_gb hosts ladder{max_len,on{VERDICT: spec}}. `cmd` tokens: {seed} {model} {params} {out} {device} (cpu on pool nodes, cuda on w3090)."""
+    seeds memory_gb hosts ladder{max_len,on{VERDICT: spec}}, plus
+      status     REGISTERED | DRAFT | TODO | SMOKE (absent = REGISTERED). TODO never runs; DRAFT needs --allow-draft.
+      placement  {seed: node or [nodes]} or "@kr" (PLACEMENTS): a job of that seed (dev or six) runs only there; seeds not
+                 listed run on any fitting node. This is where per-seed data lives, not a preference.
+      requires   paths relative to the node's $HOME that must exist on the node before a job of that seed launches there
+                 (checked once per node and seed; a pinned seed whose data is missing stops the run with the list).
+      vars       {name: value} and seed_vars {seed: {name: value}}: extra {name} tokens for cmd and requires.
+      requires_local  repo-relative files that must exist on the driver (e.g. the registered prereg) before a run.
+      dev_memory_gb   memcap of the dev jobs (default memory_gb), e.g. a measure-first step 0 with a wide cap; an int, or
+                      {seed: gb} (a per-node measure: 21 on the 23 GB node, 11 on the 15 GB ones).
+    dev_grid values are a params string (run on dev_seed) or {params, seed} (a per-seed dev job, e.g. step 0 on every node).
+    A pick may return memcap {seed: gb}: the six-seed job of that seed runs at that cap (<= memory_gb, which sizes the fit).
+    `cmd` tokens: {seed} {model} {params} {out} {device} (cpu on pool nodes, cuda on w3090) {job} (the job name: a dev grid
+    key or s<seed>) {commit} (12 hex of the state's commit, the one in the shipped COMMIT file) {tree} (12 hex of the brain/
+    tree) + vars. {commit}/{job} give a harness that resumes its own units a stable directory across attempts, and a fresh
+    one after --reset at a new commit (units never mix commits)."""
 
     def __init__(self, d, path, repo):
         miss = [k for k in REQUIRED if k not in d]
         if miss:
             raise ValueError(f"spec {path}: missing {miss}")
         self.__dict__.update(dict(dict(question=d["name"], model="", dev_seed=None, dev_grid={}, six_params="", hosts=[],
-                                    pick=None, verdict="verdict", ladder={}), **d))
+                                    pick=None, verdict="verdict", ladder={}, status="REGISTERED", placement={},
+                                    requires=[], vars={}, seed_vars={}, requires_local=[], dev_memory_gb=None), **d))
+        self.normalize()
         self.path, self.repo = Path(path), Path(repo)
         m = Path(self.module)
         m = m if m.is_absolute() else (self.path.parent / m if (self.path.parent / m).exists() else self.repo / m)
@@ -63,6 +92,58 @@ class Spec:
         sp.loader.exec_module(self.mod)
         self.pick_fn = getattr(self.mod, self.pick) if self.pick else None
         self.verdict_fn = getattr(self.mod, self.verdict)
+
+    def normalize(self):
+        if self.status not in STATUSES:
+            raise ValueError(f"spec {self.name}: status {self.status!r} not in {STATUSES}")
+        pl = self.placement or {}
+        if isinstance(pl, str):
+            if not pl.startswith("@") or pl[1:] not in PLACEMENTS:
+                raise ValueError(f"spec {self.name}: placement {pl!r} is not one of {['@' + k for k in PLACEMENTS]}")
+            pl = PLACEMENTS[pl[1:]]
+        self.placement = {int(k): ([v] if isinstance(v, str) else list(v)) for k, v in pl.items()}
+        self.seed_vars = {int(k): dict(v) for k, v in (self.seed_vars or {}).items()}
+        self.vars, self.requires = dict(self.vars or {}), list(self.requires or [])
+
+    def apply(self, over):
+        self.__dict__.update(over)
+        self.normalize()
+        return self
+
+    def mem(self, phase, seed=None, pick=None):
+        if phase == "dev" and self.dev_memory_gb:
+            d = self.dev_memory_gb
+            return d.get(seed, d.get(str(seed), self.memory_gb)) if isinstance(d, dict) else d
+        mc = (pick or {}).get("memcap") if phase == "six" else None
+        if isinstance(mc, dict) and str(seed) in {str(k) for k in mc}:
+            return min(int({str(k): v for k, v in mc.items()}[str(seed)]), self.memory_gb)
+        return self.memory_gb
+
+    def dev_items(self):
+        """[(name, seed, params)] of the dev grid."""
+        return [(n, p.get("seed", self.dev_seed), p["params"]) if isinstance(p, dict) else (n, self.dev_seed, p)
+                for n, p in (self.dev_grid or {}).items()]
+
+    def fill(self, text, seed, tree="", commit="", job=""):
+        """{seed} {tree} {commit} {job} and the vars / seed_vars tokens (seed_vars win)."""
+        try:
+            sv = self.seed_vars.get(int(seed), {})
+        except (TypeError, ValueError):
+            sv = {}
+        for k, v in list({**self.vars, **sv}.items()) + [("seed", seed), ("tree", tree), ("commit", commit), ("job", job)]:
+            text = text.replace("{" + k + "}", str(v))
+        return text
+
+    def todo(self):
+        """Why this spec cannot run yet (status TODO, or a TODO left in its cmd, grid, params, vars or requires), else None."""
+        if self.status == "TODO":
+            return "status TODO"
+        blob = json.dumps([self.cmd, self.dev_grid, self.six_params, self.vars, self.seed_vars, self.requires, self.prereg,
+                           self.requires_local], default=str)
+        if "TODO" in blob:
+            return "a TODO is left in cmd/dev_grid/six_params/vars/requires/prereg"
+        miss = [f for f in self.requires_local if not (self.repo / f).exists()]
+        return f"requires_local missing on the driver: {miss}" if miss else None
 
     @classmethod
     def find(cls, name, repo=REPO):
@@ -75,12 +156,12 @@ class Spec:
         on = (self.ladder or {}).get("next", {})
         return on.get(verdict) or on.get(verdict.split("-")[0])   # exact, else base ("GO-SHY" -> "GO")
 
-    def render(self, seed, params, out, device="cpu"):
+    def render(self, seed, params, out, device="cpu", tree="", commit="", job=""):
         t = self.cmd
-        for k, v in (("{seed}", seed), ("{model}", "$BRAIN_MODEL_DIR/" + self.model if self.model else ""),
-                     ("{params}", params), ("{out}", out), ("{device}", device)):
+        for k, v in (("{params}", params), ("{model}", "$BRAIN_MODEL_DIR/" + self.model if self.model else ""),
+                     ("{out}", out), ("{device}", device)):
             t = t.replace(k, str(v))
-        return t
+        return self.fill(t, seed, tree, commit, job)
 
 
 # ---------------------------------------------------------------- nodes
@@ -178,16 +259,30 @@ def make_nodes(backend, names=None, local_root=None, allow_w3090=False):
 
 # ---------------------------------------------------------------- engine
 class Engine:
-    def __init__(self, spec_name, nodes, repo=REPO, poll=30, state_path=None, dry=False, log=print):
+    def __init__(self, spec_name, nodes, repo=REPO, poll=30, state_path=None, dry=False, log=print, allow_draft=False,
+                 overrides=None, stop_after_launch=False):
         self.repo, self.nodes, self.poll, self.dry, self.log = Path(repo), nodes, poll, dry, log
-        self.root = Spec.find(spec_name, repo)
+        self.allow_draft, self.overrides, self.stop_after_launch = allow_draft, dict(overrides or {}), stop_after_launch
+        self.root = self.spec(spec_name)
         self.res = self.repo / RES
         self.state_path = Path(state_path or self.res / f"ENGINE_STATE_{self.root.name}.json")
-        self.shipped, self.fails = set(), {}
+        self.shipped, self.fails, self.req = set(), {}, {}
         ws = socket.gethostname()
         for n in nodes:                              # never run on the workstation (w3090 is the explicit opt-in exception)
             if n.kind == "ssh" and n.name.split(".")[0] == ws.split(".")[0]:
                 raise SystemExit(f"REFUSED: node {n.name} is this workstation ({ws}); the engine never runs jobs here")
+
+    def spec(self, name):
+        s = Spec.find(name, self.repo)
+        return s.apply(self.overrides[s.name]) if s.name in self.overrides else s
+
+    def check_runnable(self, spec):
+        why = spec.todo()
+        if why:
+            raise SystemExit(f"REFUSED: spec {spec.name} is not ready to run ({why}); --dry-run shows the plan")
+        if spec.status == "DRAFT" and not self.allow_draft:
+            raise SystemExit(f"REFUSED: spec {spec.name} is DRAFT (prereg {spec.prereg} pending pre-data review); "
+                             "pass --allow-draft only for a registered dev/smoke step")
 
     # -- state
     def load(self, reset=False):
@@ -218,14 +313,23 @@ class Engine:
             Path(idx).unlink(missing_ok=True)
         return git("rev-parse", "HEAD"), tree
 
+    def ship_key(self):
+        """brain/ tree + a hash of the shipped tools files: a changed bundler or memcap ships a new repo dir."""
+        import hashlib
+        h = hashlib.sha1()
+        for f in SHIP_TOOLS:
+            if (self.repo / f).exists():
+                h.update(f.encode() + b"\0" + (self.repo / f).read_bytes())
+        return f"{self.st['tree'][:12]}_{self.st['commit'][:8]}_{h.hexdigest()[:8]}"   # one COMMIT per shipped dir
+
     def ensure_shipped(self, node):
-        c = self.st["tree"][:12]
+        c = self.ship_key()
         d = f"brain-lane/engine/repo_{c}"
         if (node.name, c) in self.shipped:
             return d
         if node.sh(f"test -f {node.home}/{d}/.shipped")[0] != 0:
             node.put(self.repo / "brain", f"{d}/brain")
-            for f in ("tools/memcap.sh", "tools/mem_ok.sh"):
+            for f in SHIP_TOOLS:
                 if (self.repo / f).exists():
                     node.put(self.repo / f, f"{d}/{f}")
             node.sh(f"echo {self.st['commit']} > {node.home}/{d}/COMMIT; touch {node.home}/{d}/.shipped")
@@ -235,19 +339,22 @@ class Engine:
     # -- jobs
     def job_script(self, node, spec, job, repo_dir, jd):
         out = f"{node.home}/{jd}/out.json"
-        cmd = spec.render(job["seed"], job["params"], out, "cuda" if node.kind == "w3090" else "cpu")
+        phase, name = job["key"].split("/", 1)
+        cmd = spec.render(job["seed"], job["params"], out, "cuda" if node.kind == "w3090" else "cpu", self.st["tree"][:12],
+                          self.st["commit"][:12], name)
         run = f"bash -c {shlex.quote(cmd)}"
         if node.memcap:
-            run = f"bash tools/memcap.sh {spec.memory_gb} -- {run}"
+            run = f"bash tools/memcap.sh {self.mem(spec, phase, job['seed'])} -- {run}"
         py = f"PY={shlex.quote(node.py)}" if node.py else \
             'PY=$HOME/brain-lane/venv/bin/python; [ -x "$PY" ] || PY=$HOME/derisk-pool/sim/.venv/bin/python'
         w = node.kind == "w3090"
         guard = "" if node.local else f'[ "$(hostname)" != {shlex.quote(socket.gethostname())} ] || exit 96\n'
         model = "${BRAIN_MODEL_DIR:-$HOME/brain-lane/models}" if w else "$HOME/brain-lane/models"
+        hostflag = {"ssh": " POOL_NODE=1", "w3090": " BRAIN_ALLOW_W3090=1"}.get(node.kind, " ENGINE_LOCAL_TEST=1")
         return f"""{guard}[ -f {node.home}/{jd}/pid ] && kill -0 $(cat {node.home}/{jd}/pid) 2>/dev/null && exit 0
 echo $$ > {node.home}/{jd}/pid
 cd {node.home}/{repo_dir} || exit 97
-export COMMIT=$(cat COMMIT) HOST=$(hostname) OMP_NUM_THREADS=$(nproc) BRAIN_MODEL_DIR={model}{" BRAIN_DEVICE=cuda" if w else ""}
+export COMMIT=$(cat COMMIT) HOST=$(hostname) OMP_NUM_THREADS=$(nproc) BRAIN_MODEL_DIR={model}{" BRAIN_DEVICE=cuda" if w else ""}{hostflag}
 export PYTHONPATH=$PWD:$HOME/brain-lane/pylib
 {py}; export PY
 {run} > {node.home}/{jd}/log 2>&1
@@ -261,7 +368,9 @@ echo $rc > {node.home}/{jd}/rc
         script = self.job_script(node, spec, job, repo_dir, jd)
         job.update(status="launching", node=node.name, jd=jd, attempts=job["attempts"] + 1, started=now(), t0=time.time())
         self.save()                                  # recorded BEFORE node.sh: a crash here is resumed, not duplicated
-        rc, _ = node.sh(f"mkdir -p {node.home}/{jd} && printf %s {shlex.quote(script)} > {node.home}/{jd}/job.sh && "
+        d = f"{node.home}/{jd}"                      # a reused jd (--reset at the same tree) must not report the old rc
+        rc, _ = node.sh(f"mkdir -p {d} && {{ [ -f {d}/pid ] && kill -0 $(cat {d}/pid) 2>/dev/null || rm -f {d}/rc {d}/out.json; }} && "
+                        f"printf %s {shlex.quote(script)} > {node.home}/{jd}/job.sh && "
                         f"(nohup setsid bash {node.home}/{jd}/job.sh >/dev/null 2>&1 </dev/null &)")
         if rc != 0:                                  # same jd is reused next time; job_script exits if that pid is alive
             job.update(status="pending", node=None, attempts=job["attempts"] - 1)
@@ -309,11 +418,15 @@ echo $rc > {node.home}/{jd}/rc
         if ok:
             job.update(status="done", finished=now())
         else:
-            try:
-                node.get(f"{node.home}/{job['jd']}/log", str(dest) + f".fail{job['attempts']}.log")
-            except Exception:
-                pass
-            job.update(status="pending" if job["attempts"] < 2 else "failed", node=None, error=s)   # retry once
+            for f, suf in (("log", "log"), ("out.json", "json")):   # out.json: a partial bundle, if the job wrote one
+                try:
+                    node.get(f"{node.home}/{job['jd']}/{f}", str(dest) + f".fail{job['attempts']}.{suf}")
+                except Exception:
+                    pass
+            oom = s in OOM_RC
+            if oom:                                  # a memcap (OOM) kill repeats at the same cap: never retried
+                s = f"{s} (memcap {self.mem(spec, job['key'].split('/', 1)[0], job['seed'])} GB: OOM kill or kill -9; not retried)"
+            job.update(status="pending" if job["attempts"] < 2 and not oom else "failed", node=None, error=s)   # retry once
         self.save()
 
     def run_jobs(self, spec, ss, phase, items):
@@ -325,10 +438,11 @@ echo $rc > {node.home}/{jd}/rc
             if j["status"] == "done" and not (outdir / f"{name}.json").exists():
                 j["status"] = "pending"          # result file lost locally: redo
             jobs.append((j, outdir / f"{name}.json"))
-        fits = [n for n in self.nodes if n.ram_gb >= spec.memory_gb + FIT_SLACK and (not spec.hosts or n.name in spec.hosts)]
-        if not fits:
-            raise SystemExit(f"no node fits {spec.name}: needs memcap {spec.memory_gb} GB + {FIT_SLACK}, hosts={spec.hosts}")
+        fit = {j["key"]: self.fits(spec, phase, j["seed"]) for j, _ in jobs}
         by = {n.name: n for n in self.nodes}
+        for j, _ in jobs:                         # placement and data, once, before anything launches
+            if j["status"] == "pending":
+                self.preflight(spec, j["seed"], fit[j["key"]])
         for j, _ in jobs:                         # crash/reboot: reattach to running/launching jobs, else rerun
             if j["status"] in ("running", "launching"):
                 if j["node"] not in by or (j["status"] == "launching" and self.status(by[j["node"]], j) == "dead"):
@@ -344,33 +458,87 @@ echo $rc > {node.home}/{jd}/rc
                         self.finish_job(by[j["node"]], spec, j, s, dest)
             busy = {j["node"] for j, _ in jobs if j["status"] == "running"}
             for j, _ in jobs:
-                free = [n for n in fits if n.name not in busy and n.usable()] if j["status"] == "pending" else []
+                mem = self.mem(spec, phase, j["seed"])
+                free = [n for n in self.allowed(spec, j["seed"], fit[j["key"]]) if n.name not in busy and n.usable()
+                        and self.req_ok(n, spec, j["seed"]) is True] if j["status"] == "pending" else []
                 if not free:
                     continue
                 n = free[0]
                 avail = n.sh("awk '/MemAvailable/{print int($2/1048576)}' /proc/meminfo")[1].strip()
-                if avail.isdigit() and int(avail) < spec.memory_gb:
+                if avail.isdigit() and int(avail) < mem:
                     continue                      # node busy with something else: wait
                 if self.launch(n, spec, j):
                     busy.add(n.name)
                     self.log(f"[{spec.name}] {j['key']} -> {n.name} (attempt {j['attempts']})")
+            if self.stop_after_launch and jobs and all(j["status"] == "running" for j, _ in jobs):
+                raise StopAfterLaunch(spec.name)
             if any(j["status"] == "failed" for j, _ in jobs) and not any(j["status"] in ("running",) for j, _ in jobs):
                 break
             if any(j["status"] in ("pending", "running") for j, _ in jobs):
                 time.sleep(self.poll)
-        bad = [j["key"] for j, _ in jobs if j["status"] == "failed"]
+        bad = [j["key"] + (f" [{j['error']}]" if j.get("error") else "") for j, _ in jobs if j["status"] == "failed"]
         return {j["key"].split("/", 1)[1]: json.loads(d.read_text()) for j, d in jobs if j["status"] == "done"}, bad
+
+    # -- placement and data
+    def mem(self, spec, phase, seed):
+        return spec.mem(phase, seed, ((getattr(self, "st", None) or {}).get("specs", {}).get(spec.name) or {}).get("pick"))
+
+    def fits(self, spec, phase, seed):
+        mem = self.mem(spec, phase, seed)
+        f = [n for n in self.nodes if n.ram_gb >= mem + FIT_SLACK and (not spec.hosts or n.name in spec.hosts)]
+        if not f:
+            raise SystemExit(f"no node fits {spec.name} {phase}: needs memcap {mem} GB + {FIT_SLACK}, hosts={spec.hosts}")
+        return f
+
+    def allowed(self, spec, seed, fits):
+        pl = spec.placement.get(int(seed)) if seed is not None else None
+        return [n for n in fits if pl is None or n.name in pl]
+
+    def req_ok(self, node, spec, seed):
+        """True: every `requires` path exists on the node for this seed; a list: the missing paths; None: ssh failed (retry)."""
+        if not spec.requires:
+            return True
+        key = (node.name, spec.name, seed)
+        if key not in self.req:
+            paths = [spec.fill(p, seed, self.st["tree"][:12], self.st["commit"][:12]) for p in spec.requires]
+            rc, out = node.sh("".join(f"[ -e {node.home}/{shlex.quote(p)} ] || echo MISSING:{shlex.quote(p)}\n" for p in paths)
+                              + "echo REQ-DONE")
+            if rc != 0 or "REQ-DONE" not in out:
+                return None
+            miss = [x.split(":", 1)[1] for x in out.splitlines() if x.startswith("MISSING:")]
+            self.req[key] = miss or True
+        return self.req[key]
+
+    def preflight(self, spec, seed, fits):
+        pl = spec.placement.get(int(seed)) if seed is not None else None
+        ok = self.allowed(spec, seed, fits)
+        if not ok:
+            raise SystemExit(f"[{spec.name}] seed {seed} is placed on {pl}, but no such node is in use and fits "
+                             f"(nodes {[n.name for n in self.nodes]}, fitting {[n.name for n in fits]}, hosts {spec.hosts})")
+        res = {n.name: self.req_ok(n, spec, seed) for n in ok}
+        if all(isinstance(r, list) for r in res.values()):
+            raise SystemExit(f"[{spec.name}] seed {seed}: required data missing on every allowed node: "
+                             + "; ".join(f"{k}: {v}" for k, v in res.items()))
+
+    def preflight_all(self, spec):
+        """Placement and `requires` of EVERY seed of the spec (dev seed at the dev cap, six seeds at the six cap), before the
+        first dev job launches: a six-seed node missing its data must not be found only after hours of dev work."""
+        for phase, seeds in (("dev", sorted({s for _, s, _ in spec.dev_items()}, key=str)), ("six", spec.seeds)):
+            for s in seeds:
+                self.preflight(spec, s, self.fits(spec, phase, s))
 
     # -- phases
     def step(self, spec):
         ss = self.st["specs"].setdefault(spec.name, {"phase": "dev", "jobs": {}, "pick": None, "verdict": None})
-        ctx = {"repo": str(self.repo), "spec": spec.name, "res": str(self.res / spec.name)}
+        if ss["phase"] in ("dev", "pick"):
+            self.preflight_all(spec)
+        ctx = {"repo": str(self.repo), "spec": spec.name, "res": str(self.res / spec.name), "commit": self.st["commit"],
+               "tree": self.st["tree"], "vars": dict(spec.vars), "memory_gb": spec.memory_gb}
         if spec.name not in self.st["chain"]:
             self.st["chain"].append(spec.name)
             self.st["variants"].setdefault(spec.question, []).append(spec.name)
         if ss["phase"] == "dev":
-            dev, bad = self.run_jobs(spec, ss, "dev", [(n, spec.dev_seed, p) for n, p in spec.dev_grid.items()]) \
-                if spec.dev_grid else ({}, [])
+            dev, bad = self.run_jobs(spec, ss, "dev", spec.dev_items()) if spec.dev_grid else ({}, [])
             if bad:
                 return self.conclude(spec, ss, {"verdict": "ERROR", "summary": f"dev jobs failed twice: {bad}"})
             ss["phase"] = "pick"
@@ -381,6 +549,8 @@ echo $rc > {node.home}/{jd}/rc
             ss["pick"] = spec.pick_fn(dev, ctx) if spec.pick_fn else {"params": spec.six_params}
             if ss["pick"] is None:
                 return self.conclude(spec, ss, {"verdict": "NEGATIVE-DEV", "summary": "no dev candidate met the pick rule; six seeds not run"})
+            if "stop" in ss["pick"]:                  # the prereg's own stop rule on a dev step (e.g. a step-0 timing bar)
+                return self.conclude(spec, ss, {"verdict": "HOLD-DEV", "summary": f"pick stopped the chain: {ss['pick']['stop']}"})
             ss["phase"] = "six"
             self.save()
         if ss["phase"] == "six":
@@ -420,14 +590,26 @@ echo $rc > {node.home}/{jd}/rc
         while spec and spec.name not in seen:
             seen.append(spec.name)
             fits = [n.name for n in self.nodes if n.ram_gb >= spec.memory_gb + FIT_SLACK and (not spec.hosts or n.name in spec.hosts)]
-            self.log(f"== {spec.name} (question '{spec.question}'), prereg {spec.prereg}\n   memcap {spec.memory_gb} GB -> nodes {fits or 'NONE FIT'}; "
+            dmem = {s: spec.mem("dev", s) for _, s, _ in spec.dev_items()}
+            dfits = {s: [n.name for n in self.nodes if n.ram_gb >= m + FIT_SLACK and (not spec.hosts or n.name in spec.hosts)]
+                     for s, m in dmem.items()}
+            self.log(f"== {spec.name} (question '{spec.question}'), prereg {spec.prereg}, status {spec.status}"
+                     f"{' (NOT RUNNABLE: ' + spec.todo() + ')' if spec.todo() else ''}\n   memcap {spec.memory_gb} GB -> nodes {fits or 'NONE FIT'}; "
                      f"one job per node; ladder {spec.ladder or 'none'}")
-            for n, p in spec.dev_grid.items():
-                self.log(f"   dev   {n}: {spec.render(spec.dev_seed, p, '<out>')}")
-            self.log(f"   pick  {spec.pick or 'none'} -> six seeds {spec.seeds}: {spec.render('<seed>', '<params from pick>', '<out>')}")
+            if spec.dev_grid and set(dmem.values()) != {spec.memory_gb}:
+                self.log(f"   dev memcap {{seed: GB}} {dmem} -> nodes {dfits}")
+            if spec.placement:
+                self.log(f"   placement {{seed: nodes}} {spec.placement}")
+            for s in sorted({spec.dev_seed, *spec.seeds} - {None}, key=str) if spec.requires else []:
+                self.log(f"   requires s{s} (under $HOME): {[spec.fill(p, s, '<tree>', '<commit>') for p in spec.requires]}")
+            for n, s, p in spec.dev_items():
+                self.log(f"   dev   {n} (s{s}): {spec.render(s, p, '<out>', tree='<tree>', commit='<commit>', job=n)}")
+            six_seeds = [s for s in spec.seeds if s in spec.seed_vars] if spec.seed_vars else ['<seed>']   # seed_vars: per seed
+            for s in six_seeds:
+                self.log(f"   pick  {spec.pick or 'none'} -> six seeds {spec.seeds}: {spec.render(s, '<params from pick>', '<out>', tree='<tree>', commit='<commit>', job=f's{s}')}")
             self.log(f"   verdict {spec.verdict}; results -> {RES}/{spec.name}/, digest -> {RES}/ENGINE_DIGEST.md")
             nxt = [v for v in (spec.ladder or {}).get("next", {}).values() if v]
-            spec = Spec.find(nxt[0], self.repo) if nxt and (self.repo / "tools/engine/specs" / f"{nxt[0]}.yaml").exists() else None
+            spec = self.spec(nxt[0]) if nxt and (self.repo / "tools/engine/specs" / f"{nxt[0]}.yaml").exists() else None
 
     def run(self, reset=False):
         if self.dry:
@@ -440,13 +622,75 @@ echo $rc > {node.home}/{jd}/rc
         if not self.st.get("tree"):
             self.st["commit"], self.st["tree"] = head, tree
         while self.st["current"]:
-            self.step(Spec.find(self.st["current"], self.repo))
+            spec = self.spec(self.st["current"])
+            if self.st["specs"].get(spec.name, {}).get("phase") != "done":
+                self.check_runnable(spec)
+            self.step(spec)
         return self.st["finished"]
+
+
+# ---------------------------------------------------------------- smoke
+SMOKE = "engine_smoke"
+
+
+def smoke(nodes, repo=REPO, poll=5, log=print, imports="torch,rwkv", sleep_s=20, allow_draft=False):
+    """One tiny real job per node (imports only, no model), end to end: ship -> launch -> driver crash right after launch ->
+    a fresh driver reattaches (status) -> pull out.json + log -> a third driver resumes a finished chain and launches nothing.
+    Seed i is placed on node i (the placement path), every seed requires ~/brain-lane (the requires path). Returns the report."""
+    repo, nodes = Path(repo), list(nodes)
+    over = {SMOKE: {"seeds": list(range(1, len(nodes) + 1)), "placement": {i + 1: n.name for i, n in enumerate(nodes)},
+                    "six_params": f"--imports {imports} --sleep {sleep_s}"}}
+    res = repo / RES
+    mk = lambda **k: Engine(SMOKE, nodes, repo=repo, poll=poll, log=log, overrides=over, allow_draft=allow_draft, **k)
+    e1 = mk(stop_after_launch=True)
+    e1.state_path.unlink(missing_ok=True)
+    shutil.rmtree(res / SMOKE, ignore_errors=True)
+    for n in nodes:                                   # the smoke's own job dirs only (a fresh launch count per run)
+        n.sh(f"rm -rf {n.home}/brain-lane/engine/jobs/{SMOKE}-*")
+    checks, t0 = {}, time.time()
+    try:
+        e1.run()
+        checks["crash_after_launch"] = False          # never reached StopAfterLaunch
+    except StopAfterLaunch:
+        jobs = e1.st["specs"][SMOKE]["jobs"]
+        checks["crash_after_launch"] = all(j["status"] == "running" and j["attempts"] == 1 for j in jobs.values())
+        checks["placement"] = all(j["node"] == nodes[j["seed"] - 1].name for j in jobs.values())
+    e2 = mk()
+    v2 = e2.run()
+    jobs = e2.st["specs"][SMOKE]["jobs"]
+    checks["reattached_not_relaunched"] = all(j["attempts"] == 1 and j["status"] == "done" for j in jobs.values())
+    checks["pulled"] = all((res / SMOKE / "six" / f"s{i}.json").exists() and (res / SMOKE / "six" / f"s{i}.json.log").exists()
+                           for i in over[SMOKE]["seeds"])
+    shipped = {}
+    for n in nodes:
+        rc, out = n.sh(f"cat {n.home}/brain-lane/engine/repo_{e2.ship_key()}/COMMIT && "
+                       f"test -f {n.home}/brain-lane/engine/repo_{e2.ship_key()}/.shipped && "
+                       f"test -f {n.home}/brain-lane/engine/repo_{e2.ship_key()}/tools/engine/bundle.py && echo SHIP-OK")
+        shipped[n.name] = rc == 0 and "SHIP-OK" in out and e2.st["commit"] in out
+    checks["shipped"] = all(shipped.values())
+    e3, launched = mk(), []
+    real = e3.launch
+    e3.launch = lambda *a: launched.append(a) or real(*a)
+    v3 = e3.run()
+    checks["resume_finished_is_noop"] = v3 == v2 and not launched
+    checks["verdict_ok"] = v2 == "SMOKE-OK"
+    vj = json.loads((res / SMOKE / "verdict.json").read_text())
+    rep = {"ok": all(checks.values()), "checks": checks, "shipped": shipped, "verdict": v2, "per_seed": vj.get("per_seed"),
+           "nodes": [n.name for n in nodes], "commit": e2.st["commit"], "tree": e2.st["tree"], "wall_s": round(time.time() - t0, 1),
+           "when": now(), "driver": socket.gethostname()}
+    jwrite(res / SMOKE / "smoke_report.json", rep)
+    log(json.dumps({k: rep[k] for k in ("ok", "checks", "verdict", "wall_s")}, indent=1))
+    return rep
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m tools.engine")
-    ap.add_argument("spec")
+    ap.add_argument("spec", nargs="?")
+    ap.add_argument("--smoke", action="store_true", help="one tiny real job per node (imports torch, rwkv; no model): "
+                    "ship/launch/status/pull/resume end to end; writes results/engine_smoke/smoke_report.json")
+    ap.add_argument("--smoke-imports", default="torch,rwkv")
+    ap.add_argument("--smoke-sleep", type=float, default=20)
+    ap.add_argument("--allow-draft", action="store_true", help="run a spec whose status is DRAFT (never TODO)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reset", action="store_true", help="forget the state file and start the chain again")
     ap.add_argument("--backend", default="ssh", choices=["ssh", "local"], help="local = tests only")
@@ -456,4 +700,10 @@ def main(argv=None):
     ap.add_argument("--allow-w3090", action="store_true", help="also use this workstation's GPU, only while idle (<2 GB, no compute apps)")
     a = ap.parse_args(argv)
     nodes = make_nodes(a.backend, a.nodes.split(",") if a.nodes else None, a.local_root, a.allow_w3090)
-    print("final verdict:", Engine(a.spec, nodes, poll=a.poll, dry=a.dry_run).run(a.reset))
+    if a.smoke:
+        rep = smoke(nodes, poll=min(a.poll, 5), imports=a.smoke_imports, sleep_s=a.smoke_sleep)
+        print("smoke:", "OK" if rep["ok"] else "FAILED")
+        raise SystemExit(0 if rep["ok"] else 1)
+    if not a.spec:
+        ap.error("spec is required (or --smoke)")
+    print("final verdict:", Engine(a.spec, nodes, poll=a.poll, dry=a.dry_run, allow_draft=a.allow_draft).run(a.reset))

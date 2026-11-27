@@ -1,7 +1,8 @@
 # Sleep-drift wall: recipe check against the Lift-Gate-Glue persistence literature, and one offline screen (2026-11-27)
 
 Status: a design note, NOT a registered prereg. Nothing was run. Revised 11-27 after a design check (changes listed in
-section 6); the screen rule in section 4 is DRAFT pending pre-data review (sonnet, per the prereg habit). Written read-only against `brain/sleep.py`,
+section 6). **The screen's rule now lives in `brain/research/2026-11-27-mix-night-prereg.md` (DRAFT pending pre-data review);
+where section 4 below and that file differ, the prereg governs.** Written read-only against `brain/sleep.py`,
 `brain/brain.py` (Brain.sleep, `_keep_bank`, `_night_episodes`), `brain/research/2026-11-23-stage2-test2-prereg.md`,
 `results/2026-11-22-kp-dev-read-1.5b.md`, `results/2026-11-22-kp-gate-replications-1.5b.md`, and
 `Lift-Gate-Glue/docs/SN4_PERSISTENCE_PLAN_2026-11-26.md` lines 40-125 (read as data). Record check run
@@ -98,7 +99,10 @@ and the keep bank are already declared). None adds host logic about world, body 
    retrieval (excluded), and any new bank texts written by the teacher as keep material (a scaffold we would have to
    declare; only worth it if arms 2-3 both fail).
 
-## 4. The screen: `mix-night-screen` (offline, pool CPU fp32, $0 cloud). DRAFT rule pending pre-data review
+## 4. The screen: `mix-night-screen` (offline, pool CPU fp32, $0 cloud). Superseded by `2026-11-27-mix-night-prereg.md`
+
+(Kept as the design record. The recheck fixes of 11-27 are in the prereg and section 6 item 12; the off-frame set is written
+and hashed; placement and RAM measurement are in the prereg section 6.)
 
 **Question.** Does anything in the REMIX/keep-coverage family reduce multi-night language drift on the K-P slept store, and
 how much of the drift is content-independent?
@@ -239,4 +243,14 @@ D_foreign = A5f - n12. A seed is READABLE only if D_real > 2 x noise_s; fewer th
 9. The off-frame set needs a registered hash and a run-time refusal on mismatch; the scorer is `mix_night_screen.py score`.
 10. CE-vs-KL equivalence caveats (forced frame, decode/re-encode) added in section 2.
 11. Compute recounted: 87 night-sleeps, not 63; the wall estimate moves from 12-13 h to about 17 h (placeholder inputs).
-Open before launch: write and hash the 12 off-frame passages; time step 0; the pre-data review of the DRAFT rule.
+12. Recheck of the harness (11-27, later): a missing A0r, A0L or A0 n13 unit, or a missing banked n13 KL, used to be SKIPPED by
+    the instrument gate (only a False voided); now any unread instrument check makes the whole screen INCONCLUSIVE (placebo
+    read included). An empty P2 stratum used to pass P2 vacuously; now a P2 stratum read on < 5 texts makes the candidate
+    INCONCLUSIVE (a KILL still stands). Commit provenance on a node is read from `~/brain-lane/route_repo/COMMIT` (a missing
+    or empty file refuses the run); units also carry commit source, precision and model; a resume refuses a unit written
+    under other provenance; the scorer checks every key across units and one host per seed, and needs the three lives.
+    A5f refused only deep in the run when the foreign store was absent (nodes hold one seed each): now checked before the
+    model loads and shipped by `ship.sh`. A3's 256 frozen references (about 4.5 GB) are recomputed per step instead of held.
+    The 12 off-frame passages are written and hashed (`brain/eval/mix_night_offframe.json`). The guard also admits
+    BRAIN_ALLOW_W3090=1 (the house convention); mixing W units with node units is refused by the scorer.
+Open before launch: the pre-data review of `2026-11-27-mix-night-prereg.md`; `ship.sh strata`; step 0 (measure).

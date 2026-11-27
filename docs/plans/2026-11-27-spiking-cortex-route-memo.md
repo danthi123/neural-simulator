@@ -83,9 +83,18 @@ shared substrate; spike counts for local rules), not speed.
   trained on teacher/fineweb text alone: a share of each batch is prefixes sampled from the twin itself, with the
   teacher's token KL as the target on them. Follow SpikeOPD's recipe as published, not a hand-built variant.
 - Arms: (a) twin from teacher weights, teacher-text data; (a2) as (a) plus self-generated prefixes (SpikeOPD-style);
-  (b) same twin, random init, same tokens (route B control); (c) teacher. (a2) adds about 1 A10G-hour [E].
-- Budget: 0.3B tokens per arm, about 4 A10G-hours each, about $13-20 total with (a2) with evaluation [E]. AWS g5 only; the
-  workstation stays untouched.
+  (b) same twin, random init, same tokens (route B control); (c) teacher. (a2) adds about 2.5 A10G-hours [E].
+- Budget (corrected 11-27: four arms, of which three train; re-corrected 11-27 after the build review, the prereg's
+  `estimate` is now the one source). Per seed at 25k tok/s: (a) 3.8 h, (a2) 3.8 h + 2.5 h of self-generated prefixes
+  (2,289 refills x about 4 s, a fixed cost that does not scale with training throughput) = 6.4 h, (b) 3.8 h, (c) 0.25 h
+  (its sleep unit only; its ppl and ladder do not depend on the seed and run once): 14.3 A10G-hours, about $14 [E].
+  Seed 7 plus six seeds: about 100 h, about $100 [E], not the $13-20 this memo first gave (that was one seed of two
+  arms). The 25k tok/s of section 4 assumes RWKV-LM's training kernel. The in-repo training forward (a per-token WKV
+  loop in Python, no training kernel on disk; the rwkv package's rwkv7.cu is inference-only, no backward) is reviewed
+  at 0.5-1.5k tok/s [E] even at micro-batch 16: 1,200-1,800 h, which E1 cannot spend. E1 therefore needs an
+  off-the-shelf training kernel (RWKV-LM wkv7 or flash-linear-attention rwkv7, a download) before it can run as
+  registered; the launch refuses prep and smoke until that decision is written down, and gates the run on a measured
+  10k tok/s. Device: the workstation 3090 (BRAIN_ALLOW_W3090=1, via tools/gpu_queue.sh, $0) or AWS g5.
 - Read-outs:
   1. Held-out ppl ratio to the teacher on WikiText-103 validation and on chat-format text.
   2. `brain/experiments/sleep_probe.py`: recall with the hippocampus off after sleep. Teacher reference 3.83/12
@@ -95,8 +104,12 @@ shared substrate; spike counts for local rules), not speed.
      through a spike-coded cortex.
   4. Spikes per channel and the share of silent channels (SpikingBrain: 1.13 and 18.4% [C]).
   5. Weekly 20 prompts read whole, twin beside teacher.
-- Proposed bars, to be registered before data: ppl ratio at most 1.5; sleep recall at least half the teacher's;
-  reinstatement at least 8/12; arm (a) better than arm (b) by at least 1 nat. Seed 7 for dev, then six seeds.
+- Proposed bars, to be registered before data, applied to (a) and to (a2) separately: ppl ratio at most 1.5;
+  sleep recall at least half the teacher's; reinstatement at least 8/12; the arm better than arm (b) by at least 1 nat.
+  Decision (a2 added 11-27): (a) is the primary method. GO on (a) if (a) passes; (a2) replaces (a) as the method carried
+  to E2 only if (a2) also passes and its chat-text gap is at least 0.05 nats smaller. GO on (a2) if only (a2) passes.
+  If both fail, that is two failed methods: the stop rule below ends the arc until a new method is named. Seed 7 for
+  dev, then six seeds. Exact rule and controls: `brain/research/2026-11-27-spiking-twin-e1-prereg.md`.
 - Expected-fail note: 0.1B is weak in the brain (in-context 6/12 [M]). A fluency miss there is a scale result; a
   reinstatement miss is a method result.
 
@@ -119,7 +132,7 @@ shared substrate; spike counts for local rules), not speed.
 | Date | Step | Cost |
 |---|---|---|
 | 11-28 to 12-03 | Record brief in `brain/research/`, prereg for E1, sonnet pre-data review; smoke the twin forward on pool CPU (parity with spikes off) | $0 |
-| 12-04 to 12-08 | E1 seed 7 on one g5, then six seeds; read with a fresh skeptic | $15-30 [E] |
+| 12-04 to 12-08 | Training-kernel decision (download, parity test) before prep; E1 seed 7 on the 3090 or one g5, then six seeds; read with a fresh skeptic. The dates assume 25k tok/s; on the in-repo loop they do not hold | $14 + $86 on g5 at 25k tok/s, $0 on the 3090 [E] |
 | 12-10 | test2 read done. Decision gate on E1: GO to 0.4B, or bank the method | |
 | 12-11 to 12-20 | E2: 0.4B twin, 1B tokens, same read-outs plus weekly transcript | $40-60 [E] |
 | 12-31 | Milestone unchanged (local sleep rule, 1.5B). Report E1/E2 beside it; try the local sleep rule on the twin, where pre and post spike counts exist | |

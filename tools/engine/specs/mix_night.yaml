@@ -1,0 +1,69 @@
+# Mix-night screen as the engine runs it. Rule: brain/research/2026-11-27-mix-night-prereg.md (DRAFT pending pre-data review;
+# requires_local keeps the spec unrunnable without it and the W-side life JSONs). Design and record brief:
+# brain/research/2026-11-27-sleep-drift-recipe-check.md. Harness: brain/experiments/mix_night_screen.py (imported by the
+# node command, never edited here). Same measure-first step 0 as results/2026-11-27-mix-night/run_node.sh measure:
+#   dev  = step 0 on EVERY node (its own seed, prereg section 6): A0r (night 13), A0 night 13 (A0@13 = --max-night 13), the
+#          determinism pair (DET = `mix_night_screen detcheck`; a miss stops the loop, never retried), A2 night 13 (the
+#          worst-case arm), each under /usr/bin/time -v into a NEW time_<arm>.<epoch>.txt (a resumed attempt can only add a
+#          report, never replace the measured one); cap 21 on pool40, 11 on the 15 GB nodes (run_node.sh's MEMCAP_GB);
+#   pick = per seed: det ok; cap ceil(1.3 x max(RSS A0r, RSS A2)) + 1 GB <= memory_gb; on s319 one night + reading <= 45 min;
+#          any miss is HOLD-DEV (the THREADS=1 fallback and the nights 14-15 amendment are manual, before re-registering).
+#          The six job of each seed runs at ITS measured cap (pick memcap);
+#   six  = the 3 KR DEV seeds x all arms, one sequential job per seed on the node holding that seed's snapshots.
+# The out-dir is per commit and per seed (not per job), so the six job resumes step 0's units, a retried attempt resumes
+# finished units, and a --reset at another commit starts fresh (the harness refuses to mix units of two commits).
+# NOT shipped by the engine: the KR snapshots / life JSONs (already on the nodes since 11-25) and each node's foreign A5f
+# store (foreign_s<F>/n13..n15/episodes.json): `bash brain/experiments/results/2026-11-27-mix-night/ship.sh ship` copies
+# those node to node. `requires` checks all of it before anything launches.
+name: mix_night
+question: "Does a REMIX/keep-coverage recipe change cut multi-night language drift on the K-P slept store?"
+prereg: brain/research/2026-11-27-mix-night-prereg.md
+requires_local:                   # the prereg, and the W-side life JSONs the scorer needs (gitignored: absent = K-sane unread)
+  - brain/research/2026-11-27-mix-night-prereg.md
+  - _scratch/brainv2/aws/20261124-1219/lifeKR_s319.json.json
+  - _scratch/brainv2/aws/20261124-1624/lifeKR_s320.json.json
+  - _scratch/brainv2/aws/20261124-1704/lifeKR_s321.json.json
+status: DRAFT                     # -> REGISTERED once the pre-data review is recorded in the prereg
+module: mix_night.py
+pick: pick
+verdict: verdict
+cmd: >-
+  [ -x /usr/bin/time ] || { echo "/usr/bin/time missing: measure-first needs GNU time"; exit 2; };
+  T0=$(date +%s); KR=$HOME/brain-lane/route_repo/_scratch/route/kr; D=$HOME/brain-lane/engine/data/mix_night/{commit}/s{seed};
+  mkdir -p $D && for X in {params}; do A=${X%@*}; MN=""; [ "$X" = "$A" ] || MN="--max-night ${X#*@}";
+  if [ "$A" = DET ]; then "$PY" -m brain.experiments.mix_night_screen detcheck --dir $D --seed {seed} > $D/detcheck.txt 2>&1;
+  echo "rc $?" >> $D/detcheck.txt; grep -qx "rc 0" $D/detcheck.txt || break; continue; fi;
+  TF=$D/time_${A}.$(date +%s).txt; /usr/bin/time -v -o $TF "$PY" -u -m brain.experiments.mix_night_screen run --seed {seed} --arm $A
+  --life $KR/lifeKR_s{seed}.json.json --snaps $KR/snaps_s{seed} --foreign-snaps $KR/foreign_s{foreign}
+  --offframe {offframe} --offframe-sha256 {offframe_sha256} --model 1.5b --device {device}
+  --out-dir $D --work $D/work_$A $MN >> $D/${A}.log 2>&1 || { rc=$?; echo "arm $X rc $rc"; tail -n 25 $TF; exit $rc; }; done &&
+  "$PY" -m tools.engine.bundle $D {out} --text '*.txt' --t0 $T0
+vars:
+  offframe: brain/eval/mix_night_offframe.json      # repo path, shipped with brain/; 12 passages
+  offframe_sha256: b1a95684b8caeec1f6564493afa35a6cddc280d791f8466a2c73ccbc49e6f268   # = mix_night_screen.OFFFRAME_SHA256
+  lives:                          # W-side life JSONs, read by the scorer for the K-sane banked n13 KL (unread K-sane voids)
+    - _scratch/brainv2/aws/20261124-1219/lifeKR_s319.json.json
+    - _scratch/brainv2/aws/20261124-1624/lifeKR_s320.json.json
+    - _scratch/brainv2/aws/20261124-1704/lifeKR_s321.json.json
+seed_vars:                        # A5f's foreign store: the next KR seed
+  319: {foreign: 320}
+  320: {foreign: 321}
+  321: {foreign: 319}
+placement: "@kr"                  # 319 -> pool40, 320 -> pool41, 321 -> pool42 (where the snapshots were shipped, 11-25)
+requires:                         # under the node's $HOME
+  - brain-lane/route_repo/_scratch/route/kr/lifeKR_s{seed}.json.json
+  - brain-lane/route_repo/_scratch/route/kr/snaps_s{seed}/n12/cortex_adapters.pt
+  - brain-lane/route_repo/_scratch/route/kr/snaps_s{seed}/n15/episodes.json
+  - brain-lane/route_repo/_scratch/route/kr/foreign_s{foreign}/n13/episodes.json
+  - brain-lane/route_repo/_scratch/route/kr/foreign_s{foreign}/n14/episodes.json
+  - brain-lane/route_repo/_scratch/route/kr/foreign_s{foreign}/n15/episodes.json
+  - brain-lane/models
+dev_seed: 319                     # the 45-min bar's node (pool40)
+dev_grid:                         # step 0 per node; the six job of the same seed resumes all four units
+  step0_s319: {seed: 319, params: "A0r A0@13 DET A2@13"}
+  step0_s320: {seed: 320, params: "A0r A0@13 DET A2@13"}
+  step0_s321: {seed: 321, params: "A0r A0@13 DET A2@13"}
+dev_memory_gb: {319: 21, 320: 11, 321: 11}   # unmeasured: MemTotal - 2 on pool40; run_node.sh's MEMCAP_GB=11 on 15 GB
+seeds: [319, 320, 321]            # the KR DEV seeds; a PASS enters a six-seed fresh-split registered test (not this spec)
+memory_gb: 13                     # six-phase ceiling: the largest that fits the 15 GB nodes (13 + 2); each seed runs at its pick cap
+ladder: {max_len: 1, next: {}}    # no registered follow-up yet
