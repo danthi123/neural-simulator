@@ -759,7 +759,7 @@ _ENG = {"A1": {"ce_keep_w": 1.0, "mean_ce_keep": 2.1}, "A2": {"keep_per_step": [
 def _unit(arm, seed, night, kl, off=1.0, nll=1.0, refusal=0.0, name=0.0):
     return {"arm": arm, "seed": seed, "night": night, "kl": kl, "off_kl": off, "refusal": refusal, "name": name,
             "sleep_info": dict(_ENG.get(arm, {})),
-            "ret": {s: {"n": 20, "nll": nll} for s in ("own", "recent", "mid", "old")}, "commit": "c", "device": "cpu",
+            "ret": {s: {"n": 20, "nll": nll} for s in ("new", "mid", "old")}, "commit": "c", "device": "cpu",
             "precision": "fp32", "model": "1.5b", "host": f"h{seed}", "offframe_sha256": "h"}
 
 

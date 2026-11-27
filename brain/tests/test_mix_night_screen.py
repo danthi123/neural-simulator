@@ -142,12 +142,12 @@ def test_placebo_pool_excludes_and_assigns():
 
 def test_strata_and_sampling():
     assert [MN.stratum(a) for a in (0.0, 0.99, 1.0, 2.9, 3.0, 4.9, 5.0, 40.0, -0.2)] == \
-        ["own", "own", "recent", "recent", "mid", "mid", "old", "old", "own"]
+        ["new", "new", "new", "new", "mid", "mid", "old", "old", "new"]
     now = 100 * 86400.0
     created = [now - d * 86400.0 for d in [0.2] * 30 + [2.0] * 5 + [9.0] * 30]
     s1, s2 = MN.sample_strata(created, now, 15), MN.sample_strata(created, now, 15)
-    assert s1 == s2 and len(s1["own"]) == 20 and len(s1["recent"]) == 5 and s1["mid"] == [] and len(s1["old"]) == 20
-    assert all(0 <= i < 30 for i in s1["own"]) and all(35 <= i for i in s1["old"])
+    assert s1 == s2 and len(s1["new"]) == 20 and s1["mid"] == [] and len(s1["old"]) == 20 and set(s1) == {"new", "mid", "old"}
+    assert all(0 <= i < 35 for i in s1["new"]) and all(35 <= i for i in s1["old"])
 
 
 def test_reply_flags():
@@ -433,7 +433,7 @@ def test_missing_instrument_unit_is_inconclusive_not_skipped(drop, expect):
 def test_p2_empty_or_thin_stratum_never_passes(n, nll, status):
     for arm in ("A3", "A0"):
         t = tab_of()
-        t[arm][320][15]["ret"]["recent"] = {"n": n, "nll": nll, "under1": None}
+        t[arm][320][15]["ret"]["new"] = {"n": n, "nll": nll, "under1": None}
         v = MN.candidate_verdict(t, "A3")
         assert v["status"].startswith(status), (arm, v["status"])
         assert v["P2"] is (status == "PASS")
@@ -446,7 +446,7 @@ def test_p2_unread_does_not_hide_a_kill():
     t = tab_of()
     for s in (319, 320):
         t["A1"][s][15]["kl"] = 0.45
-    t["A1"][321][15]["ret"]["own"] = {"n": 0, "nll": None, "under1": None}
+    t["A1"][321][15]["ret"]["new"] = {"n": 0, "nll": None, "under1": None}
     assert MN.candidate_verdict(t, "A1")["status"] == "KILL"
 
 
@@ -526,13 +526,13 @@ def test_strata_counts_from_store_only(tmp_path):
         d = tmp_path / f"n{k}"
         d.mkdir()
         now = 100 * day + k * day
-        rows = [{"text": f"e{i}", "created": now - a * day} for i, a in enumerate([0.5] * 6 + [2.0] * 3 + [4.0] * 2 + [8.0] * 30)]
+        rows = [{"text": f"e{i}", "created": now - a * day} for i, a in enumerate([0.5] * 2 + [2.0] * 2 + [4.0] * 2 + [8.0] * 30)]
         (d / "episodes.json").write_text(json.dumps(rows))
         (d / "meta.json").write_text(json.dumps({"last_sleep": now}))
     c = MN.strata_counts(str(tmp_path))
-    assert c[15] == {"own": 6, "recent": 3, "mid": 2, "old": 20}
+    assert c[15] == {"new": 4, "mid": 2, "old": 20}
     out = MN.main(["strata", "--snaps", str(tmp_path)])
-    assert out["p2_short_at_n15"] == ["recent"] and out["ok"] is False
+    assert out["p2_short_at_n15"] == ["new"] and out["ok"] is False
 
 
 def test_run_refuses_before_any_model_load(tmp_path, monkeypatch):

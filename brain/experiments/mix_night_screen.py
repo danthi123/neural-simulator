@@ -57,8 +57,8 @@ PLACEBO_SEED = 20261127
 RET_SEED = 20261128
 RET_PER_STRATUM = 20
 REPLY_TOKENS = 40
-STRATA = (("own", 0.0, 1.0), ("recent", 1.0, 3.0), ("mid", 3.0, 5.0), ("old", 5.0, float("inf")))   # age in clock days
-P2_STRATA = ("own", "recent", "old")
+STRATA = (("new", 0.0, 3.0), ("mid", 3.0, 5.0), ("old", 5.0, float("inf")))   # age in clock days (Amendment S1: own+recent merged)
+P2_STRATA = ("new", "old")
 P2_MIN_N = 5                   # a P2 stratum read on fewer texts (or none) is UNREAD: the candidate is INCONCLUSIVE, never a P2 pass
 REF_CACHE_MAX = 64             # keep sets up to this size hold their frozen reference log-probs; larger (A3) recompute per step
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -372,7 +372,7 @@ def stratum(age_days: float) -> str:
     for name, lo, hi in STRATA:
         if lo <= age_days < hi:
             return name
-    return "own"      # negative age (clock skew): the night's own
+    return "new"      # negative age (clock skew): the night's own
 
 
 def sample_strata(created: list, now: float, k: int, per: int = RET_PER_STRATUM) -> dict:

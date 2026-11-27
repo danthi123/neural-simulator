@@ -292,3 +292,10 @@ REGISTERED, the 10 GB cap, and engaged synthetic units).
   THREADS. dev_memory_gb is labelled "set, not measured". The header status now lists both reviews. Not changed: A2
   draws with replacement and A3's extras are drawn from a correlated nested stream (declared residuals, noise only).
   The reading time is folded into the 10-min placeholder, and step 0 measures it.
+
+## Amendment S1 (2026-11-27 21:40 UTC, from `ship.sh strata`, before any unit ran)
+`strata` showed the `own` stratum (< 1 clock day) holds 3 texts at n15 on all three seeds (each simulated day adds 2-4
+episodes), so P2 would be UNREAD by construction (P2_MIN_N 5). As section 7 requires, amended before launch: `own` and
+`recent` merge into one `new` stratum (< 3 clock days; 9 texts at n15 on every seed); P2 now reads `new` and `old`;
+P2_MIN_N stays 5; margins unchanged. `mid` remains report-only. Code: `STRATA`, `P2_STRATA` in mix_night_screen.py; tests
+updated. The question P2 answers is unchanged: does the arm keep recently learned and old texts as well as A0.
