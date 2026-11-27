@@ -22,7 +22,7 @@ a = ap.parse_args()
 open(os.environ["ENGINE_TEST_LOG"], "a").write(f"{a.seed} {a.v}\\n")
 import time
 while a.wait_for and not os.path.exists(a.wait_for): time.sleep(0.05)
-if a.fail_always: sys.exit(3)
+if a.fail_always: print("BOOM fake failure", file=sys.stderr); sys.exit(3)
 if a.rc:
     open(a.out, "w").write('{"partial": 1}'); sys.exit(a.rc)
 if a.garbage:
@@ -75,6 +75,7 @@ def env(tmp_path, monkeypatch):
             subprocess.run(["git", "-C", str(repo), *c], check=True, capture_output=True)
 
     def engine(name, nodes=2, poll=0.02, **kw):
+        kw.setdefault("launch_checks", False)          # the real-smoke/model/kind checks have their own tests below
         return Engine(name, make_nodes("local", [f"n{i}" for i in range(nodes)], tmp_path / "nodes"), repo=repo, poll=poll,
                       log=lambda *_: None, **kw)
 
@@ -370,7 +371,7 @@ def test_w3090_only_used_when_gpu_idle(env, monkeypatch):
     env.commit()
     w = core.Node("w3090", 23, root=env.tmp / "nodes/w", py=sys.executable, memcap=False, kind="w3090")
     w._home = str(env.tmp / "nodes/w")
-    e = Engine("a", [w], repo=env.repo, poll=0.02, log=lambda *_: None)
+    e = Engine("a", [w], repo=env.repo, poll=0.02, log=lambda *_: None, launch_checks=False)
     idle = [False, False, True]
     monkeypatch.setattr(core, "gpu_idle", lambda: idle.pop(0) if idle else True)
     assert e.run() == "GO" and idle == []                       # waited out two busy checks before launching
@@ -639,7 +640,7 @@ def test_dev_memory_gb_caps_dev_jobs_and_requires_local(env):
     _yaml(env, "m", BASE.format(n="m").replace("memory_gb: 1", "memory_gb: 13") + "pick: pick\ndev_seed: 7\n"
           "dev_grid: {x: '--v 5'}\ndev_memory_gb: 21\nseeds: [1]\nrequires_local: [docs/prereg.md]\n")
     env.commit()
-    e = Engine("m", make_nodes("ssh"), repo=env.repo, log=lambda *_: None)
+    e = Engine("m", make_nodes("ssh"), repo=env.repo, log=lambda *_: None, launch_checks=False)
     spec, job = _prep(e)
     assert "memcap.sh 21 --" in e.job_script(e.nodes[0], spec, {**job, "key": "dev/x"}, "r", "jd")
     assert "memcap.sh 13 --" in e.job_script(e.nodes[1], spec, {**job, "key": "six/s1"}, "r", "jd")
@@ -887,3 +888,76 @@ def test_local_rule_v2_verdict_delegates_to_the_harness(tmp_path, monkeypatch):
     _fake_v2_main(monkeypatch, refuse="missing units: [('sham', 42)]")
     v = m.verdict({}, {"harness_pick": hp}, {"res": str(tmp_path)})
     assert v["verdict"] == "ERROR" and "missing units" in v["summary"]
+
+
+# ---- the real smoke stage, model naming, node kind check, RAM placement (engine-first launches)
+TIMESHIM = """#!/bin/bash
+shift; out=$2; shift 2; "$@"; rc=$?
+printf '\\tMaximum resident set size (kbytes): %s\\n\\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:01.50\\n' "$FAKE_RSS_KB" > "$out"
+exit $rc
+"""
+CHECKED = BASE.replace("cmd: '", "model: m.pth\ncmd: 'test -f {{model}} && ") + "six_params: '--v 5'\nseeds: [1]\n"
+
+
+@pytest.fixture
+def checked(env, monkeypatch):
+    shim = env.tmp / "timeshim"
+    shim.write_text(TIMESHIM)
+    shim.chmod(0o755)
+    monkeypatch.setenv("ENGINE_TIME", str(shim))
+    monkeypatch.setenv("FAKE_RSS_KB", str(int(3.5 * 1048576)))
+    for n in ("n0", "n1"):
+        (env.tmp / "nodes" / n / "brain-lane/models").mkdir(parents=True)
+        (env.tmp / "nodes" / n / "brain-lane/models/m.pth").write_text("w")
+
+    def engine(name, smoke="{params: '--v 5'}"):
+        _yaml(env, name, CHECKED.format(n=name) + (f"smoke: {smoke}\n" if smoke else ""))
+        env.commit()
+        e = env.engine(name, launch_checks=True)
+        e.imports = ("json",)
+        return e
+    return engine
+
+
+def test_smoke_measures_rss_and_sets_the_memcap(env, checked):
+    e = checked("a")
+    assert e.run() == "GO" and env.calls() == ["1 5.0", "1 5.0"]          # smoke, then the six-seed job
+    sm = _state(env)["specs"]["a"]["smoke"]
+    assert abs(sm["peak_rss_gb"] - 3.5) < 1e-9 and sm["wall_s"] == 1.5 and sm["memcap_gb"] == 6   # ceil(1.3 x 3.5 + 1)
+    assert e.mem(e.root, "six", 1) == 6 and e.mem(e.root, "smoke", 1) == 1
+    assert json.loads((env.repo / core.RES / "a/verdict.json").read_text())["smoke"]["memcap_gb"] == 6
+
+
+def test_placement_skips_nodes_too_small_for_the_measured_cap(env, checked):
+    (env.repo / "tools/engine/nodes.json").write_text('{"n0": {"ram_gb": 6}}')   # 6 < 6 + 2: n0 only fits the smoke
+    e = checked("a")
+    assert e.run() == "GO"
+    jobs = _state(env)["specs"]["a"]["jobs"]
+    assert jobs["smoke/smoke"]["node"] == "n0" and jobs["six/s1"]["node"] == "n1"
+    assert e.ram(e.nodes[0]) == 6 and e.ram(e.nodes[1]) == 23
+
+
+def test_smoke_failure_stops_the_chain_with_its_log_tail(env, checked):
+    e = checked("a", smoke="{params: '--fail-always'}")
+    assert e.run() == "ERROR-SMOKE" and len(env.calls()) == 1          # never retried, no dev/six job
+    dg = (env.repo / core.RES / "ENGINE_DIGEST.md").read_text()
+    assert "ERROR-SMOKE" in dg and "BOOM fake failure" in dg and "rc=3" in dg
+
+
+def test_missing_model_smoke_or_kind_refuses(env, checked):
+    for n in ("n0", "n1"):
+        (env.tmp / "nodes" / n / "brain-lane/models/m.pth").unlink()
+    with pytest.raises(SystemExit, match="required data missing.*brain-lane/models/m.pth"):
+        checked("a").run()
+    assert env.calls() == []
+    _yaml(env, "b", BASE.format(n="b") + "six_params: '--v 5'\nseeds: [1]\nsmoke: {params: '--v 5'}\n")
+    env.commit()
+    with pytest.raises(SystemExit, match="must name its model"):
+        env.engine("b", launch_checks=True).run()
+    with pytest.raises(SystemExit, match="no `smoke"):
+        checked("c", smoke=None).run()
+    (env.tmp / "nodes/n0/brain-lane/models/m.pth").write_text("w")
+    e = checked("d")
+    e.imports = ("no_such_mod_zz",)
+    with pytest.raises(SystemExit, match="no such node is in use"):
+        e.run()

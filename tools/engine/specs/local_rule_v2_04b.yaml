@@ -17,6 +17,7 @@ module: local_rule_v2.py
 pick: pick
 verdict: verdict
 model: rwkv7-g1d-0.4b-20260210-ctx8192.pth
+smoke: {seed: 7, params: "--arms gradient --steps 24 --tag smoke"}   # engine real smoke: one arm, 24 steps
 cmd: >-
   D=$HOME/brain-lane/engine/data/local_rule_v2_04b/{commit}/{job}; mkdir -p $D &&
   "$PY" -u -m brain.experiments.local_rule_v2 run --model {model} --seed {seed} --device {device} {params} --out-dir $D

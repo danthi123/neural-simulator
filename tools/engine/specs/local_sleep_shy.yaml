@@ -7,6 +7,7 @@ module: local_sleep_shy.py        # relative to this file, else to the repo root
 pick: pick                        # python function names in the module
 verdict: verdict
 model: rwkv7-g1d-0.4b-20260210-ctx8192.pth   # under ~/brain-lane/models on the node ({model} = $BRAIN_MODEL_DIR/<this>)
+smoke: {seed: 7, params: "--arms gradient --steps 24"}   # engine real smoke (the later --steps wins)
 cmd: '"$PY" -m brain.experiments.local_sleep --model {model} --seed {seed} --steps 240 {params} --out {out}'
 dev_seed: 7
 dev_grid:                         # job name -> {params}

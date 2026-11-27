@@ -1,0 +1,71 @@
+[
+  {
+    "name": "pool40",
+    "ram_gb": 23,
+    "ram_mb": 23804,
+    "disk_free_gb": 724,
+    "python": "/home/node/brain-lane/venv/bin/python",
+    "pythonpath": "/home/node/brain-lane/pylib",
+    "models": [
+      "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+      "rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+      "rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+      "rwkv7-g1l-2.9b-20261031-ctx34304.pth"
+    ],
+    "kr_seeds": [
+      319,
+      320,
+      321
+    ],
+    "keep_files": [],
+    "memcap_md5": "36f4206b43bfe6c0149b44eb1b86017c",
+    "mem_ok_md5": "1fd96dd4679d1f3a87547ed7b246086d",
+    "max_1p5b_cpu": true
+  },
+  {
+    "name": "pool41",
+    "ram_gb": 15,
+    "ram_mb": 15701,
+    "disk_free_gb": 25,
+    "python": "/home/node/brain-lane/venv/bin/python",
+    "pythonpath": "/home/node/brain-lane/pylib",
+    "models": [
+      "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+      "rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+      "rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+      "rwkv7-g1l-2.9b-20261031-ctx34304.pth"
+    ],
+    "kr_seeds": [
+      319,
+      320,
+      321
+    ],
+    "keep_files": [],
+    "memcap_md5": "36f4206b43bfe6c0149b44eb1b86017c",
+    "mem_ok_md5": "1fd96dd4679d1f3a87547ed7b246086d",
+    "max_1p5b_cpu": false
+  },
+  {
+    "name": "pool42",
+    "ram_gb": 15,
+    "ram_mb": 15699,
+    "disk_free_gb": 22,
+    "python": "/home/node/derisk-pool/sim/.venv/bin/python",
+    "pythonpath": "/home/node/brain-lane/pylib",
+    "models": [
+      "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+      "rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+      "rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+      "rwkv7-g1l-2.9b-20261031-ctx34304.pth"
+    ],
+    "kr_seeds": [
+      319,
+      320,
+      321
+    ],
+    "keep_files": [],
+    "memcap_md5": "36f4206b43bfe6c0149b44eb1b86017c",
+    "mem_ok_md5": "1fd96dd4679d1f3a87547ed7b246086d",
+    "max_1p5b_cpu": false
+  }
+]
