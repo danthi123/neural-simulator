@@ -358,7 +358,8 @@ def test_never_runs_on_workstation_and_w3090_rules(env, monkeypatch):
     assert "exit 96" in e.job_script(nodes[0], spec, job, "r", "jd") and "BRAIN_DEVICE" not in e.job_script(nodes[0], spec, job, "r", "jd")
     spec.cmd = "x {device}"
     assert spec.render(1, "", "o", "cuda") == "x cuda" and spec.render(1, "", "o") == "x cpu"
-    for used, apps, ok in (("500", "", True), ("3000", "", False), ("500", "123", False)):
+    for used, apps, ok in (("500", "", True), ("3000", "4348, /usr/bin/kwin_wayland, 281", True), ("7000", "", False),
+                           ("500", "123, /home/x/.venv/bin/python, 18000", False)):
         monkeypatch.setattr(core.subprocess, "run", lambda a, **k: subprocess.CompletedProcess(
             a, 0, used if "memory.used" in a[1] else apps, ""))
         assert w.usable() is ok

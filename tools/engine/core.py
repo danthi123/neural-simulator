@@ -258,13 +258,15 @@ def timev(text):
 
 
 def gpu_idle():
-    """True only if nvidia-smi shows < 2 GB used and no compute apps (never preempt anyone)."""
+    """True only if no compute (python/cuda) process holds the GPU and < 6 GB is used: desktop graphics processes
+    (compositor, browsers, chat apps, about 1-3 GB) do not count as a job (owner 11-27: never preempt anyone)."""
     try:
         q = lambda *a: subprocess.run(["nvidia-smi", *a, "--format=csv,noheader,nounits"], capture_output=True, text=True, timeout=20)
-        used, apps = q("--query-gpu=memory.used"), q("--query-compute-apps=pid")
+        used, apps = q("--query-gpu=memory.used"), q("--query-compute-apps=pid,process_name,used_memory")
         if used.returncode or apps.returncode:
             return False
-        return max(int(x) for x in used.stdout.split()) < 2048 and not apps.stdout.strip()
+        jobs = [l for l in apps.stdout.splitlines() if l.strip() and ("python" in l.lower() or "cuda" in l.lower())]
+        return max(int(x) for x in used.stdout.split()) < 6144 and not jobs
     except Exception:
         return False
 
@@ -884,7 +886,7 @@ def main(argv=None):
     ap.add_argument("--local-root")
     ap.add_argument("--nodes", help="comma list, default pool40,pool41,pool42")
     ap.add_argument("--poll", type=float, default=30)
-    ap.add_argument("--allow-w3090", action="store_true", help="also use this workstation's GPU, only while idle (<2 GB, no compute apps)")
+    ap.add_argument("--allow-w3090", action="store_true", help="also use this workstation's GPU, only while idle (no python/cuda job, < 6 GB used)")
     a = ap.parse_args(argv)
     nodes = make_nodes(a.backend, a.nodes.split(",") if a.nodes else None, a.local_root, a.allow_w3090)
     if a.smoke:
