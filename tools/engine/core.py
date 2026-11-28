@@ -36,7 +36,8 @@ FIT_SLACK = 2                                       # a job's memcap needs ram >
 REQUIRED = ("name", "prereg", "module", "cmd", "memory_gb", "seeds")
 # Where per-seed data lives on the pool (spec key `placement: "@kr"`). KR night snapshots, life JSONs and trunks were shipped
 # one seed per node by brain/experiments/results/2026-11-25-routing-screen/ship.sh (and routing-ceiling/ship.sh).
-PLACEMENTS = {"kr": {319: "pool40", 320: "pool41", 321: "pool42"}}
+# Since 11-27 tools/pool_inventory.sh put all three KR seeds on every pool node (tools/engine/nodes.json kr_seeds).
+PLACEMENTS = {"kr": {s: ["pool40", "pool41", "pool42"] for s in (319, 320, 321)}}
 OOM_RC = ("rc=137",)                                # SIGKILL: the cgroup OOM kill under tools/memcap.sh
 STATUSES = ("REGISTERED", "DRAFT", "TODO", "SMOKE")   # TODO never runs; DRAFT runs only with --allow-draft
 # Repo files shipped beside brain/ (the job side of the engine: memcap, the unit bundler, the smoke job). No yaml needed there.

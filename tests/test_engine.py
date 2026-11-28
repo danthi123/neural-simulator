@@ -476,7 +476,7 @@ def test_kr_placement_alias_and_bad_alias():
     sp = core.Spec.find("mix_night")
     assert sp.placement == {319: ["w3090"], 320: ["w3090"], 321: ["w3090"]}     # Amendment S2: the W 3090
     sp.apply({"placement": "@kr"})
-    assert sp.placement == {319: ["pool40"], 320: ["pool41"], 321: ["pool42"]}
+    assert sp.placement == {s: ["pool40", "pool41", "pool42"] for s in (319, 320, 321)}
     with pytest.raises(ValueError, match="placement"):
         sp.apply({"placement": "@nope"})
 
