@@ -27,7 +27,11 @@ prereg brain/research/2026-11-27-spiking-twin-e1-prereg.md section 7 item 1). Th
 S_fla <- S_fla * exp(gk) + b (a^T S_fla) + k v^T, o = scale * S_fla^T q, is (see _wkv_fla): S_fla = our state
 transposed (ours is [H, V, K]), q = r, gk = log w = -0.606531 sigmoid(w0 + lora) (computed in log space, not log(exp)),
 a = -kk, b = kk * a_gate, scale = 1. The package is imported lazily (fla_import) so nothing else depends on it; it is a
-training path only: single-token steps (T == 1, sampling) and non-CUDA tensors always take the loop.
+training path only: single-token steps (T == 1, sampling) and non-CUDA tensors always take the loop. Spikes, a ragged
+T, checkpointing (the block is recomputed through self._wkv_fla) and lower_bound all take the kernel; nothing else
+bypasses it. With spikes on, a kernel difference smaller than a count's rounding margin is absorbed by the integer
+counts of the "o" site and the head, so the logits can be bit-equal to the loop although the kernel ran (the graded
+state is not): seen on the tiny parity cortex, 11-27, and reproduced on CPU by tests/test_spiking_twin_fla.py.
 
 TwinCortex wraps a twin in the Cortex API (read, read_nll, speak, matrix_delta, add_delta, key_of) so the scale-ladder
 memory rows run on it.

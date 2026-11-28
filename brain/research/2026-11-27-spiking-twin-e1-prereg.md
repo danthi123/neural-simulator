@@ -188,6 +188,40 @@ On the 3090 the cost is $0 but the card time is long. The gate (section 7) stops
    `run/PARITY_OK` exists for the current code (hash of the twin, plastic_cortex, the E1 harness, the test and fla's
    installed RECORD), and the gate refuses a smoke whose recorded kernel differs from `run/KERNEL`. **The throughput gate is unchanged** (200-step smoke,
    >= 10k tok/s, else STOP).
+
+   **Amendment A1 (2026-11-27, pre-data: no E1 data exists; prep, smoke and training have not run).** The first GPU
+   parity run (`run/parity/log.txt`, `tiny_off.json`, `teacher_off.json`, `teacher_on.json`; 8 passed, 5 failed) showed
+   three things the bar above did not anticipate. It is amended once, for these reasons, before any data:
+   - *Spikes on, per logit, is not a meetable bar.* Spikes off at fp32 the kernel matches the loop on the teacher
+     (logits 3.3e-4, KL 1.6e-6, gradients <= 0.008), so the mapping is right. Spikes on, fla vs the loop is KL 1.49,
+     and the loop against itself (bf16 AMP vs fp32) is KL 1.59: integer counts are discontinuous, any numeric
+     difference flips some count and the flip cascades. No implementation, the loop included, meets a per-logit bar
+     there. **Replaced** (spikes off per logit unchanged) by a statistical criterion on the 0.1B teacher, each fla read
+     compared with the loop at its own precision, with floor F = the loop's own bf16 AMP vs fp32 difference and bar
+     max(1.5 F, an absolute epsilon): S1, per-token NLL on held-out WT103 val (8 windows x 512 tokens): rms <=
+     max(1.5 F, 1e-3) and |mean| <= max(1.5 F, 0.01 nats); S2, spike counts per channel over every site (mean |count|
+     per token and firing share): mean |diff| <= max(1.5 F, 1e-4); S3, 50 optimizer steps of the real `train()` (arm
+     a, seed 7, seq 256, micro-batch 4, warmup 10, teacher targets and student through the kernel, checkpointing on):
+     fla bf16 AMP vs the loop bf16 AMP, mean |d loss| per step and |d mean loss over the last 10 steps| <= max(1.5 F,
+     1e-5), F from the loop's own bf16 vs fp32 runs. The tiny-cortex spikes-on cases (T = 96, ragged 50, 512 with
+     checkpointing) now assert that the kernel ran (call count, and the graded final state not bit-equal to the loop);
+     when no count flips (fp32 logits bit-equal) the spikes-off fp32 state and gradient bars apply, since the kernel is
+     then the only difference.
+   - *The "kernel not used" failures were not a bypass.* On the tiny spikes-on, T50 and T512-checkpointed cases the
+     call counter passed (fla ran 4 / 4 / 8 times per pass, as expected) and only the "logits not bit-equal" check
+     failed. Every path (spikes on, ragged T, checkpoint recompute, lower_bound, T > 1) reaches `_wkv_fla`; the
+     kernel's ~1e-5 difference is below the rounding margin of the counts at the `o` site and the head, so the counts
+     and hence the logits are unchanged while the graded state differs. Reproduced on CPU with a kernel-sized
+     perturbation of the loop (`test_spike_counts_absorb_small_kernel_differences`). The check is now on the state.
+   - *bf16 AMP with fp32 kernel inputs failed the gradient bar* on the teacher, spikes off: worst weight gradient 0.67
+     (blocks.4.att.a2) > 2 x the loop's own bf16 floor (0.27). The gradient bar was already relative to the loop's
+     floor (2 x, every metric, as the logits); it is kept and not moved. bf16 kernel inputs under AMP passed every
+     bar on the teacher (weight gradients 0.21 <= 0.27, logits 7.3e-3 <= 1.5e-2, KL 5.3e-4 <= 1.1e-3). **So E1
+     trains under bf16 AMP with bf16 kernel inputs only** (`--wkv-dtype bf16`, now the default; `train()` refuses fla
+     + bf16 AMP + fp32 inputs); fp32 kernel inputs are allowed only with `--precision fp32`, where they passed. The
+     AMP fp32-input case is still measured and recorded, not asserted. Its cause is not diagnosed (fla itself warns
+     that its chunk kernel's fp32 path is unsupported on some platforms).
+   Throughput gate, scope (training only; eval, prep and T = 1 on the loop) and the mapping are unchanged.
 2. **SpikeOPD is known from its abstract only.** a2 is the generic self-generated-prefix variant, not the published
    recipe.
 3. **The chat data is the teacher's own text.** This flatters the teacher on chat ppl. WT103 val is the clean measure,

@@ -9,23 +9,33 @@ CPU (always): the variable mapping (brain.spiking_twin.wkv_fla_args) is exact. O
 fla.ops.generalized_delta_rule.dplr.naive.dplr_recurrence (skipped if fla is not on PYTHONPATH), outputs, final state
 and gradients, with a non-zero initial state. The switch defaults to the loop, and wkv="fla" refuses CPU tensors.
 
-GPU (skipped unless BRAIN_ALLOW_W3090=1, CUDA is present and no other python/cuda job holds the GPU and < 6 GB is used; with BRAIN_REQUIRE_GPU=1 an
-unmet condition FAILS instead, so the launch script's parity stage cannot pass on a skip): the fla path against the loop
-path on (1) a tiny random cortex (head size 32, two layers, carried state) and (2) the real 0.1B teacher
-(rwkv7-g1d-0.1b), spikes off and spikes on, fp32 and bf16 AMP, trainable twin with nonzero slow-store adapters:
-logits, final state, adapter gradients and the weight/theta gradients, each gradient error taken per parameter (worst
-parameter, and separately the kernel-only att decay / a / kk group, whose gradients come only through fla's backward).
-Each fla case counts its _wkv_fla calls (a silent fall-through to the loop fails) and checks the fp32 logits are not
-bit-equal to the loop. Also: T = 512 with per-block checkpointing (the training shape) and T = 50 (ragged last chunk).
+GPU (skipped unless BRAIN_ALLOW_W3090=1, CUDA is present and no other python/cuda job holds the GPU and < 6 GB is used;
+with BRAIN_REQUIRE_GPU=1 an unmet condition FAILS instead, so the launch script's parity stage cannot pass on a skip).
 The gate is evaluated once per session (nvidia-smi would count this process's own tensors after the first case); CPU
 tests never import the fla package (its import probes CUDA), they load fla's naive reference by file path.
 
-Parity bar (registered in the prereg section 7 item 1). err(x, ref) = ||x - ref|| / ||ref|| (relative L2):
-  fp32, spikes off: logits <= 2e-3, state <= 2e-3, gradients <= 1e-2, mean token KL(loop || fla) <= 1e-4 nats.
-  fp32, spikes on:  logits <= 1e-2, gradients <= 5e-2, KL <= 1e-3 (a 1e-6 change can flip an integer count).
-  bf16 AMP: the fla path's error to the fp32 loop must be <= max(the fp32 bar, 2 x the bf16 loop's own error to the
-  fp32 loop), i.e. the kernel may not add more than the precision the loop already loses at bf16.
-The fp32 bars allow TF32 inside fla's Triton dots (about 1e-3 relative); the bf16 bar is relative to the loop's floor.
+Parity bar (registered in the prereg section 7 item 1, as amended before data by A1, 2026-11-27).
+err(x, ref) = ||x - ref|| / ||ref|| (relative L2); every fla case counts its _wkv_fla calls (a silent fall-through to
+the loop fails), including the checkpoint recompute.
+Spikes OFF, per logit (tiny random cortex and the 0.1B teacher, trainable twin, nonzero adapters, carried state):
+  fp32: logits <= 2e-3, state <= 2e-3, gradients <= 1e-2 (per parameter: worst adapter, worst other weight/theta, and
+  the kernel-only att decay / a / kk group), mean token KL(loop || fla) <= 1e-4 nats; fp32 logits not bit-equal.
+  bf16 AMP with bf16 kernel inputs (the AMP training config): every metric <= max(the fp32 bar, 2 x the bf16 loop's own
+  error to the fp32 loop). AMP with fp32 kernel inputs is measured and recorded, not asserted: it failed the gradient
+  bar on the teacher (0.67 > 0.27) and train() refuses it.
+Spikes ON: a per-logit bar cannot be met by any implementation (integer counts are discontinuous: the loop's own
+  bf16-vs-fp32 error on the teacher is KL 1.59, the same size as fla's 1.49), so it is replaced by:
+  (tiny cortex, T = 96, ragged T = 50, T = 512 with checkpointing) the kernel ran (calls) and the graded final state
+  is not bit-equal to the loop; when the fp32 logits ARE bit-equal (no count flipped: kernel differences below the
+  rounding margin are absorbed by the counts, see test_spike_counts_absorb_small_kernel_differences) the state and
+  gradients must meet the spikes-off fp32 bars, since then the kernel is the only difference.
+  (0.1B teacher, statistical; fla vs the loop at the same precision; floor F = the loop bf16 AMP vs the loop fp32)
+  S1 per-token NLL on held-out WT103 val (8 windows x 512): rms(dNLL) <= max(1.5 F, 1e-3) and |mean dNLL| <=
+     max(1.5 F, 0.01 nats); S2 spike counts per channel (mean |count| and firing share, all sites): mean |diff| over
+     channels <= max(1.5 F, 1e-4); S3 50 steps of the real train() (arm a, seq 256, micro-batch 4, warmup 10, bf16 AMP,
+     fla with bf16 kernel inputs vs the loop): mean |d loss| per step and |d mean loss of the last 10 steps| <=
+     max(1.5 F, 1e-5), F from the loop's own bf16 vs fp32 training runs.
+The fp32 bars allow TF32 inside fla's Triton dots (about 1e-3 relative); the bf16 bars are relative to the loop's floor.
 With BRAIN_PARITY_OUT=<dir> every GPU case writes its measured errors to <dir>/<case>.json."""
 from __future__ import annotations
 
@@ -42,8 +52,9 @@ import torch
 from brain.spiking_twin import FLA_VERSION, LOG_DECAY_MIN, SpikingTwin, fla_version, wkv_fla_args
 from brain.tests.test_source_tag import _Cortex, _Model
 
-BARS = {("fp32", False): dict(logits=2e-3, state=2e-3, grad=1e-2, kl=1e-4),
-        ("fp32", True): dict(logits=1e-2, state=1e-2, grad=5e-2, kl=1e-3)}
+BARS = {("fp32", False): dict(logits=2e-3, state=2e-3, grad=1e-2, kl=1e-4)}   # spikes on: statistical (docstring)
+STAT_X = 1.5                       # spikes-on statistical bars: x the loop's own bf16-vs-fp32 floor (amendment A1)
+AMP_KERNEL_DTYPE = "bf16"          # the only kernel input dtype train() accepts under bf16 AMP (amendment A1)
 
 
 # The loop computes in fp32 (it casts state and inputs with .float()); the references below run in fp64 on the same
@@ -290,6 +301,7 @@ def _count_fla(tw):
 
 
 def _compare(case, cortex, toks, spikes, ckpt=False):
+    """Per-logit parity (spikes off) / kernel-ran + no-flip parity (spikes on); see the module docstring."""
     ref_tw = _twin(cortex, "loop", spikes, toks[:1], ckpt=ckpt)
     fla_tw = _twin(cortex, "fla", spikes, None, ckpt=ckpt)
     calls = _count_fla(fla_tw)
@@ -300,7 +312,8 @@ def _compare(case, cortex, toks, spikes, ckpt=False):
         for k in fla_tw.theta:
             fla_tw.theta[k].copy_(ref_tw.theta[k])
     ref = _run(ref_tw, toks, False, torch.float32)
-    out = {"fla_calls_per_run": per_run}
+    out = {"fla_calls_per_run": per_run, "spikes": spikes}
+    fails = []
     for prec, amp in (("fp32", False), ("bf16", True)):
         res = {}
         loop_p = _run(ref_tw, toks, amp, torch.float32) if amp else ref
@@ -310,8 +323,13 @@ def _compare(case, cortex, toks, spikes, ckpt=False):
             n0 = len(calls)
             got = _run(fla_tw, toks, amp, dt)
             assert len(calls) - n0 == per_run, f"{case}: fla ran {len(calls) - n0} times, expected {per_run}"
+            assert all(bool(torch.isfinite(t).all()) for t in (got[0], got[1], *got[2].values())), f"{case}: non-finite"
             if prec == "fp32":
-                assert not torch.equal(got[0], ref[0]), f"{case}: fla logits bit-equal to the loop (kernel not used?)"
+                # the graded state is never quantised: bit-equal would mean the kernel's result was not used
+                assert not torch.equal(got[1], ref[1]), f"{case}: fla final state bit-equal to the loop (kernel not used?)"
+                out["fp32_logits_bit_equal"] = bool(torch.equal(got[0], ref[0]))
+                if not spikes and out["fp32_logits_bit_equal"]:
+                    fails.append("spikes off: fp32 logits bit-equal to the loop (kernel not used?)")
             kl = float((torch.softmax(ref[0], -1) * (torch.log_softmax(ref[0], -1) - torch.log_softmax(got[0], -1)))
                        .sum(-1).mean())
             ge, worst = _grad_errs(got[2], ref[2])
@@ -324,23 +342,34 @@ def _compare(case, cortex, toks, spikes, ckpt=False):
             floor = {"logits": rel(loop_p[0], ref[0]), "state": rel(loop_p[1], ref[1]), "kl": kl0,
                      **_grad_errs(loop_p[2], ref[2])[0]}
         out[prec] = {"fla": res, "loop_floor": floor}
+    bar = BARS[("fp32", False)]
+    lim = {"logits": bar["logits"], "state": bar["state"], "kl": bar["kl"], "grad_adapters": bar["grad"],
+           "grad_weights": bar["grad"], "grad_att_kernel": bar["grad"]}
+    # spikes on: the per-logit numbers are recorded only, except when no count flipped (fp32 logits bit-equal), where
+    # the kernel is the only difference and the spikes-off fp32 bars apply to the state and the gradients
+    no_flip = spikes and out["fp32_logits_bit_equal"]
+    out["asserted"] = ("fp32 per-logit + bf16-AMP/bf16-kernel" if not spikes else
+                       "fp32 state + gradients (no count flipped)" if no_flip else "kernel ran + state differs only")
+    if not spikes or no_flip:
+        for m, v in out["fp32"]["fla"]["fp32"].items():
+            if not v <= lim[m]:
+                fails.append(f"fp32 {m} {v:.3g} > {lim[m]:.3g}")
+    if not spikes:
+        r = out["bf16"]["fla"][AMP_KERNEL_DTYPE]        # fp32 kernel inputs under AMP: recorded, refused by train()
+        for m, v in r.items():
+            b = max(lim[m], 2 * out["bf16"]["loop_floor"][m])
+            if not v <= b:
+                fails.append(f"bf16-amp kernel-{AMP_KERNEL_DTYPE} {m} {v:.3g} > {b:.3g}")
+    out["fails"] = fails
+    _dump(case, out)
+    assert not fails, f"{case}: " + "; ".join(fails) + f"\n{json.dumps(out, indent=1)}"
+
+
+def _dump(case, out):
     if os.environ.get("BRAIN_PARITY_OUT"):
         os.makedirs(os.environ["BRAIN_PARITY_OUT"], exist_ok=True)
         with open(os.path.join(os.environ["BRAIN_PARITY_OUT"], f"{case}.json"), "w") as f:
             json.dump(out, f, indent=1)
-    bar = BARS[("fp32", spikes)]
-    lim = {"logits": bar["logits"], "state": bar["state"], "kl": bar["kl"], "grad_adapters": bar["grad"],
-           "grad_weights": bar["grad"], "grad_att_kernel": bar["grad"]}
-    fails = []
-    for m, v in out["fp32"]["fla"]["fp32"].items():
-        if not v <= lim[m]:
-            fails.append(f"fp32 {m} {v:.3g} > {lim[m]:.3g}")
-    for dt_name, r in out["bf16"]["fla"].items():
-        for m, v in r.items():
-            b = max(lim[m], 2 * out["bf16"]["loop_floor"][m])
-            if not v <= b:
-                fails.append(f"bf16-amp kernel-{dt_name} {m} {v:.3g} > {b:.3g}")
-    assert not fails, f"{case}: " + "; ".join(fails) + f"\n{json.dumps(out, indent=1)}"
 
 
 class _CudaCortex:
@@ -387,16 +416,212 @@ def test_gpu_tiny_lower_bound_option_matches_default():
     assert rel(lb, lr) <= BARS[("fp32", False)]["logits"]
 
 
-@pytest.mark.parametrize("spikes", [False, True], ids=["spikes_off", "spikes_on"])
-def test_gpu_parity_real_teacher(spikes):
+_TEACHER = {}
+
+
+def _teacher():
+    if "c" not in _TEACHER:
+        from brain.experiments.spiking_twin_e1 import load_teacher
+        _TEACHER["c"] = load_teacher("cuda")
+    return _TEACHER["c"]
+
+
+def test_gpu_parity_real_teacher_spikes_off():
+    """Per-logit parity on the 0.1B teacher, spikes off (spikes on: the statistical tests below, amendment A1)."""
     _gpu_gate()
-    from brain.experiments.spiking_twin_e1 import load_teacher
-    c = load_teacher("cuda")
+    c = _teacher()
     ids = c.pipe.encode("The history of the river valley begins with the first farmers, who settled along the banks "
                         "and learned to read the floods. User: what is my cat called?\n\nAssistant: Your cat is "
                         "called Pixel, and she likes the window seat in the morning sun. " * 8)
     toks = torch.tensor([ids[:256], ids[64:320]], device="cuda")
-    _compare(f"teacher_{'on' if spikes else 'off'}", c, toks, spikes)
+    _compare("teacher_off", c, toks, False)
+
+
+def _need_file(path):
+    if not os.path.exists(path):
+        msg = f"missing {path}"
+        if os.environ.get("BRAIN_REQUIRE_GPU") == "1":
+            pytest.fail(msg)
+        pytest.skip(msg)
+
+
+def _heldout_windows(pipe, n, seq=512):
+    """n windows of seq + 1 tokens from the start of WT103 val (held out: E1 trains on fineweb and teacher chat)."""
+    import pyarrow.parquet as pq
+    from brain.experiments.spiking_twin_e1 import WT103_VAL
+    _need_file(WT103_VAL)
+    text, ids = "", []
+    for row in pq.read_table(WT103_VAL).column("text").to_pylist():
+        text += row
+        if len(text) > 8 * n * (seq + 1):           # about 4+ chars per token: tokenise once, with room to spare
+            ids = pipe.encode(text)
+            if len(ids) >= n * (seq + 1):
+                break
+    ids = ids if len(ids) >= n * (seq + 1) else pipe.encode(text)
+    assert len(ids) >= n * (seq + 1), "WT103 val too short"
+    return torch.tensor([ids[w * (seq + 1):(w + 1) * (seq + 1)] for w in range(n)], device="cuda")
+
+
+def _nll_and_counts(tw, win, amp):
+    """Per-token NLL (flat) and per-channel mean |count| and firing share over every spiking site (sorted)."""
+    tw.stats = {}
+    try:
+        with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16, enabled=amp):
+            lg = tw.forward_batch(win[:, :-1])[0].float()
+        nll = torch.nn.functional.cross_entropy(lg.reshape(-1, lg.shape[-1]), win[:, 1:].reshape(-1), reduction="none")
+        m = torch.cat([tw.stats[k][0] / tw.stats[k][1] for k in sorted(tw.stats)])
+        f = torch.cat([tw.stats[k][2] / tw.stats[k][1] for k in sorted(tw.stats)])
+    finally:
+        tw.stats = None
+    return nll.double(), m.double(), f.double()
+
+
+def _stat_diff(a, b):
+    d = a[0] - b[0]
+    return {"nll_rms": float(d.pow(2).mean().sqrt()), "nll_mean": abs(float(d.mean())),
+            "count_mean_abs": float((a[1] - b[1]).abs().mean()), "fire_mean_abs": float((a[2] - b[2]).abs().mean())}
+
+
+STAT_ABS = {"nll_rms": 1e-3, "nll_mean": 1e-2, "count_mean_abs": 1e-4, "fire_mean_abs": 1e-4}
+
+
+def test_gpu_spikes_on_statistical_teacher():
+    """S1 + S2 (amendment A1): the 0.1B teacher's weights as a spiking twin (calibrated on 2 held-out windows), read on 8
+    other held-out windows by the loop fp32 (reference), the loop bf16 AMP (floor), fla fp32 and fla bf16 AMP with bf16
+    kernel inputs (the AMP training config); each fla read is compared with the loop at its own precision."""
+    _gpu_gate()
+    c = _teacher()
+    win = _heldout_windows(c.pipe, 10)
+    loop_tw = SpikingTwin(c, spikes=True)
+    loop_tw.calibrate([win[:2, :-1]])
+    fla_tw = SpikingTwin(c, spikes=True, wkv="fla")
+    fla_tw.theta = dict(loop_tw.theta)
+    calls = _count_fla(fla_tw)
+    ev = win[2:]
+    ref = _nll_and_counts(loop_tw, ev, False)
+    loop_amp = _nll_and_counts(loop_tw, ev, True)
+    fla32 = _nll_and_counts(fla_tw, ev, False)
+    fla_tw.wkv_dtype = torch.bfloat16 if AMP_KERNEL_DTYPE == "bf16" else torch.float32
+    fla_amp = _nll_and_counts(fla_tw, ev, True)
+    assert len(calls) == 2 * fla_tw.L, f"fla ran {len(calls)} times, expected {2 * fla_tw.L}"
+    floor = _stat_diff(loop_amp, ref)
+    out = {"tokens": int(ev[:, 1:].numel()), "nll_loop_fp32": float(ref[0].mean()), "floor": floor,
+           "fla_fp32_vs_loop_fp32": _stat_diff(fla32, ref),
+           f"fla_amp_{AMP_KERNEL_DTYPE}_vs_loop_amp": _stat_diff(fla_amp, loop_amp),
+           "bar": {m: max(STAT_X * floor[m], STAT_ABS[m]) for m in floor}}
+    fails = [f"{name} {m} {v:.3g} > {out['bar'][m]:.3g}" for name in (k for k in out if k.startswith("fla_"))
+             for m, v in out[name].items() if not v <= out["bar"][m]]
+    out["fails"] = fails
+    _dump("teacher_on_stat", out)
+    assert not fails, "; ".join(fails) + f"\n{json.dumps(out, indent=1)}"
+
+
+S3_CFG = dict(seq=256, micro_b=4, accum=1, warmup=10, tokens_per_arm=60 * 256 * 4, chat_share=0.0, calib_seqs=4)
+S3_STEPS = 50
+
+
+def _fineweb_pool(pipe, n_chars=600_000):
+    import numpy as np
+    from brain.experiments.spiking_twin_e1 import FINEWEB
+    _need_file(FINEWEB)
+    with open(FINEWEB, "rb") as fh:
+        text = fh.read(n_chars).decode("utf-8", errors="ignore")
+    return np.asarray(pipe.encode(text), dtype=np.int64)
+
+
+def test_gpu_spikes_on_training_run_teacher(tmp_path, monkeypatch):
+    """S3 (amendment A1): 50 optimizer steps of the real train() (arm a, seed 7, teacher-initialised spiking student,
+    per-block checkpointing, teacher targets through the same kernel) with the loop fp32, the loop bf16 AMP (the floor
+    between them) and fla bf16 AMP with bf16 kernel inputs (the E1 config), compared with the loop bf16 AMP."""
+    _gpu_gate()
+    from brain.experiments import spiking_twin_e1 as E
+    c = _teacher()
+    pool = _fineweb_pool(c.pipe)
+    cfg = dict(E.CFG, **S3_CFG)
+    calls, orig = [], SpikingTwin._wkv_fla
+
+    def counted(self, *a, **k):
+        calls.append(1)
+        return orig(self, *a, **k)
+    monkeypatch.setattr(SpikingTwin, "_wkv_fla", counted)
+
+    def run(name, precision, wkv):
+        d = tmp_path / name
+        d.mkdir()
+        n0 = len(calls)
+        E.train("a", 7, str(d), device="cuda", precision=precision, max_steps=S3_STEPS, cfg=cfg, cortex=c,
+                pools=(pool, None), log=lambda *a, **k: None, wkv=wkv, wkv_dtype=AMP_KERNEL_DTYPE)
+        blob = torch.load(d / "ckpt_a_s7.pt", map_location="cpu", weights_only=False)
+        gc.collect()
+        torch.cuda.empty_cache()
+        return torch.tensor([row[1] for row in blob["losses"]], dtype=torch.float64), len(calls) - n0
+
+    l32, n32 = run("loop_fp32", "fp32", "loop")
+    l16, n16 = run("loop_bf16", "bf16", "loop")
+    lfla, nfla = run("fla_bf16", "bf16", "fla")
+    assert n32 == n16 == 0
+    L = c.n_layers
+    # per step: teacher targets + student forward + the student's checkpoint recompute, L layers each
+    assert nfla >= S3_STEPS * 3 * L, f"fla ran {nfla} times in train(), expected >= {S3_STEPS * 3 * L}"
+    assert len(l32) == len(l16) == len(lfla) == S3_STEPS
+    assert bool(torch.isfinite(lfla).all())
+
+    def diff(a, b):
+        return {"loss_mean_abs": float((a - b).abs().mean()), "loss_last10": abs(float(a[-10:].mean() - b[-10:].mean()))}
+    floor = diff(l16, l32)
+    got = diff(lfla, l16)
+    bar = {m: max(STAT_X * floor[m], 1e-5) for m in floor}
+    out = {"steps": S3_STEPS, "cfg": S3_CFG, "fla_calls": nfla, "loss_loop_fp32": l32.tolist(),
+           "loss_loop_bf16": l16.tolist(), "loss_fla_bf16": lfla.tolist(), "floor": floor,
+           "fla_amp_vs_loop_amp": got, "bar": bar}
+    fails = [f"{m} {v:.3g} > {bar[m]:.3g}" for m, v in got.items() if not v <= bar[m]]
+    out["fails"] = fails
+    _dump("teacher_on_train", out)
+    assert not fails, "; ".join(fails) + f"\n{json.dumps({k: out[k] for k in ('floor', 'fla_amp_vs_loop_amp', 'bar')})}"
+
+
+# ---------------------------------------------------------------------------------------------------- CPU (more)
+class _NoisyLoop(SpikingTwin):
+    """The loop with a kernel-sized relative perturbation (4e-5, the tiny spikes-off fla logits error) on its output
+    and state: what fla's TF32 / reordered sums look like to the rest of the twin."""
+    eps = 4e-5
+
+    def _wkv_loop(self, *a):
+        y, S = super()._wkv_loop(*a)
+        g = torch.Generator().manual_seed(y.numel())
+        return (y * (1 + self.eps * torch.randn(y.shape, generator=g, dtype=y.dtype)),
+                S * (1 + self.eps * torch.randn(S.shape, generator=g, dtype=S.dtype)))
+
+
+@pytest.mark.parametrize("T,seed,tseed,B", [(96, 5, 3, 3), (50, 7, 8, 2), (512, 7, 8, 2)],
+                         ids=["tiny_on", "T50", "T512"])
+def test_spike_counts_absorb_small_kernel_differences(T, seed, tseed, B):
+    """Why the 11-27 GPU run saw fla logits bit-equal to the loop on the tiny cortex with spikes on although the kernel
+    ran (its call count passed): the same cortex and tokens, a kernel-sized perturbation of the WKV output changes the
+    spikes-off logits but not one spike count downstream, so the spikes-on logits stay bit-equal; the graded state
+    differs. Not a bypass."""
+    m = _Model(C=64, H=2, L=2, hid=128, V=256, r=8, seed=seed)
+    toks = torch.randint(0, 256, (B, T), generator=torch.Generator().manual_seed(tseed))
+    for spikes in (False, True):
+        a, b = SpikingTwin(_CudaCortex(m), spikes=spikes), _NoisyLoop(_CudaCortex(m), spikes=spikes)
+        a.calibrate([toks[:1]])
+        b.theta = dict(a.theta)
+        with torch.no_grad():
+            la, sa = a.forward_batch(toks)
+            lb, sb = b.forward_batch(toks)
+        assert not torch.equal(sa[1], sb[1])
+        assert torch.equal(la, lb) == spikes
+
+
+def test_e1_train_refuses_fp32_kernel_inputs_under_amp(tmp_path):
+    import numpy as np
+    from brain.experiments import spiking_twin_e1 as E
+    pools = (np.arange(4096) % 100, np.arange(4096) % 100)
+    with pytest.raises(SystemExit, match="wkv-dtype bf16 only"):
+        E.train("a", 7, str(tmp_path), device="cuda", precision="bf16", cortex=_Cortex(), pools=pools, max_steps=1,
+                wkv="fla", wkv_dtype="fp32")
+    import inspect
+    assert inspect.signature(E.train).parameters["wkv_dtype"].default == "bf16"
 
 
 def test_e1_train_flag_defaults_to_loop_and_fla_refuses_cpu(tmp_path):

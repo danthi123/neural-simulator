@@ -295,10 +295,12 @@ def distill_loss(student, teacher, toks, cfg=CFG):
 
 
 def train(arm, seed, out_dir, device="cuda", precision="bf16", max_steps=None, cfg=CFG, cortex=None, pools=None,
-          log=print, wkv="loop", wkv_dtype="fp32"):
+          log=print, wkv="loop", wkv_dtype="bf16"):
     """Train one arm; resumes from ckpt_<arm>_s<seed>.pt. Returns the train record (also written as JSON).
     wkv="fla" (CUDA only) computes the WKV state recurrence of the teacher targets and the student with fla's
-    chunk_rwkv7; the default "loop" is the per-token loop, unchanged."""
+    chunk_rwkv7; the default "loop" is the per-token loop, unchanged. Under bf16 AMP the fla kernel takes bf16 inputs
+    only: fp32 kernel inputs under AMP failed the weight-gradient parity bar (prereg section 7 item 1, amendment A1)
+    and are refused; fp32 kernel inputs are allowed with precision="fp32" (no AMP), where they passed."""
     import numpy as np
     import torch
     assert arm in TRAINED, arm
@@ -310,6 +312,9 @@ def train(arm, seed, out_dir, device="cuda", precision="bf16", max_steps=None, c
         pools = (np.load(os.path.join(out_dir, "fineweb.npy"), mmap_mode="r"),
                  np.load(os.path.join(out_dir, "chat_train.npy"), mmap_mode="r"))
     torch.manual_seed(seed)
+    if wkv == "fla" and precision == "bf16" and wkv_dtype != "bf16":
+        raise SystemExit("--wkv fla under bf16 AMP takes --wkv-dtype bf16 only (fp32 kernel inputs under AMP failed "
+                         "the weight-gradient parity bar; prereg section 7 item 1, amendment A1)")
     if wkv != "loop" and device != "cuda":
         raise SystemExit(f"--wkv {wkv} runs on CUDA only")
     teacher = make_twin(cortex, spikes=False, wkv=wkv, wkv_dtype=wkv_dtype)
@@ -754,8 +759,9 @@ def main(argv=None):
             p.add_argument("--max-steps", type=int, default=None, help="smoke / throughput gate; never a final twin")
             p.add_argument("--wkv", default="loop", choices=["loop", "fla"],
                            help="WKV training kernel: loop (default) or fla (fla-core 0.6.0 chunk_rwkv7, CUDA)")
-            p.add_argument("--wkv-dtype", default="fp32", choices=["fp32", "bf16"],
-                           help="dtype of the tensors handed to the fla kernel (its state is fp32)")
+            p.add_argument("--wkv-dtype", default="bf16", choices=["fp32", "bf16"],
+                           help="dtype of the tensors handed to the fla kernel (its state is fp32); bf16 AMP "
+                                "(--precision bf16) takes bf16 only, fp32 is for --precision fp32")
         else:
             p.add_argument("--units", default="ppl,sleep,ladder,transcript")
     p = sub.add_parser("score")
