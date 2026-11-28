@@ -264,10 +264,10 @@ def _gpu_gate_why():
         apps = subprocess.run(["nvidia-smi", "--query-compute-apps=pid,process_name", "--format=csv,noheader"],
                               capture_output=True, text=True, timeout=30).stdout
         jobs = [l for l in apps.splitlines() if ("python" in l.lower() or "cuda" in l.lower()) and str(os.getpid()) not in l]
-        if jobs:      # desktop graphics (compositor, chat apps) are not jobs; another python/cuda job is
-            why = f"GPU busy: compute job(s) {jobs}"
-        elif used is not None and used >= 6144:
-            why = f"GPU busy: {used} MiB used (>= 6 GB)"
+        # Sharing the card with another job changes timing, not numerics (each process has its own kernels and
+        # streams), so another python/cuda job is allowed while >= 8 GB of VRAM stays free (24 GB card).
+        if used is not None and used > 24576 - 8192:
+            why = f"GPU busy: {used} MiB used (< 8 GB free); jobs {jobs}"
     return why
 
 
