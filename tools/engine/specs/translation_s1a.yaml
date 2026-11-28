@@ -1,0 +1,40 @@
+# Translation layer S1a (dictionary free): can any residual write carry a told fact? Prereg
+# brain/research/2026-11-28-translation-s1a-prereg.md (REGISTERED 2026-11-28 after its pre-data review; fixes listed in its STATUS line).
+# Design: brain/research/2026-11-28-translation-layer-DESIGN.md section 3 (S1a). Harness: brain/experiments/translation_s1a.py
+# (imports memory_ceiling, routing_replay, voice_ceiling_oracle, voice_tag; edits none). Forward only, nothing trained.
+# One job per KR seed on the pool node holding that seed's snapshots (@kr), all units of the life in one sequential job,
+# atomic per-unit files that resume in a per-commit, per-seed dir (the smoke's units are tagged "smoke" and never scored;
+# the smoke runs every heavy path once: perplexity, a dev battery, the DELTA family, a vector arm and its sham, ORACLE-RES, REPRO).
+# The DELTA anchor and the OFF reproduction read the banked memory-ceiling dec_/u_ files (mc_s<seed>/) and the voice-ceiling
+# output (vc_full_s<seed>.json) where those runs wrote them on the node (results/ is not shipped). Verdict = the harness's own
+# `translation_s1a score`, by delegation. DEV only: the KR lives are the only lives with banked night snapshots; a six-seed
+# claim needs lives of 42/43/44/100/101/102 with night snapshots (none exist; not this spec).
+name: translation_s1a
+question: "Can a residual write at layer 12 (dense, top-64 raw, random-projection top-64) carry a told fact over hippocampus-off (S1a)?"
+prereg: brain/research/2026-11-28-translation-s1a-prereg.md
+requires_local: [brain/research/2026-11-28-translation-s1a-prereg.md]
+status: REGISTERED                # 2026-11-28: pre-data review PROCEED-WITH-CHANGES applied (B1 DELTA-NULL driver link + REPRO on 20 rows; B2 full-path smoke + pick memcap)
+module: translation_s1a.py
+verdict: verdict
+model: rwkv7-g1l-1.5b-20261031-ctx34304.pth   # the KR lives' cortex (their adapters are 1.5B)
+smoke: {seed: 319, params: "--units META,OFF,C,PPL,DEV-DENSE@1,DELTA,SHAM-DELTA,DENSE@1,SHAM-DENSE@1,ORACLE-RES,REPRO --gains 1 --limit 3 --tag smoke"}
+pick: pick                        # no dev grid: returns the six-seed params and memcap = memory_gb per seed (not the smoke's ceil(1.3 x peak + 1))
+cmd: >-
+  KR=$HOME/brain-lane/route_repo/_scratch/route/kr; D=$HOME/brain-lane/engine/data/translation_s1a/{commit}/s{seed};
+  mkdir -p $D && "$PY" -u -m brain.experiments.translation_s1a run --life $KR/lifeKR_s{seed}.json.json
+  --snaps $KR/snaps_s{seed} --trunk $KR/trunk_s{seed} --model {model} --device {device} --out-dir $D --work $D/work
+  --mc-ref $KR/mc_s{seed} --vc-ref $KR/vc_full_s{seed}.json {params} >> $D/run.log 2>&1 &&
+  "$PY" -m tools.engine.bundle $D {out} --glob 'u_s*.json'
+six_params: ""
+seeds: [319, 320, 321]            # KR DEV lives (lead only); the six project seeds have no banked lives
+placement: "@kr"
+memory_gb: 13                     # forward only at 1.5B fp32 (voice ceiling ran the same session under a 14 GB memcap); the pick sets the six-seed cap to this (15 GB nodes)
+requires:                         # under the node's $HOME
+  - brain-lane/route_repo/_scratch/route/kr/lifeKR_s{seed}.json.json
+  - brain-lane/route_repo/_scratch/route/kr/snaps_s{seed}/n14/cortex_adapters.pt
+  - brain-lane/route_repo/_scratch/route/kr/trunk_s{seed}
+  - brain-lane/route_repo/_scratch/route/kr/mc_s{seed}/dec_s{seed}_n14.json
+  - brain-lane/route_repo/_scratch/route/kr/mc_s{seed}/u_s{seed}_n14_ORACLE.json
+  - brain-lane/route_repo/_scratch/route/kr/vc_full_s{seed}.json
+  - brain-lane/models
+ladder: {max_len: 1, next: {}}    # HEADROOM -> S0 (its own prereg); BARRIER -> design section 4 item 4 (its own prereg)

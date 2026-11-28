@@ -1,0 +1,165 @@
+{
+ "root": "local_rule_v3q_04b",
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "tree": "0589b6c923cd7babae71c65c315b76f319a6b158",
+ "current": null,
+ "chain": [
+  "local_rule_v3q_04b"
+ ],
+ "variants": {
+  "Does v3's local rule store told facts when its targets are question-form (the cortex answering its own or the user's cue with the telling in context), 0.1B then 0.4B?": [
+   "local_rule_v3q_04b"
+  ]
+ },
+ "specs": {
+  "local_rule_v3q_04b": {
+   "phase": "done",
+   "jobs": {
+    "smoke/smoke": {
+     "key": "smoke/smoke",
+     "seed": 7,
+     "params": "--arms g0q,gradient,v3q --steps 24 --tag smoke",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/smoke_smoke_a0",
+     "started": "2026-11-28 00:14Z",
+     "t0": 1795824865.6696649,
+     "finished": "2026-11-28 00:20Z"
+    },
+    "dev/ref": {
+     "key": "dev/ref",
+     "seed": 7,
+     "params": "--arms g0q,no_sleep,gradient --tag ref",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_ref_a0",
+     "started": "2026-11-28 00:20Z",
+     "t0": 1795825229.6840422,
+     "finished": "2026-11-28 00:33Z"
+    },
+    "dev/lr0.03_keep0.3": {
+     "key": "dev/lr0.03_keep0.3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.03 --keep 0.3 --tag lr0.03_keep0.3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.03_keep0.3_a0",
+     "started": "2026-11-28 00:33Z",
+     "t0": 1795826018.6380353,
+     "finished": "2026-11-28 00:39Z"
+    },
+    "dev/lr0.03_keep1": {
+     "key": "dev/lr0.03_keep1",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.03 --keep 1 --tag lr0.03_keep1",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.03_keep1_a0",
+     "started": "2026-11-28 00:39Z",
+     "t0": 1795826383.5023947,
+     "finished": "2026-11-28 00:45Z"
+    },
+    "dev/lr0.03_keep3": {
+     "key": "dev/lr0.03_keep3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.03 --keep 3 --tag lr0.03_keep3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.03_keep3_a0",
+     "started": "2026-11-28 00:45Z",
+     "t0": 1795826748.2397568,
+     "finished": "2026-11-28 00:51Z"
+    },
+    "dev/lr0.1_keep0.3": {
+     "key": "dev/lr0.1_keep0.3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.1 --keep 0.3 --tag lr0.1_keep0.3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.1_keep0.3_a0",
+     "started": "2026-11-28 00:51Z",
+     "t0": 1795827118.2091815,
+     "finished": "2026-11-28 00:58Z"
+    },
+    "dev/lr0.1_keep1": {
+     "key": "dev/lr0.1_keep1",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.1 --keep 1 --tag lr0.1_keep1",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.1_keep1_a0",
+     "started": "2026-11-28 00:58Z",
+     "t0": 1795827483.1548524,
+     "finished": "2026-11-28 01:04Z"
+    },
+    "dev/lr0.1_keep3": {
+     "key": "dev/lr0.1_keep3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.1 --keep 3 --tag lr0.1_keep3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.1_keep3_a0",
+     "started": "2026-11-28 01:04Z",
+     "t0": 1795827847.4620042,
+     "finished": "2026-11-28 01:10Z"
+    },
+    "dev/lr0.3_keep0.3": {
+     "key": "dev/lr0.3_keep0.3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.3 --keep 0.3 --tag lr0.3_keep0.3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.3_keep0.3_a0",
+     "started": "2026-11-28 01:10Z",
+     "t0": 1795828212.4591231,
+     "finished": "2026-11-28 01:16Z"
+    },
+    "dev/lr0.3_keep1": {
+     "key": "dev/lr0.3_keep1",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.3 --keep 1 --tag lr0.3_keep1",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.3_keep1_a0",
+     "started": "2026-11-28 01:16Z",
+     "t0": 1795828577.4890232,
+     "finished": "2026-11-28 01:22Z"
+    },
+    "dev/lr0.3_keep3": {
+     "key": "dev/lr0.3_keep3",
+     "seed": 7,
+     "params": "--arms v3q --lr 0.3 --keep 3 --tag lr0.3_keep3",
+     "status": "done",
+     "attempts": 1,
+     "node": "pool42",
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_04b-0589b6c9/dev_lr0.3_keep3_a0",
+     "started": "2026-11-28 01:22Z",
+     "t0": 1795828942.1886997,
+     "finished": "2026-11-28 01:29Z"
+    }
+   },
+   "pick": null,
+   "verdict": {
+    "verdict": "NEGATIVE-DEV",
+    "summary": "no dev candidate met the pick rule; six seeds not run"
+   },
+   "smoke": {
+    "peak_rss_gb": 7.033061981201172,
+    "wall_s": 331.17,
+    "memcap_gb": 11
+   },
+   "pick_written": true
+  }
+ },
+ "finished": "NEGATIVE-DEV"
+}

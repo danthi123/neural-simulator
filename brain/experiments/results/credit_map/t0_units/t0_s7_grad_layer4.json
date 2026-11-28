@@ -1,0 +1,173 @@
+{
+ "tag": "t0",
+ "seed": 7,
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "model_id": "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "steps": 240,
+ "L": 12,
+ "grad_lr": 0.0005,
+ "kl_weight": 1.0,
+ "v1": {
+  "lr": 0.01,
+  "decay": 0.001,
+  "feedback": "transport",
+  "mode": "kp"
+ },
+ "v3": {
+  "lr": 0.3,
+  "keep": 1.0,
+  "decay": 0.001
+ },
+ "host": "node-mxl1462drl",
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "device": "cpu",
+ "precision": "float32",
+ "host_env": "node-mxl1462drl",
+ "arm": "grad_layer4",
+ "layer": 4,
+ "elapsed_s": 158.78617644309998,
+ "engagement": {
+  "kind": "gradient",
+  "layers_on": [
+   4
+  ],
+  "replay_seed": 7,
+  "steps_run": 240,
+  "loss_start": 2.6089584628740945,
+  "loss_end": 0.1673094971726338,
+  "loss_tail": 0.13893452286720276,
+  "adapter_norm": 3.607029438018799
+ },
+ "result": {
+  "recall": 2,
+  "paraphrase": 0,
+  "false_recall": 1,
+  "generic_kl": 0.040484802797436714,
+  "recall_items": [
+   true,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   true,
+   false,
+   false
+  ],
+  "paraphrase_items": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false
+  ],
+  "graded": {
+   "mean_logp": -14.213093690729389,
+   "mean_logp_first": -13.703788042068481,
+   "mean_rank_first": 4094.75,
+   "median_rank_first": 3565,
+   "n_top1": 0,
+   "n_top10": 0,
+   "items": [
+    {
+     "key": "pixel",
+     "n_tok": 1,
+     "logp": -14.062620162963867,
+     "logp_first": -14.062620162963867,
+     "rank_first": 3565
+    },
+    {
+     "key": "teal",
+     "n_tok": 2,
+     "logp": -16.07097739726305,
+     "logp_first": -16.01784896850586,
+     "rank_first": 7160
+    },
+    {
+     "key": "lyon",
+     "n_tok": 1,
+     "logp": -13.925614356994629,
+     "logp_first": -13.925614356994629,
+     "rank_first": 2507
+    },
+    {
+     "key": "marguerite",
+     "n_tok": 3,
+     "logp": -13.541138665750623,
+     "logp_first": -13.419925689697266,
+     "rank_first": 2518
+    },
+    {
+     "key": "biscuit",
+     "n_tok": 3,
+     "logp": -11.99801530316472,
+     "logp_first": -11.511521339416504,
+     "rank_first": 932
+    },
+    {
+     "key": "volvo",
+     "n_tok": 2,
+     "logp": -10.53950817976147,
+     "logp_first": -10.533832550048828,
+     "rank_first": 509
+    },
+    {
+     "key": "tomasz",
+     "n_tok": 2,
+     "logp": -15.452360368333757,
+     "logp_first": -15.440980911254883,
+     "rank_first": 5713
+    },
+    {
+     "key": "crumb",
+     "n_tok": 2,
+     "logp": -18.30656099319458,
+     "logp_first": -14.158222198486328,
+     "rank_first": 4723
+    },
+    {
+     "key": "cello",
+     "n_tok": 2,
+     "logp": -18.038755889981985,
+     "logp_first": -18.00025749206543,
+     "rank_first": 12818
+    },
+    {
+     "key": "peanut",
+     "n_tok": 2,
+     "logp": -12.405920505523682,
+     "logp_first": -11.158980369567871,
+     "rank_first": 1271
+    },
+    {
+     "key": "oslo",
+     "n_tok": 1,
+     "logp": -16.370100021362305,
+     "logp_first": -16.370100021362305,
+     "rank_first": 7127
+    },
+    {
+     "key": "march",
+     "n_tok": 1,
+     "logp": -9.845552444458008,
+     "logp_first": -9.845552444458008,
+     "rank_first": 294
+    }
+   ]
+  },
+  "adapter_norm": 3.607029438018799,
+  "layer_norms": {
+   "4": 2.605398654937744
+  }
+ }
+}

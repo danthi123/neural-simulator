@@ -1,0 +1,199 @@
+{
+ "L": 12,
+ "thresholds": {
+  "cos_low": 0.1,
+  "cos_high": 0.3,
+  "pos_cos_min": 0.5,
+  "gain_min": 0.1,
+  "carrier_frac": 0.5,
+  "grad_min": 2
+ },
+ "carriers": [
+  0,
+  4,
+  5
+ ],
+ "gains": {
+  "0": 0.7440391515071187,
+  "1": -0.3895887494921535,
+  "2": 0.15706757409498096,
+  "3": 0.22979353263508528,
+  "4": 0.6244918343921508,
+  "5": 1.039988373639062,
+  "6": 0.24182953413886388,
+  "7": -0.09465321281459183,
+  "8": 0.2307998194786105,
+  "9": -0.9761782176768374,
+  "10": -0.7564640073081446,
+  "11": -1.1272001315470934
+ },
+ "best_gain": 1.039988373639062,
+ "recall": {
+  "no_sleep": 0,
+  "gradient": 3,
+  "grad_reseed": 8,
+  "grad_shuffled": 0,
+  "v1": 0,
+  "v3": 2,
+  "grad_distill": 2,
+  "grad_ans": 4,
+  "grad_init": 0,
+  "grad_init_ans": 0,
+  "grad_layer0": 2,
+  "grad_layer1": 3,
+  "grad_layer2": 1,
+  "grad_layer3": 3,
+  "grad_layer4": 2,
+  "grad_layer5": 0,
+  "grad_layer6": 3,
+  "grad_layer7": 6,
+  "grad_layer8": 1,
+  "grad_layer9": 3,
+  "grad_layer10": 0,
+  "grad_layer11": 0,
+  "grad_ans_layer0": 2,
+  "grad_ans_layer1": 2,
+  "grad_ans_layer2": 1,
+  "grad_ans_layer3": 3,
+  "grad_ans_layer4": 0,
+  "grad_ans_layer5": 3,
+  "grad_ans_layer6": 2,
+  "grad_ans_layer7": 2,
+  "grad_ans_layer8": 2,
+  "grad_ans_layer9": 1,
+  "grad_ans_layer10": 2,
+  "grad_ans_layer11": 1
+ },
+ "mean_logp": {
+  "no_sleep": -14.83758552512154,
+  "gradient": -13.361802503395362,
+  "grad_reseed": -13.515529623671073,
+  "grad_shuffled": -15.194813993142356,
+  "v1": -14.923269075496743,
+  "v3": -13.937021190300584,
+  "grad_distill": -11.53712762773345,
+  "grad_ans": -10.56757146933892,
+  "grad_init": -14.83758552512154,
+  "grad_init_ans": -14.83758552512154,
+  "grad_layer0": -14.093546373614421,
+  "grad_layer1": -15.227174274613693,
+  "grad_layer2": -14.680517951026559,
+  "grad_layer3": -14.607791992486455,
+  "grad_layer4": -14.213093690729389,
+  "grad_layer5": -13.797597151482478,
+  "grad_layer6": -14.595755990982676,
+  "grad_layer7": -14.932238737936132,
+  "grad_layer8": -14.60678570564293,
+  "grad_layer9": -15.813763742798377,
+  "grad_layer10": -15.594049532429684,
+  "grad_layer11": -15.964785656668633,
+  "grad_ans_layer0": -12.557148472241048,
+  "grad_ans_layer1": -13.436532274708346,
+  "grad_ans_layer2": -12.86930363039331,
+  "grad_ans_layer3": -13.210457916604355,
+  "grad_ans_layer4": -13.01964684650496,
+  "grad_ans_layer5": -12.79673657407208,
+  "grad_ans_layer6": -12.580378762368733,
+  "grad_ans_layer7": -12.388054940461492,
+  "grad_ans_layer8": -12.817059856276805,
+  "grad_ans_layer9": -12.537597102897658,
+  "grad_ans_layer10": -12.611111543223766,
+  "grad_ans_layer11": -12.083490992891408
+ },
+ "engagement": {
+  "gated": [],
+  "report": []
+ },
+ "distill_reading": "rule-limit: grad_distill recall 2 >= bar 2 on v3's own target",
+ "position_reading": "answer-positions-only keeps 2.89 of the all-position gain (recall 4 vs 3)",
+ "cos_R": {
+  "v1": {
+   "0": 0.0041484328428385495,
+   "4": 0.041603712887471764,
+   "5": 0.06177017740269076
+  },
+  "v3": {
+   "0": 0.007943536740819981,
+   "4": 0.02005644185513708,
+   "5": 0.008560576711643973
+  },
+  "grad_reseed": {
+   "0": 0.5503669703996535,
+   "4": 0.6038955026354457,
+   "5": 0.5895524351247763
+  }
+ },
+ "cos_mean_R": {
+  "v1": 0.03584077437766702,
+  "v3": 0.012186851769200346,
+  "grad_reseed": 0.5812716360532918
+ },
+ "minority": true,
+ "anti_aligned": [],
+ "verdict": "CONFIRMED",
+ "instrument": {
+  "model_id": "rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+  "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+  "L": 12,
+  "steps": 240
+ },
+ "seed": 7,
+ "hosts": [
+  "node-mxl1462drl"
+ ],
+ "devices": [
+  "cpu"
+ ],
+ "summary": "CONFIRMED; carriers [0, 4, 5]; cos over R {'v1': 0.03584077437766702, 'v3': 0.012186851769200346, 'grad_reseed': 0.5812716360532918}",
+ "spec": "credit_map",
+ "question": "Did the local rules (v1, v3) move the adapters along the direction gradient sleep uses where recall lives (T0)?",
+ "prereg": "brain/research/2026-11-28-credit-map-T0-prereg.md",
+ "pick": {
+  "params": "--arms all --tag t0"
+ },
+ "smoke": {
+  "peak_rss_gb": 4.516422271728516,
+  "wall_s": 212.84,
+  "memcap_gb": 7
+ },
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "jobs": {
+  "smoke/smoke": "done",
+  "six/s7": "done"
+ },
+ "when": "2026-11-28 01:42Z",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "commit and brain/ tree recorded",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke rc 0",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke measured peak RSS",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "peak_rss_gb=4.516422271728516"
+  },
+  {
+   "kind": "require",
+   "name": "job six/s7 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "preconditions_status": "GO",
+ "undefined_reasons": [],
+ "disabled_processes": [],
+ "verdict_raw": "CONFIRMED"
+}

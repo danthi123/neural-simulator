@@ -1,0 +1,37 @@
+{
+ "spec": "credit_map",
+ "pick": {
+  "params": "--arms all --tag t0"
+ },
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "when": "2026-11-28 01:42Z",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "commit and brain/ tree recorded",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke rc 0",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke measured peak RSS",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "peak_rss_gb=4.516422271728516"
+  }
+ ],
+ "preconditions_status": "GO",
+ "undefined_reasons": [],
+ "disabled_processes": [],
+ "verdict_raw": "PICKED",
+ "verdict": "PICKED",
+ "earned": true
+}

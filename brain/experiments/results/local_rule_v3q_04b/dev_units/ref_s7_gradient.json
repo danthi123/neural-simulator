@@ -1,0 +1,159 @@
+{
+ "tag": "ref",
+ "seed": 7,
+ "model": "/home/node/brain-lane/models/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "model_id": "rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "steps": 240,
+ "prompts_sha256": "77e31aa1935c86bf6d6c04ea8e87009b73668a0196f3d831a81766c9d620d8d6",
+ "pick": null,
+ "cue_sha256": "c34d307139399d5b5e419d7d0b1de3755bd82a988e5714ffdafe58b738f5a1e8",
+ "life_cues_sha256": "5d24cf1a5bf26d8d784ac65e5b2291e40f502460101e6eeb8c490b0db2209ad4",
+ "host": "node-dl5d243",
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "device": "cpu",
+ "precision": "float32",
+ "host_env": "node-dl5d243",
+ "arm": "gradient",
+ "last_layer": 23,
+ "cues": {
+  "n": 12,
+  "n_items": 7,
+  "items_kept": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   9
+  ],
+  "n_units": 10,
+  "n_excluded": 5,
+  "excluded": {
+   "tomasz": "no candidate cue survived (see rejected)",
+   "crumb": "no candidate cue survived (see rejected)",
+   "cello": "no candidate cue survived (see rejected)",
+   "oslo": "no candidate cue survived (see rejected)",
+   "march": "no candidate cue survived (see rejected)"
+  },
+  "by_source": {
+   "life": 2,
+   "self": 8
+  },
+  "items_by_source": {
+   "life": 2,
+   "self": 7
+  },
+  "eval_cue_items": [
+   0,
+   3
+  ],
+  "pass": true,
+  "cue_sha256": "c34d307139399d5b5e419d7d0b1de3755bd82a988e5714ffdafe58b738f5a1e8"
+ },
+ "lr": null,
+ "keep": null,
+ "decay": null,
+ "grad_lr": 0.0005,
+ "teacher": null,
+ "elapsed_s": 511.649263381958,
+ "cue_build_s": 138.5008738040924,
+ "engagement": {
+  "kind": "gradient",
+  "steps_run": 240,
+  "loss_head": 0.9777611181139946,
+  "loss_tail": 0.17398309484124183,
+  "loss_start": 2.5787169337272644,
+  "loss_end": 0.1569252343227466,
+  "adapter_norm": 39.14271545410156
+ },
+ "result": {
+  "recall": 5,
+  "paraphrase": 3,
+  "false_recall": 2,
+  "generic_kl": 0.032344261184334755,
+  "recall_items": [
+   true,
+   false,
+   true,
+   false,
+   false,
+   true,
+   false,
+   false,
+   true,
+   false,
+   false,
+   true
+  ],
+  "paraphrase_items": [
+   false,
+   false,
+   true,
+   false,
+   true,
+   false,
+   false,
+   false,
+   true,
+   false,
+   false,
+   false
+  ],
+  "graded": {
+   "logprob_items": [
+    -11.903498649597168,
+    -16.70630083233118,
+    -11.826684951782227,
+    -12.500544765309314,
+    -10.040459910134814,
+    -13.651126695331186,
+    -14.466594454359438,
+    -11.621107548475266,
+    -17.19587256736122,
+    -15.105659082531929,
+    -14.147031784057617,
+    -8.409871101379395
+   ],
+   "first_logprob_items": [
+    -11.903498649597168,
+    -16.6960506439209,
+    -11.826684951782227,
+    -12.500288009643555,
+    -10.039772987365723,
+    -13.645164489746094,
+    -14.466513633728027,
+    -11.357173919677734,
+    -17.192005157470703,
+    -14.9054594039917,
+    -14.147031784057617,
+    -8.409871101379395
+   ],
+   "rank_items": [
+    1303,
+    9729,
+    2000,
+    3235,
+    451,
+    3993,
+    6190,
+    1577,
+    13052,
+    6760,
+    6106,
+    183
+   ],
+   "mean_logprob": -13.131229361887563,
+   "mean_first_logprob": -13.090792894363403,
+   "median_rank": 3614.0,
+   "n_rank_le10": 0
+  },
+  "heldout_kl": null,
+  "heldout_kl_dev": 0.1064081930865844,
+  "adapter_norm": 39.14271545410156,
+  "factor_norms": [
+   20.544977438443855,
+   5.605230340971742
+  ]
+ }
+}

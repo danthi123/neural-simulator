@@ -1,0 +1,39 @@
+{
+ "root": "local_rule_v3q_01b",
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "tree": "0589b6c923cd7babae71c65c315b76f319a6b158",
+ "current": null,
+ "chain": [
+  "local_rule_v3q_01b"
+ ],
+ "variants": {
+  "Does v3's local rule store told facts when its targets are question-form (the cortex answering its own or the user's cue with the telling in context), 0.1B then 0.4B?": [
+   "local_rule_v3q_01b"
+  ]
+ },
+ "specs": {
+  "local_rule_v3q_01b": {
+   "phase": "done",
+   "jobs": {
+    "smoke/smoke": {
+     "key": "smoke/smoke",
+     "seed": 7,
+     "params": "--arms g0q,gradient,v3q --steps 24 --tag smoke",
+     "status": "failed",
+     "attempts": 1,
+     "node": null,
+     "jd": "brain-lane/engine/jobs/local_rule_v3q_01b-0589b6c9/smoke_smoke_a0",
+     "started": "2026-11-28 00:14Z",
+     "t0": 1795824865.2482293,
+     "error": "rc=1"
+    }
+   },
+   "pick": null,
+   "verdict": {
+    "verdict": "ERROR-SMOKE",
+    "summary": "smoke failed: ['smoke/smoke [rc=1]']; log tail: [memcap] MemoryMax=5G MemoryHigh=infinity MemorySwapMax=0G :: /usr/bin/time -v -o /home/node/brain-lane/engine/jobs/local_rule_v3q_01b-0589b6c9/smoke_smoke_a0/time.txt bash -c D=$HOME/brain-lane/engine/data/local_rule_v3q_01b/f543cc321f5b/smoke; mkdir -p $D && \"$PY\" -u -m brain.experiments.local_rule_v3q run --model $BRAIN_MODEL_DIR/rwkv7-g1d-0.1b-20260129-ctx8192.pth --seed 7 --device cpu --arms g0q,gradient,v3q --steps 24 --tag smoke --out-dir $D > $D/run.log 2>&1 && \"$PY\" -m tools.engine.bundle $D /home/node/brain-lane/engine/jobs/local_rule_v3q_01b-0589b6c9/smoke_smoke_a0/out.json --glob '*.json'"
+   }
+  }
+ },
+ "finished": "ERROR-SMOKE"
+}

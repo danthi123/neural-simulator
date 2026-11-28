@@ -1,0 +1,105 @@
+{
+ "spec": "local_rule_v3q_04b",
+ "pick": null,
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "when": "2026-11-28 01:29Z",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "commit and brain/ tree recorded",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke rc 0",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke measured peak RSS",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "peak_rss_gb=7.033061981201172"
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/ref present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "preconditions_status": "GO",
+ "undefined_reasons": [],
+ "disabled_processes": [],
+ "verdict_raw": "NEGATIVE-DEV",
+ "verdict": "NEGATIVE-DEV",
+ "earned": true
+}

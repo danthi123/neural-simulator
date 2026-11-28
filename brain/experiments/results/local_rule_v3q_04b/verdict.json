@@ -1,0 +1,125 @@
+{
+ "verdict": "NEGATIVE-DEV",
+ "summary": "no dev candidate met the pick rule; six seeds not run",
+ "spec": "local_rule_v3q_04b",
+ "question": "Does v3's local rule store told facts when its targets are question-form (the cortex answering its own or the user's cue with the telling in context), 0.1B then 0.4B?",
+ "prereg": "brain/research/2026-11-28-local-rule-v3q-prereg-DRAFT.md",
+ "pick": null,
+ "smoke": {
+  "peak_rss_gb": 7.033061981201172,
+  "wall_s": 331.17,
+  "memcap_gb": 11
+ },
+ "commit": "f543cc321f5b7c079a9eeef5a4af261c5110d307",
+ "jobs": {
+  "smoke/smoke": "done",
+  "dev/ref": "done",
+  "dev/lr0.03_keep0.3": "done",
+  "dev/lr0.03_keep1": "done",
+  "dev/lr0.03_keep3": "done",
+  "dev/lr0.1_keep0.3": "done",
+  "dev/lr0.1_keep1": "done",
+  "dev/lr0.1_keep3": "done",
+  "dev/lr0.3_keep0.3": "done",
+  "dev/lr0.3_keep1": "done",
+  "dev/lr0.3_keep3": "done"
+ },
+ "when": "2026-11-28 01:29Z",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "commit and brain/ tree recorded",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke rc 0",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "smoke measured peak RSS",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "peak_rss_gb=7.033061981201172"
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.03_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.1_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep0.3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep1 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/lr0.3_keep3 present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "job dev/ref present and parsed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "preconditions_status": "GO",
+ "undefined_reasons": [],
+ "disabled_processes": [],
+ "verdict_raw": "NEGATIVE-DEV"
+}
