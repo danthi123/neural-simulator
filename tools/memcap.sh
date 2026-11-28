@@ -58,6 +58,9 @@ echo "[memcap] MemoryMax=${MAX_GB}G MemoryHigh=${HIGH} MemorySwapMax=${SWAP_GB}G
 # holding 21 GB of VRAM and deadlocked the GPU queue for 5 h (2026-10-31); llm.sh now stops local-llm-backend-*.scope.
 NAME_ARGS=()
 [ -n "${MEMCAP_UNIT:-}" ] && NAME_ARGS=(--unit="${MEMCAP_UNIT}-$$")
+# systemd >= 254 expands $VAR in the command line itself (an unset $A became "" and broke `--arm $A`, 2026-11-28 on
+# the workstation; the pools' systemd 249 does not). Pass the command through verbatim wherever the flag exists.
+systemd-run --help 2>/dev/null | grep -q -- '--expand-environment' && NAME_ARGS+=(--expand-environment=no)
 exec systemd-run --user --scope --quiet "${NAME_ARGS[@]}" \
   -p MemoryMax="${MAX_GB}G" -p MemoryHigh="${HIGH}" -p MemorySwapMax="${SWAP_GB}G" \
   -- "$@"
