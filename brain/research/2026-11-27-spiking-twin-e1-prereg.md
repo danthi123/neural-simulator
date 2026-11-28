@@ -222,6 +222,120 @@ On the 3090 the cost is $0 but the card time is long. The gate (section 7) stops
      AMP fp32-input case is still measured and recorded, not asserted. Its cause is not diagnosed (fla itself warns
      that its chunk kernel's fp32 path is unsupported on some platforms).
    Throughput gate, scope (training only; eval, prep and T = 1 on the loop) and the mapping are unchanged.
+
+   **Amendment A2 (2026-11-27, pre-data for E1: no E1 science data exists; prep, smoke and training have not run.
+   This is an instrument gate, the kernel parity test, not an E1 measure).** A2 is written **after seeing a failing
+   S1**. The parity run under A1 (IEEE fix not yet in; now `run/parity/run1_tf32/`) passed 17 of 18 tests and failed S1
+   |mean dNLL|: fla fp32 vs loop fp32 0.0586, fla bf16 AMP vs loop AMP 0.0134, bar max(1.5 x floor 0.0005, 0.01) =
+   0.01. That run stays on record **as failed**; A2 does not reinterpret it. The diagnosis
+   (`run/parity/bias_diagnosis.md`) found two things:
+   - *A real kernel defect, fixed.* fla's fp32 `tl.dot` ran as TF32 (Triton's default). That shrank fla's fp32 output
+     toward zero in all 12 layers (63% of the o-site count flips lowered |count|). With IEEE fp32 dots the error is
+     fp32 rounding (3e-7 to 2e-6, the size of an fp64 recurrence against the loop). The bf16-input path is unbiased.
+   - *The A1 mean bar could not discriminate.* The spikes-on twin is chaotic (one count flip cascades), so per-token
+     NLLs of two correct implementations are close to independent draws. On 8 windows x 512 tokens the mean dNLL has a
+     window SE of 0.03-0.06 nats against a 0.01 bar: a correct kernel passes 18-50% of the time. IEEE fla read 0.0117
+     (SE 0.015) and an fp64 loop, more accurate than the reference, read 0.0054 (SE 0.012); a sign-free perturbation of
+     the TF32 error's size missed 0.01 in 5 of 6 seeds. The floor's 0.0005 was a lucky draw (SE 0.043).
+
+   **Changes** (implemented in `brain/tests/test_spiking_twin_fla.py`, CPU-tested there):
+   1. *Sample.* S1 and S2 read 64 windows x 512 tokens (32,768 tokens; 8x A1) of held-out WT103 val. The windows are
+      drawn once by a fixed seed (1127, `numpy.random.default_rng(...).choice`, no replacement, sorted) from the
+      non-overlapping 513-token grid of the whole val file (489 windows with the rwkv vocab), excluding grid windows
+      0-1, which stay the calibration windows (as in A1). The same 64 windows are read by every arm (loop fp32, loop
+      bf16 AMP, fla fp32, fla bf16 AMP), so every comparison is paired. Window ids are written to the JSON. The seed
+      was picked before the windows were drawn; one of the 64 (window 9) was among A1's 8.
+   2. *Statistic.* The paired mean dNLL with an item-clustered SE: the window is the item (each starts from a zero
+      state), SE = sd of the 64 per-window mean dNLLs / 8; 95% CI = mean +- t(0.975, df 63) x SE (t = 1.998).
+      Projected SE at 64 windows [E, from the 8-window SEs / sqrt 8]: fp32 about 0.005, bf16 AMP 0.015-0.019.
+      **This is an assumption**, not a measurement: it takes the windows as independent draws from one distribution
+      and the 8-window SD as that distribution's SD. A CPU bootstrap of the existing per-window means (pooled from
+      the correct-kernel comparisons in `bias_diag_*.json`: fp32 IEEE chunk, fused_recurrent, fp64 loop and the
+      reversed IEEE error, 32 window means; bf16 chunk, fused_recurrent, reversed bf16 error and the floor, 32;
+      centred, resampled 64 at a time) gives SE 0.0044 (fp32) and 0.016 (bf16) [E]. If the true SD sits at the upper
+      90% bound of an 8-window estimate (df 7), the bf16 SE is 0.026-0.030 and a correct bf16 kernel passes the rule
+      only 0.68-0.74 of the time [E]; the repeat (item 8) is the recourse for that.
+   3. *Mean rule.* Each fla comparison passes S1-mean only if the 95% CI includes 0 **and** |mean| <= 0.03 nats.
+      Why 0.03: E1 measures a teacher-twin gap of about 0.3-0.4 nats (the memo
+      `docs/plans/2026-11-27-spiking-cortex-route-memo.md`: SpikingMamba, distilled from a same-size Mamba2, WT103 ppl
+      26.32 vs 19.56 at 130M = 0.30 nats, WikiText-2 15.17 vs 10.42 at 1.3B = 0.38 nats [C]). A kernel bias is
+      tolerable only if it is at most 10% of the smallest of these, 0.03 nats, so the kernel cannot move E1's main
+      read-out by more than a tenth. The CI part catches any bias the sample can resolve; the cap bounds what the
+      sample cannot. A correct kernel passes with probability about 0.95 (fp32) and 0.89-0.95 (bf16, where the cap
+      binds) [E]; a 0.05-nat bias passes the bf16 comparison 10-15% of the time and the fp32 one almost never [E].
+      Bootstrap (item 2's assumption): a correct kernel passes 0.954 (fp32), 0.936 (bf16), both 0.892; a 0.05-nat
+      bias passes bf16 0.098 and fp32 0.000; a 0.03-nat bias passes bf16 0.48 [E]. **The mean rule is a weak TF32
+      detector.** The diagnosis never showed that the TF32 kernel bias moved mean NLL at all: the TF32 run read
+      -0.0586, the same error with its sign reversed read +0.005, and a random-sign error of the same size spread
+      -0.068..+0.013. So "a 0.06-nat TF32-kind bias" is a hypothetical NLL effect, not a measured one. What guards
+      against a TF32-type defect is the `ieee` assertion (item 5) and the per-layer statistic (item 7), not this CI.
+      A1's mean bar max(1.5 F, 0.01) is retired; the floor's mean and CI are still computed and recorded.
+   4. *Unchanged.* The floor-based bar max(1.5 F, absolute epsilon) stays for S1 rms (1e-3), S2 counts and firing
+      share (1e-4) and S3 training (1e-5), with F now measured on the same 64 windows for S1/S2. Spikes-off bars,
+      tiny-cortex cases, the throughput gate, scope and mapping are unchanged. S1 now costs about 8x its A1 GPU time [E].
+   5. *Kernel config.* IEEE fp32 dots are part of the kernel: `brain.spiking_twin.fla_import` sets
+      `TRITON_F32_DEFAULT=ieee` before importing fla and refuses any other explicit setting; `run/KERNEL` records
+      `f32_dot=ieee`; every parity JSON records `triton_f32_default`, and S1 asserts it is `ieee`. The setting also
+      reaches fla's internal fp32 dot on the bf16-input path, so every parity case is rerun, not only S1. The fp32
+      bars were set allowing TF32 and are not tightened.
+   6. *Record.* `run/parity/run1_tf32/` (the TF32 run, 17/18, S1 failed) stays as a failed run. The rerun overwrites
+      the top-level `run/parity/*.json` and `log.txt`.
+   7. *Per-layer kernel-bias check (asserted, added after the skeptic).* A new parity case
+      (`test_gpu_kernel_bias_per_layer_teacher`, JSON `teacher_on_kernel_bias.json`) reads the first 8 S1 windows
+      with the loop fp32 and hands each layer's WKV inputs to fla on the SAME inputs (`DiagTwin._iso_layer` from
+      `brain/experiments/spiking_twin_fla_bias_diag.py`, fp32 IEEE and bf16 inputs). fla fp32: |slope of
+      (y_fla - y_loop) on y_loop| <= 1e-5 in every layer (IEEE read 1.5e-6 at most and the fp64 loop 1.4e-6; TF32
+      read 2.9e-4 at least). Both paths: when there are at least 1000 o-site count flips over all layers, the share
+      of flips that lower |count| lies in 0.47-0.53 (bf16 inputs 0.4987-0.5002; TF32 0.63). With fewer flips
+      (IEEE fp32 had 10), the share is recorded, not asserted. bf16 slopes are recorded only (up to +4e-4 with no
+      sign pattern; the diagnosis found that path unbiased by its flips). These bars were set after seeing the
+      diagnostic numbers on A1's 8 windows. They test a new property (a sign-consistent shrink) that was not run
+      before, and they fail the retired TF32 config by a factor of 29 (slope) and 0.10 (share).
+   8. *One pre-registered repeat (the only recourse, added after the skeptic).* Two comparisons, each with a 5%
+      false fail from the CI and the bf16 cap binding, give a correct kernel about an 11% chance (bootstrap) to fail
+      S1-mean. Up to 30% if the SE is at its upper bound. Under "no further amendment", that would send E1 to training
+      without fla. So: if the A2 rerun fails **only** the S1 mean rule (every other parity case and S1/S2 bar
+      passes, `ieee` asserted, item 7 passes), S1 runs **once** more on a second disjoint draw: 64 windows by seed
+      **1128** (fixed now), drawn from the same grid minus the calibration windows and the first draw's 64. Every arm
+      reads it, as in item 1. S1-mean then passes only if each fla comparison passes the A2 rule **on draw 2 and on
+      the pooled 128 windows** (window SE over 128, t df 127 = 1.9788). The other S1/S2 bars stay on draw 1, and
+      draw 1's mean verdict is recorded. Run by `S1_REPEAT=1 WKV_DTYPE=bf16 bash launch_3090.sh kernel`. The script
+      refuses unless the last parity run was A2 and failed the mean rule alone. It keeps that run in
+      `run/parity/rerun_draw1/`, refuses a second repeat, and the test writes `teacher_on_stat_repeat.json`.
+      Bootstrap [E]: with the repeat, a correct kernel passes 0.958 (was 0.892). A 0.05-nat bf16 bias passes 0.095
+      (was 0.093), because the pooled rule blocks it. A 0.03- or 0.05-nat fp32 bias never passes. The alternative was
+      to drop the CI clause for bf16 and keep the cap alone. It was not taken: at SE 0.015-0.019 the CI and the cap
+      bind at nearly the same |mean|, so dropping the clause cuts little of the false fail. Owner may swap it before
+      the rerun.
+
+   **Why this is not a rescue.** The A1 bar failed a run, but the diagnosis shows it could not tell a correct kernel
+   from a biased one: at 4096 tokens a pass or fail was close to a coin flip, so the failure carried no information
+   about the kernel beyond what the per-layer statistics showed (and that defect, TF32, is fixed, not waved through).
+   A2 does not widen the bar on the old sample. It raises power (8x tokens, a paired clustered test) and fixes the
+   bias ceiling now, from a quantity outside this test (the gap E1 measures), before the rerun. Read against run1's
+   numbers A2 would fail the fp32 TF32 comparison (0.0586 > 0.03) and pass bf16 (0.0134, SE 0.048); neither counts,
+   because run1 used the old windows and the retired TF32 config. **The rerun is the test.** If it fails S1 under A2,
+   that is a kernel bias (diagnosed per layer, as in `bias_diagnosis.md`) or E1 trains without fla; no further
+   amendment of the S1 bar. The single repeat in item 8 is part of A2, with its seed fixed before the rerun, and it is
+   the only recourse. A failed repeat is final.
+
+   **A2 skeptic verdict (fresh-context review, 2026-11-27, before the rerun): APPROVE-WITH-CHANGES.** What held:
+   - The noise estimate. Run1's fp32 miss was t = -1.05; the fp64 loop read 0.0054; the sign-free injection missed in
+     5 of 6 seeds.
+   - It is not a rescue. The ceiling was fixed before the data, run1 stays failed, and TF32 was fixed rather than
+     passed.
+   - The 0.03 cap is derived from outside this test (10% of the 0.30-0.38 nat E1 gap). It is somewhat arbitrary,
+     and the text says so.
+
+   Problems and what was done:
+   1. The mean test is a weak TF32 detector. Stated in item 3; the per-layer slope and flip-asymmetry check is added
+      and asserted (item 7).
+   2. The power numbers were projections. Labelled as an assumption and bootstrapped from the per-window data
+      (items 2-3). The bootstrap still assumes independent, identically distributed windows.
+   3. The false-fail rate is about 10-20%. One fixed-seed repeat on a disjoint draw, with a pooled rule, was added
+      (item 8). The skeptic left the choice between this and the cap-only alternative to the owner; the repeat was
+      chosen (reason in item 8).
+   4. Window 9 overlaps A1's 8 windows. Already disclosed; minor; unchanged.
 2. **SpikeOPD is known from its abstract only.** a2 is the generic self-generated-prefix variant, not the published
    recipe.
 3. **The chat data is the teacher's own text.** This flatters the teacher on chat ppl. WT103 val is the clean measure,

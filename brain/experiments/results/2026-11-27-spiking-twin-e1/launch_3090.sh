@@ -10,7 +10,9 @@
 #                                #   PARITY_OK whose hashes match the current files (a code change re-requires parity).
 #                                #   KERNEL_CHOICE=loop writes the in-repo loop decision instead (no parity; the gate is
 #                                #   then expected to stop). WKV_DTYPE=bf16 hands bf16 tensors to the kernel (default
-#                                #   fp32); the parity test covers both.
+#                                #   fp32); the parity test covers both. S1_REPEAT=1 (prereg 7.1 A2, once only): after
+#                                #   a rerun whose only failure was the S1 mean rule, keeps that run in parity/rerun_draw1/
+#                                #   and reruns with BRAIN_S1_REPEAT=1 (S1-mean then decided by draw 2 + pooled 128).
 #   bash launch_3090.sh prep     # tokenise fineweb (first 0.3B tokens) + WT103 val, teacher-written chat pools (queued)
 #   bash launch_3090.sh smoke    # 200 optimizer steps of arm a, seed 7, in OUT/smoke: measures tok/s and the time of
 #                                #   one a2 refill (queued)
@@ -44,7 +46,7 @@ code_hash() {   # everything the parity verdict depends on: twin, cortex math, E
   local rec="$FLA_LIB/fla_core-0.6.0.dist-info/RECORD"
   [ -s "$rec" ] || { echo "missing-$rec"; return; }
   (cd "$REPO" && sha256sum brain/spiking_twin.py brain/plastic_cortex.py brain/experiments/spiking_twin_e1.py \
-     brain/tests/test_spiking_twin_fla.py "$rec" | sha256sum | cut -c1-64); }
+     brain/tests/test_spiking_twin_fla.py brain/experiments/spiking_twin_fla_bias_diag.py "$rec" | sha256sum | cut -c1-64); }
 need_kernel() {
   [ -s "$OUT/KERNEL" ] || { echo "refuse: run 'bash launch_3090.sh kernel' first (writes $OUT/KERNEL)"; exit 7; }
   if [ "$(kv kernel)" = "fla" ]; then
@@ -71,12 +73,23 @@ case "${1:-}" in
     [ "$ver" = "0.6.0" ] || { echo "refuse: fla-core 0.6.0 not found in $FLA_LIB (got '$ver')"; exit 9; }
     { echo "kernel=fla"; echo "wkv_dtype=$dt"; echo "fla_core=$ver"; echo "fla_lib=$FLA_LIB"
       echo "op=fla.ops.rwkv7.chunk_rwkv7 (training only: student + teacher targets inside train; eval/prep/T=1 = loop)"
+      echo "f32_dot=ieee (TRITON_F32_DEFAULT, set by brain.spiking_twin.fla_import; prereg 7.1 amendment A2)"
       echo "decision=owner-approved off-the-shelf training kernel, 2026-11-27 (prereg section 7 item 1)"
       echo "parity=brain/tests/test_spiking_twin_fla.py (bars in its docstring and the prereg); throughput gate unchanged"
       echo "written=$(date -Iseconds)"; } > "$OUT/KERNEL"
     mkdir -p "$OUT/parity"
+    rep_env=""
+    if [ "${S1_REPEAT:-0}" = "1" ]; then   # A2: one repeat, only after a rerun that failed the S1 mean rule alone
+      P="$OUT/parity"
+      [ ! -e "$P/rerun_draw1" ] || { echo "refuse: the A2 repeat has already run ($P/rerun_draw1 exists)"; exit 10; }
+      $PY -c "import json,sys;d=json.load(open('$P/teacher_on_stat.json'));f=d['fails'];sys.exit(0 if d.get('amendment')=='A2' and 'repeat' not in d and f and all('fails the A2 rule' in x for x in f) else 1)" \
+        && grep -Eq '(^|[^0-9])1 failed' "$P/log.txt" \
+        || { echo "refuse: the A2 repeat needs an A2 rerun whose only failure is the S1 mean rule"; exit 10; }
+      mkdir "$P/rerun_draw1" && cp -p "$P"/*.json "$P/log.txt" "$P/rerun_draw1/"
+      rep_env="BRAIN_S1_REPEAT=1 "
+    fi
     ch=$(code_hash)
-    cmd="cd $REPO && BRAIN_ALLOW_W3090=1 BRAIN_REQUIRE_GPU=1 BRAIN_PARITY_OUT=$OUT/parity OMP_NUM_THREADS=4 PYTHONPATH=.:$FLA_LIB bash tools/memcap.sh $MEM_GB -- $PY -m pytest -q -p no:cacheprovider -rA brain/tests/test_spiking_twin_fla.py > $OUT/parity/log.txt 2>&1 && ! grep -qi skipped $OUT/parity/log.txt && printf 'code=$ch\\npassed=%s\\n' \"\$(date -Iseconds)\" > $OUT/PARITY_OK"
+    cmd="cd $REPO && ${rep_env}BRAIN_ALLOW_W3090=1 BRAIN_REQUIRE_GPU=1 BRAIN_PARITY_OUT=$OUT/parity OMP_NUM_THREADS=4 PYTHONPATH=.:$FLA_LIB bash tools/memcap.sh $MEM_GB -- $PY -m pytest -q -p no:cacheprovider -rA brain/tests/test_spiking_twin_fla.py > $OUT/parity/log.txt 2>&1 && ! grep -qi skipped $OUT/parity/log.txt && printf 'code=$ch\\npassed=%s\\n' \"\$(date -Iseconds)\" > $OUT/PARITY_OK"
     bash "$REPO/tools/gpu_queue.sh" add "$cmd"
     echo "KERNEL = fla ($ver, wkv_dtype $dt); parity test queued -> $OUT/parity/log.txt; PARITY_OK only on a pass" ;;
   prep)

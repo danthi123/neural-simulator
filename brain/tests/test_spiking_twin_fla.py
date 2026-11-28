@@ -14,7 +14,7 @@ with BRAIN_REQUIRE_GPU=1 an unmet condition FAILS instead, so the launch script'
 The gate is evaluated once per session (nvidia-smi would count this process's own tensors after the first case); CPU
 tests never import the fla package (its import probes CUDA), they load fla's naive reference by file path.
 
-Parity bar (registered in the prereg section 7 item 1, as amended before data by A1, 2026-11-27).
+Parity bar (registered in the prereg section 7 item 1, as amended before data by A1 and A2, 2026-11-27).
 err(x, ref) = ||x - ref|| / ||ref|| (relative L2); every fla case counts its _wkv_fla calls (a silent fall-through to
 the loop fails), including the checkpoint recompute.
 Spikes OFF, per logit (tiny random cortex and the 0.1B teacher, trainable twin, nonzero adapters, carried state):
@@ -30,12 +30,24 @@ Spikes ON: a per-logit bar cannot be met by any implementation (integer counts a
   rounding margin are absorbed by the counts, see test_spike_counts_absorb_small_kernel_differences) the state and
   gradients must meet the spikes-off fp32 bars, since then the kernel is the only difference.
   (0.1B teacher, statistical; fla vs the loop at the same precision; floor F = the loop bf16 AMP vs the loop fp32)
-  S1 per-token NLL on held-out WT103 val (8 windows x 512): rms(dNLL) <= max(1.5 F, 1e-3) and |mean dNLL| <=
-     max(1.5 F, 0.01 nats); S2 spike counts per channel (mean |count| and firing share, all sites): mean |diff| over
+  S1 per-token NLL on held-out WT103 val, A2: 64 windows x 512 tokens (32768 tokens), drawn by a fixed seed
+     (S1_SEED) from the non-overlapping 513-token grid of the whole file minus the 2 calibration windows, the same
+     windows for every arm: rms(dNLL) <= max(1.5 F, 1e-3); the paired mean dNLL with a window-clustered SE (sd of the
+     64 per-window mean dNLLs / 8) must have a 95% t CI (df 63) that includes 0 AND |mean| <= 0.03 nats (A2 replaced
+     A1's |mean| <= max(1.5 F, 0.01) on 8 windows: SE 0.03-0.06 there, a correct kernel passed 18-50%). One
+     pre-registered repeat (BRAIN_S1_REPEAT=1, only after a rerun failing the mean rule alone): draw 2 by S1_REPEAT_SEED,
+     disjoint from draw 1; S1-mean then needs the rule on draw 2 AND on the pooled 128 windows (t df 127);
+     Kernel bias, per layer (A2, skeptic): the mean NLL is a weak bias detector (the chaotic twin turns a bias into
+     noise), so the first 8 S1 windows also run fla on each layer's loop-fp32 inputs: fla fp32 |slope of
+     (y_fla - y_loop) on y_loop| <= 1e-5 in every layer; o-site flips lowering |count| 0.47-0.53 of all flips when
+     there are >= 1000 (fp32 IEEE and bf16 inputs);
+     S2 spike counts per channel (mean |count| and firing share, all sites): mean |diff| over
      channels <= max(1.5 F, 1e-4); S3 50 steps of the real train() (arm a, seq 256, micro-batch 4, warmup 10, bf16 AMP,
      fla with bf16 kernel inputs vs the loop): mean |d loss| per step and |d mean loss of the last 10 steps| <=
      max(1.5 F, 1e-5), F from the loop's own bf16 vs fp32 training runs.
-The fp32 bars allow TF32 inside fla's Triton dots (about 1e-3 relative); the bf16 bars are relative to the loop's floor.
+Kernel config (A2): fla's fp32 tl.dot runs IEEE fp32 (TRITON_F32_DEFAULT=ieee, set by brain.spiking_twin.fla_import;
+every GPU case records the setting and the fla cases assert it). The fp32 bars were set allowing TF32 (about 1e-3
+relative) and are not tightened; the bf16 bars are relative to the loop's floor.
 With BRAIN_PARITY_OUT=<dir> every GPU case writes its measured errors to <dir>/<case>.json."""
 from __future__ import annotations
 
@@ -55,6 +67,23 @@ from brain.tests.test_source_tag import _Cortex, _Model
 BARS = {("fp32", False): dict(logits=2e-3, state=2e-3, grad=1e-2, kl=1e-4)}   # spikes on: statistical (docstring)
 STAT_X = 1.5                       # spikes-on statistical bars: x the loop's own bf16-vs-fp32 floor (amendment A1)
 AMP_KERNEL_DTYPE = "bf16"          # the only kernel input dtype train() accepts under bf16 AMP (amendment A1)
+# S1 sample and mean rule (amendment A2, written before the rerun; prereg section 7 item 1)
+S1_WINDOWS, S1_SEQ, S1_CALIB, S1_SEED, S1_BATCH = 64, 512, 2, 1127, 8   # S1_BATCH: windows per forward (memory only)
+S1_MEAN_MAX = 0.03                 # nats: <= 10% of the 0.3-0.4 nat teacher-twin gap E1 measures (SpikingMamba, memo)
+S1_T95 = 1.998340542520741         # two-sided 95% t quantile, df = S1_WINDOWS - 1 = 63 (scipy.stats.t.ppf(0.975, 63))
+# A2 repeat (skeptic change 3): one pre-registered repeat on a second disjoint draw, seed fixed now; run only with
+# BRAIN_S1_REPEAT=1 after a rerun whose only failure was the S1 mean rule. It decides S1-mean by the rule on draw 2
+# AND on the pooled 128 windows (t df 127); every other S1/S2 bar stays on draw 1.
+S1_REPEAT_SEED = 1128
+S1_T95_POOLED = 1.9788195347028539   # scipy.stats.t.ppf(0.975, 2 * S1_WINDOWS - 1 = 127)
+# A2 per-layer kernel bias check (skeptic change 1): the mean NLL is a weak bias detector (the chaotic twin turns a
+# kernel bias into noise); the detector is the isolated per-layer statistic on identical inputs
+# (brain/experiments/spiking_twin_fla_bias_diag.py, DiagTwin._iso_layer), read on the first ISO_WINDOWS S1 windows.
+ISO_WINDOWS = 8
+ISO_SLOPE_MAX_FP32 = 1e-5          # |slope of (y_fla - y_loop) on y_loop|, every layer, fla fp32 (IEEE 1.5e-6 at most,
+                                   #   loop fp64 1.4e-6; TF32 2.9e-4 at least: bias_diagnosis.md)
+ISO_FLIP_MIN = 1000                # flip asymmetry is asserted only with >= this many o-site flips (all layers)
+ISO_FLIP_DOWN_BAND = (0.47, 0.53)  # share of o-site flips lowering |count| (bf16 inputs 0.4987-0.5002; TF32 0.63)
 
 
 # The loop computes in fp32 (it casts state and inputs with .float()); the references below run in fp64 on the same
@@ -366,6 +395,7 @@ def _compare(case, cortex, toks, spikes, ckpt=False):
 
 
 def _dump(case, out):
+    out.setdefault("triton_f32_default", os.environ.get("TRITON_F32_DEFAULT"))   # A2: part of the kernel config
     if os.environ.get("BRAIN_PARITY_OUT"):
         os.makedirs(os.environ["BRAIN_PARITY_OUT"], exist_ok=True)
         with open(os.path.join(os.environ["BRAIN_PARITY_OUT"], f"{case}.json"), "w") as f:
@@ -446,7 +476,8 @@ def _need_file(path):
 
 
 def _heldout_windows(pipe, n, seq=512):
-    """n windows of seq + 1 tokens from the start of WT103 val (held out: E1 trains on fineweb and teacher chat)."""
+    """n windows of seq + 1 tokens from the start of WT103 val (held out: E1 trains on fineweb and teacher chat). The A1
+    S1 sample (8 eval windows), kept for spiking_twin_fla_bias_diag; S1 itself reads _s1_windows (A2)."""
     import pyarrow.parquet as pq
     from brain.experiments.spiking_twin_e1 import WT103_VAL
     _need_file(WT103_VAL)
@@ -462,58 +493,210 @@ def _heldout_windows(pipe, n, seq=512):
     return torch.tensor([ids[w * (seq + 1):(w + 1) * (seq + 1)] for w in range(n)], device="cuda")
 
 
-def _nll_and_counts(tw, win, amp):
-    """Per-token NLL (flat) and per-channel mean |count| and firing share over every spiking site (sorted)."""
+def _wt103_val_ids(pipe):
+    """The whole WT103 val file (rows concatenated), tokenised once."""
+    import pyarrow.parquet as pq
+    from brain.experiments.spiking_twin_e1 import WT103_VAL
+    _need_file(WT103_VAL)
+    return pipe.encode("".join(pq.read_table(WT103_VAL).column("text").to_pylist()))
+
+
+def _s1_window_ids(n_grid, n=S1_WINDOWS, calib=S1_CALIB, seed=S1_SEED, exclude=()):
+    """A2: calibration = grid windows 0 .. calib-1 (as in A1); evaluation = n distinct other grid windows (not in
+    `exclude`) drawn by a fixed seed, sorted. The same windows for every arm and implementation."""
+    import numpy as np
+    pool = [i for i in range(calib, n_grid) if i not in set(exclude)]
+    assert len(pool) >= n, f"WT103 val has {n_grid} windows, need {calib} + {len(set(exclude))} + {n}"
+    pick = np.random.default_rng(seed).choice(np.asarray(pool), size=n, replace=False)
+    return list(range(calib)), sorted(int(i) for i in pick)
+
+
+def _s1_repeat_window_ids(n_grid):
+    """A2 repeat: draw 2 = S1_WINDOWS grid windows by S1_REPEAT_SEED, disjoint from draw 1 and the calibration."""
+    cal, ev1 = _s1_window_ids(n_grid)
+    return cal, ev1, _s1_window_ids(n_grid, seed=S1_REPEAT_SEED, exclude=ev1)[1]
+
+
+def _s1_windows(pipe, seq=S1_SEQ, repeat=False):
+    """(calibration windows, evaluation windows, evaluation grid indices[, draw-2 windows, draw-2 indices]); windows
+    are seq + 1 tokens."""
+    ids = _wt103_val_ids(pipe)
+    grid = torch.tensor(ids[:len(ids) // (seq + 1) * (seq + 1)], device="cuda").view(-1, seq + 1)
+    if repeat:
+        cal, ev, ev2 = _s1_repeat_window_ids(grid.shape[0])
+        return grid[cal], grid[ev], ev, grid[ev2], ev2
+    cal, ev = _s1_window_ids(grid.shape[0])
+    return grid[cal], grid[ev], ev
+
+
+def _nll_and_counts(tw, win, amp, batch=None):
+    """Per-token NLL (flat, window-major) and per-channel mean |count| and firing share over every spiking site
+    (sorted), read over all windows; `batch` windows per forward (memory only: the windows are independent)."""
     tw.stats = {}
+    nll = []
     try:
-        with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16, enabled=amp):
-            lg = tw.forward_batch(win[:, :-1])[0].float()
-        nll = torch.nn.functional.cross_entropy(lg.reshape(-1, lg.shape[-1]), win[:, 1:].reshape(-1), reduction="none")
+        for i in range(0, win.shape[0], batch or win.shape[0]):
+            w = win[i:i + (batch or win.shape[0])]
+            with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16, enabled=amp):
+                lg = tw.forward_batch(w[:, :-1])[0].float()
+            nll.append(torch.nn.functional.cross_entropy(lg.reshape(-1, lg.shape[-1]), w[:, 1:].reshape(-1),
+                                                         reduction="none"))
+            del lg
         m = torch.cat([tw.stats[k][0] / tw.stats[k][1] for k in sorted(tw.stats)])
         f = torch.cat([tw.stats[k][2] / tw.stats[k][1] for k in sorted(tw.stats)])
     finally:
         tw.stats = None
-    return nll.double(), m.double(), f.double()
+    return torch.cat(nll).double(), m.double(), f.double()
 
 
-def _stat_diff(a, b):
+def _paired_mean(d, n_win):
+    """A2: paired mean of the per-token dNLL and its window-clustered SE (windows are the independent items: each
+    starts from a zero state). Equal-size windows, so the mean of window means is the token mean."""
+    wm = d.reshape(n_win, -1).mean(1)
+    return float(wm.mean()), float(wm.std(unbiased=True)) / n_win ** 0.5
+
+
+def _s1_mean_verdict(mean, se, t=S1_T95, cap=S1_MEAN_MAX):
+    """A2 mean rule: the 95% CI of the mean dNLL includes 0 AND |mean| <= cap (both inclusive)."""
+    lo, hi = mean - t * se, mean + t * se
+    ci0, small = lo <= 0 <= hi, abs(mean) <= cap
+    return {"mean": mean, "se_window": se, "ci95": [lo, hi], "ci_includes_0": ci0, "abs_mean_le_cap": small,
+            "cap": cap, "pass": ci0 and small}
+
+
+def _stat_diff(a, b, n_win=None):
     d = a[0] - b[0]
-    return {"nll_rms": float(d.pow(2).mean().sqrt()), "nll_mean": abs(float(d.mean())),
-            "count_mean_abs": float((a[1] - b[1]).abs().mean()), "fire_mean_abs": float((a[2] - b[2]).abs().mean())}
+    out = {"nll_rms": float(d.pow(2).mean().sqrt()), "nll_mean": abs(float(d.mean())),
+           "count_mean_abs": float((a[1] - b[1]).abs().mean()), "fire_mean_abs": float((a[2] - b[2]).abs().mean())}
+    if n_win is not None:
+        out["nll_mean_rule"] = _s1_mean_verdict(*_paired_mean(d, n_win))
+    return out
+
+
+def _s1_repeat_verdict(d1, d2, n_win=S1_WINDOWS):
+    """A2 repeat: per-token dNLL on draw 1 and draw 2 (flat, window-major). Draw 1 is recorded; S1-mean passes only if
+    the A2 rule holds on draw 2 AND on the pooled 2 x n_win windows (t df 2 n_win - 1)."""
+    r1 = _s1_mean_verdict(*_paired_mean(d1, n_win))
+    r2 = _s1_mean_verdict(*_paired_mean(d2, n_win))
+    rp = _s1_mean_verdict(*_paired_mean(torch.cat([d1, d2]), 2 * n_win), t=S1_T95_POOLED)
+    return {"draw1": r1, "draw2": r2, "pooled": rp, "pass": r2["pass"] and rp["pass"]}
+
+
+def _kernel_bias_verdict(iso, slope_max=None):
+    """A2 per-layer bias check on isolated per-layer stats ({layer: DiagTwin._iso_layer dict}): every layer
+    |slope_d_on_y| <= slope_max (if given), and, with >= ISO_FLIP_MIN o-site flips over all layers, the share lowering
+    |count| inside ISO_FLIP_DOWN_BAND (fewer flips: recorded only)."""
+    slopes = [iso[k]["slope_d_on_y"] for k in sorted(iso, key=int)]
+    down = sum(iso[k]["o_flips_abs_down"] for k in iso)
+    flips = down + sum(iso[k]["o_flips_abs_up"] for k in iso)
+    share = down / flips if flips else None
+    fails = []
+    if slope_max is not None and not max(abs(x) for x in slopes) <= slope_max:
+        fails.append(f"max |slope| {max(abs(x) for x in slopes):.3g} > {slope_max:.3g}")
+    if flips >= ISO_FLIP_MIN and not ISO_FLIP_DOWN_BAND[0] <= share <= ISO_FLIP_DOWN_BAND[1]:
+        fails.append(f"{share:.4f} of {flips} o-site flips lower |count|, outside {ISO_FLIP_DOWN_BAND}")
+    return {"slopes": slopes, "slope_max": slope_max, "o_flips_abs_changed": flips, "share_abs_down": share,
+            "flip_asym_asserted": flips >= ISO_FLIP_MIN, "fails": fails, "pass": not fails}
 
 
 STAT_ABS = {"nll_rms": 1e-3, "nll_mean": 1e-2, "count_mean_abs": 1e-4, "fire_mean_abs": 1e-4}
+FLOOR_BARRED = ("nll_rms", "count_mean_abs", "fire_mean_abs")   # A2: the mean has its own rule (_s1_mean_verdict)
 
 
 def test_gpu_spikes_on_statistical_teacher():
-    """S1 + S2 (amendment A1): the 0.1B teacher's weights as a spiking twin (calibrated on 2 held-out windows), read on 8
-    other held-out windows by the loop fp32 (reference), the loop bf16 AMP (floor), fla fp32 and fla bf16 AMP with bf16
-    kernel inputs (the AMP training config); each fla read is compared with the loop at its own precision."""
+    """S1 + S2 (amendments A1, A2): the 0.1B teacher's weights as a spiking twin (calibrated on WT103 val windows 0-1),
+    read on 64 other held-out windows (fixed seed) by the loop fp32 (reference), the loop bf16 AMP (floor), fla fp32
+    and fla bf16 AMP with bf16 kernel inputs (the AMP training config); each fla read is compared with the loop at its
+    own precision, the windows paired."""
     _gpu_gate()
     c = _teacher()
-    win = _heldout_windows(c.pipe, 10)
+    repeat = os.environ.get("BRAIN_S1_REPEAT") == "1"
+    if repeat:
+        cal, ev, ev_ids, ev2, ev2_ids = _s1_windows(c.pipe, repeat=True)
+    else:
+        cal, ev, ev_ids = _s1_windows(c.pipe)
     loop_tw = SpikingTwin(c, spikes=True)
-    loop_tw.calibrate([win[:2, :-1]])
+    loop_tw.calibrate([cal[:, :-1]])
     fla_tw = SpikingTwin(c, spikes=True, wkv="fla")
     fla_tw.theta = dict(loop_tw.theta)
     calls = _count_fla(fla_tw)
-    ev = win[2:]
-    ref = _nll_and_counts(loop_tw, ev, False)
-    loop_amp = _nll_and_counts(loop_tw, ev, True)
-    fla32 = _nll_and_counts(fla_tw, ev, False)
+    n = ev.shape[0]
+    ref = _nll_and_counts(loop_tw, ev, False, S1_BATCH)
+    loop_amp = _nll_and_counts(loop_tw, ev, True, S1_BATCH)
+    dt32 = fla_tw.wkv_dtype
+    fla32 = _nll_and_counts(fla_tw, ev, False, S1_BATCH)
     fla_tw.wkv_dtype = torch.bfloat16 if AMP_KERNEL_DTYPE == "bf16" else torch.float32
-    fla_amp = _nll_and_counts(fla_tw, ev, True)
-    assert len(calls) == 2 * fla_tw.L, f"fla ran {len(calls)} times, expected {2 * fla_tw.L}"
-    floor = _stat_diff(loop_amp, ref)
-    out = {"tokens": int(ev[:, 1:].numel()), "nll_loop_fp32": float(ref[0].mean()), "floor": floor,
-           "fla_fp32_vs_loop_fp32": _stat_diff(fla32, ref),
-           f"fla_amp_{AMP_KERNEL_DTYPE}_vs_loop_amp": _stat_diff(fla_amp, loop_amp),
-           "bar": {m: max(STAT_X * floor[m], STAT_ABS[m]) for m in floor}}
-    fails = [f"{name} {m} {v:.3g} > {out['bar'][m]:.3g}" for name in (k for k in out if k.startswith("fla_"))
-             for m, v in out[name].items() if not v <= out["bar"][m]]
+    fla_amp = _nll_and_counts(fla_tw, ev, True, S1_BATCH)
+    n_fwd = -(-n // S1_BATCH)
+    assert len(calls) == 2 * n_fwd * fla_tw.L, f"fla ran {len(calls)} times, expected {2 * n_fwd * fla_tw.L}"
+    if repeat:                                       # draw 2, the same four reads (amp flag and kernel dtype as above)
+        fla_tw.wkv_dtype = dt32
+        ref2, loop_amp2 = _nll_and_counts(loop_tw, ev2, False, S1_BATCH), _nll_and_counts(loop_tw, ev2, True, S1_BATCH)
+        fla32_2 = _nll_and_counts(fla_tw, ev2, False, S1_BATCH)
+        fla_tw.wkv_dtype = torch.bfloat16 if AMP_KERNEL_DTYPE == "bf16" else torch.float32
+        fla_amp2 = _nll_and_counts(fla_tw, ev2, True, S1_BATCH)
+        assert len(calls) == 4 * n_fwd * fla_tw.L
+    assert os.environ.get("TRITON_F32_DEFAULT") == "ieee", "A2: fla must run with IEEE fp32 dots"
+    floor = _stat_diff(loop_amp, ref, n)
+    out = {"amendment": "A2", "tokens": int(ev[:, 1:].numel()), "windows": n, "seq": S1_SEQ, "seed": S1_SEED,
+           "eval_window_ids": ev_ids, "calib_window_ids": list(range(S1_CALIB)),
+           "nll_loop_fp32": float(ref[0].mean()), "floor": floor,
+           "fla_fp32_vs_loop_fp32": _stat_diff(fla32, ref, n),
+           f"fla_amp_{AMP_KERNEL_DTYPE}_vs_loop_amp": _stat_diff(fla_amp, loop_amp, n),
+           "bar": {m: max(STAT_X * floor[m], STAT_ABS[m]) for m in FLOOR_BARRED},
+           "mean_rule": f"95% t CI (df {n - 1}) of the paired mean dNLL includes 0 and |mean| <= {S1_MEAN_MAX}"}
+    if repeat:
+        out["repeat"] = {"seed": S1_REPEAT_SEED, "eval_window_ids": ev2_ids, "floor": _stat_diff(loop_amp2, ref2, n),
+                         "rule": "A2 rule on draw 2 AND on the pooled 2 x 64 windows (t df 127); other bars on draw 1"}
+        for name, (a, b, a2, b2) in {"fla_fp32_vs_loop_fp32": (fla32, ref, fla32_2, ref2),
+                                     f"fla_amp_{AMP_KERNEL_DTYPE}_vs_loop_amp": (fla_amp, loop_amp, fla_amp2,
+                                                                                 loop_amp2)}.items():
+            out["repeat"][name] = dict(_stat_diff(a2, b2, n), nll_mean_rule=_s1_repeat_verdict(a[0] - b[0],
+                                                                                               a2[0] - b2[0], n))
+            out[name]["nll_mean_rule_draw1"] = out[name]["nll_mean_rule"]
+            out[name]["nll_mean_rule"] = out["repeat"][name]["nll_mean_rule"]   # the repeat decides S1-mean
+    fails = [f"{name} {m} {out[name][m]:.3g} > {out['bar'][m]:.3g}" for name in (k for k in out if k.startswith("fla_"))
+             for m in FLOOR_BARRED if not out[name][m] <= out["bar"][m]]
+    fails += [f"{name} mean dNLL {r['mean']:+.4f} (SE {r['se_window']:.4f}, "
+              f"CI {r['ci95'][0]:+.4f}..{r['ci95'][1]:+.4f}) fails the A2 rule" for name in (k for k in out if k.startswith("fla_"))
+              for r in [out[name]["nll_mean_rule"]] if not repeat and not r["pass"]]
+    fails += [f"{name} A2 repeat fails (draw 2 {r['draw2']['mean']:+.4f} SE {r['draw2']['se_window']:.4f}; pooled "
+              f"{r['pooled']['mean']:+.4f} SE {r['pooled']['se_window']:.4f})" for name in (k for k in out
+                                                                                          if k.startswith("fla_"))
+              for r in [out[name]["nll_mean_rule"]] if repeat and not r["pass"]]
     out["fails"] = fails
-    _dump("teacher_on_stat", out)
+    _dump("teacher_on_stat_repeat" if repeat else "teacher_on_stat", out)
     assert not fails, "; ".join(fails) + f"\n{json.dumps(out, indent=1)}"
+
+
+def test_gpu_kernel_bias_per_layer_teacher():
+    """A2 (skeptic change 1): the kernel-bias detector. On the first ISO_WINDOWS S1 windows, the loop fp32 run of the
+    calibrated spiking teacher hands each layer's WKV inputs to fla (fp32 IEEE and bf16 inputs, the E1 config) on the
+    SAME inputs (DiagTwin, brain/experiments/spiking_twin_fla_bias_diag.py). fla fp32: every layer |slope of
+    (y_fla - y_loop) on y_loop| <= ISO_SLOPE_MAX_FP32; both paths: with >= ISO_FLIP_MIN o-site count flips, the share
+    lowering |count| inside ISO_FLIP_DOWN_BAND. bf16 slopes are recorded only (+-4e-4, no sign pattern)."""
+    _gpu_gate()
+    from brain.experiments.spiking_twin_fla_bias_diag import DiagTwin
+    c = _teacher()
+    cal, ev, ev_ids = _s1_windows(c.pipe)
+    base = SpikingTwin(c, spikes=True)
+    base.calibrate([cal[:, :-1]])
+    tw = DiagTwin(c, spikes=True)
+    tw.theta = dict(base.theta)
+    tw.kern, tw.iso, tw.rec = "loop", {}, None
+    tw.iso_variants = ("chunk32", "chunk_bf16in")
+    with torch.no_grad():
+        tw.forward_batch(ev[:ISO_WINDOWS, :-1])
+    assert os.environ.get("TRITON_F32_DEFAULT") == "ieee", "A2: fla must run with IEEE fp32 dots"
+    iso = tw.iso
+    assert set(iso) == set(tw.iso_variants) and all(len(iso[v]) == tw.L for v in iso)
+    out = {"amendment": "A2", "windows": ISO_WINDOWS, "eval_window_ids": ev_ids[:ISO_WINDOWS],
+           "fla_fp32": _kernel_bias_verdict(iso["chunk32"], ISO_SLOPE_MAX_FP32),
+           "fla_bf16in": _kernel_bias_verdict(iso["chunk_bf16in"]), "iso_per_layer": iso}
+    fails = [f"{k}: {f}" for k in ("fla_fp32", "fla_bf16in") for f in out[k]["fails"]]
+    out["fails"] = fails
+    _dump("teacher_on_kernel_bias", out)
+    assert not fails, "; ".join(fails)
 
 
 S3_CFG = dict(seq=256, micro_b=4, accum=1, warmup=10, tokens_per_arm=60 * 256 * 4, chat_share=0.0, calib_seqs=4)
@@ -581,6 +764,90 @@ def test_gpu_spikes_on_training_run_teacher(tmp_path, monkeypatch):
 
 
 # ---------------------------------------------------------------------------------------------------- CPU (more)
+def test_s1_windows_fixed_seed_distinct_and_held_apart_from_calibration():
+    """A2: 64 eval windows drawn once by the fixed seed: reproducible, distinct, sorted, never a calibration window."""
+    cal, ev = _s1_window_ids(489)            # 489 = the 513-token grid of the whole WT103 val file (rwkv vocab)
+    assert cal == [0, 1] and ev == _s1_window_ids(489)[1]
+    assert len(ev) == S1_WINDOWS == len(set(ev)) and ev == sorted(ev) and min(ev) >= S1_CALIB and max(ev) < 489
+    assert _s1_window_ids(489, seed=S1_SEED + 1)[1] != ev
+    with pytest.raises(AssertionError):
+        _s1_window_ids(S1_WINDOWS + 1)
+
+
+def test_s1_repeat_draw_fixed_disjoint_from_draw1_and_calibration():
+    """A2 repeat: draw 2 is fixed by S1_REPEAT_SEED and shares no window with draw 1 or the calibration."""
+    cal, ev1, ev2 = _s1_repeat_window_ids(489)
+    assert ev1 == _s1_window_ids(489)[1] and (cal, ev1, ev2) == _s1_repeat_window_ids(489)
+    assert len(ev2) == S1_WINDOWS == len(set(ev2)) and ev2 == sorted(ev2)
+    assert not set(ev2) & set(ev1) and min(ev2) >= S1_CALIB and max(ev2) < 489
+
+
+def _wins(means, seq=S1_SEQ):
+    return torch.tensor(means, dtype=torch.float64)[:, None].expand(-1, seq).reshape(-1)
+
+
+def test_s1_repeat_needs_draw2_and_pooled():
+    """A2 repeat: S1-mean passes only if draw 2 AND the pooled 128 windows pass; draw 1 alone never decides."""
+    g = torch.Generator().manual_seed(1)
+    e = torch.randn(S1_WINDOWS, generator=g, dtype=torch.float64)
+    e = (e - e.mean()) / e.std(unbiased=True)                    # window means with exactly mean 0, sd 1
+    z = lambda m, sd: (m + sd * e).tolist()                      # mean m, window SE sd / 8
+    ok, bad = z(0.0, 0.02), z(0.045, 0.2)                        # bad: CI includes 0 but |mean| > 0.03
+    assert _s1_repeat_verdict(_wins(bad), _wins(ok))["draw1"]["pass"] is False
+    r = _s1_repeat_verdict(_wins(bad), _wins(ok))
+    assert r["draw2"]["pass"] and r["pooled"]["pass"] and r["pass"]          # draw 1 failed, the repeat decides
+    assert _s1_repeat_verdict(_wins(z(0.06, 0.02)), _wins(ok))["pooled"]["pass"] is False   # pooled mean at 0.03, CI
+    assert _s1_repeat_verdict(_wins(ok), _wins(bad))["pass"] is False        # draw 2 fails
+    r = _s1_repeat_verdict(_wins(z(0.075, 0.15)), _wins(z(0.025, 0.15)))    # draw 2 passes, pooled mean 0.05 > cap
+    assert r["draw2"]["pass"] and not r["pooled"]["pass"] and not r["pass"]
+    assert abs(r["pooled"]["mean"] - (r["draw1"]["mean"] + r["draw2"]["mean"]) / 2) < 1e-12
+
+
+def _iso(slopes, down, up):
+    return {str(i): {"slope_d_on_y": s, "o_flips_abs_down": d, "o_flips_abs_up": u}
+            for i, (s, d, u) in enumerate(zip(slopes, down, up))}
+
+
+def test_kernel_bias_verdict_on_the_diagnosis_numbers():
+    """A2 per-layer detector, on numbers of the size in bias_diagnosis.md: TF32 fp32 (slopes -2.9e-4..-9e-4, 63% of
+    flips lower |count|) fails both parts; IEEE fp32 (slopes <= 1.5e-6, 10 flips: asymmetry recorded only) and bf16
+    inputs (symmetric flips, slope not asserted) pass; each part fails alone."""
+    tf32 = _kernel_bias_verdict(_iso([-2.9e-4, -9e-4], [6776, 6776], [3942, 3941]), ISO_SLOPE_MAX_FP32)
+    assert not tf32["pass"] and len(tf32["fails"]) == 2
+    ieee = _kernel_bias_verdict(_iso([-6.5e-8, -1.5e-6], [2, 2], [3, 3]), ISO_SLOPE_MAX_FP32)
+    assert ieee["pass"] and not ieee["flip_asym_asserted"]
+    assert _kernel_bias_verdict(_iso([4e-4, -9e-5], [33530, 33530], [33539, 33539]))["pass"]
+    assert not _kernel_bias_verdict(_iso([1e-6, 2e-5], [3, 3], [3, 3]), ISO_SLOPE_MAX_FP32)["pass"]     # slope alone
+    assert not _kernel_bias_verdict(_iso([1e-6, 1e-6], [540, 540], [460, 460]), ISO_SLOPE_MAX_FP32)["pass"]  # 0.54
+    assert _kernel_bias_verdict(_iso([1e-6, 1e-6], [529, 0], [470, 0]))["pass"] is True   # 999 flips: recorded only
+
+
+def test_s1_t_quantile_and_clustered_se():
+    sp = pytest.importorskip("scipy.stats")
+    assert abs(S1_T95 - sp.t.ppf(0.975, S1_WINDOWS - 1)) < 1e-12
+    assert abs(S1_T95_POOLED - sp.t.ppf(0.975, 2 * S1_WINDOWS - 1)) < 1e-12
+    g = torch.Generator().manual_seed(0)
+    wm = torch.randn(S1_WINDOWS, generator=g, dtype=torch.float64)
+    d = (wm[:, None] + 0.1 * torch.randn(S1_WINDOWS, S1_SEQ, generator=g, dtype=torch.float64)).reshape(-1)
+    mean, se = _paired_mean(d, S1_WINDOWS)
+    w = d.reshape(S1_WINDOWS, -1).mean(1)
+    assert abs(mean - float(d.mean())) < 1e-12
+    assert abs(se - float(w.std(unbiased=True)) / S1_WINDOWS ** 0.5) < 1e-12
+    # the token-level SE would treat 32768 correlated tokens as independent and be about sqrt(512) x too small here
+    assert se > 5 * float(d.std(unbiased=True)) / d.numel() ** 0.5
+
+
+@pytest.mark.parametrize("mean,se,ok", [(0.0, 0.01, True), (0.02, 0.0101, True), (0.02, 0.0099, False),
+                                        (-0.03, 0.02, True), (0.0301, 0.05, False), (-0.031, 0.05, False),
+                                        (0.012, 0.005, False)])
+def test_s1_mean_rule_needs_ci_through_zero_and_small_mean(mean, se, ok):
+    """A2: pass only if the 95% CI includes 0 AND |mean| <= 0.03; each part fails alone (0.02 at SE 0.0099: CI
+    excludes 0; 0.0301 / -0.031 at SE 0.05: CI includes 0 but over the cap)."""
+    r = _s1_mean_verdict(mean, se)
+    assert r["pass"] is ok
+    assert r["ci_includes_0"] == (abs(mean) <= S1_T95 * se) and r["abs_mean_le_cap"] == (abs(mean) <= S1_MEAN_MAX)
+
+
 class _NoisyLoop(SpikingTwin):
     """The loop with a kernel-sized relative perturbation (4e-5, the tiny spikes-off fla logits error) on its output
     and state: what fla's TF32 / reordered sums look like to the rest of the twin."""
