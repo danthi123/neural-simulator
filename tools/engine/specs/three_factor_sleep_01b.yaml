@@ -1,0 +1,38 @@
+# Three-factor sleep at 01b, brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md (DRAFT: nothing has run; needs
+# --allow-draft until a pre-data review registers it). Harness: brain/experiments/three_factor_sleep.py (imports
+# local_rule_v2 / local_rule_v3, edits neither). Candidate 1 of brain/research/2026-11-28-local-rule-research-round.md.
+# smoke = one gradient night of 24 steps and one three-factor night on its budget (30 x 24 x 2 = 1440 forwards).
+# dev = seed 7: ref (no_sleep, gradient, gradient_rank) + 9 three_factor cells (lr x sigma), one job each; pick =
+# three_factor_sleep.dev_pick (KILL-DEV / NEGATIVE-DEV -> no six seeds; UNDEFINED-DEV / a refused pick -> HOLD-DEV);
+# six = the 6 arms at the pick. Budget: 30 x the gradient arm's forward passes (480 -> 14400 per three-factor night).
+# 01b chains to 04b ONLY on GO-TF (the note: pass at 0.1B, then six seeds, then 0.4B); every other verdict stops.
+name: three_factor_sleep_01b
+question: "Does reward-gated perturbation on the adapters' rank units (three-factor, forward-only) store told facts (0.1B then 0.4B)?"
+prereg: brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md
+requires_local: [brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md]
+status: DRAFT
+module: three_factor_sleep.py
+pick: pick
+verdict: verdict
+model: rwkv7-g1d-0.1b-20260129-ctx8192.pth
+smoke: {seed: 7, params: "--arms gradient,three_factor --steps 24 --tag smoke"}
+cmd: >-
+  D=$HOME/brain-lane/engine/data/three_factor_sleep_01b/{commit}/{job}; mkdir -p $D &&
+  "$PY" -u -m brain.experiments.three_factor_sleep run --model {model} --seed {seed} --device {device} {params} --out-dir $D
+  > $D/run.log 2>&1 && "$PY" -m tools.engine.bundle $D {out} --glob '*.json'
+dev_seed: 7
+dev_grid:
+  ref: "--arms no_sleep,gradient,gradient_rank --tag ref"
+  lr3e-05_sig0.01: "--arms three_factor --lr 3e-05 --sigma 0.01 --tag lr3e-05_sig0.01"
+  lr3e-05_sig0.03: "--arms three_factor --lr 3e-05 --sigma 0.03 --tag lr3e-05_sig0.03"
+  lr3e-05_sig0.1: "--arms three_factor --lr 3e-05 --sigma 0.1 --tag lr3e-05_sig0.1"
+  lr0.0001_sig0.01: "--arms three_factor --lr 0.0001 --sigma 0.01 --tag lr0.0001_sig0.01"
+  lr0.0001_sig0.03: "--arms three_factor --lr 0.0001 --sigma 0.03 --tag lr0.0001_sig0.03"
+  lr0.0001_sig0.1: "--arms three_factor --lr 0.0001 --sigma 0.1 --tag lr0.0001_sig0.1"
+  lr0.0003_sig0.01: "--arms three_factor --lr 0.0003 --sigma 0.01 --tag lr0.0003_sig0.01"
+  lr0.0003_sig0.03: "--arms three_factor --lr 0.0003 --sigma 0.03 --tag lr0.0003_sig0.03"
+  lr0.0003_sig0.1: "--arms three_factor --lr 0.0003 --sigma 0.1 --tag lr0.0003_sig0.1"
+seeds: [42, 43, 44, 100, 101, 102]
+memory_gb: 5                       # as v3 at this scale; the real smoke's measured peak sets the later memcap
+requires: [brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth]
+ladder: {max_len: 2, next: {GO: three_factor_sleep_04b}}

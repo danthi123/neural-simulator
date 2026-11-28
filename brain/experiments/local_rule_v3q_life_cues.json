@@ -1,0 +1,70 @@
+{
+ "lives": [
+  {
+   "name": "lifeKR_s319.json.json",
+   "seed": 319,
+   "split": "dev",
+   "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+   "sha256": "822816a0f9f090f03b84c154712826e7a34d24a90a0ae106894720e42844fb15"
+  },
+  {
+   "name": "lifeKR_s320.json.json",
+   "seed": 320,
+   "split": "dev",
+   "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+   "sha256": "6f3e1acaaa30f21307e5fb67d6831f691a571d766829039569f828da58ff4e21"
+  },
+  {
+   "name": "lifeKR_s321.json.json",
+   "seed": 321,
+   "split": "dev",
+   "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+   "sha256": "5ff912a2ddb90c9a57b0d81056fa25695b08c989e9cbd3cfafff7c0c7f325a97"
+  }
+ ],
+ "kinds": [
+  "sameday",
+  "remention"
+ ],
+ "items": {
+  "pixel": [
+   {
+    "q": "What is my cat called?",
+    "life_seed": 319,
+    "day": 1,
+    "kind": "sameday"
+   },
+   {
+    "q": "What name did I give my cat?",
+    "life_seed": 319,
+    "day": 5,
+    "kind": "remention"
+   }
+  ],
+  "teal": [],
+  "lyon": [],
+  "marguerite": [
+   {
+    "q": "What is my sister's name?",
+    "life_seed": 319,
+    "day": 8,
+    "kind": "remention"
+   }
+  ],
+  "biscuit": [],
+  "volvo": [
+   {
+    "q": "Which car do I own?",
+    "life_seed": 319,
+    "day": 8,
+    "kind": "remention"
+   }
+  ],
+  "tomasz": [],
+  "crumb": [],
+  "cello": [],
+  "peanut": [],
+  "oslo": [],
+  "march": []
+ }
+}

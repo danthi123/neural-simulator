@@ -1,0 +1,40 @@
+# Local rule v3q at 01b, brain/research/2026-11-28-local-rule-v3q-prereg-DRAFT.md (REGISTERED 2026-11-28 after pre-data
+# review; launch needs the life-cues file committed). Harness: brain/experiments/local_rule_v3q.py (imports local_rule_v3 / local_rule_v2, edits neither).
+# Candidate 3 of brain/research/2026-11-28-local-rule-research-round.md: v3's rule, question-form targets (the cortex
+# answering a brain-sourced cue with the telling in context; targets at the answer-predicting rows only).
+# smoke = G0Q (>= 6 of 12 facts with a kept life or self-generated cue) then one gradient and one v3q night of 24 steps:
+# a failing G0Q exits non-zero before any night, so the chain stops at ERROR-SMOKE with no night run.
+# dev = seed 7: ref (G0Q, no_sleep, gradient) + 9 v3q cells (lr x keep); pick = local_rule_v3q.dev_pick (STOP-G0Q /
+# UNDEFINED-DEV / a refused pick -> HOLD-DEV; NEGATIVE-DEV: no six seeds for this model); six = the 8 arms at the pick.
+# The life cues file brain/experiments/local_rule_v3q_life_cues.json must be in the shipped commit (sha pinned in the
+# harness). Two-scale word: `local_rule_v3q combine`.
+name: local_rule_v3q_01b
+question: "Does v3's local rule store told facts when its targets are question-form (the cortex answering its own or the user's cue with the telling in context), 0.1B then 0.4B?"
+prereg: brain/research/2026-11-28-local-rule-v3q-prereg-DRAFT.md
+requires_local: [brain/research/2026-11-28-local-rule-v3q-prereg-DRAFT.md, brain/experiments/local_rule_v3q_life_cues.json]
+status: REGISTERED                # pre-data review recorded in the prereg 2026-11-28 (B1 paraphrase report, N1-N6 text)
+module: local_rule_v3q.py
+pick: pick
+verdict: verdict
+model: rwkv7-g1d-0.1b-20260129-ctx8192.pth
+smoke: {seed: 7, params: "--arms g0q,gradient,v3q --steps 24 --tag smoke"}   # engine real smoke: G0Q, then two short nights
+cmd: >-
+  D=$HOME/brain-lane/engine/data/local_rule_v3q_01b/{commit}/{job}; mkdir -p $D &&
+  "$PY" -u -m brain.experiments.local_rule_v3q run --model {model} --seed {seed} --device {device} {params} --out-dir $D
+  > $D/run.log 2>&1 && "$PY" -m tools.engine.bundle $D {out} --glob '*.json'
+dev_seed: 7
+dev_grid:
+  ref: "--arms g0q,no_sleep,gradient --tag ref"
+  lr0.03_keep0.3: "--arms v3q --lr 0.03 --keep 0.3 --tag lr0.03_keep0.3"
+  lr0.03_keep1: "--arms v3q --lr 0.03 --keep 1 --tag lr0.03_keep1"
+  lr0.03_keep3: "--arms v3q --lr 0.03 --keep 3 --tag lr0.03_keep3"
+  lr0.1_keep0.3: "--arms v3q --lr 0.1 --keep 0.3 --tag lr0.1_keep0.3"
+  lr0.1_keep1: "--arms v3q --lr 0.1 --keep 1 --tag lr0.1_keep1"
+  lr0.1_keep3: "--arms v3q --lr 0.1 --keep 3 --tag lr0.1_keep3"
+  lr0.3_keep0.3: "--arms v3q --lr 0.3 --keep 0.3 --tag lr0.3_keep0.3"
+  lr0.3_keep1: "--arms v3q --lr 0.3 --keep 1 --tag lr0.3_keep1"
+  lr0.3_keep3: "--arms v3q --lr 0.3 --keep 3 --tag lr0.3_keep3"
+seeds: [42, 43, 44, 100, 101, 102]
+memory_gb: 5                      # v3's cap at this size; the real smoke's measured peak sets the later memcap
+requires: [brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth]
+ladder: {max_len: 2, next: {GO: local_rule_v3q_04b, NEGATIVE: local_rule_v3q_04b}}

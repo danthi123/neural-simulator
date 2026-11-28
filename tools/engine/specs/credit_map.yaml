@@ -1,0 +1,25 @@
+# T0 credit map (diagnostic), brain/research/2026-11-28-credit-map-T0-prereg.md (REGISTERED 2026-11-28).
+# Research note: brain/research/2026-11-28-local-rule-research-round.md section 1. Harness: brain/experiments/credit_map.py
+# (imports local_sleep / local_rule_v2 / local_rule_v3 / sleep_probe, edits none). Backprop is an instrument only.
+# One job: seed 7, 0.1B, every arm (10 core arms + 2 x L single-layer nights + the cosine unit), atomic units that resume
+# in a per-commit dir. No dev grid, no pick: the six stage runs the one seed with six_params. Verdict = the harness's own
+# `credit_map score` (CONFIRMED / FALSIFIED / UNDEFINED on the misdirected-credit claim), by delegation.
+# smoke = no_sleep, gradient, v1, v3 and grad_init at 24 steps (sets the memcap); the t0 job starts fresh under its own dir.
+name: credit_map
+question: "Did the local rules (v1, v3) move the adapters along the direction gradient sleep uses where recall lives (T0)?"
+prereg: brain/research/2026-11-28-credit-map-T0-prereg.md
+requires_local: [brain/research/2026-11-28-credit-map-T0-prereg.md]
+status: REGISTERED                # pre-data review recorded in the prereg (Registration review, 2026-11-28)
+module: credit_map.py
+verdict: verdict
+model: rwkv7-g1d-0.1b-20260129-ctx8192.pth
+smoke: {seed: 7, params: "--arms no_sleep,gradient,v1,v3,grad_init --steps 24 --tag smoke"}
+cmd: >-
+  D=$HOME/brain-lane/engine/data/credit_map/{commit}/{job}; mkdir -p $D &&
+  "$PY" -u -m brain.experiments.credit_map run --model {model} --seed {seed} --device {device} {params} --out-dir $D
+  > $D/run.log 2>&1 && "$PY" -m tools.engine.bundle $D {out} --glob '*.json'
+six_params: "--arms all --tag t0"
+seeds: [7]                        # diagnostic at the dev seed only (research note section 1); no generalization claim
+memory_gb: 5                      # as local_rule_v3_01b (0.1B smoke peak 2.9 GB); the real smoke's peak sets the memcap
+requires: [brain-lane/models/rwkv7-g1d-0.1b-20260129-ctx8192.pth]
+ladder: {max_len: 1, next: {}}    # the next step (per-layer lr sweep on v1, or candidate 1) needs its own prereg
