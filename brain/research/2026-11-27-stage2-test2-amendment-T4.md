@@ -30,3 +30,10 @@ list, so a subshell holding the ssh channel waits for the job. Verified on pool4
 full 20 s, the new pattern (`chmod ...; nohup ... &`) returned in 1 s. Replaced in the freeze worktree by atomic rename:
 sha256 -> 2b83d117ae4381bb4832e77aca984b077ed087ba43152a06d8b67fd85d970722. Nothing that runs on the instance changes.
 KP42-KP101 launched with the earlier tool versions; later lives with this one. Same fix on the working branch.
+
+## T4 addendum 3 (2026-11-28 03:40 UTC, lives running, no result read)
+At 23:14 UTC the ASAP launcher aborted on lifeB_s42: AWS had no g5.xlarge capacity in us-east-1a (InsufficientInstanceCapacity),
+but asap.sh's copy of launch_life tests `grep -q 'aws_budget'` on the launch output, and the budget check prints
+"✓ aws_budget: ..." on success, so a capacity miss was read as a cap refusal and the whole plan stopped (about 4.5 h lost;
+the 5 finished K-P lives were not pulled meanwhile). Fixed in asap.sh only (launch_plan.sh stays frozen): the test is now
+`grep -q '⛔ aws_budget'` (the refusal line), so a capacity miss tries the next subnet as designed. Restarted 03:37 UTC.
