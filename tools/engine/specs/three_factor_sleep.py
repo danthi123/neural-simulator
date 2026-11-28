@@ -1,4 +1,4 @@
-"""Pick and verdict of brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md, by DELEGATION: the bundled units are
+"""Pick and verdict of brain/research/2026-11-28-three-factor-sleep-prereg.md, by DELEGATION: the bundled units are
 written to a local directory and the harness's own CLI (`brain.experiments.three_factor_sleep pick` / `score --pick`)
 reads them, with all its refusals (missing refs / cells, mixed model / commit / prompts / config). No rule is restated
 here."""

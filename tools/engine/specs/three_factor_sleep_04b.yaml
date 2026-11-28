@@ -1,16 +1,19 @@
-# Three-factor sleep at 04b, brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md (DRAFT: nothing has run; needs
-# --allow-draft until a pre-data review registers it). Harness: brain/experiments/three_factor_sleep.py (imports
-# local_rule_v2 / local_rule_v3, edits neither). Candidate 1 of brain/research/2026-11-28-local-rule-research-round.md.
-# smoke = one gradient night of 24 steps and one three-factor night on its budget (30 x 24 x 2 = 1440 forwards).
+# Three-factor sleep at 04b, brain/research/2026-11-28-three-factor-sleep-prereg.md (REGISTERED 2026-11-28
+# after the pre-data review and the MeZO / MeZO-SVRG / MEMIT full read; nothing has run). Harness:
+# brain/experiments/three_factor_sleep.py (imports local_rule_v2 / local_rule_v3, edits neither). Candidate 1 of
+# brain/research/2026-11-28-local-rule-research-round.md.
+# smoke = one gradient night of 24 steps and one three-factor night on its budget (64 x 24 x 2 = 3072 forwards).
 # dev = seed 7: ref (no_sleep, gradient, gradient_rank) + 9 three_factor cells (lr x sigma), one job each; pick =
 # three_factor_sleep.dev_pick (KILL-DEV / NEGATIVE-DEV -> no six seeds; UNDEFINED-DEV / a refused pick -> HOLD-DEV);
-# six = the 6 arms at the pick. Budget: 30 x the gradient arm's forward passes (480 -> 14400 per three-factor night).
+# six = the 6 arms at the pick. Budget: 64 x the gradient arm's forward passes (480 -> 30720 per three-factor night
+# = 7680 steps = 32 x the gradient's 240 steps, MeZO's smallest measured near-parity step ratio; 30x before the 11-28
+# full read).
 # 01b chains to 04b ONLY on GO-TF (the note: pass at 0.1B, then six seeds, then 0.4B); every other verdict stops.
 name: three_factor_sleep_04b
 question: "Does reward-gated perturbation on the adapters' rank units (three-factor, forward-only) store told facts (0.1B then 0.4B)?"
-prereg: brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md
-requires_local: [brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md]
-status: DRAFT
+prereg: brain/research/2026-11-28-three-factor-sleep-prereg.md
+requires_local: [brain/research/2026-11-28-three-factor-sleep-prereg.md]
+status: REGISTERED                # pre-data review + full read recorded in the prereg (Registration review, 2026-11-28)
 module: three_factor_sleep.py
 pick: pick
 verdict: verdict

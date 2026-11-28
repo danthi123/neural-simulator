@@ -1,7 +1,7 @@
 # Capability: Sleep consolidation
 # Record: brain/research/2026-11-28-local-rule-research-round.md
 # Expected-fail: the perturbation estimate has high variance (about 2 x layers x 8 x T noise dimensions per text, some
-#   10^4 at 0.1B), so at a 30x forward budget the accumulated update may stay too weakly aligned (cosine under 0.1) or
+#   10^4 at 0.1B), so at a 64x forward budget the accumulated update may stay too weakly aligned (cosine under 0.1) or
 #   too slow (replay loss not under 1.0); the rank units' output projection B is fixed random in this rule (only A
 #   learns), so the adapters span a fixed random subspace per layer. A negative is a verdict on this perturbation
 #   method at this budget and parameterisation, not on three-factor learning.
@@ -27,9 +27,11 @@ Per step (one episode by strength, then one keep text, the same RNG draws as bra
 5. Optional (MeZO-SVRG form, `--svrg q`): every q steps an anchor copy of A and a full-batch estimate over every telling
    and keep text; each step adds s(A) N(A) - s(A~) N(A~) with the SAME noise at the anchor, plus the full estimate.
 
-Budget: 30 x the gradient arm's forward passes. The gradient night runs 2 forwards per step (replay + keep), 240 steps
-= 480 forwards (+ 240 backwards, not counted); the rule gets 30 x 480 = 14400 text forwards, every one counted, anchor
-refreshes included; the number of steps follows (antithetic, 1 perturbation: 3600 steps).
+Budget: 64 x the gradient arm's forward passes. The gradient night runs 2 forwards per step (replay + keep), 240 steps
+= 480 forwards (+ 240 backwards, not counted); the rule gets 64 x 480 = 30720 text forwards, every one counted, anchor
+refreshes included; the number of steps follows (antithetic, 1 perturbation: 7680 steps = 32 x the gradient's 240, the
+smallest ZO/FT step ratio MeZO measured near parity: OPT-13B, 20K vs 625 steps; was 30x / 3600 steps before the 11-28
+full read, see the prereg).
 
 Arms: three_factor; tf_shuffled (the scalar is a draw from earlier steps' scalars: same magnitudes, no relation to this
 step's noise); tf_wrong_sign (-s: ascent in expectation); no_sleep; gradient (brain.sleep.sleep, the reference);
@@ -52,7 +54,7 @@ answer word at the question).
         --out-dir S --tag six
     python -m brain.experiments.three_factor_sleep score --dir S --tag six --pick D/pick.json
     python -m brain.experiments.three_factor_sleep combine --v01 V01.json --v04 V04.json
-Prereg: brain/research/2026-11-28-three-factor-sleep-prereg-DRAFT.md (DRAFT; nothing has run).
+Prereg: brain/research/2026-11-28-three-factor-sleep-prereg.md (REGISTERED 2026-11-28; nothing has run).
 """
 from __future__ import annotations
 
@@ -83,7 +85,7 @@ GATED = ("recall", "false_recall", "generic_kl", "heldout_kl")
 REF_ARMS = ("gradient", "gradient_rank", "no_sleep")
 DEV_LRS = (3e-5, 1e-4, 3e-4)
 DEV_SIGMAS = (0.01, 0.03, 0.1)
-BUDGET_MULT = 30        # the rule's text forwards = 30 x the gradient arm's (2 per step)
+BUDGET_MULT = 64        # the rule's text forwards = 64 x the gradient arm's (2 per step); 30 before the 11-28 full read
 BUDGET_USE_MIN = 0.9    # engaged: used >= 90% of the budget (and never more than it)
 KILL_REPLAY = 1.0       # kill: fixed-order replay CE at the night's end not under 1.0 ...
 KILL_COS = 0.1          # ... or the mean window cosine to the true gradient under 0.1
@@ -557,7 +559,7 @@ def _falls(e, head, tail):
 def engagement(recs, seeds=SEEDS):
     """{"core", "controls", "report"}: why an arm's night was not what its role needs, per seed. core: no_sleep norm 0;
     gradient norm > 0 and fixed-order replay CE end < start; three_factor norm > 0, fixed-order objective end < start,
-    the budget used (>= 90%, never above, budget = 30 x the gradient forwards), its own scalar (corr >= 0.99). controls:
+    the budget used (>= 90%, never above, budget = 64 x the gradient forwards), its own scalar (corr >= 0.99). controls:
     tf_shuffled norm > 0 and >= 0.5 x three_factor's, budget used, |corr(used, own)| <= 0.2; tf_wrong_sign norm > 0 and
     >= 0.5 x three_factor's, budget used, corr <= -0.99, objective end > start (ascent: the sign is live). report:
     gradient_rank norm > 0 and replay CE end < start."""

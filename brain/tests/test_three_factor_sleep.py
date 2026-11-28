@@ -155,6 +155,11 @@ def test_scalar_modes():
         T._Scalar("x", 0)
 
 
+def test_budget_is_the_full_read_number():
+    # 11-28 full read: 64 x the gradient's 480 forwards = 30720 = 7680 antithetic steps = 32 x its 240 steps (MeZO OPT)
+    assert T.BUDGET_MULT == 64 and T.plan_steps(T.BUDGET_MULT * 480, "antithetic", 1, 0, 1, 15) == (7680, 30720)
+
+
 def test_budget_plan_counts_every_forward():
     assert T.plan_steps(14400, "antithetic", 1, 0, 1, 15) == (3600, 14400)
     assert T.plan_steps(14400, "forward", 1, 0, 1, 15) == (3600, 14400)
@@ -168,8 +173,9 @@ def test_night_is_forward_only_spends_its_budget_and_records_engagement(svrg):
     pc = _pc()
     info = {}
     T.tf_sleep(pc, _st(pc), EPS, GEN, grad_steps=2, lr=1e-3, sigma=0.03, svrg=svrg, info=info)
-    assert info["budget"] == 120 and info["forwards_used"] == info["forwards_planned"] <= 120
-    assert info["forwards_used"] >= T.BUDGET_USE_MIN * 120
+    b = T.BUDGET_MULT * 2 * 2                                            # 64 x 2 steps x 2 forwards = 256
+    assert info["budget"] == b and info["forwards_used"] == info["forwards_planned"] <= b
+    assert info["forwards_used"] >= T.BUDGET_USE_MIN * b
     assert all(p.grad is None for p in pc.parameters())
     assert pc.adapter_norm() > 0 and float(sum(pc.B_k[s].abs().sum() for s in pc.B_k)) > 0
     assert info["scalar_corr"] > 0.99 and len(info["cos_windows"]) == T.N_WINDOWS
@@ -205,10 +211,10 @@ def test_guard():
 
 
 # ------------------------------------------------------------------ registered rules
-def _eng_tf(scalar="true", start=3.0, end=2.0, replay=0.5, cos=0.3, used=14400, corr=None):
+def _eng_tf(scalar="true", start=3.0, end=2.0, replay=0.5, cos=0.3, used=30720, corr=None):
     corr = {"true": 1.0, "wrong_sign": -1.0, "shuffled": 0.01}[scalar] if corr is None else corr
     return {"kind": "three_factor", "scalar": scalar, "objective_start": start, "objective_end": end,
-            "replay_end": replay, "cos_window": cos, "budget": 14400, "budget_mult": 30, "grad_forwards": 480,
+            "replay_end": replay, "cos_window": cos, "budget": 30720, "budget_mult": 64, "grad_forwards": 480,
             "forwards_used": used, "scalar_corr": corr}
 
 
@@ -269,8 +275,8 @@ GATES = [
     ("no_sleep moved", lambda r: _set(r, "no_sleep", [44], adapter_norm=0.1)),
     ("gradient flat", lambda r: _set(r, "gradient", [44], eng={"loss_end": 3.0})),
     ("tf objective flat", lambda r: _set(r, "three_factor", [44], eng={"objective_end": 3.0})),
-    ("tf over budget", lambda r: _set(r, "three_factor", [44], eng={"forwards_used": 14401})),
-    ("tf under budget", lambda r: _set(r, "three_factor", [44], eng={"forwards_used": 12000})),
+    ("tf over budget", lambda r: _set(r, "three_factor", [44], eng={"forwards_used": 30721})),
+    ("tf under budget", lambda r: _set(r, "three_factor", [44], eng={"forwards_used": 25000})),
     ("tf wrong budget mult", lambda r: _set(r, "three_factor", [44], eng={"budget_mult": 10})),
     ("tf not own scalar", lambda r: _set(r, "three_factor", [44], eng={"scalar_corr": 0.5})),
     ("tf zero norm", lambda r: _set(r, "three_factor", [44], adapter_norm=0.0)),
@@ -356,7 +362,7 @@ def test_dev_bar_binds_on_half_gradient():
 # ------------------------------------------------------------------ CLI on synthetic units
 def _unit(tag, seed, arm, res, eng=None, lr=1e-4, sigma=0.03, model="m.pth", commit="abc"):
     tf = arm in T.TF_ARMS
-    cfg = dict(lr=lr, sigma=sigma, estimator="antithetic", n_pert=1, svrg=0, svrg_full=1, budget_mult=30.0, max_step=0.0)
+    cfg = dict(lr=lr, sigma=sigma, estimator="antithetic", n_pert=1, svrg=0, svrg_full=1, budget_mult=64.0, max_step=0.0)
     return {"tag": tag, "seed": seed, "arm": arm, "model_id": model, "commit": commit, "prompts_sha256": "p",
             **{k: (cfg[k] if tf else None) for k in T.TF_KEYS}, "engagement": eng or {}, "result": res}
 
@@ -374,7 +380,7 @@ def _pickfile(tmp_path, lr=1e-4, sigma=0.03, model="m.pth", commit="abc"):
     p = str(tmp_path / "pick.json")
     T.atomic_write(p, {"verdict": "PICKED", "pick": {"lr": lr, "sigma": sigma}, "model_id": model, "commit": commit,
                        "tf_config": {"estimator": "antithetic", "n_pert": 1, "svrg": 0, "svrg_full": 1,
-                                     "budget_mult": 30.0, "max_step": 0.0}})
+                                     "budget_mult": 64.0, "max_step": 0.0}})
     return p
 
 
@@ -445,7 +451,7 @@ def test_pick_cli(tmp_path):
 # ------------------------------------------------------------------ run_units on a stub cortex
 def _run_args(tmp_path, **kw):
     a = dict(seed=42, arm_list=list(T.ARMS), out_dir=str(tmp_path / "six"), tag="six", model="/x/m.pth", steps=2,
-             lr=1e-3, sigma=0.03, estimator="antithetic", n_pert=1, svrg=0, svrg_full=1, budget_mult=30.0,
+             lr=1e-3, sigma=0.03, estimator="antithetic", n_pert=1, svrg=0, svrg_full=1, budget_mult=64.0,
              max_step=0.0, kl_weight=1.0, grad_lr=5e-4, grad_rank_lr=5e-5, device="cpu", pick=None, prompts_sha=T.PROMPTS_SHA256)
     a.update(kw)
     return SimpleNamespace(**a)
@@ -479,7 +485,7 @@ def test_run_units_on_stub_cortex_resume_provenance_and_pick(tmp_path, monkeypat
     assert units["tf_wrong_sign"]["engagement"]["scalar"] == "wrong_sign" and units["tf_shuffled"]["scalar"] == "shuffled"
     for arm in T.TF_ARMS:
         e = units[arm]["engagement"]
-        assert e["budget"] == 120 and e["forwards_used"] <= 120 and math.isfinite(e["cos_window"]), arm
+        assert e["budget"] == 256 and e["forwards_used"] <= 256 and math.isfinite(e["cos_window"]), arm
     for arm in ("gradient", "gradient_rank"):
         assert all(math.isfinite(units[arm]["engagement"][k]) for k in ("loss_start", "loss_end")), arm
     T.check_units(list(units.values()), T.read_pick(a.pick))
@@ -510,10 +516,10 @@ def test_run_cli_refuses_without_the_host_guard(tmp_path, monkeypatch):
 
 
 # ------------------------------------------------------------------ engine specs
-def test_engine_specs_render_chain_and_are_draft():
+def test_engine_specs_render_chain_and_are_registered():
     from tools.engine import core
     a, b = core.Spec.find("three_factor_sleep_01b"), core.Spec.find("three_factor_sleep_04b")
-    assert (a.status, b.status) == ("DRAFT", "DRAFT") and a.question == b.question
+    assert (a.status, b.status) == ("REGISTERED", "REGISTERED") and a.question == b.question
     assert a.model == "rwkv7-g1d-0.1b-20260129-ctx8192.pth" and b.model == "rwkv7-g1d-0.4b-20260210-ctx8192.pth"
     assert "{model}" in a.cmd and "{model}" in b.cmd and a.smoke["params"].startswith("--arms ")
     assert len(a.dev_grid) == 10 and a.dev_grid == b.dev_grid
