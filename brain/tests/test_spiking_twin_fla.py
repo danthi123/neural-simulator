@@ -9,7 +9,7 @@ CPU (always): the variable mapping (brain.spiking_twin.wkv_fla_args) is exact. O
 fla.ops.generalized_delta_rule.dplr.naive.dplr_recurrence (skipped if fla is not on PYTHONPATH), outputs, final state
 and gradients, with a non-zero initial state. The switch defaults to the loop, and wkv="fla" refuses CPU tensors.
 
-GPU (skipped unless BRAIN_ALLOW_W3090=1, CUDA is present and nvidia-smi shows < 2 GB used; with BRAIN_REQUIRE_GPU=1 an
+GPU (skipped unless BRAIN_ALLOW_W3090=1, CUDA is present and no other python/cuda job holds the GPU and < 6 GB is used; with BRAIN_REQUIRE_GPU=1 an
 unmet condition FAILS instead, so the launch script's parity stage cannot pass on a skip): the fla path against the loop
 path on (1) a tiny random cortex (head size 32, two layers, carried state) and (2) the real 0.1B teacher
 (rwkv7-g1d-0.1b), spikes off and spikes on, fp32 and bf16 AMP, trainable twin with nonzero slow-store adapters:
@@ -221,8 +221,13 @@ def _gpu_gate_why():
                                       capture_output=True, text=True, timeout=30).stdout.split()[0])
         except Exception as e:  # pragma: no cover - environment
             used, why = None, f"nvidia-smi failed: {e}"
-        if used is not None and used >= 2048:
-            why = f"GPU busy: {used} MiB used (>= 2 GB)"
+        apps = subprocess.run(["nvidia-smi", "--query-compute-apps=pid,process_name", "--format=csv,noheader"],
+                              capture_output=True, text=True, timeout=30).stdout
+        jobs = [l for l in apps.splitlines() if ("python" in l.lower() or "cuda" in l.lower()) and str(os.getpid()) not in l]
+        if jobs:      # desktop graphics (compositor, chat apps) are not jobs; another python/cuda job is
+            why = f"GPU busy: compute job(s) {jobs}"
+        elif used is not None and used >= 6144:
+            why = f"GPU busy: {used} MiB used (>= 6 GB)"
     return why
 
 
