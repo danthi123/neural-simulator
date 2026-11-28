@@ -50,16 +50,30 @@ def det_ok(texts):
     return None if not m else m[-1] == "0"
 
 
+def nondeterministic_cuda_units(units):
+    """Step-0 units run on cuda without the S3 switch (deterministic is not True): the pre-S3 units, never read."""
+    return sorted(f for f, u in (units or {}).items()
+                  if isinstance(u, dict) and str(u.get("device", "")).startswith("cuda") and u.get("deterministic") is not True)
+
+
 def pick(dev, ctx):
     mem = int(ctx.get("memory_gb") or 0)
     info, caps = {"step0": {}}, {}
     for S in SEEDS:
         b = dev.get(f"step0_s{S}") or {}
         units, texts = b.get("units", {}), b.get("texts", {})
+        nondet = nondeterministic_cuda_units(units)   # Amendment S3: a cuda unit without the deterministic switch is void
+        if nondet:
+            return {**info, "stop": f"step 0 s{S}: cuda units without --deterministic {nondet} (Amendment S3: discarded; "
+                                    "rerun step 0 with the S3 spec at a new commit, --reset)"}
         d = det_ok(texts)                  # first: a miss ends step 0 before A2, so A2's unit is absent by design
         if d is False:
-            return {**info, "stop": f"step 0 s{S}: determinism pair MISS (A0r vs A0 n13); registered fallback: rerun step 0 "
-                                    "at THREADS=1 on every node, by hand (prereg section 5)"}
+            return {**info, "stop": f"step 0 s{S}: determinism pair MISS (A0r vs A0 n13); "
+                                    + ("under Amendment S3's deterministic cuda settings: the screen does not launch "
+                                       "(prereg section 5: no second fallback, the 1e-3 tolerance is not relaxed)"
+                                       if any(u.get("device") == "cuda" for u in units.values()) else
+                                       "registered fallback: rerun step 0 at THREADS=1 on every node, by hand (prereg "
+                                       "section 5)")}
         miss = [u for u in (f"u_A0r_s{S}_n13.json", f"u_A0_s{S}_n13.json", f"u_A2_s{S}_n13.json") if u not in units]
         if miss or d is None:
             return {**info, "stop": f"step 0 s{S} left no {miss or 'detcheck.txt (determinism unread)'}"}

@@ -24,6 +24,14 @@
 # W-side data: `bash tools/fetch_kr_to_w.sh` (KR life JSONs, snaps, trunks of 319-321 from pool40 into
 # ~/brain-lane/route_repo/_scratch/route/kr, the foreign_s<F> stores built from snaps_s<F>, and the model symlink in
 # ~/brain-lane/models). Caps: the w3090 node's RAM budget is 23 GB (core.W3090_GB), so 21 GB = 23 - FIT_SLACK.
+# AMENDMENT S3 (prereg, 11-28, pre-data): the S2 step 0 stopped at the pick (HOLD-DEV: s320 det pair MISS, A0r vs A0 n13
+# rel 0.24; s319 1.5e-4 and s321 5.5e-4 passed). On cuda the nondeterminism is the kernels', not CPU threads', so every
+# cuda job passes --deterministic ($DET below: CUBLAS_WORKSPACE_CONFIG=:4096:8, use_deterministic_algorithms(True),
+# cudnn.deterministic, benchmark off, fixed seeds; an op with no deterministic implementation is recorded and the run
+# falls back to warn_only=True with that op named in the unit). Every unit records det_settings and the `deterministic`
+# provenance key; the pick refuses cuda step-0 units without it. The pre-S3 step-0 units (commit ce3649e) are discarded:
+# the out-dir is per commit, so the S3 commit's step 0 recomputes all of them (launch with --reset). The 1e-3 tolerance
+# is unchanged; a miss under S3 ends the screen (no second fallback).
 name: mix_night
 question: "Does a REMIX/keep-coverage recipe change cut multi-night language drift on the K-P slept store?"
 prereg: brain/research/2026-11-27-mix-night-prereg.md
@@ -41,12 +49,13 @@ smoke: {seed: 319, params: "A0r", memory_gb: 21}   # engine real smoke: the one-
 cmd: >-
   [ -n "$TIMEV" ] || [ -x /usr/bin/time ] || { echo "/usr/bin/time missing: measure-first needs GNU time"; exit 2; };
   T0=$(date +%s); KR=$HOME/brain-lane/route_repo/_scratch/route/kr; D=$HOME/brain-lane/engine/data/mix_night/{commit}/s{seed};
+  case "{device}" in cuda*) DET=--deterministic;; *) DET="";; esac;
   mkdir -p $D && for X in {params}; do A=${X%@*}; MN=""; [ "$X" = "$A" ] || MN="--max-night ${X#*@}";
   if [ "$A" = DET ]; then "$PY" -m brain.experiments.mix_night_screen detcheck --dir $D --seed {seed} > $D/detcheck.txt 2>&1;
   echo "rc $?" >> $D/detcheck.txt; grep -qx "rc 0" $D/detcheck.txt || break; continue; fi;
   TF=$D/time_${A}.$(date +%s).txt; ${TIMEV:-/usr/bin/time} -v -o $TF "$PY" -u -m brain.experiments.mix_night_screen run --seed {seed} --arm $A
   --life $KR/lifeKR_s{seed}.json.json --snaps $KR/snaps_s{seed} --foreign-snaps $KR/foreign_s{foreign}
-  --offframe {offframe} --offframe-sha256 {offframe_sha256} --model {model} --device {device}
+  --offframe {offframe} --offframe-sha256 {offframe_sha256} --model {model} --device {device} $DET
   --out-dir $D --work $D/work_$A $MN >> $D/${A}.log 2>&1 || { rc=$?; echo "arm $X rc $rc"; tail -n 25 $TF; exit $rc; }; done &&
   "$PY" -m tools.engine.bundle $D {out} --text '*.txt' --t0 $T0
 vars:

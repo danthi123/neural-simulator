@@ -6,6 +6,8 @@
 > per outcome, N2/N3 expected outcome stated, N4 placebo stated as a reading aid (tested), N5 pick isolation stated, N6
 > measure cap 10 GB on the 15 GB nodes plus an early stop after A0r, N7 empty-env test and spec consistency; tests
 > 88 passed. Launch order is section 7: `strata` and step 0 run first and may still amend this file under their own
+> **Amendments at the end:** S1 (strata merge), S2 (the W 3090), S3 (deterministic cuda kernels; discards the S2 step-0
+> units, step 0 recomputed).
 > registered rules (P2_MIN_N, the 45-min rule, the THREADS=1 fallback) before any other unit. Nothing has been run; no
 > unit, timing or RSS exists. The design, the literature check and
 > the reasons for each arm are `brain/research/2026-11-27-sleep-drift-recipe-check.md` (sections 1-3, 5, 6); its section 4 is
@@ -309,3 +311,35 @@ time, only when nvidia-smi shows the GPU free (owner 11-27). Step 0 is repeated 
 determinism pair, A2 n13) before the full run, and its numbers replace the pool40 ones; every unit records device and
 precision; all arms of a seed run on the one device. Rules, arms, margins and Amendment S1 unchanged. The pool40 A0r unit
 (u_A0r_s319_n13.json) is a step-0 measurement only and is not scored.
+
+## Amendment S3 (2026-11-28 UTC, from the S2 step 0, pre-data: no scored unit exists)
+The S2 step 0 on the 3090 (engine, commit ce3649e) stopped at the pick as HOLD-DEV: the determinism pair MISSED on s320
+(A0r vs A0 n13 held-out KL 0.3300 vs 0.2656, relative 0.24; mean replay loss 0.4329 vs 0.4313) and passed on s319 (1.5e-4)
+and s321 (5.5e-4). The registered fallback (section 5: rerun step 0 at THREADS=1) targets CPU thread nondeterminism; on
+cuda the nondeterminism comes from the kernels (atomic adds in backward passes, the cuBLAS workspace), which THREADS does
+not touch. The s319/s321 gaps (1e-4 level, nonzero) show the kernels are not repeatable on this path, and s320 shows how far
+480 Adam steps can carry such a difference. Amended before any scored unit, as the cuda form of the same once-only fallback:
+- **On cuda, step 0 and every arm run with deterministic settings** (`mix_night_screen run --deterministic`; required with
+  `--device cuda`, `run` refuses without it; off by default on cpu, where the THREADS rule of section 5 stays as it was):
+  env `CUBLAS_WORKSPACE_CONFIG=:4096:8` (set before the cortex is built), `torch.use_deterministic_algorithms(True,
+  warn_only=False)`, `torch.backends.cudnn.deterministic = True`, `torch.backends.cudnn.benchmark = False`, fixed seeds
+  (`random` and `torch` from the run's seed; each sleep reseeds from its own seed exactly as before). TF32 stays off (S2).
+- **An op with no deterministic implementation**: torch raises naming it; the run records that op and falls back to
+  `warn_only=True` (the night that raised wrote nothing and is redone; finished units resume). Every op torch names in
+  its warnings from then on is recorded too. The op(s) are named in every later unit (`det_settings.fallback_op`,
+  `det_settings.nondeterministic_ops`), and the determinism pair decides as registered.
+- **Recorded in every unit**: `det_settings` (the settings as read back from torch and the env at write time: switch,
+  use_deterministic_algorithms, warn_only, cudnn deterministic / benchmark, CUBLAS_WORKSPACE_CONFIG, seed, fallback op,
+  ops named, whether CUDA was initialized before the switch) and the provenance key `deterministic` (in PROV_KEYS: a
+  resumed unit of the other setting refuses, and `score` voids a unit set that mixes it).
+- **The 1e-3 tolerance is NOT relaxed.** If the pair misses under S3 on any seed, the screen does not launch (section 5:
+  no second fallback; a tolerance chosen after the miss would be fitted to it). The engine pick names this.
+- **The earlier step-0 units are discarded.** The S2 step-0 units of all three seeds (commit ce3649e: start n12, A0r,
+  A0 n13, A2 n13, the detcheck files; and the smoke A0r unit) ran without these settings and are never read or resumed.
+  The engine out-dir is per commit, so the S3 commit recomputes every step-0 unit (launch with `--reset`), and the pick
+  refuses any cuda step-0 unit without `deterministic: true`. Their RSS (about 3.9 GB) and times stay as a pre-S3 note
+  only; the pick and the 45-min bar read the S3 step 0 (deterministic kernels may be slower).
+Rules, arms, margins, the noise floor and Amendments S1/S2 are unchanged. Code: `apply_deterministic`, `det_fallback`,
+`det_record`, `--deterministic` in `mix_night_screen.py`; `tools/engine/specs/mix_night.yaml` passes `--deterministic` on
+cuda; `mix_night.py` pick check. Tests: `brain/tests/test_mix_night_screen.py` (switch sets the flags, units record them,
+the fallback names the op, cuda refuses without the switch, the key is a provenance key), `tests/test_engine.py`.

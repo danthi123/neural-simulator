@@ -24,7 +24,8 @@ subset is kept, and a larger subset is that same 64 plus extras drawn from a thi
 exact replica of brain.sleep.sleep (tested equal) and is used only by arm A0L, the instrument check against the life.
 
     POOL_NODE=1 python -m brain.experiments.mix_night_screen run --seed 319 --arm A0 --life L.json --snaps DIR \\
-        --offframe F.json --offframe-sha256 HEX --out-dir D [--model 1.5b] [--device cpu] [--foreign-snaps DIR2]
+        --offframe F.json --offframe-sha256 HEX --out-dir D [--model 1.5b] [--device cpu] [--foreign-snaps DIR2] \\
+        [--deterministic]       (Amendment S3: required with --device cuda; off by default on cpu)
     python -m brain.experiments.mix_night_screen score --dir D --lives L1.json L2.json L3.json [--out verdict.json]
     python -m brain.experiments.mix_night_screen strata --snaps DIR [--min-n 5]     (store-only; no model, no guard)
     python -m brain.experiments.mix_night_screen estimate [--night-min 25 --read-min 10]
@@ -43,6 +44,7 @@ import shutil
 import socket
 import subprocess
 import time
+import warnings
 
 import torch
 import torch.nn.functional as F
@@ -129,16 +131,85 @@ def guard(env=None):
         raise SystemExit("mix_night_screen run: refuses to run unless POOL_NODE=1 (pool node) or BRAIN_ALLOW_W3090=1")
 
 
+# ------------------------------------------------------------------ deterministic settings (Amendment S3)
+CUBLAS_WORKSPACE = ":4096:8"
+NONDET_RE = re.compile(r"(\S+) does not have a deterministic implementation")
+_DET = {"on": False, "seed": None, "ops": set(), "fallback_op": None, "cuda_initialized_before": None, "hooked": False}
+
+
+def nondeterministic_op(msg) -> str | None:
+    """The op torch names in its "<op> does not have a deterministic implementation" error / warning; None otherwise."""
+    m = NONDET_RE.search(str(msg))
+    return m.group(1) if m else None
+
+
+def _hook_warnings() -> None:
+    """Under warn_only, torch warns (UserWarning) instead of raising: every op it names is collected into _DET["ops"]."""
+    if _DET["hooked"]:
+        return
+    orig = warnings.showwarning
+
+    def show(message, category, filename, lineno, file=None, line=None):
+        op = nondeterministic_op(message)
+        if op:
+            _DET["ops"].add(op)
+        return orig(message, category, filename, lineno, file, line)
+
+    warnings.showwarning = show
+    _DET["hooked"] = True
+
+
+def apply_deterministic(seed: int, warn_only: bool = False, env=None) -> dict:
+    """Amendment S3 (brain/research/2026-11-27-mix-night-prereg.md): on cuda the nondeterminism comes from kernels
+    (atomic adds in backward, the cuBLAS workspace), not CPU threads. Sets CUBLAS_WORKSPACE_CONFIG=:4096:8 (before the
+    cortex is built, so before cuBLAS starts; whether CUDA was already initialized is recorded),
+    torch.use_deterministic_algorithms(True, warn_only), cudnn.deterministic True, cudnn.benchmark False, and fixed seeds
+    (random, torch incl. cuda; every sleep reseeds from its own seed as before). warn_only=True is only the registered
+    fallback after an op raised for want of a deterministic implementation (that op is recorded)."""
+    env = os.environ if env is None else env
+    if _DET["cuda_initialized_before"] is None:
+        _DET["cuda_initialized_before"] = bool(torch.cuda.is_initialized())
+    env["CUBLAS_WORKSPACE_CONFIG"] = CUBLAS_WORKSPACE
+    torch.use_deterministic_algorithms(True, warn_only=warn_only)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    random.seed(seed)
+    torch.manual_seed(seed)
+    _DET.update(on=True, seed=seed)
+    _hook_warnings()
+    return det_record()
+
+
+def det_fallback(op: str) -> dict:
+    """The registered fallback (S3): an op has no deterministic implementation -> record it, warn_only=True."""
+    _DET["ops"].add(op)
+    _DET["fallback_op"] = _DET["fallback_op"] or op
+    return apply_deterministic(_DET["seed"], warn_only=True)
+
+
+def det_record() -> dict:
+    """The determinism settings as they are NOW in this process (read from torch / the env, not from the switch); every
+    unit carries it as det_settings."""
+    return {"switch": bool(_DET["on"]), "use_deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+            "warn_only": torch.is_deterministic_algorithms_warn_only_enabled(),
+            "cudnn_deterministic": bool(torch.backends.cudnn.deterministic),
+            "cudnn_benchmark": bool(torch.backends.cudnn.benchmark),
+            "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"), "seed": _DET["seed"],
+            "fallback_op": _DET["fallback_op"], "nondeterministic_ops": sorted(_DET["ops"]),
+            "cuda_initialized_before_switch": _DET["cuda_initialized_before"]}
+
+
 def precision_of(device: str, cuda_precision: str) -> str:
     return cuda_precision if str(device).startswith("cuda") else "fp32"
 
 
-def provenance(device="?", precision="fp32", model=None, env=None, repo=REPO) -> dict:
+def provenance(device="?", precision="fp32", model=None, env=None, repo=REPO, deterministic=False) -> dict:
     """host, commit, device, precision, model. On a pool node (POOL_NODE=1) the commit is READ from <repo>/COMMIT (the
     route_repo copy, ~/brain-lane/route_repo/COMMIT, is a git-archive copy, so `git rev-parse` there would report nothing or
     an enclosing repo); a missing or empty COMMIT file refuses the run. The same on the w3090 node (BRAIN_ALLOW_W3090=1)
     when the repo is an engine-shipped copy (~/brain-lane/engine/repo_*/COMMIT, not a git checkout; Amendment S2).
-    Elsewhere `git rev-parse HEAD` in the repo."""
+    Elsewhere `git rev-parse HEAD` in the repo. deterministic: the S3 switch (a provenance key; the settings themselves
+    are each unit's det_settings)."""
     env = os.environ if env is None else env
     cf = os.path.join(repo, "COMMIT")
     if env.get("POOL_NODE") == "1" or (env.get("BRAIN_ALLOW_W3090") == "1" and os.path.exists(cf)):
@@ -155,11 +226,12 @@ def provenance(device="?", precision="fp32", model=None, env=None, repo=REPO) ->
         if not commit:
             raise SystemExit(f"no git commit readable in {repo}")
     return {"host": socket.gethostname(), "commit": commit, "commit_source": src, "device": str(device),
-            "precision": precision, "model": model, "threads": torch.get_num_threads()}
+            "precision": precision, "model": model, "threads": torch.get_num_threads(), "deterministic": bool(deterministic)}
 
 
 SNAP_FILES = ("episodes.json", "keys.pt", "meta.json", "keep_bank.json")   # per reading night; keep_bank.json: review defect 1
-PROV_KEYS = ("host", "commit", "device", "precision", "model", "threads", "offframe_sha256")   # threads: determinism fallback
+PROV_KEYS = ("host", "commit", "device", "precision", "model", "threads", "offframe_sha256",   # threads: determinism fallback
+             "deterministic")                                                                  # the S3 switch
 
 
 def same_provenance(u: dict, prov: dict, off_sha: str) -> bool:
@@ -535,7 +607,7 @@ def run_start(res, snaps, cortex, work, out_dir, offframe, prov, off_sha) -> dic
         now = float(meta["last_sleep"])
         clock.set(lambda: now)
         rec = {"arm": "start", "seed": seed, "night": START_NIGHT, **read_all(b, offframe, now, START_NIGHT),
-               "offframe_sha256": off_sha, **prov}
+               "offframe_sha256": off_sha, **prov, "det_settings": det_record()}
     finally:
         clock.set(None)
         b.release()
@@ -590,7 +662,7 @@ def run_chain(res, snaps, arm, cortex, work, out_dir, offframe, prov, off_sha, f
                    "sleep_info": info, "mean_replay": sum(a for a, _ in losses) / max(len(losses), 1),
                    "mean_keep": sum(c for _, c in losses) / max(len(losses), 1),
                    "mean_ce_keep": info.get("mean_ce_keep"), "kl_weight_used": info.get("kl_weight"),
-                   **read_all(b, offframe, now, k), "offframe_sha256": off_sha, **prov}
+                   **read_all(b, offframe, now, k), "offframe_sha256": off_sha, **prov, "det_settings": det_record()}
             if arm == "A0L" or k == NIGHTS[0]:
                 life_ad = os.path.join(snaps, f"n{k}", "cortex_adapters.pt")
                 if os.path.exists(life_ad):
@@ -753,7 +825,8 @@ def determinism_pair(tab, s: int) -> dict:
         return {"seed": s, "ok": None, "rel_diff": None}
     rel = abs(a["kl"] - r["kl"]) / max(abs(a["kl"]), 1e-12)
     return {"seed": s, "ok": abs(a["kl"] - r["kl"]) <= DETERMINISM_TOL * max(abs(a["kl"]), 1e-12), "rel_diff": rel,
-            "threads": [a.get("threads"), r.get("threads")]}
+            "threads": [a.get("threads"), r.get("threads")], "deterministic": [a.get("deterministic"), r.get("deterministic")],
+            "det_settings": [a.get("det_settings"), r.get("det_settings")]}
 
 
 def p1_change_diag(tab, start, X, seeds=SEEDS) -> dict:
@@ -807,7 +880,7 @@ def provenance_check(start: dict, tab: dict, seeds=SEEDS) -> list:
     bad = []
     if any(not u.get("commit") for u in units):
         bad.append("units without a commit")
-    for k in ("commit", "device", "precision", "model", "threads", "offframe_sha256"):
+    for k in ("commit", "device", "precision", "model", "threads", "offframe_sha256", "deterministic"):
         vals = {str(u.get(k)) for u in units}
         if len(vals) > 1:
             bad.append(f"{k} differs across units {sorted(vals)}")
@@ -920,6 +993,8 @@ def main(argv=None, cortex=None):
     r.add_argument("--cuda-precision", default="fp32")
     r.add_argument("--work", default=None)
     r.add_argument("--max-night", type=int, default=None, help="stop after this night (step 0: A0 / A2 night 13 only)")
+    r.add_argument("--deterministic", action="store_true",
+                   help="Amendment S3: deterministic torch / cuDNN / cuBLAS settings and fixed seeds (required on cuda)")
     dc = sub.add_parser("detcheck", help="step 0: A0r vs A0 night-13 determinism for one seed (exit 3 on a miss)")
     dc.add_argument("--dir", required=True)
     dc.add_argument("--seed", type=int, required=True)
@@ -961,6 +1036,9 @@ def main(argv=None, cortex=None):
                           "placebo": v["placebo"]["status"], "instrument": v["instrument"]}, indent=1))
         return v
     guard()
+    if str(a.device).startswith("cuda") and not a.deterministic:
+        raise SystemExit("mix_night_screen run: --device cuda needs --deterministic (Amendment S3: every cuda unit runs "
+                         "with deterministic kernels)")
     cfg = arm_cfg(a.arm)
     if cfg["placebo"] == "foreign":
         foreign_check(a.foreign_snaps, NIGHTS[:cfg["nights"]])
@@ -982,14 +1060,30 @@ def main(argv=None, cortex=None):
         raise SystemExit(f"--life is seed {res['seed']}, not {a.seed}")
     if res["brain_kw"].get("keep_bank") != "prior":
         raise SystemExit("the screen is for K-P (keep_bank='prior') lives")
+    if a.deterministic:
+        apply_deterministic(a.seed)          # before the cortex: CUBLAS_WORKSPACE_CONFIG must precede cuBLAS init
     if cortex is None:
         from brain.cortex import Cortex, resolve_model
         cortex = Cortex(model_path=resolve_model(a.model), device=a.device, cuda_precision=a.cuda_precision)
-    prov = provenance(a.device, precision_of(a.device, a.cuda_precision), getattr(cortex, "model_name", None))
+    prov = provenance(a.device, precision_of(a.device, a.cuda_precision), getattr(cortex, "model_name", None),
+                      deterministic=a.deterministic)
     work = a.work or os.path.join(a.out_dir, f"work_{a.arm}_s{a.seed}")
     os.makedirs(a.out_dir, exist_ok=True)
-    return run_chain(res, a.snaps, a.arm, cortex, work, a.out_dir, offframe, prov, sha, a.foreign_snaps,
-                     max_night=a.max_night)
+    while True:
+        try:
+            return run_chain(res, a.snaps, a.arm, cortex, work, a.out_dir, offframe, prov, sha, a.foreign_snaps,
+                             max_night=a.max_night)
+        except RuntimeError as e:
+            # S3 fallback, once per process: an op with no deterministic implementation raised under warn_only=False.
+            # Record it and rerun at warn_only=True; run_chain resumes every finished unit, and the night that raised
+            # wrote nothing (its unit, state and dirs are written only after the night completes). The determinism pair
+            # then decides as registered (tolerance unchanged).
+            op = nondeterministic_op(e)
+            if not a.deterministic or op is None or torch.is_deterministic_algorithms_warn_only_enabled():
+                raise
+            print(f"mix_night_screen: {op} has no deterministic implementation; warn_only=True from here (S3 fallback)",
+                  flush=True)
+            det_fallback(op)
 
 
 if __name__ == "__main__":

@@ -1114,6 +1114,7 @@ def test_mix_night_runs_on_w3090_only_amendment_s2(monkeypatch):
     e.st = {"tree": "t" * 40, "commit": "c" * 40, "specs": {}}
     sc = e.job_script(nodes[0], sp, {"key": "smoke/smoke", "seed": 319, "params": "A0r"}, "r", "jd")
     assert "--device cuda" in sc and "BRAIN_ALLOW_W3090=1" in sc and "POOL_NODE" not in sc and "memcap.sh 21 " in sc
+    assert 'case "cuda" in cuda*) DET=--deterministic;;' in sc and "--device cuda $DET" in sc      # Amendment S3
     assert "$BRAIN_MODEL_DIR/rwkv7-g1l-1.5b-20261031-ctx34304.pth" in sc and "${BRAIN_MODEL_DIR:-$HOME/brain-lane/models}" in sc
 
 
@@ -1167,3 +1168,31 @@ def test_peak_rss_prefers_the_jobs_torch_peak_file(tmp_path, monkeypatch):
     rc, txt = _peak(tmp_path, code)
     assert rc == 0 and "Peak GPU memory (MiB): 2048 (torch max_memory_allocated)" in txt
 
+
+
+# ---- mix-night Amendment S3: cuda jobs pass --deterministic; the pick discards pre-S3 cuda units and names a S3 miss
+def test_mix_night_s3_deterministic_on_cuda_only_and_pick_refuses_pre_s3_units():
+    import subprocess
+    from tools.engine.specs import mix_night as m
+    sp = core.Spec.find("mix_night")
+    for dev, want in (("cuda", "--deterministic"), ("cpu", "")):
+        c = sp.render(319, "A0r", "/o.json", tree="t" * 12, commit="c" * 12, job="s319", device=dev)
+        head = c.split("mkdir -p")[0]
+        out = subprocess.run(["bash", "-c", head + 'printf "%s" "$DET"'], capture_output=True, text=True,
+                             env={**os.environ, "TIMEV": "x"}).stdout
+        assert out == want and f"--device {dev} $DET" in c
+    dev = _step0()
+    for S in (319, 320, 321):
+        for u in dev[f"step0_s{S}"]["units"].values():
+            u.update(device="cuda", deterministic=True)
+    assert "params" in m.pick(dev, {"memory_gb": 13})
+    dev["step0_s320"]["units"]["u_A0_s320_n13.json"]["deterministic"] = None       # a pre-S3 unit (no key)
+    p = m.pick(dev, {"memory_gb": 13})
+    assert "params" not in p and "without --deterministic ['u_A0_s320_n13.json']" in p["stop"]
+    dev = _step0(det="rc 3")
+    for S in (319, 320, 321):
+        for u in dev[f"step0_s{S}"]["units"].values():
+            u.update(device="cuda", deterministic=True)
+    p = m.pick(dev, {"memory_gb": 13})
+    assert "Amendment S3" in p["stop"] and "not relaxed" in p["stop"] and "THREADS=1" not in p["stop"]
+    assert "THREADS=1" in m.pick(_step0(det="rc 3"), {"memory_gb": 13})["stop"]     # cpu units: the registered rule

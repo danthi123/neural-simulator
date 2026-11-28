@@ -385,7 +385,8 @@ def test_score_reads_unit_files(tmp_path):
 
 
 @pytest.mark.parametrize("key,val", [("commit", "c2"), ("device", "cuda"), ("precision", "fp16"), ("model", "m04"),
-                                     ("offframe_sha256", "h2"), ("host", "node-z"), ("commit", None)])
+                                     ("offframe_sha256", "h2"), ("host", "node-z"), ("commit", None),
+                                     ("deterministic", True)])
 def test_score_mixed_provenance_each_key_alone(tmp_path, key, val):
     d = str(tmp_path)
     lives = write_units(d)
@@ -944,7 +945,131 @@ def test_run_on_cuda_builds_an_fp32_cortex_and_records_it(tmp_path, monkeypatch)
                         seen.update(prov) or [])
     base = ["run", "--seed", "319", "--arm", "A0", "--life", str(life), "--snaps", str(tmp_path / "s"),
             "--out-dir", str(tmp_path / "o"), "--offframe", MN.OFFFRAME_FILE, "--offframe-sha256", MN.OFFFRAME_SHA256]
-    MN.main(base + ["--device", "cuda"])
+    with pytest.raises(SystemExit, match="needs --deterministic"):         # Amendment S3: no cuda unit without it
+        MN.main(base + ["--device", "cuda"])
+    assert made == []
+    MN.main(base + ["--device", "cuda", "--deterministic"])
     assert made == [("cuda", "fp32")] and seen["device"] == "cuda" and seen["precision"] == "fp32"
+    assert seen["deterministic"] is True
     MN.main(base)
     assert made[-1] == ("cpu", "fp32") and seen["device"] == "cpu" and seen["precision"] == "fp32"
+
+
+# ---------------------------------------------------------------- Amendment S3: deterministic cuda settings (CPU tests)
+@pytest.fixture
+def det_restore(monkeypatch):
+    """Every global the switch touches is restored: torch's deterministic flags, cuDNN flags, the cuBLAS env var, the
+    module's _DET record and warnings.showwarning (the op-collecting hook)."""
+    import warnings
+    was = (torch.are_deterministic_algorithms_enabled(), torch.is_deterministic_algorithms_warn_only_enabled(),
+           torch.backends.cudnn.deterministic, torch.backends.cudnn.benchmark)
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    monkeypatch.setattr(warnings, "showwarning", warnings.showwarning)
+    monkeypatch.setattr(MN, "_DET", {"on": False, "seed": None, "ops": set(), "fallback_op": None,
+                                     "cuda_initialized_before": None, "hooked": False})
+    yield
+    torch.use_deterministic_algorithms(was[0], warn_only=was[1])
+    torch.backends.cudnn.deterministic, torch.backends.cudnn.benchmark = was[2], was[3]
+
+
+def _det_run(tmp_path, monkeypatch, out, extra=(), sleep=None):
+    """main(run) end to end on stubs: real run_chain / run_start / unit writing; the snapshot open, sleep, reading and
+    adapter save are stubs (no model)."""
+    import json
+    from brain.experiments import routing_replay as RR
+    monkeypatch.delenv("POOL_NODE", raising=False)
+    monkeypatch.setenv("BRAIN_ALLOW_W3090", "1")
+    if not (tmp_path / "s").exists():
+        _snap_tree(tmp_path / "s")
+    life = tmp_path / "life.json"
+    life.write_text(json.dumps({"seed": 319, "brain_kw": {"keep_bank": "prior"}}))
+
+    class B:
+        def __init__(self, d):
+            self.meta = json.load(open(os.path.join(d, "meta.json")))
+
+        def sleep(self):
+            (sleep or (lambda: None))()
+            self.meta["sleeps"] += 1
+            return [(0.5, 0.1)]
+
+        def release(self):
+            pass
+
+    monkeypatch.setattr(RR, "open_snapshot", lambda snap, home, cortex, kw, *a, **k: B(snap))
+    monkeypatch.setattr(MN, "read_all", lambda b, offframe, now, k: {"kl": 0.2, "off_kl": 0.3})
+    monkeypatch.setattr(MN, "save_state", lambda b, path: open(path, "w").write("x"))
+    monkeypatch.setattr(MN, "_load_adapters_file", lambda path: {"adapters": {"w": torch.ones(2)}})
+    MN.main(["run", "--seed", "319", "--arm", "A0r", "--life", str(life), "--snaps", str(tmp_path / "s"),
+             "--out-dir", str(tmp_path / out), "--offframe", MN.OFFFRAME_FILE, "--offframe-sha256", MN.OFFFRAME_SHA256,
+             *extra], cortex=object())
+    return {f: json.load(open(tmp_path / out / f)) for f in ("u_start_s319_n12.json", "u_A0r_s319_n13.json")}
+
+
+def test_deterministic_switch_sets_the_flags_and_every_unit_records_them(tmp_path, monkeypatch, det_restore):
+    """S3: --deterministic sets CUBLAS_WORKSPACE_CONFIG=:4096:8, use_deterministic_algorithms(True, warn_only=False),
+    cudnn.deterministic True, benchmark False and fixed seeds, before the sleep runs; each unit (start and night) carries
+    det_settings as read back from torch and the provenance key deterministic. Off (the cpu default) records them too."""
+    seen = []
+
+    def sleep():
+        seen.append((torch.are_deterministic_algorithms_enabled(), torch.is_deterministic_algorithms_warn_only_enabled(),
+                     torch.backends.cudnn.deterministic, torch.backends.cudnn.benchmark,
+                     os.environ.get("CUBLAS_WORKSPACE_CONFIG")))
+
+    torch.backends.cudnn.benchmark = True                       # the switch must turn it off
+    units = _det_run(tmp_path, monkeypatch, "on", ["--deterministic"], sleep)
+    assert seen == [(True, False, True, False, ":4096:8")]
+    for u in units.values():
+        ds = u["det_settings"]
+        assert u["deterministic"] is True and ds["switch"] is True and ds["use_deterministic_algorithms"] is True
+        assert ds["warn_only"] is False and ds["cudnn_deterministic"] is True and ds["cudnn_benchmark"] is False
+        assert ds["cublas_workspace_config"] == ":4096:8" and ds["seed"] == 319
+        assert ds["fallback_op"] is None and ds["nondeterministic_ops"] == []
+        assert isinstance(ds["cuda_initialized_before_switch"], bool)
+    assert "deterministic" in MN.PROV_KEYS
+    torch.use_deterministic_algorithms(False)                   # a fresh cpu process: the switch never ran
+    torch.backends.cudnn.deterministic = False
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    MN._DET.update(on=False, seed=None)
+    off = _det_run(tmp_path, monkeypatch, "off")
+    for u in off.values():
+        assert u["deterministic"] is False and u["det_settings"]["switch"] is False
+        assert u["det_settings"]["use_deterministic_algorithms"] is False and u["det_settings"]["cublas_workspace_config"] is None
+    with pytest.raises(SystemExit, match="no mixing"):          # a resumed unit of the other setting refuses
+        _det_run(tmp_path, monkeypatch, "off", ["--deterministic"])
+
+
+def test_deterministic_fallback_names_the_op_in_the_unit(tmp_path, monkeypatch, det_restore):
+    """S3: an op with no deterministic implementation raises under warn_only=False; the run records it, falls back to
+    warn_only=True, redoes the night (nothing of it was written) and names the op, plus any op torch then warns about."""
+    import warnings
+    calls = []
+
+    def sleep():
+        calls.append(torch.is_deterministic_algorithms_warn_only_enabled())
+        if not calls[-1]:
+            raise RuntimeError("index_add_cuda_ does not have a deterministic implementation, but you set "
+                               "'torch.use_deterministic_algorithms(True)'.")
+        warnings.warn("scatter_add_cuda_kernel does not have a deterministic implementation, but you set "
+                      "'torch.use_deterministic_algorithms(True, warn_only=True)'.", UserWarning)
+
+    u = _det_run(tmp_path, monkeypatch, "fb", ["--deterministic"], sleep)["u_A0r_s319_n13.json"]
+    assert calls == [False, True]
+    ds = u["det_settings"]
+    assert ds["warn_only"] is True and ds["use_deterministic_algorithms"] is True and ds["fallback_op"] == "index_add_cuda_"
+    assert ds["nondeterministic_ops"] == ["index_add_cuda_", "scatter_add_cuda_kernel"] and u["deterministic"] is True
+    assert MN.nondeterministic_op(RuntimeError("CUDA out of memory")) is None
+
+
+def test_other_errors_and_switch_off_are_not_a_fallback(tmp_path, monkeypatch, det_restore):
+    def boom():
+        raise RuntimeError("CUDA out of memory")
+    with pytest.raises(RuntimeError, match="out of memory"):
+        _det_run(tmp_path, monkeypatch, "e1", ["--deterministic"], boom)
+
+    def nd():
+        raise RuntimeError("index_add_cuda_ does not have a deterministic implementation, but you set ...")
+    with pytest.raises(RuntimeError, match="deterministic implementation"):     # switch off: never a silent fallback
+        _det_run(tmp_path, monkeypatch, "e2", (), nd)
+    assert MN._DET["fallback_op"] is None
