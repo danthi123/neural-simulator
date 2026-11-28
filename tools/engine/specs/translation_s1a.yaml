@@ -24,7 +24,7 @@ cmd: >-
   mkdir -p $D && "$PY" -u -m brain.experiments.translation_s1a run --life $KR/lifeKR_s{seed}.json.json
   --snaps $KR/snaps_s{seed} --trunk $KR/trunk_s{seed} --model {model} --device {device} --out-dir $D --work $D/work
   --mc-ref $KR/mc_s{seed} --vc-ref $KR/vc_full_s{seed}.json {params} >> $D/run.log 2>&1 &&
-  "$PY" -m tools.engine.bundle $D {out} --glob 'u_s*.json'
+  "$PY" -m tools.engine.bundle $D {out} --glob 'u*_s*.json'
 six_params: ""
 seeds: [319, 320, 321]            # KR DEV lives (lead only); the six project seeds have no banked lives
 placement: "@kr"
