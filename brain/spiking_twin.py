@@ -26,8 +26,9 @@ time-mix state recurrence with flash-linear-attention's chunk_rwkv7 (fla-core 0.
 prereg brain/research/2026-11-27-spiking-twin-e1-prereg.md section 7 item 1). The mapping onto fla's DPLR form
 S_fla <- S_fla * exp(gk) + b (a^T S_fla) + k v^T, o = scale * S_fla^T q, is (see _wkv_fla): S_fla = our state
 transposed (ours is [H, V, K]), q = r, gk = log w = -0.606531 sigmoid(w0 + lora) (computed in log space, not log(exp)),
-a = -kk, b = kk * a_gate, scale = 1. The package is imported lazily (fla_import) so nothing else depends on it; it is a
-training path only: single-token steps (T == 1, sampling) and non-CUDA tensors always take the loop. Spikes, a ragged
+a = -kk, b = kk * a_gate, scale = 1. fla's fp32 Triton dots run in IEEE fp32, not TF32 (fla_f32_precision: TF32
+biased the fp32 path, run/parity/bias_diagnosis.md). The package is imported lazily (fla_import) so nothing else
+depends on it; it is a training path only: single-token steps (T == 1, sampling) and non-CUDA tensors always take the loop. Spikes, a ragged
 T, checkpointing (the block is recomputed through self._wkv_fla) and lower_bound all take the kernel; nothing else
 bypasses it. With spikes on, a kernel difference smaller than a count's rounding margin is absorbed by the integer
 counts of the "o" site and the head, so the logits can be bit-equal to the loop although the kernel ran (the graded
@@ -42,6 +43,8 @@ is surrogate-gradient distillation from the teacher, the declared pretraining-st
 from __future__ import annotations
 
 import copy
+import os
+import sys
 
 import torch
 import torch.nn.functional as F
@@ -72,10 +75,38 @@ def fla_version():
     return ver
 
 
+FLA_F32_PRECISION = "ieee"   # Triton's precision for fp32 tl.dot inside fla's kernels (Triton's own default is tf32)
+
+
+def fla_f32_precision():
+    """Make every fp32 tl.dot in fla's kernels IEEE fp32 instead of Triton's default TF32 (TRITON_F32_DEFAULT).
+
+    Why (run/parity/bias_diagnosis.md, 11-27): with TF32, chunk_rwkv7 on fp32 inputs is not fp32-accurate (relative
+    error 7e-4 to 9e-4 per layer on the 0.1B teacher) and it is biased: its output is shrunk toward zero (slope of the
+    error on y -3e-4 to -9e-4 in all 12 layers) and 63% of the o-site count flips lower |count|. With IEEE the
+    error is fp32 rounding (4e-7 to 1.7e-6, the size of an fp64 recurrence against the loop) and the shrink is gone.
+    Triton reads the setting when it compiles a kernel; its in-process kernel cache is not keyed on it (the on-disk
+    cache is), so this must run before the first fla kernel compiles in the process: fla_import calls it first.
+    A different explicit setting (environment or triton.knobs) is refused, not overridden."""
+    cur = os.environ.get("TRITON_F32_DEFAULT")
+    if cur not in (None, "", FLA_F32_PRECISION):
+        raise RuntimeError(f"wkv='fla' runs fla with TRITON_F32_DEFAULT={FLA_F32_PRECISION}; found {cur!r}")
+    os.environ["TRITON_F32_DEFAULT"] = FLA_F32_PRECISION
+    triton = sys.modules.get("triton")
+    knobs = getattr(triton, "knobs", None) if triton is not None else None
+    if knobs is not None:
+        got = knobs.language.fp32_default        # a Python-level override wins over the environment
+        if got != FLA_F32_PRECISION:
+            raise RuntimeError(f"wkv='fla' needs triton.knobs.language.fp32_default={FLA_F32_PRECISION}; found {got!r}")
+    return FLA_F32_PRECISION
+
+
 def fla_import():
-    """Lazily import fla's rwkv7 ops (chunk_rwkv7, fused_recurrent_rwkv7) after checking the installed version.
-    Importing fla initialises CUDA (device name / capability probe), so call this only where a GPU run is intended."""
+    """Lazily import fla's rwkv7 ops (chunk_rwkv7, fused_recurrent_rwkv7) after checking the installed version and
+    fixing fla's fp32 dot precision to IEEE (fla_f32_precision). Importing fla initialises CUDA (device name /
+    capability probe), so call this only where a GPU run is intended."""
     fla_version()
+    fla_f32_precision()
     try:
         from fla.ops.rwkv7 import chunk_rwkv7, fused_recurrent_rwkv7
     except ImportError as e:  # pragma: no cover - environment
